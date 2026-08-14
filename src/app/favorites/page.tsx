@@ -1,0 +1,2 @@
+'use client';import {Heart} from 'lucide-react';import {AuthDialog} from '@/components/AuthDialog';import {useI18n} from '@/i18n/I18nProvider';import {useState} from 'react';export default function Page(){const {t}=useI18n();const [open,setOpen]=useState(false);return <main className="empty-page"><Heart/><p className="eyebrow">{t('favorites')}</p><h1>{t('favoritesTitle')}</h1><p>{t('favoritesEmpty')}</p><button className="button primary" onClick={()=>setOpen(true)}>{t('signIn')}</button><AuthDialog open={open} onClose={()=>setOpen(false)}/></main>}
+

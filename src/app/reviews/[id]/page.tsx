@@ -1,0 +1,2 @@
+import type {Metadata} from 'next';import {PostCard} from '@/components/PostCard';import {feedPost} from '@/lib/fixtures';export const metadata:Metadata={title:'A verified store visit | Home App',description:feedPost.text};export default function Page(){return <main className="public-narrow"><PostCard post={feedPost}/><section className="comments-section"><p className="eyebrow">Comments</p><h2>3 community comments</h2><p>Comments are displayed as one simple conversation, matching the Home App API.</p></section></main>}
+
