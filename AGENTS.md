@@ -23,10 +23,14 @@ Before changing screens, tokens, navigation, content, responsive behavior, or ac
 
 ## Web implementation invariants
 
+- Write READMEs, contributor documentation, developer-facing explanations, and code comments in English only. Localized product UI and locale fixtures are exempt.
 - Use semantic HTML, logical headings, keyboard navigation, visible focus, and WCAG AA contrast.
 - Keep all UI strings in the `tr`, `en`, `de`, and `ru` dictionaries.
 - Keep user-authored content untranslated.
-- Preserve the browser BFF boundary; never expose `BFF_SECRET` to client bundles.
+- Preserve the browser BFF boundary as a non-negotiable architecture rule.
+- Browser code must call only same-origin Next.js BFF routes and must never call the real backend origin.
+- Only server components, route handlers, and other trusted server-side code may read `API_ORIGIN` or call the backend.
+- Never introduce `NEXT_PUBLIC_API_ORIGIN` or expose `BFF_SECRET` to client bundles.
 - Keep fixture imagery in the presentation layer rather than adding image fields to API DTOs.
 - A local optimistic state change is not backend success. Commit mutations after a successful response or roll them back on failure.
 - At 900 px and below, primary navigation belongs at the viewport bottom.
@@ -44,4 +48,3 @@ npm run lint
 npm test
 npm run build
 ```
-
