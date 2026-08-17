@@ -16,6 +16,7 @@ This repository currently contains the working frontend prototype, responsive de
 - Server-rendered store, review, and user pages
 - Foundations for favorites, profile, and review creation
 - Contextual authentication with Google and passwordless email OTP
+- Confirmed account deletion that clears the HTTP-only session and returns to anonymous mode
 - Interface dictionaries for Turkish, English, German, and Russian
 - A bottom-anchored, label-free, accessible glass navigation rail on mobile web
 - Keyboard focus, semantic HTML, and reduced-motion support
@@ -102,6 +103,8 @@ Browser UI → same-origin Next.js BFF → Boşa Gezme! API
 The location flow follows the same boundary. Browser geolocation is requested only after an explicit user action, and coordinates are sent only to same-origin `/api/proxy/*` routes. Manual location search uses one human-readable text field. Candidate coordinates are transport-only and must never be rendered or used as visit evidence.
 
 Access and rotating refresh tokens are stored in HTTP-only cookies. Anonymous browsing remains available. Contextual authentication opens only when a visitor attempts a protected action such as saving, liking, following, commenting, or sharing a visit.
+
+The App Store review identity uses the ordinary email OTP screens; the UI must never expose a special reviewer branch, label, prefill, or code. `ACCOUNT_UNAVAILABLE` clears any local session. Account deletion is permanent for profile, content, history, and social data, even though a later verified login may reactivate the same account ID as a blank profile.
 
 ## Fixtures and prototype behavior
 
