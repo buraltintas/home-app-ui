@@ -1,6 +1,8 @@
-# Home App Web
+# Boşa Gezme! Web
 
-The web experience for Home App: an anonymous-first Next.js application that helps people discover physical home and living stores through real visits, photography, and community reviews.
+The web experience for Boşa Gezme!: an anonymous-first Next.js application that helps people discover physical home and living stores through real visits, photography, and community reviews.
+
+Canonical production URL: [https://bosagezme.com](https://bosagezme.com). The supplied logo is used without redrawing or recoloring; derived favicon and app-icon assets preserve the original artwork.
 
 This repository currently contains the working frontend prototype, responsive design system, and browser-side API boundary.
 
@@ -8,7 +10,9 @@ This repository currently contains the working frontend prototype, responsive de
 
 - A photography- and community-first home feed
 - Natural-language discovery and search
-- Results that keep Home App community data separate from Google data
+- Backend-authored home/living guidance for unrelated or unclear searches
+- User-initiated current or manually chosen location for nearby discovery
+- Results that keep Boşa Gezme! community data separate from Google data
 - Server-rendered store, review, and user pages
 - Foundations for favorites, profile, and review creation
 - Contextual authentication with Google and passwordless email OTP
@@ -18,7 +22,7 @@ This repository currently contains the working frontend prototype, responsive de
 
 ## Design direction
 
-Home App is a consumer social product for discovering physical stores. It is not ecommerce, a merchant dashboard, or a generic review directory.
+Boşa Gezme! is a consumer social product for discovering physical stores. It is not ecommerce, a merchant dashboard, or a generic review directory.
 
 The interface is warm, quiet, and editorial. Photography and authored content remain more prominent than interface chrome. The palette combines off-white surfaces, dark ink tones, and a restrained terracotta accent.
 
@@ -29,7 +33,7 @@ Responsive web uses two intentional compositions:
 - Recognizable Lucide icons without visible labels on mobile, while accessible names remain available
 - Material blur restricted to navigation rather than repeated across content
 
-The canonical design authority lives in `.agents/skills/home-app-design/SKILL.md` in the Home App API repository.
+The canonical design authority lives in `.agents/skills/home-app-design/SKILL.md` in the Boşa Gezme! API repository.
 
 ## Technology
 
@@ -58,7 +62,7 @@ The canonical design authority lives in `.agents/skills/home-app-design/SKILL.md
 Requirements:
 
 - Node.js 20 or a current LTS release
-- A running Home App API instance
+- A running Boşa Gezme! API instance
 
 ```bash
 cp .env.example .env.local
@@ -72,7 +76,7 @@ The application opens at [http://localhost:3000](http://localhost:3000) by defau
 
 | Variable | Description |
 | --- | --- |
-| `API_ORIGIN` | The Home App API origin used by the Next.js server |
+| `API_ORIGIN` | The Boşa Gezme! API origin used by the Next.js server |
 | `BFF_SECRET` | A server-only backend client credential |
 | `NEXT_PUBLIC_SITE_URL` | The base URL for metadata and canonical URLs |
 
@@ -80,20 +84,22 @@ Never expose `BFF_SECRET` through a `NEXT_PUBLIC_` variable. The browser communi
 
 ## API and authentication
 
-Typed domain shapes follow `home-app-api/docs/openapi.yaml`. The BFF forwards locale, visitor session, bearer state, search attribution headers, `Retry-After`, and request identifiers.
+Typed domain shapes follow `home-app-api/docs/openapi.yaml`. The BFF forwards locale, visitor session, bearer state, search attribution headers, `Retry-After`, and request identifiers. Current contracts distinguish `store_distance_meters` (viewer-to-store feed ordering) from `distance_meters` (visit verification), expose search `scope`, `store_name`, and optional localized `guidance`, and support private discovery-location persistence.
 
 ### Non-negotiable BFF boundary
 
 The browser must never call the real backend origin directly.
 
 ```text
-Browser UI → same-origin Next.js BFF → Home App API
+Browser UI → same-origin Next.js BFF → Boşa Gezme! API
 ```
 
 - Client components call only same-origin endpoints such as `/api/auth/*` and `/api/proxy/*`.
 - Server components and Next.js route handlers are the only web layers allowed to use `API_ORIGIN`.
 - The BFF injects `BFF_SECRET`, forwards locale and attribution metadata, manages HTTP-only auth cookies, and shields backend topology from the browser.
 - Do not add `NEXT_PUBLIC_API_ORIGIN`, expose the backend host in client code, or bypass the BFF for convenience.
+
+The location flow follows the same boundary. Browser geolocation is requested only after an explicit user action, and coordinates are sent only to same-origin `/api/proxy/*` routes. Manual location search uses one human-readable text field. Candidate coordinates are transport-only and must never be rendered or used as visit evidence.
 
 Access and rotating refresh tokens are stored in HTTP-only cookies. Anonymous browsing remains available. Contextual authentication opens only when a visitor attempts a protected action such as saving, liking, following, commenting, or sharing a visit.
 
