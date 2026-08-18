@@ -10,7 +10,9 @@ import {apiFetch} from '@/lib/api-client';
 import {Rating,Verified} from './Rating';
 import {AuthDialog} from './AuthDialog';
 
-export function PostCard({post}:{post:Post}){
+type PostCardProps={post:Post;showStoreName?:boolean};
+
+export function PostCard({post,showStoreName=true}:PostCardProps){
   const {t,locale}=useI18n();
   const [auth,setAuth]=useState(false);
   const [liked,setLiked]=useState(post.viewer_has_liked);
@@ -57,7 +59,7 @@ export function PostCard({post}:{post:Post}){
         <div><strong>{post.display_name}</strong><span>@{post.username} · {new Intl.DateTimeFormat(locale,{day:'numeric',month:'short'}).format(new Date(post.created_at))}</span></div>
         <button className="icon-button" disabled={busy==='save'} aria-label={t('save')} aria-pressed={saved} onClick={()=>void mutate('save')}><Bookmark className={saved?'active-icon':''}/></button>
       </header>
-      <Link href={`/stores/${post.store_id}`} className="post-store"><h2>{post.store_name}</h2>{place&&<p>{place}</p>}</Link>
+      {showStoreName&&<Link href={`/stores/${post.store_id}`} className="post-store"><h2>{post.store_name}</h2>{place&&<p>{place}</p>}</Link>}
     </div>
 
     {media
