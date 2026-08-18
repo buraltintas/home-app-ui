@@ -138,9 +138,8 @@ export function SearchExperience() {
     if(!outcome.ok){setError(t(locationMessage(outcome.reason)));return;}
     const selected={label:t('currentLocation'),coordinates:{latitude:outcome.position.latitude,longitude:outcome.position.longitude}};
     setLocation(selected);setLocationOpen(false);setError('');
-    void runSearch(query||t('nearby'),selected);
   };
-  const choose=(candidate:LocationResult)=>{const selected={label:candidate.name,city:candidate.name,coordinates:{latitude:candidate.latitude,longitude:candidate.longitude}};setLocation(selected);setLocationOpen(false);void runSearch(query||t('nearby'),selected);};
+  const choose=(candidate:LocationResult)=>{const selected={label:candidate.name,city:candidate.name,coordinates:{latitude:candidate.latitude,longitude:candidate.longitude}};setLocation(selected);setLocationOpen(false);};
   const fill=(example:string)=>{setQuery(example);void runSearch(example);};
 
   // Attribute the visit back to the search so the backend can measure which results
