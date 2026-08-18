@@ -16,13 +16,31 @@ export function AuthDialog({open,onClose,onAuthenticated}:{open:boolean;onClose:
   const googleCallbackRef=useRef<(response:GoogleCredentialResponse)=>void>(()=>undefined);
   const googleInitializedRef=useRef(false);
   const [googleReady,setGoogleReady]=useState(false);
+  const [googleClientId,setGoogleClientId]=useState('');
+  const [runtimeConfigReady,setRuntimeConfigReady]=useState(false);
   const [emailMode,setEmailMode]=useState(false);
   const [sent,setSent]=useState(false);
   const [email,setEmail]=useState('');
   const [code,setCode]=useState('');
   const [error,setError]=useState('');
   const [busy,setBusy]=useState(false);
-  const googleClientId=process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+
+  useEffect(()=>{
+    let active=true;
+    void(async()=>{
+      try{
+        const response=await fetch('/api/runtime-config',{cache:'no-store'});
+        if(!response.ok)throw new Error();
+        const config=await response.json() as {googleClientId?:string};
+        if(active)setGoogleClientId(config.googleClientId??'');
+      }catch{
+        if(active)setGoogleClientId('');
+      }finally{
+        if(active)setRuntimeConfigReady(true);
+      }
+    })();
+    return()=>{active=false;};
+  },[]);
 
   const resetFlow=useCallback(()=>{setEmailMode(false);setSent(false);setEmail('');setCode('');setError('');setBusy(false)},[]);
   const closeDialog=useCallback(()=>{resetFlow();onClose()},[onClose,resetFlow]);
@@ -40,12 +58,12 @@ export function AuthDialog({open,onClose,onAuthenticated}:{open:boolean;onClose:
   useEffect(()=>{googleCallbackRef.current=response=>void authenticateWithGoogle(response)},[authenticateWithGoogle]);
 
   useEffect(()=>{
-    if(!open||emailMode||!googleReady||!googleClientId||!window.google||!googleButtonRef.current)return;
+    if(!open||emailMode||!runtimeConfigReady||!googleReady||!googleClientId||!window.google||!googleButtonRef.current)return;
     const container=googleButtonRef.current;
     container.replaceChildren();
     if(!googleInitializedRef.current){window.google.accounts.id.initialize({client_id:googleClientId,callback:response=>googleCallbackRef.current(response)});googleInitializedRef.current=true}
     window.google.accounts.id.renderButton(container,{type:'standard',theme:'outline',size:'large',text:'continue_with',shape:'rectangular',logo_alignment:'left',width:String(Math.min(388,container.clientWidth))});
-  },[authenticateWithGoogle,emailMode,googleClientId,googleReady,locale,open]);
+  },[authenticateWithGoogle,emailMode,googleClientId,googleReady,locale,open,runtimeConfigReady]);
 
   if(!open)return null;
 
@@ -73,8 +91,9 @@ export function AuthDialog({open,onClose,onAuthenticated}:{open:boolean;onClose:
         <button disabled={busy||(sent&&code.length!==6)} className="button primary" type="submit">{busy?'…':sent?t('verify'):t('sendCode')}</button>
       </form>:<>
         <p>{t('signInBody')}</p>
-        <div className="google-button-slot" ref={googleButtonRef} style={{width:'100%',minHeight:44,marginTop:10,overflow:'hidden'}}>{(!googleReady||!googleClientId)&&<button className="button secondary" style={{width:'100%',margin:0}} disabled>{t('google')}</button>}</div>
-        {!googleClientId&&<p role="alert">{t('googleUnavailable')}</p>}
+        {!runtimeConfigReady&&<button className="button secondary" style={{width:'100%',margin:0}} disabled>{t('google')}</button>}
+        {runtimeConfigReady&&<div className="google-button-slot" ref={googleButtonRef} style={{width:'100%',minHeight:44,marginTop:10,overflow:'hidden'}}>{(!googleReady||!googleClientId)&&<button className="button secondary" style={{width:'100%',margin:0}} disabled>{t('google')}</button>}</div>}
+        {runtimeConfigReady&&!googleClientId&&<p role="alert">{t('googleUnavailable')}</p>}
         {error&&<p role="alert">{error}</p>}
         <button className="button secondary" disabled={busy} onClick={()=>setEmailMode(true)}>{t('email')}</button>
         <button className="button quiet" disabled={busy} onClick={closeDialog}>{t('later')}</button>

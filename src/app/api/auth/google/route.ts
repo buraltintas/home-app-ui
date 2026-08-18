@@ -1,8 +1,9 @@
 import {NextRequest,NextResponse} from 'next/server';
+import {forwardToBackend} from '@/lib/backend-forward';
 import type {TokenPair} from '@/lib/types';
 
 export async function POST(request:NextRequest){
-  const response=await fetch(new URL('/api/proxy/auth/google',request.url),{method:'POST',headers:{'content-type':'application/json','x-locale':request.headers.get('x-locale')??'tr'},body:await request.text()});
+  const response=await forwardToBackend({request,path:'auth/google',method:'POST',body:await request.text()});
   const data=await response.json() as TokenPair|{error?:{code?:string}};
   const outgoing=NextResponse.json(response.ok?{user_id:(data as TokenPair).user_id}:data,{status:response.status});
   if(response.ok){
