@@ -7,6 +7,7 @@ import {ChangeEvent,Suspense,useCallback,useEffect,useState} from 'react';
 import {AuthDialog} from '@/components/AuthDialog';
 import {MascotLoader} from '@/components/MascotLoader';
 import {useI18n} from '@/i18n/I18nProvider';
+import { localePath } from '@/lib/site';
 import {apiFetch} from '@/lib/api-client';
 import {locationMessage,requestPosition} from '@/lib/location';
 import {readOriginSearch} from '@/lib/search-origin';
@@ -166,13 +167,13 @@ function ReviewWizard({storeId}:{storeId:string}){
       })});
       if(response.status===401){setSignedIn(false);setAuth(true);return;}
       if(!response.ok)throw new Error();
-      router.push(`/stores/${storeId}`);
+      router.push(localePath(locale,`/stores/${storeId}`));
       router.refresh();
     }catch{setSubmitError(t('reviewError'));}
     finally{setSubmitting(false);}
   };
 
-  if(loadError)return <main className="create-page"><div className="empty-state"><h1>{t('storeUnavailable')}</h1><button className="button primary" onClick={()=>router.push('/discover')}>{t('discover')}</button></div></main>;
+  if(loadError)return <main className="create-page"><div className="empty-state"><h1>{t('storeUnavailable')}</h1><button className="button primary" onClick={()=>router.push(localePath(locale,'/discover'))}>{t('discover')}</button></div></main>;
   if(!store||signedIn===undefined)return <main className="create-page"><MascotLoader/></main>;
 
   const steps=[[t('verifyLocation'),MapPin],[t('addRating'),Star],[t('addPhotos'),Camera],[t('tellExperience'),Check]] as const;
@@ -241,11 +242,11 @@ function ReviewWizard({storeId}:{storeId:string}){
 }
 
 function CreateRoute(){
-  const {t}=useI18n();
+  const {t,locale}=useI18n();
   const router=useRouter();
   const storeId=useSearchParams().get('store')??'';
   const valid=UUID.test(storeId);
-  useEffect(()=>{if(!valid)router.replace('/discover');},[router,valid]);
+  useEffect(()=>{if(!valid)router.replace(localePath(locale,'/discover'));},[router,valid,locale]);
   if(!valid)return <main className="create-page"><div className="empty-state"><h1>{t('chooseStoreToReview')}</h1><p>{t('chooseStoreBody')}</p></div></main>;
   return <ReviewWizard storeId={storeId}/>;
 }

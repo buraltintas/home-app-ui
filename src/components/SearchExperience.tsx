@@ -6,6 +6,7 @@ import { ArrowRight, LocateFixed, MapPin, Search, X } from 'lucide-react';
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import type { Coordinates, LocationResult, SearchHistory, SearchResponse, SearchResult } from '@/lib/types';
 import { useI18n } from '@/i18n/I18nProvider';
+import { localePath } from '@/lib/site';
 import { apiFetch } from '@/lib/api-client';
 import { locationMessage, requestPosition } from '@/lib/location';
 import { rememberOriginSearch } from '@/lib/search-origin';
@@ -43,7 +44,7 @@ function Result({item,onSelect}:{item:SearchResult;onSelect:()=>void}) {
   const {t,locale}=useI18n();
   const categoryText=item.categories.map(category=>categoryLabels[locale][category]??category).join(' · ');
   const card=<article className="search-result"><ResultPhoto item={item}/><div><p className="result-category">{categoryText}</p><h2>{item.name}</h2><p className="result-address">{item.address}</p>{item.distance_meters!==undefined&&<p className="distance">{(item.distance_meters/1000).toLocaleString(locale,{maximumFractionDigits:1})} km</p>}{item.platform?<div className="dual-score"><div><span>{t('communityRating')}</span><strong><Rating value={item.platform.average_rating}/></strong><small>{item.platform.review_count} {t('reviews')} · {item.platform.favorite_count} {t('favorites').toLowerCase()}</small></div>{item.google&&<div><span>{t('googleRating')}</span><strong><Rating value={item.google.rating}/></strong><small>{item.google.rating_count} {t('reviews')}</small></div>}</div>:<div className="google-only"><strong>{t('newHere')}</strong><p>{t('firstReview')}</p>{item.google&&<span>{t('googleRating')} <Rating value={item.google.rating}/> · {item.google.rating_count} {t('reviews')}</span>}</div>}</div><ArrowRight aria-hidden="true"/></article>;
-  return item.id?<Link href={`/stores/${item.id}`} onClick={onSelect}>{card}</Link>:card;
+  return item.id?<Link href={localePath(locale,`/stores/${item.id}`)} onClick={onSelect}>{card}</Link>:card;
 }
 
 export function SearchExperience() {

@@ -6,6 +6,7 @@ import {Bookmark,Heart,MessageCircle,Send} from 'lucide-react';
 import {useState} from 'react';
 import type {Post} from '@/lib/types';
 import {useI18n} from '@/i18n/I18nProvider';
+import { localePath } from '@/lib/site';
 import {apiFetch} from '@/lib/api-client';
 import {Rating,Verified} from './Rating';
 import {AuthDialog} from './AuthDialog';
@@ -59,19 +60,19 @@ export function PostCard({post,showStoreName=true}:PostCardProps){
         <div><strong>{post.display_name}</strong><span>@{post.username} · {new Intl.DateTimeFormat(locale,{day:'numeric',month:'short'}).format(new Date(post.created_at))}</span></div>
         <button className="icon-button" disabled={busy==='save'} aria-label={t('save')} aria-pressed={saved} onClick={()=>void mutate('save')}><Bookmark className={saved?'active-icon':''}/></button>
       </header>
-      {showStoreName&&<Link href={`/stores/${post.store_id}`} className="post-store"><h2>{post.store_name}</h2>{place&&<p>{place}</p>}</Link>}
+      {showStoreName&&<Link href={localePath(locale,`/stores/${post.store_id}`)} className="post-store"><h2>{post.store_name}</h2>{place&&<p>{place}</p>}</Link>}
     </div>
 
     {media
-      ?<Link href={`/reviews/${post.id}`} className="post-photo"><Image src={`/api/media/${media.id}`} fill sizes="(max-width: 760px) 100vw, 760px" alt={post.store_name} priority/></Link>
-      :<Link href={`/reviews/${post.id}`} className="post-photo is-empty"><span aria-hidden="true">{post.store_name.slice(0,2).toLocaleUpperCase(locale)}</span><small>{t('noPhoto')}</small></Link>}
+      ?<Link href={localePath(locale,`/reviews/${post.id}`)} className="post-photo"><Image src={`/api/media/${media.id}`} fill sizes="(max-width: 760px) 100vw, 760px" alt={post.store_name} priority/></Link>
+      :<Link href={localePath(locale,`/reviews/${post.id}`)} className="post-photo is-empty"><span aria-hidden="true">{post.store_name.slice(0,2).toLocaleUpperCase(locale)}</span><small>{t('noPhoto')}</small></Link>}
 
     <div className="post-details">
       <div className="post-meta"><Rating value={post.rating}/><Verified label={t('verified')}/></div>
       <p className="post-copy">{post.text}</p>
       <footer className="post-actions">
         <button disabled={busy==='like'} aria-pressed={liked} onClick={()=>void mutate('like')}><Heart className={liked?'active-icon':''}/>{likes}</button>
-        <Link href={`/reviews/${post.id}`} className="post-action-link"><MessageCircle/>{post.comment_count}</Link>
+        <Link href={localePath(locale,`/reviews/${post.id}`)} className="post-action-link"><MessageCircle/>{post.comment_count}</Link>
         <button onClick={()=>void share()}><Send/>{shared?t('copied'):t('share')}</button>
       </footer>
     </div>

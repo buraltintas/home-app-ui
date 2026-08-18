@@ -5,11 +5,11 @@ import {getProfile,getUserPosts} from '@/lib/server-api';
 import {canonicalFor,userPath} from '@/lib/site';
 
 export async function generateMetadata({params}:{params:Promise<{id:string}>}):Promise<Metadata>{
-  const {id}=await params;
+  const [{id},{locale}]=await Promise.all([params,getServerI18n()]);
   const profile=await getProfile(id);
   const title=`${profile.display_name} (@${profile.username})`;
   const description=profile.bio||undefined;
-  return {title,description,alternates:canonicalFor(userPath(profile.id)),openGraph:{type:'profile',url:userPath(profile.id),title,description}};
+  return {title,description,alternates:canonicalFor(locale,userPath(profile.id)),openGraph:{type:'profile',url:userPath(profile.id),title,description}};
 }
 
 // Every visitor used to land on the same invented person. This reads the profile whose

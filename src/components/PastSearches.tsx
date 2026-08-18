@@ -4,6 +4,7 @@ import {ArrowRight,Trash2} from 'lucide-react';
 import Link from 'next/link';
 import {useEffect,useState} from 'react';
 import {useI18n} from '@/i18n/I18nProvider';
+import { localePath } from '@/lib/site';
 import {apiFetch} from '@/lib/api-client';
 import type {SearchHistory} from '@/lib/types';
 
@@ -62,7 +63,7 @@ export function PastSearches(){
         <button className="icon-button" onClick={()=>void removeOne(search.id)} aria-label={t('deleteSearch')} disabled={busy}><Trash2/></button>
       </div>
       {search.results?.length>0&&<ul className="past-search-results">{search.results.map(result=><li key={`${search.id}:${result.store_id}`}>
-        <Link href={`/stores/${result.store_id}`}><span>{result.name}</span><small>{[result.district,result.city].filter(Boolean).join(', ')}</small><ArrowRight aria-hidden="true"/></Link>
+        <Link href={localePath(locale,`/stores/${result.store_id}`)}><span>{result.name}</span><small>{[result.district,result.city].filter(Boolean).join(', ')}</small><ArrowRight aria-hidden="true"/></Link>
       </li>)}</ul>}
     </li>)}</ul>}
   </section>;

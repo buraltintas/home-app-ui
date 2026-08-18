@@ -4,6 +4,7 @@ import {Bookmark,Check,Map,PenLine,Share2} from 'lucide-react';
 import {useRouter} from 'next/navigation';
 import {useState} from 'react';
 import {useI18n} from '@/i18n/I18nProvider';
+import { localePath } from '@/lib/site';
 import {apiFetch} from '@/lib/api-client';
 import {originSearchHeaders} from '@/lib/search-origin';
 import {AuthDialog} from './AuthDialog';
@@ -11,7 +12,7 @@ import {AuthDialog} from './AuthDialog';
 type Props={storeId:string;name:string;latitude:number;longitude:number;initialFavorited:boolean};
 
 export function StoreActions({storeId,name,latitude,longitude,initialFavorited}:Props){
-  const {t}=useI18n();
+  const {t,locale}=useI18n();
   const router=useRouter();
   const [favorited,setFavorited]=useState(initialFavorited);
   const [busy,setBusy]=useState(false);
@@ -41,7 +42,7 @@ export function StoreActions({storeId,name,latitude,longitude,initialFavorited}:
       const response=await apiFetch('/api/proxy/me',{cache:'no-store'});
       if(!response.ok){setPending('review');setAuth(true);return;}
     }catch{setPending('review');setAuth(true);return;}
-    router.push(`/create?store=${storeId}`);
+    router.push(localePath(locale,`/create?store=${storeId}`));
   };
 
   const directions=()=>window.open(`https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`,'_blank','noopener,noreferrer');
@@ -58,7 +59,7 @@ export function StoreActions({storeId,name,latitude,longitude,initialFavorited}:
   const resume=()=>{
     const intent=pending;setPending(undefined);
     if(intent==='favorite')void toggleFavorite();
-    if(intent==='review')router.push(`/create?store=${storeId}`);
+    if(intent==='review')router.push(localePath(locale,`/create?store=${storeId}`));
   };
 
   return <><div className="store-actions">

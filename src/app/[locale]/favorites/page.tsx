@@ -6,11 +6,12 @@ import {useCallback,useEffect,useState} from 'react';
 import {AuthDialog} from '@/components/AuthDialog';
 import {Rating} from '@/components/Rating';
 import {useI18n} from '@/i18n/I18nProvider';
+import { localePath } from '@/lib/site';
 import {apiFetch} from '@/lib/api-client';
 import type {Store} from '@/lib/types';
 
 export default function Page(){
-  const {t}=useI18n();
+  const {t,locale}=useI18n();
   const [open,setOpen]=useState(false);
   const [signedIn,setSignedIn]=useState(false);
   const [checking,setChecking]=useState(true);
@@ -48,7 +49,7 @@ export default function Page(){
     <p className="eyebrow">{t('favorites')}</p>
     <h1>{t('favoritesTitle')}</h1>
     {error&&<p className="form-error" role="alert">{error}</p>}
-    <ul className="favorites-list">{stores.map(store=><li key={store.id}><Link href={`/stores/${store.id}`}>
+    <ul className="favorites-list">{stores.map(store=><li key={store.id}><Link href={localePath(locale,`/stores/${store.id}`)}>
       <div><strong>{store.name}</strong><span>{[store.district,store.city].filter(Boolean).join(', ')}</span>
       {store.platform.review_count?<small><Rating value={store.platform.average_rating}/> · {store.platform.review_count} {t('reviews')}</small>:<small>{t('noCommunity')}</small>}</div>
       <ArrowRight aria-hidden="true"/>

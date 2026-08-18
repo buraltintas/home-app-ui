@@ -32,7 +32,7 @@ function googleSource(store:Store):GoogleSource|undefined{
 }
 
 export async function generateMetadata({params}:Props):Promise<Metadata>{
-  const [{id},{t}]=await Promise.all([params,getServerI18n()]);
+  const [{id},{t,locale}]=await Promise.all([params,getServerI18n()]);
   const {store}=await getStore(id);
   const place=[store.district,store.city].filter(Boolean).join(', ');
   const title=place?`${store.name} — ${place}`:store.name;
@@ -42,7 +42,7 @@ export async function generateMetadata({params}:Props):Promise<Metadata>{
   const google=googleSource(store);
   const image=google?.photo_name?`/api/places/photo?name=${encodeURIComponent(google.photo_name)}&w=1200`:undefined;
   return {title,description,
-    alternates:canonicalFor(storePath(store)),
+    alternates:canonicalFor(locale,storePath(store)),
     openGraph:{type:'website',url:storePath(store),title,description,...(image?{images:[{url:image,width:1200,height:630,alt:store.name}]}:{})},
     twitter:{card:image?'summary_large_image':'summary',title,description,...(image?{images:[image]}:{})}};
 }
