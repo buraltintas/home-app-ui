@@ -10,9 +10,13 @@ import {useI18n} from '@/i18n/I18nProvider';
 import {apiFetch} from '@/lib/api-client';
 import {locationMessage,requestPosition} from '@/lib/location';
 import {readOriginSearch} from '@/lib/search-origin';
-import type {MediaUpload,StoreDetail,VisitVerification} from '@/lib/types';
+import type {LocationResult,MediaUpload,StoreDetail,VisitVerification} from '@/lib/types';
 
 const UUID=/^[0-9a-f-]{36}$/i;
+// A place resolved from an address is a point, not a reading with a radius. Fifty metres
+// is the honest allowance for one, and the backend still adds it to the distance before
+// deciding whether the visit counts.
+const MANUAL_ACCURACY_METERS=50;
 type Draft={id:string;url:string};
 
 // A review only means something attached to a store, so this screen is reachable
@@ -29,6 +33,9 @@ function ReviewWizard({storeId}:{storeId:string}){
   const [verification,setVerification]=useState<VisitVerification>();
   const [verifying,setVerifying]=useState(false);
   const [verifyError,setVerifyError]=useState('');
+  const [manual,setManual]=useState('');
+  const [manualOpen,setManualOpen]=useState(false);
+  const [candidates,setCandidates]=useState<LocationResult[]>([]);
   const [rating,setRating]=useState(0);
   const [photos,setPhotos]=useState<Draft[]>([]);
   const [uploading,setUploading]=useState(false);
@@ -61,20 +68,61 @@ function ReviewWizard({storeId}:{storeId:string}){
     return()=>{active=false;};
   },[checkSession,storeId,t]);
 
+  // Only the coordinates differ between an automatic and a manual verification; the
+  // backend applies the same distance rule to both.
+  const submitVerification=async(latitude:number,longitude:number,accuracy:number)=>{
+    const response=await apiFetch(`/api/proxy/stores/${storeId}/visit-verifications`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude,longitude,accuracy_meters:accuracy})});
+    if(response.status===401){setSignedIn(false);setAuth(true);return;}
+    if(response.status===422){setVerifyError(t('verifyTooFar'));return;}
+    if(!response.ok)throw new Error();
+    setVerification(await response.json() as VisitVerification);
+    setManualOpen(false);
+    setStep(2);
+  };
+
   const verify=async()=>{
     setVerifying(true);setVerifyError('');
     try{
       // Proof of a visit has to be measured now, so a remembered fix is never accepted.
       const outcome=await requestPosition();
-      if(!outcome.ok){setVerifyError(t(locationMessage(outcome.reason)));return;}
+      if(!outcome.ok){
+        setVerifyError(t(locationMessage(outcome.reason)));
+        // A device that will not answer should not be the end of the road. The person
+        // can say where they are instead, and the same distance rule decides.
+        setManualOpen(true);
+        return;
+      }
       const {latitude,longitude,accuracy_meters}=outcome.position;
-      const response=await apiFetch(`/api/proxy/stores/${storeId}/visit-verifications`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude,longitude,accuracy_meters})});
-      if(response.status===401){setSignedIn(false);setAuth(true);return;}
-      if(response.status===422){setVerifyError(t('verifyTooFar'));return;}
-      if(!response.ok)throw new Error();
-      setVerification(await response.json() as VisitVerification);
-      setStep(2);
+      await submitVerification(latitude,longitude,accuracy_meters??MANUAL_ACCURACY_METERS);
     }catch{setVerifyError(t('verifyError'));}
+    finally{setVerifying(false);}
+  };
+
+  // Candidates come from the backend's place lookup, so a typed line always becomes a
+  // real coordinate rather than a number anyone could invent.
+  useEffect(()=>{
+    const term=manual.trim();
+    // The search is debounced and reset only as part of the user-driven lookup flow,
+    // so this stale-clear is intentional and does not create a render loop.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if(!manualOpen||term.length<2){setCandidates([]);return;}
+    const controller=new AbortController();
+    const timer=window.setTimeout(()=>{
+      void(async()=>{
+        try{
+          const response=await apiFetch(`/api/proxy/locations/search?q=${encodeURIComponent(term)}&limit=5`,{cache:'no-store',signal:controller.signal});
+          if(!response.ok)throw new Error();
+          setCandidates((await response.json() as {items:LocationResult[]}).items??[]);
+        }catch{if(!controller.signal.aborted)setCandidates([]);}
+      })();
+    },300);
+    return()=>{controller.abort();window.clearTimeout(timer);};
+  },[manual,manualOpen]);
+
+  const chooseManual=async(candidate:LocationResult)=>{
+    setVerifying(true);setVerifyError('');
+    try{await submitVerification(candidate.latitude,candidate.longitude,MANUAL_ACCURACY_METERS);}
+    catch{setVerifyError(t('verifyError'));}
     finally{setVerifying(false);}
   };
 
@@ -147,6 +195,20 @@ function ReviewWizard({storeId}:{storeId:string}){
         ?<p className="review-ok" role="status"><Check aria-hidden="true"/>{t('verifyDone')}</p>
         :<button className="button primary" onClick={()=>void verify()} disabled={verifying||!signedIn}>{verifying?t('verifying'):verifyError?t('locationRetry'):t('verifyNow')}</button>}
       {verifyError&&<p className="form-error" role="alert">{verifyError}</p>}
+      {!verification&&<>
+        {!manualOpen&&<button className="button quiet" onClick={()=>setManualOpen(true)}>{t('locationManualTitle')}</button>}
+        {manualOpen&&<div className="manual-location">
+          <h3>{t('locationManualTitle')}</h3>
+          <p>{t('locationManualBody')}</p>
+          <label><span>{t('chooseLocation')}</span><input value={manual} onChange={event=>setManual(event.target.value)} placeholder={t('locationHint')} disabled={verifying}/></label>
+          {manual.trim().length>=2&&<div className="location-results" aria-live="polite">
+            {candidates.length===0
+              ?<p>{t('noLocations')}</p>
+              :candidates.map(candidate=><button key={candidate.place_id} onClick={()=>void chooseManual(candidate)} disabled={verifying}><strong>{candidate.name}</strong><span>{candidate.address}</span><small>{candidate.attributions.join(' · ')}</small></button>)}
+          </div>}
+          <small>{t('locationManualNote')}</small>
+        </div>}
+      </>}
     </section>}
 
     {step===2&&<section className="review-step">

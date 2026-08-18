@@ -7,7 +7,10 @@ export async function POST(request:NextRequest){
   const outgoing=NextResponse.json(response.ok?{user_id:(data as TokenPair).user_id}:data,{status:response.status});
   if(response.ok){
     const pair=data as TokenPair;const secure=process.env.NODE_ENV==='production';
-    outgoing.cookies.set('bosagezme_access',pair.access_token,{httpOnly:true,secure,sameSite:'lax',path:'/',expires:new Date(pair.access_expires_at)});
+    // Outliving the token is deliberate: an expired token still reaches the backend and
+    // comes back 401, which the client repairs by refreshing. A missing cookie instead
+    // reads as an anonymous visitor and silently loses every viewer-scoped flag.
+    outgoing.cookies.set('bosagezme_access',pair.access_token,{httpOnly:true,secure,sameSite:'lax',path:'/',expires:new Date(pair.refresh_expires_at)});
     outgoing.cookies.set('bosagezme_refresh',pair.refresh_token,{httpOnly:true,secure,sameSite:'strict',path:'/api/auth',expires:new Date(pair.refresh_expires_at)});
   }else if('error' in data&&data.error?.code==='ACCOUNT_UNAVAILABLE'){
     outgoing.cookies.delete('bosagezme_access');outgoing.cookies.delete('bosagezme_refresh');

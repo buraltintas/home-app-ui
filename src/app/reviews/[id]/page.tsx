@@ -1,3 +1,21 @@
-import type {Metadata} from 'next';import {PostCard} from '@/components/PostCard';import {feedPost} from '@/lib/fixtures';import {getServerI18n} from '@/i18n/server';
-export async function generateMetadata():Promise<Metadata>{const {t}=await getServerI18n();return {title:t.verified,description:feedPost.text}}
-export default async function Page(){const {t}=await getServerI18n();return <main className="public-narrow"><PostCard post={feedPost}/><section className="comments-section"><p className="eyebrow">{t.comments}</p><h2>3 {t.communityComments}</h2><p>{t.commentsBody}</p></section></main>}
+import type {Metadata} from 'next';
+import {PostCard} from '@/components/PostCard';
+import {CommentThread} from '@/components/CommentThread';
+import {getComments,getPost} from '@/lib/server-api';
+
+// This page used to ignore its own id and render a sample review, so every photo in the
+// feed led to the same fictional store. It now shows the review that was tapped.
+export async function generateMetadata({params}:{params:Promise<{id:string}>}):Promise<Metadata>{
+  const {id}=await params;
+  const post=await getPost(id);
+  return {title:`${post.store_name} · ${post.display_name}`,description:post.text.slice(0,160)};
+}
+
+export default async function Page({params}:{params:Promise<{id:string}>}){
+  const {id}=await params;
+  const [post,comments]=await Promise.all([getPost(id),getComments(id)]);
+  return <main className="public-narrow">
+    <PostCard post={post}/>
+    <CommentThread postId={post.id} comments={comments}/>
+  </main>;
+}
