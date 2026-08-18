@@ -1,10 +1,14 @@
 import type {Metadata} from 'next';
 import Image from 'next/image';
+import {permanentRedirect} from 'next/navigation';
 import {PostCard} from '@/components/PostCard';
 import {Rating} from '@/components/Rating';
 import {StoreActions} from '@/components/StoreActions';
+import {JsonLd} from '@/components/JsonLd';
 import {getStore} from '@/lib/server-api';
 import {getServerI18n} from '@/i18n/server';
+import {canonicalFor,storePath} from '@/lib/site';
+import {breadcrumbJsonLd,storeJsonLd} from '@/lib/structured-data';
 import type {Store} from '@/lib/types';
 
 type Props={params:Promise<{id:string}>};
@@ -27,14 +31,33 @@ function googleSource(store:Store):GoogleSource|undefined{
   };
 }
 
-export async function generateMetadata({params}:Props):Promise<Metadata>{const [{id},{t}]=await Promise.all([params,getServerI18n()]);const {store}=await getStore(id);return {title:store.name,description:store.localized_description??`${store.name} — ${t.community}`}}
+export async function generateMetadata({params}:Props):Promise<Metadata>{
+  const [{id},{t}]=await Promise.all([params,getServerI18n()]);
+  const {store}=await getStore(id);
+  const place=[store.district,store.city].filter(Boolean).join(', ');
+  const title=place?`${store.name} — ${place}`:store.name;
+  const description=store.localized_description??`${store.name}${place?`, ${place}`:''} — ${t.community}`;
+  // Every store link shared anywhere previewed as the generic homepage card, because
+  // this page set no openGraph of its own and inherited the root layout's.
+  const google=googleSource(store);
+  const image=google?.photo_name?`/api/places/photo?name=${encodeURIComponent(google.photo_name)}&w=1200`:undefined;
+  return {title,description,
+    alternates:canonicalFor(storePath(store)),
+    openGraph:{type:'website',url:storePath(store),title,description,...(image?{images:[{url:image,width:1200,height:630,alt:store.name}]}:{})},
+    twitter:{card:image?'summary_large_image':'summary',title,description,...(image?{images:[image]}:{})}};
+}
 
 export default async function Page({params}:Props){
   const [{id},{locale,t}]=await Promise.all([params,getServerI18n()]);
   const {store,recent_posts}=await getStore(id);
+  // One store, one address. Links created before slugs existed still resolve, they just
+  // do not stay on a second URL competing with the canonical one.
+  if(store.slug&&id!==store.slug)permanentRedirect(storePath(store));
   const google=googleSource(store);
   const photoCredit=google?.photo_attributions?.length?google.photo_attributions.join(' · '):t.photoByGoogle;
+  const trail=[{name:t.discover??'',path:'/discover'},...(store.city?[{name:store.city,path:'/discover'}]:[]),{name:store.name,path:storePath(store)}].filter(entry=>entry.name);
   return <main className="store-page">
+    <JsonLd data={[storeJsonLd(store,recent_posts),breadcrumbJsonLd(trail)]}/>
     <section className="store-hero">
       {google?.photo_name
         ?<figure className="store-hero-photo"><Image src={`/api/places/photo?name=${encodeURIComponent(google.photo_name)}&w=1200`} fill style={{objectFit:'cover'}} sizes="100vw" priority unoptimized alt=""/><figcaption>{photoCredit}</figcaption></figure>

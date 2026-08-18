@@ -2,11 +2,14 @@ import type {Metadata} from 'next';
 import {PostCard} from '@/components/PostCard';
 import {getServerI18n} from '@/i18n/server';
 import {getProfile,getUserPosts} from '@/lib/server-api';
+import {canonicalFor,userPath} from '@/lib/site';
 
 export async function generateMetadata({params}:{params:Promise<{id:string}>}):Promise<Metadata>{
   const {id}=await params;
   const profile=await getProfile(id);
-  return {title:`${profile.display_name} (@${profile.username})`,description:profile.bio||undefined};
+  const title=`${profile.display_name} (@${profile.username})`;
+  const description=profile.bio||undefined;
+  return {title,description,alternates:canonicalFor(userPath(profile.id)),openGraph:{type:'profile',url:userPath(profile.id),title,description}};
 }
 
 // Every visitor used to land on the same invented person. This reads the profile whose

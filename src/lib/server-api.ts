@@ -14,17 +14,31 @@ export async function serverApi<T>(path:string,init:RequestInit={}):Promise<T>{
   if(!response.ok)throw await response.json();
   return response.status===204?undefined as T:response.json();
 }
-const STORE_ID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+// A store is reachable by slug as well as by id, so the URL can carry the store's name.
+// The shape is still checked before it reaches the backend: anything that is neither a
+// uuid nor a plausible slug is a 404 here rather than a wasted round trip.
+const STORE_REF=/^[a-z0-9]+(?:-[a-z0-9]+)*$/i;
 // A store page must show that store or nothing. Falling back to sample content here
 // used to render a fictional store for any unknown id, including /stores/undefined.
 // A store with no reviews yet comes back with a null recent_posts, so the list is
 // normalised here rather than leaving every caller to guard against it.
-export async function getStore(id:string):Promise<StoreDetail>{if(!STORE_ID.test(id))notFound();try{const detail=await serverApi<StoreDetail>(`/v1/stores/${id}`);return {...detail,recent_posts:detail.recent_posts??[]}}catch{notFound()}}
+export async function getStore(ref:string):Promise<StoreDetail>{if(!STORE_REF.test(ref)&&!UUID.test(ref))notFound();try{const detail=await serverApi<StoreDetail>(`/v1/stores/${encodeURIComponent(ref)}`);return {...detail,recent_posts:detail.recent_posts??[]}}catch{notFound()}}
 
 // A review page shows that review. Comments are a separate read so a failure there
 // still leaves the review itself on screen rather than turning the page into a 404.
-export async function getPost(id:string):Promise<Post>{if(!STORE_ID.test(id))notFound();try{return await serverApi<Post>(`/v1/posts/${id}`)}catch{notFound()}}
+export async function getPost(id:string):Promise<Post>{if(!UUID.test(id))notFound();try{return await serverApi<Post>(`/v1/posts/${id}`)}catch{notFound()}}
 export async function getComments(id:string):Promise<Comment[]>{try{return (await serverApi<{items:Comment[]}>(`/v1/posts/${id}/comments?limit=50`)).items??[]}catch{return []}}
-export async function getProfile(id:string):Promise<PublicProfile>{if(!STORE_ID.test(id))notFound();try{return await serverApi<PublicProfile>(`/v1/users/${id}`)}catch{notFound()}}
+export async function getProfile(id:string):Promise<PublicProfile>{if(!UUID.test(id))notFound();try{return await serverApi<PublicProfile>(`/v1/users/${id}`)}catch{notFound()}}
 export async function getUserPosts(id:string):Promise<Post[]>{try{return (await serverApi<{items:Post[]}>(`/v1/users/${id}/posts?limit=20`)).items??[]}catch{return []}}
+// The feed is read on the server so the homepage arrives with reviews already in the
+// HTML. It used to be fetched from an effect, which left the server response an empty
+// shell for crawlers and for anyone on a slow connection.
+export async function getFeed(limit=20):Promise<Post[]>{try{return (await serverApi<{items:Post[]}>(`/v1/feed?limit=${limit}`)).items??[]}catch{return []}}
+
+// Every published store, for the sitemap. Enumerating the catalogue is a separate
+// backend concern from searching it, so this is the one endpoint that can answer it.
+export type StoreIndexEntry={id:string;slug:string;name:string;city:string;updated_at:string;review_count:number};
+export async function getStoreIndex(limit=2000):Promise<StoreIndexEntry[]>{try{return (await serverApi<{items:StoreIndexEntry[]}>(`/v1/stores/index?limit=${limit}`)).items??[]}catch{return []}}
+
 export const backendOrigin=API_ORIGIN;
