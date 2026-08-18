@@ -21,7 +21,11 @@ export async function forwardToBackend({
 
   const headers=new Headers();
   headers.set('X-BFF-Secret',process.env.BFF_SECRET??'');
-  headers.set('X-Locale',request.headers.get('x-locale')??cookieStore.get('bosagezme_locale')?.value??'tr');
+  // Only an explicit choice is forwarded as X-Locale. Defaulting it to Turkish overrode
+  // the backend's own resolution order, so a German browser signing up for the first time
+  // was recorded as Turkish and received Turkish mail.
+  const chosenLocale=request.headers.get('x-locale')??cookieStore.get('bosagezme_locale')?.value;
+  if(chosenLocale)headers.set('X-Locale',chosenLocale);
   headers.set('Accept-Language',request.headers.get('accept-language')??'tr');
 
   const accessToken=cookieStore.get('bosagezme_access')?.value;
