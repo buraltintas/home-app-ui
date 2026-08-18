@@ -8,7 +8,7 @@ This repository currently contains the working frontend prototype, responsive de
 
 ## Current experience
 
-- A photography- and community-first home feed
+- A live photography- and community-first home feed with loading, empty, and retryable error states
 - Natural-language discovery and search
 - Backend-authored home/living guidance for unrelated or unclear searches
 - User-initiated current or manually chosen location for nearby discovery
@@ -35,6 +35,10 @@ Responsive web uses two intentional compositions:
 - Material blur restricted to navigation rather than repeated across content
 
 The canonical design authority lives in `.agents/skills/home-app-design/SKILL.md` in the Boşa Gezme! API repository.
+
+## Brand assets
+
+Web branding lives under `public/brand/`. The transparent logo is used in the header, the mascot artwork drives browser and PWA icons, and `social-share-banner.png` is the wide Open Graph/Twitter preview. Keep these role-specific files separate; do not substitute the full wordmark for small platform icons.
 
 ## Technology
 
@@ -80,6 +84,7 @@ The application opens at [http://localhost:3000](http://localhost:3000) by defau
 | `API_ORIGIN` | The Boşa Gezme! API origin used by the Next.js server |
 | `BFF_SECRET` | A server-only backend client credential |
 | `NEXT_PUBLIC_SITE_URL` | The base URL for metadata and canonical URLs |
+| `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | The public Google Web OAuth client ID used by Google Identity Services |
 
 Never expose `BFF_SECRET` through a `NEXT_PUBLIC_` variable. The browser communicates through `/api/proxy/*`; only the Next.js server injects this credential.
 
@@ -104,13 +109,15 @@ The location flow follows the same boundary. Browser geolocation is requested on
 
 Access and rotating refresh tokens are stored in HTTP-only cookies. Anonymous browsing remains available. Contextual authentication opens only when a visitor attempts a protected action such as saving, liking, following, commenting, or sharing a visit.
 
+Google Identity Services returns an ID token to the browser. The browser sends it only to `/api/auth/google`; that route forwards it through the BFF and stores the resulting Boşa Gezme! tokens in HTTP-only cookies. Configure the Google OAuth client with `http://localhost:3000` for local development and `https://bosagezme.com` for production under Authorized JavaScript origins.
+
 The App Store review identity uses the ordinary email OTP screens; the UI must never expose a special reviewer branch, label, prefill, or code. `ACCOUNT_UNAVAILABLE` clears any local session. Account deletion is permanent for profile, content, history, and social data, even though a later verified login may reactivate the same account ID as a blank profile.
 
 ## Fixtures and prototype behavior
 
-Canonical fixtures keep the interface usable while the backend is unavailable. Development photography stays in a presentation adapter and does not add fields to API DTOs.
+Canonical fixtures support store, review, and profile presentation while those prototype surfaces are being integrated. The home feed and discovery search use the live API through the same-origin BFF. An empty feed is represented by `{"items":[],"next_cursor":""}` and renders an intentional empty state. Development photography stays in a presentation adapter and does not add fields to API DTOs.
 
-Some interactions are still prototypes. For example, a like or favorite count may change in local state without representing a successful API mutation. Production integration must commit UI state only after a successful response, or roll back an optimistic update when the request fails.
+Feed likes and store favorites update only after the BFF confirms the backend mutation; authentication failures open contextual sign-in without changing counts. Other unfinished prototype surfaces must follow the same rule as they are integrated: commit UI state only after success, or roll back an optimistic update when the request fails.
 
 ## Project structure
 
@@ -121,6 +128,7 @@ src/
   i18n/         Turkish, English, German, and Russian dictionaries
   lib/          Typed API, fixtures, and server utilities
 public/
+  brand/        Role-specific logo, app icon, and social sharing artwork
   images/       Development presentation imagery
 ```
 

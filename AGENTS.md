@@ -10,7 +10,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 # Boşa Gezme! web contribution rules
 
-Before changing screens, tokens, navigation, content, responsive behavior, or accessibility, read the shared `$home-app-design` authority from the Boşa Gezme! API repository.
+Before changing screens, tokens, navigation, content, responsive behavior, or accessibility, use the shared `$impeccable` foundation and then the `$home-app-design` authority from `../home-app-api/.agents/skills/`. The Boşa Gezme!-specific skill wins if they conflict.
 
 ## Product invariants
 

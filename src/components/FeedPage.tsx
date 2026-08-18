@@ -1,4 +1,17 @@
 'use client';
-import {feedPost} from '@/lib/fixtures';import {useI18n} from '@/i18n/I18nProvider';import {PostCard} from './PostCard';
-export function FeedPage(){const {t}=useI18n();return <main className="feed-layout"><section className="feed-main"><header className="feed-intro"><p className="eyebrow">{t('wordmark')} · {t('home')}</p><h1>{t('feedTitle')}</h1><p>{t('feedIntro')}</p></header><PostCard post={feedPost}/></section><aside className="feed-aside"><p className="eyebrow">Discover, visit, share</p><blockquote>“Before I spend time going there, I can finally see what this physical home store is really like.”</blockquote><div className="aside-rule"/><span>İstanbul · Berlin · Antalya</span></aside></main>}
 
+import {useEffect,useState} from 'react';
+import Image from 'next/image';
+import type {Post} from '@/lib/types';
+import {useI18n} from '@/i18n/I18nProvider';
+import {apiFetch} from '@/lib/api-client';
+import {PostCard} from './PostCard';
+
+type FeedResponse={items:Post[];next_cursor:string};
+
+export function FeedPage(){
+  const {t,locale}=useI18n();const [posts,setPosts]=useState<Post[]|null>(null);const [error,setError]=useState(false);const [request,setRequest]=useState(0);
+  useEffect(()=>{let active=true;apiFetch('/api/proxy/feed?limit=20',{headers:{'X-Locale':locale},signal:AbortSignal.timeout(10000)}).then(async response=>{if(!response.ok)throw new Error();return response.json() as Promise<FeedResponse>;}).then(data=>{if(active){setError(false);setPosts(data.items);}}).catch(()=>{if(active){setPosts(null);setError(true);}});return()=>{active=false;};},[locale,request]);
+  const retry=()=>{setPosts(null);setError(false);setRequest(value=>value+1);};
+  return <main className="feed-layout"><section className="feed-main"><header className="feed-intro"><div className="intro-copy"><h1>{t('feedTitle')}</h1><p>{t('feedIntro')}</p></div><div className="intro-stamp" aria-hidden="true"><span className="intro-stamp-image"><Image src="/brand/mascot-magnifier.png" width={92} height={92} alt=""/></span><span>{t('discover')}</span></div></header><div className="feed-rule"><span>{t('home')}</span><span aria-hidden="true">↘</span></div>{posts===null&&!error&&<div className="feed-state" aria-live="polite"><div className="feed-skeleton"/><p>{t('feedLoading')}</p></div>}{error&&<div className="feed-state" role="alert"><h2>{t('feedErrorTitle')}</h2><p>{t('feedErrorBody')}</p><button className="button secondary" onClick={retry}>{t('retry')}</button></div>}{posts?.length===0&&<div className="feed-state"><Image src="/brand/brand-mark.png" width={84} height={84} alt=""/><h2>{t('feedEmptyTitle')}</h2><p>{t('feedEmptyBody')}</p></div>}{posts?.map(post=><PostCard post={post} key={post.id}/>)}</section></main>;
+}

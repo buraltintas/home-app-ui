@@ -1,3 +1,193 @@
-'use client';import {useState} from 'react';import {Camera,Check,MapPin,Star,Store} from 'lucide-react';import {AuthDialog} from '@/components/AuthDialog';import {useI18n} from '@/i18n/I18nProvider';
-export default function Page(){const {t}=useI18n();const [auth,setAuth]=useState(false);const [step,setStep]=useState(0);const steps=[['Select store',Store],['Verify location',MapPin],['Add rating',Star],['Add photos',Camera],['Tell your experience',Check]];return <main className="create-page"><div><p className="eyebrow">{t('create')}</p><h1>{t('createTitle')}</h1><p>Create a social post about a place you just visited. Your location is requested only when you reach verification.</p></div><ol className="review-steps">{steps.map(([label,Icon],i)=><li key={label as string} className={i===step?'current':i<step?'done':''}><span><Icon/></span><strong>{label as string}</strong><small>{i===1?'Used only to verify proximity to the store.':i===3?'JPEG, PNG, or WebP · up to 10 photos':''}</small></li>)}</ol><button className="button primary" onClick={()=>{setAuth(true);setStep(Math.min(step+1,4))}}>Continue</button><AuthDialog open={auth} onClose={()=>setAuth(false)}/></main>}
+'use client';
 
+import {Camera,Check,MapPin,Star,Store,X} from 'lucide-react';
+import Image from 'next/image';
+import {useRouter,useSearchParams} from 'next/navigation';
+import {ChangeEvent,Suspense,useCallback,useEffect,useState} from 'react';
+import {AuthDialog} from '@/components/AuthDialog';
+import {MascotLoader} from '@/components/MascotLoader';
+import {useI18n} from '@/i18n/I18nProvider';
+import {apiFetch} from '@/lib/api-client';
+import {locationMessage,requestPosition} from '@/lib/location';
+import {readOriginSearch} from '@/lib/search-origin';
+import type {MediaUpload,StoreDetail,VisitVerification} from '@/lib/types';
+
+const UUID=/^[0-9a-f-]{36}$/i;
+type Draft={id:string;url:string};
+
+// A review only means something attached to a store, so this screen is reachable
+// only as /create?store=<id>. Without one there is nothing to review and the user is
+// sent back to discovery rather than shown an empty stepper.
+function ReviewWizard({storeId}:{storeId:string}){
+  const {t,locale}=useI18n();
+  const router=useRouter();
+  const [store,setStore]=useState<StoreDetail>();
+  const [loadError,setLoadError]=useState('');
+  const [step,setStep]=useState(1);
+  const [auth,setAuth]=useState(false);
+  const [signedIn,setSignedIn]=useState<boolean>();
+  const [verification,setVerification]=useState<VisitVerification>();
+  const [verifying,setVerifying]=useState(false);
+  const [verifyError,setVerifyError]=useState('');
+  const [rating,setRating]=useState(0);
+  const [photos,setPhotos]=useState<Draft[]>([]);
+  const [uploading,setUploading]=useState(false);
+  const [uploadError,setUploadError]=useState('');
+  const [text,setText]=useState('');
+  const [submitting,setSubmitting]=useState(false);
+  const [submitError,setSubmitError]=useState('');
+
+  const checkSession=useCallback(async()=>{
+    try{const response=await apiFetch('/api/proxy/me',{cache:'no-store'});return response.ok;}catch{return false;}
+  },[]);
+
+  useEffect(()=>{
+    let active=true;
+    void(async()=>{
+      const ok=await checkSession();
+      if(!active)return;
+      setSignedIn(ok);
+      // The dialog opens because the session is genuinely missing, never on every tap.
+      if(!ok)setAuth(true);
+    })();
+    void(async()=>{
+      try{
+        const response=await apiFetch(`/api/proxy/stores/${storeId}`,{cache:'no-store'});
+        if(!response.ok)throw new Error();
+        const detail=await response.json() as StoreDetail;
+        if(active)setStore(detail);
+      }catch{if(active)setLoadError(t('storeUnavailable'));}
+    })();
+    return()=>{active=false;};
+  },[checkSession,storeId,t]);
+
+  const verify=async()=>{
+    setVerifying(true);setVerifyError('');
+    try{
+      // Proof of a visit has to be measured now, so a remembered fix is never accepted.
+      const outcome=await requestPosition();
+      if(!outcome.ok){setVerifyError(t(locationMessage(outcome.reason)));return;}
+      const {latitude,longitude,accuracy_meters}=outcome.position;
+      const response=await apiFetch(`/api/proxy/stores/${storeId}/visit-verifications`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude,longitude,accuracy_meters})});
+      if(response.status===401){setSignedIn(false);setAuth(true);return;}
+      if(response.status===422){setVerifyError(t('verifyTooFar'));return;}
+      if(!response.ok)throw new Error();
+      setVerification(await response.json() as VisitVerification);
+      setStep(2);
+    }catch{setVerifyError(t('verifyError'));}
+    finally{setVerifying(false);}
+  };
+
+  const addPhoto=async(event:ChangeEvent<HTMLInputElement>)=>{
+    const file=event.target.files?.[0];
+    event.target.value='';
+    if(!file||photos.length>=10)return;
+    setUploading(true);setUploadError('');
+    try{
+      const created=await apiFetch('/api/proxy/media/uploads',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mime_type:file.type,size_bytes:file.size})});
+      if(!created.ok)throw new Error();
+      const {id,upload}=await created.json() as MediaUpload;
+      // The upload URL is a pre-signed object-storage target handed to us by the API
+      // for exactly this purpose; it is not the backend origin.
+      const stored=await fetch(upload.upload_url,{method:'PUT',headers:upload.headers,body:file});
+      if(!stored.ok)throw new Error();
+      const bitmap=await createImageBitmap(file);
+      const completed=await apiFetch(`/api/proxy/media/${id}/complete`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({width:bitmap.width,height:bitmap.height})});
+      bitmap.close();
+      if(!completed.ok)throw new Error();
+      setPhotos(current=>[...current,{id,url:URL.createObjectURL(file)}]);
+    }catch{setUploadError(t('uploadError'));}
+    finally{setUploading(false);}
+  };
+
+  const removePhoto=(id:string)=>setPhotos(current=>{
+    const target=current.find(photo=>photo.id===id);
+    if(target)URL.revokeObjectURL(target.url);
+    return current.filter(photo=>photo.id!==id);
+  });
+
+  const submit=async()=>{
+    if(!verification||rating<1||text.trim().length<3)return;
+    setSubmitting(true);setSubmitError('');
+    const origin=readOriginSearch();
+    try{
+      const response=await apiFetch('/api/proxy/posts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+        store_id:storeId,rating,text:text.trim(),visit_verification_id:verification.id,
+        media_ids:photos.map(photo=>photo.id),content_language:locale,
+        ...(origin?{origin_search_id:origin.search_id,origin_search_result_id:origin.search_result_id}:{}),
+      })});
+      if(response.status===401){setSignedIn(false);setAuth(true);return;}
+      if(!response.ok)throw new Error();
+      router.push(`/stores/${storeId}`);
+      router.refresh();
+    }catch{setSubmitError(t('reviewError'));}
+    finally{setSubmitting(false);}
+  };
+
+  if(loadError)return <main className="create-page"><div className="empty-state"><h1>{t('storeUnavailable')}</h1><button className="button primary" onClick={()=>router.push('/discover')}>{t('discover')}</button></div></main>;
+  if(!store||signedIn===undefined)return <main className="create-page"><MascotLoader/></main>;
+
+  const steps=[[t('verifyLocation'),MapPin],[t('addRating'),Star],[t('addPhotos'),Camera],[t('tellExperience'),Check]] as const;
+  const textLength=text.trim().length;
+  return <main className="create-page">
+    <div>
+      <p className="eyebrow">{t('reviewFor')}</p>
+      <h1>{store.store.name}</h1>
+      <p className="review-store-address"><Store aria-hidden="true"/>{[store.store.address,store.store.city].filter(Boolean).join(', ')}</p>
+    </div>
+
+    <ol className="review-steps">{steps.map(([label,Icon],index)=>{
+      const position=index+1;
+      return <li key={label} className={position===step?'current':position<step?'done':''} aria-current={position===step?'step':undefined}><span><Icon/></span><strong>{label}</strong></li>;
+    })}</ol>
+
+    {step===1&&<section className="review-step">
+      <p>{t('verifyValidity')}</p>
+      {verification
+        ?<p className="review-ok" role="status"><Check aria-hidden="true"/>{t('verifyDone')}</p>
+        :<button className="button primary" onClick={()=>void verify()} disabled={verifying||!signedIn}>{verifying?t('verifying'):verifyError?t('locationRetry'):t('verifyNow')}</button>}
+      {verifyError&&<p className="form-error" role="alert">{verifyError}</p>}
+    </section>}
+
+    {step===2&&<section className="review-step">
+      <fieldset className="rating-picker"><legend>{t('ratingLabel')}</legend>{[1,2,3,4,5].map(value=>
+        <label key={value}><input type="radio" name="rating" value={value} checked={rating===value} onChange={()=>setRating(value)}/><Star aria-hidden="true" className={value<=rating?'is-on':undefined}/><span>{value}</span></label>)}
+      </fieldset>
+      <div className="review-nav"><button className="button quiet" onClick={()=>setStep(1)}>{t('back')}</button><button className="button primary" onClick={()=>setStep(3)} disabled={rating<1}>{t('continue')}</button></div>
+    </section>}
+
+    {step===3&&<section className="review-step">
+      <p>{t('addPhotosOptional')}</p>
+      <div className="photo-drafts">{photos.map(photo=>
+        <figure key={photo.id}><Image src={photo.url} width={120} height={120} alt="" unoptimized/><button className="icon-button" onClick={()=>removePhoto(photo.id)} aria-label={t('removePhoto')}><X/></button></figure>)}
+      </div>
+      <label className="button secondary photo-input"><Camera aria-hidden="true"/>{t('addPhotos')}<input type="file" accept="image/jpeg,image/png,image/webp" onChange={event=>void addPhoto(event)} disabled={uploading||photos.length>=10}/></label>
+      {uploadError&&<p className="form-error" role="alert">{uploadError}</p>}
+      <div className="review-nav"><button className="button quiet" onClick={()=>setStep(2)}>{t('back')}</button><button className="button primary" onClick={()=>setStep(4)} disabled={uploading}>{t('continue')}</button></div>
+    </section>}
+
+    {step===4&&<section className="review-step">
+      <label className="review-text"><span>{t('reviewTextLabel')}</span><textarea value={text} onChange={event=>setText(event.target.value.slice(0,5000))} rows={6} placeholder={t('reviewTextHint')} maxLength={5000}/></label>
+      <small>{textLength}/5000</small>
+      {textLength>0&&textLength<3&&<p className="form-error" role="alert">{t('reviewTooShort')}</p>}
+      {submitError&&<p className="form-error" role="alert">{submitError}</p>}
+      <div className="review-nav"><button className="button quiet" onClick={()=>setStep(3)}>{t('back')}</button><button className="button primary" onClick={()=>void submit()} disabled={submitting||textLength<3||rating<1||!verification}>{submitting?t('loading'):t('submitReview')}</button></div>
+    </section>}
+
+    <AuthDialog open={auth} onClose={()=>setAuth(false)} onAuthenticated={()=>{setSignedIn(true);setAuth(false);}}/>
+  </main>;
+}
+
+function CreateRoute(){
+  const {t}=useI18n();
+  const router=useRouter();
+  const storeId=useSearchParams().get('store')??'';
+  const valid=UUID.test(storeId);
+  useEffect(()=>{if(!valid)router.replace('/discover');},[router,valid]);
+  if(!valid)return <main className="create-page"><div className="empty-state"><h1>{t('chooseStoreToReview')}</h1><p>{t('chooseStoreBody')}</p></div></main>;
+  return <ReviewWizard storeId={storeId}/>;
+}
+
+export default function Page(){
+  return <Suspense fallback={<main className="create-page"><MascotLoader/></main>}><CreateRoute/></Suspense>;
+}
