@@ -123,8 +123,13 @@ export function SearchExperience() {
     return()=>{window.clearTimeout(timer);controller.abort();};
   },[locationOpen,manual,locale]);
 
+  // Results are ordered near to far, so a search without a location is not a weaker
+  // search but a meaningless one: it cannot tell a store down the road from one in the
+  // next province. The location sheet opens instead of running an unusable query, and
+  // the query is kept so the visitor returns to it once a place is chosen.
   const runSearch=async(nextQuery=query,nextLocation=location)=>{
     if(nextQuery.trim().length<2)return;
+    if(!nextLocation){setQuery(nextQuery);setLocationOpen(true);setError(t('locationRequired'));return;}
     setLoading(true);setError('');
     try{const response=await apiFetch('/api/proxy/search',{method:'POST',headers:{'Content-Type':'application/json','X-Locale':locale},body:JSON.stringify({query:nextQuery.trim(),...(nextLocation?.coordinates??{})})});if(!response.ok)throw await response.json();setData(await response.json() as SearchResponse);}catch{setError(t('searchError'));}finally{setLoading(false);}
   };
