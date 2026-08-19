@@ -53,7 +53,6 @@ export function AdminSignIn(){
         onChange={event=>setCode(event.target.value)}/>
     </label>}
     <button type="submit" disabled={busy}>{busy?'…':sent?'Giriş yap':'Kod gönder'}</button>
-    {sent&&<button type="button" className="admin-signin-back" onClick={()=>{setSent(false);setCode('');setError('');}}>Adresi değiştir</button>}
     {error&&<p className="admin-note" role="alert">{error}</p>}
     {/* A stale session used to block signing in, because the browser sent a dead token to a
         route that needs none. That is fixed at the source, and this stays as the way out of
