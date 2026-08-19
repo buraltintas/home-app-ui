@@ -1,5 +1,6 @@
 /* City Print — Boşa Gezme!'s durable visual world. */
-:root{--canvas:#f3ebdd;--surface:#fff9ee;--muted:#e3dccd;--ink:#171a1f;--ink-muted:#5f5a51;--line:#172a54;--accent:#c83c32;--accent-strong:#9e2825;--cobalt:#172a54;--sun:#f2b735;--forest:#183f38;--success:#216344;--error:#a22c2c;--font-serif:var(--font-display)}
+/* Tokens moved to globals.css so every surface inherits them, including the ones that
+   never load this file. This sheet is composition only. */
 html{background:var(--canvas);scrollbar-color:var(--accent) var(--canvas)}
 body{background:var(--canvas);font-family:var(--font-sans),sans-serif;letter-spacing:-.01em}
 ::selection{background:var(--sun);color:var(--cobalt)}
