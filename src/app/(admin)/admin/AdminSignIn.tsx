@@ -17,12 +17,18 @@ export function AdminSignIn(){
   const [sent,setSent]=useState(false);
   const [busy,setBusy]=useState(false);
   const [error,setError]=useState('');
+  const [failed,setFailed]=useState(false);
 
   const submit=async(event:React.FormEvent)=>{
     event.preventDefault();
     setBusy(true);setError('');
     try{
       if(!sent){
+        // Whatever session the browser is already holding is dropped before an
+        // administrator signs in. The two are not meant to be held at once: entering the
+        // panel should not silently inherit whoever was browsing the site on this machine,
+        // and leaving it should not leave an elevated session behind.
+        await fetch('/api/auth/logout',{method:'POST'});
         const response=await fetch('/api/auth/request-code',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email.trim()})});
         if(!response.ok)throw new Error();
         setSent(true);
@@ -31,7 +37,7 @@ export function AdminSignIn(){
         if(!response.ok)throw new Error();
         router.refresh();
       }
-    }catch{setError(sent?'Kod doğrulanamadı. Süresi dolmuş olabilir.':'Kod gönderilemedi.');}
+    }catch{setError(sent?'Kod doğrulanamadı. Süresi dolmuş olabilir.':'Kod gönderilemedi.');setFailed(true);}
     finally{setBusy(false);}
   };
 
@@ -49,5 +55,13 @@ export function AdminSignIn(){
     <button type="submit" disabled={busy}>{busy?'…':sent?'Giriş yap':'Kod gönder'}</button>
     {sent&&<button type="button" className="admin-signin-back" onClick={()=>{setSent(false);setCode('');setError('');}}>Adresi değiştir</button>}
     {error&&<p className="admin-note" role="alert">{error}</p>}
+    {/* A stale session used to block signing in, because the browser sent a dead token to a
+        route that needs none. That is fixed at the source, and this stays as the way out of
+        any session state that still gets in the way -- it clears everything and reloads,
+        which is what somebody would otherwise be told to do by hand. */}
+    {failed&&<button type="button" className="admin-signin-back" onClick={async()=>{
+      await fetch('/api/auth/logout',{method:'POST'});
+      window.location.reload();
+    }}>Oturumu temizleyip yeniden dene</button>}
   </form>;
 }

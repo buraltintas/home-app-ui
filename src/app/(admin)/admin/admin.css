@@ -59,3 +59,4 @@
 .admin-signin .admin-signin-back{background:none;color:#706d65;font-weight:600;min-height:40px}
 .admin-nav{display:flex;gap:4px;flex-wrap:wrap;margin:0 0 22px}
 .admin-nav a{color:#1e2a45;font-size:14px;font-weight:600;padding:8px 12px;border-radius:6px;background:#efece5;min-height:44px;display:flex;align-items:center}
+.admin-signout{margin-left:auto;min-height:44px;padding:8px 14px;border:1px solid #d9d5cc;border-radius:6px;background:#fffefb;font-size:14px;font-weight:600;color:#a63d35}

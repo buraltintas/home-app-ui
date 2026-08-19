@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import {AdminSignOut} from './AdminSignOut';
 
 // Rendered only by a page that has already confirmed access. Before signing in there is
 // nothing to navigate: showing six section links to somebody who cannot open any of them
@@ -15,5 +16,6 @@ const tabs=[
 export function AdminNav(){
   return <nav className="admin-nav" aria-label="Yönetim bölümleri">
     {tabs.map(tab=><Link key={tab.href} href={tab.href}>{tab.label}</Link>)}
+    <AdminSignOut/>
   </nav>;
 }
