@@ -7,6 +7,7 @@ import {ContributorLevel} from '@/components/ContributorLevel';
 import {MascotLoader} from '@/components/MascotLoader';
 import {LocaleSwitcher} from '@/components/LocaleSwitcher';
 import {PastSearches} from '@/components/PastSearches';
+import {ProfileEditor} from '@/components/ProfileEditor';
 import {useI18n} from '@/i18n/I18nProvider';
 import {apiFetch} from '@/lib/api-client';
 import type {Locale,Me} from '@/lib/types';
@@ -19,6 +20,17 @@ const accountCopy:Record<Locale,{body:string;danger:string;title:string;confirm:
 };
 const deleteBody:Record<Locale,string>={tr:'Yorumlarınız, arama geçmişiniz, profil bilgileriniz ve sosyal bağlantılarınız kaldırılır. Daha sonra aynı e-postayla giriş yapabilirsiniz ancak silinen veriler geri gelmez.',en:'Your reviews, search history, profile information, and social connections will be removed. You can sign in later with the same email, but deleted data cannot be restored.',de:'Deine Bewertungen, dein Suchverlauf, deine Profilangaben und deine sozialen Verbindungen werden entfernt. Du kannst dich später mit derselben E-Mail-Adresse anmelden, gelöschte Daten werden jedoch nicht wiederhergestellt.',ru:'Ваши отзывы, история поиска, данные профиля и социальные связи будут удалены. Позже вы сможете войти с тем же адресом электронной почты, но удалённые данные нельзя восстановить.'};
 
+// One panel of the profile. Everything below the identity card is collapsed by default:
+// the page was a single column of unrelated blocks -- search history, language, account
+// deletion -- with nothing saying which was which, so the one thing somebody came to do
+// was buried among the others.
+function Panel({title,hint,children}:{title:string;hint:string;children:React.ReactNode}){
+  return <details className="profile-panel">
+    <summary><span>{title}</span><small>{hint}</small></summary>
+    <div className="profile-panel-body">{children}</div>
+  </details>;
+}
+
 export default function Page(){
   const {t,locale}=useI18n();const copy=accountCopy[locale];const [open,setOpen]=useState(false);const [signedIn,setSignedIn]=useState(false);const [checking,setChecking]=useState(true);const [deleting,setDeleting]=useState(false);const [me,setMe]=useState<Me|null>(null);
   useEffect(()=>{
@@ -29,5 +41,47 @@ export default function Page(){
     return()=>{active=false;window.removeEventListener('bosagezme:authenticated',handleAuthentication)};
   },[]);
   const remove=async()=>{if(!window.confirm(`${copy.title}\n\n${deleteBody[locale]}`))return;setDeleting(true);try{const response=await apiFetch('/api/proxy/me',{method:'DELETE'});if(!response.ok)throw new Error();await fetch('/api/auth/logout',{method:'POST'});setSignedIn(false);setMe(null);}catch{window.alert(copy.failed);}finally{setDeleting(false);}};
-  return <main className="empty-page"><p className="eyebrow">{t('profile')}</p><h1>{t('profileTitle')}</h1>{checking?<MascotLoader/>:signedIn&&me?<section className="profile-summary"><div className="profile-avatar">{(me.display_name||me.username||me.email).slice(0,1).toLocaleUpperCase(locale)}</div><div className="profile-summary-identity"><strong>{me.display_name||me.username}<ContributorLevel level={me.level}/></strong><span>@{me.username}</span><span>{me.email}</span></div><dl><div><dd>{me.follower_count}</dd><dt>{t('followers')}</dt></div><div><dd>{me.following_count}</dd><dt>{t('following')}</dt></div><div><dd>{me.post_count}</dd><dt>{t('profileReviews')}</dt></div><div><dd>{me.favorite_count}</dd><dt>{t('favorites')}</dt></div></dl></section>:<p>{copy.body}</p>}{!checking&&!signedIn&&<button className="button primary" onClick={()=>setOpen(true)}>{t('signIn')}</button>}{signedIn&&<SignOutButton/>}{signedIn&&<PastSearches/>}<LocaleSwitcher/>{signedIn&&<section className="danger-zone"><h2>{copy.danger}</h2><p>{deleteBody[locale]}</p><button className="button secondary danger-button" disabled={deleting} onClick={()=>void remove()}>{copy.confirm}</button></section>}<AuthDialog open={open} onClose={()=>setOpen(false)}/></main>;
+
+  if(checking)return <main className="profile-page"><p className="eyebrow">{t('profile')}</p><h1>{t('profileTitle')}</h1><MascotLoader/></main>;
+
+  if(!signedIn||!me)return <main className="profile-page profile-page-out">
+    <p className="eyebrow">{t('profile')}</p><h1>{t('profileTitle')}</h1>
+    <p>{copy.body}</p>
+    <button className="button primary" onClick={()=>setOpen(true)}>{t('signIn')}</button>
+    <Panel title={t('languageSection')} hint={t('languageHint')}><LocaleSwitcher/></Panel>
+    <AuthDialog open={open} onClose={()=>setOpen(false)}/>
+  </main>;
+
+  return <main className="profile-page">
+    <p className="eyebrow">{t('profile')}</p>
+    <h1>{t('profileTitle')}</h1>
+    <section className="profile-summary">
+      <div className="profile-avatar">{(me.display_name||me.username||me.email).slice(0,1).toLocaleUpperCase(locale)}</div>
+      <div className="profile-summary-identity"><strong>{me.display_name||me.username}<ContributorLevel level={me.level}/></strong><span>@{me.username}</span><span>{me.email}</span></div>
+      <dl>
+        <div><dd>{me.follower_count}</dd><dt>{t('followers')}</dt></div>
+        <div><dd>{me.following_count}</dd><dt>{t('following')}</dt></div>
+        <div><dd>{me.post_count}</dd><dt>{t('profileReviews')}</dt></div>
+        <div><dd>{me.favorite_count}</dd><dt>{t('favorites')}</dt></div>
+      </dl>
+      <SignOutButton className="button secondary profile-signout"/>
+    </section>
+    <Panel title={t('editProfile')} hint={t('editProfileHint')}>
+      <ProfileEditor me={me} onSaved={setMe}/>
+    </Panel>
+    <Panel title={t('pastSearches')} hint={t('pastSearchesHint')}>
+      <PastSearches heading={false}/>
+    </Panel>
+    <Panel title={t('languageSection')} hint={t('languageHint')}>
+      <LocaleSwitcher/>
+    </Panel>
+    <Panel title={t('accountSection')} hint={t('accountHint')}>
+      <div className="danger-zone">
+        <h2>{copy.danger}</h2>
+        <p>{deleteBody[locale]}</p>
+        <button className="button secondary danger-button" disabled={deleting} onClick={()=>void remove()}>{copy.confirm}</button>
+      </div>
+    </Panel>
+    <AuthDialog open={open} onClose={()=>setOpen(false)}/>
+  </main>;
 }

@@ -10,7 +10,9 @@ import type {SearchHistory} from '@/lib/types';
 
 // The stored results carry a store id, so a past search replays entirely from our
 // own database. Opening one never calls Google again.
-export function PastSearches(){
+// The heading is optional because the profile page now carries this inside a labelled
+// panel, where a second title of its own says the same thing twice.
+export function PastSearches({heading=true}:{heading?:boolean}={}){
   const {t,locale}=useI18n();
   const [searches,setSearches]=useState<SearchHistory[]>([]);
   const [error,setError]=useState('');
@@ -53,7 +55,7 @@ export function PastSearches(){
 
   return <section className="past-searches">
     <div className="past-searches-head">
-      <h2>{t('pastSearches')}</h2>
+      {heading&&<h2>{t('pastSearches')}</h2>}
       {searches.length>0&&<button className="button quiet" onClick={()=>void clearAll()} disabled={busy}>{t('clearSearches')}</button>}
     </div>
     {error&&<p className="form-error" role="alert">{error}</p>}
