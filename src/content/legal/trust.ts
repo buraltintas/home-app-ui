@@ -313,7 +313,6 @@ export const contact:LegalDoc={
             ['Mağaza bilgisi düzeltme','Mağaza düzeltme'],
           ]}},
           {p:`Adres: ${mail}`},
-          {note:'Bu adresler ayrı kutular değil, aynı kutuya gelen konulardır. Okunmayan yedi ayrı adres yayımlamaktansa okunan tek bir adres vermeyi tercih ettik.'},
         ]},
         {id:'sorumlu',heading:'Sorumlu',blocks:[
           {p:`Platformu işleten ve veri sorumlusu sıfatını taşıyan kişi: ${controller}${legalFacts.controllerWebsite?` (${legalFacts.controllerWebsite})`:''}.`},
@@ -333,7 +332,6 @@ export const contact:LegalDoc={
             ['Store information corrections','Store correction'],
           ]}},
           {p:`Address: ${mail}`},
-          {note:'These are subjects arriving in one mailbox, not seven separate boxes. We would rather publish one address that is read than seven that are not.'},
         ]},
         {id:'sorumlu',heading:'Who is responsible',blocks:[
           {p:`The person operating the platform and acting as data controller: ${controller}${legalFacts.controllerWebsite?` (${legalFacts.controllerWebsite})`:''}.`},
@@ -353,7 +351,6 @@ export const contact:LegalDoc={
             ['Korrektur von Geschäftsdaten','Geschäftskorrektur'],
           ]}},
           {p:`Adresse: ${mail}`},
-          {note:'Es handelt sich um Themen in einem Postfach, nicht um sieben getrennte Adressen. Eine gelesene Adresse ist besser als sieben ungelesene.'},
         ]},
         {id:'sorumlu',heading:'Verantwortlich',blocks:[
           {p:`Betreiber der Plattform und Verantwortlicher: ${controller}${legalFacts.controllerWebsite?` (${legalFacts.controllerWebsite})`:''}.`},
@@ -373,7 +370,6 @@ export const contact:LegalDoc={
             ['Исправление данных магазина','Исправление магазина'],
           ]}},
           {p:`Адрес: ${mail}`},
-          {note:'Это темы в одном почтовом ящике, а не семь отдельных адресов. Лучше один читаемый адрес, чем семь нечитаемых.'},
         ]},
         {id:'sorumlu',heading:'Ответственное лицо',blocks:[
           {p:`Платформой управляет и выступает оператором данных: ${controller}${legalFacts.controllerWebsite?` (${legalFacts.controllerWebsite})`:''}.`},
