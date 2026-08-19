@@ -10,6 +10,7 @@ export async function forwardToBackend({
   method='GET',
   body,
   anonymous=false,
+  bearer,
 }: {
   request: NextRequest;
   path: string;
@@ -17,6 +18,8 @@ export async function forwardToBackend({
   body?: BodyInit | null;
   /** Send no credentials. Used by the sign-in routes, which must work while holding a dead one. */
   anonymous?: boolean;
+  /** Use this token instead of the cookie. Signing out needs a live one to revoke with. */
+  bearer?: string;
 }): Promise<Response>{
   const cookieStore=await cookies();
   const target=new URL(`/v1/${path.replace(/^\/+/, '')}`,API_ORIGIN);
@@ -36,7 +39,7 @@ export async function forwardToBackend({
   // so forwarding a stale access cookie to request-code answered INVALID_TOKEN and left
   // somebody unable to sign in again until they cleared their cookies by hand. A dead
   // token is exactly the state you are in when you need to sign in.
-  const accessToken=anonymous?undefined:cookieStore.get('bosagezme_access')?.value;
+  const accessToken=anonymous?undefined:bearer??cookieStore.get('bosagezme_access')?.value;
   if(accessToken)headers.set('Authorization',`Bearer ${accessToken}`);
 
   const visitorSessionId=request.headers.get('x-visitor-session-id')??cookieStore.get('bosagezme_visitor')?.value;

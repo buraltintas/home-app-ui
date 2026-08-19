@@ -19,8 +19,13 @@ export function setSessionCookies(response:NextResponse,pair:TokenPair){
   response.cookies.set(SESSION_EXPIRES_COOKIE,pair.access_expires_at,{httpOnly:false,secure,sameSite:'lax',path:'/',expires});
 }
 
+// Each cookie has to be cleared at the path it was written to. Deleting by name alone
+// targets "/", which never touched the refresh cookie sitting under /api/auth: signing out
+// removed the access cookie, the next request answered 401, and the refresh cookie that
+// was still there quietly signed the person back in. On a shared device that is not an
+// inconvenience, it is the whole point of the button failing.
 export function clearSessionCookies(response:NextResponse){
-  response.cookies.delete('bosagezme_access');
-  response.cookies.delete('bosagezme_refresh');
-  response.cookies.delete(SESSION_EXPIRES_COOKIE);
+  response.cookies.delete({name:'bosagezme_access',path:'/'});
+  response.cookies.delete({name:'bosagezme_refresh',path:'/api/auth'});
+  response.cookies.delete({name:SESSION_EXPIRES_COOKIE,path:'/'});
 }
