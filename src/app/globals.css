@@ -157,3 +157,8 @@
 body{min-height:100dvh;display:flex;flex-direction:column}
 body>main{flex:1 0 auto}
 .site-footer{margin-top:auto}
+
+.contributor-level{display:inline-block;margin-left:8px;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;padding:3px 7px;border-radius:20px;background:var(--muted);color:var(--ink-muted);vertical-align:middle}
+.contributor-level[data-level="4"],.contributor-level[data-level="5"]{background:var(--accent);color:#fff}
+/* Paid placement has to be identifiable at a glance, not inferred from position. */
+.promoted-flag{margin-left:8px;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;padding:3px 7px;border-radius:20px;background:var(--ink);color:#fff}

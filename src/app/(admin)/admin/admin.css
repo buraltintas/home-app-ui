@@ -1,0 +1,31 @@
+/* Deliberately plain. This is a working surface for one person, not a product screen, and
+   borrowing the editorial styling would make it easy to mistake one for the other. */
+.admin-body{background:#f7f5f0;color:#262521;margin:0;font-family:var(--font-sans),system-ui,sans-serif}
+.admin-header{position:sticky;top:0;z-index:10;background:#1e2a45;color:#f7f5f0;padding:0 24px;display:flex;align-items:center;gap:32px;height:60px;flex-wrap:wrap}
+.admin-header strong{font-size:15px;white-space:nowrap}
+.admin-header nav{display:flex;gap:4px;flex-wrap:wrap}
+.admin-header nav a{color:#c9d2e4;font-size:14px;padding:8px 12px;border-radius:6px;min-height:44px;display:flex;align-items:center}
+.admin-header nav a:hover{background:rgba(255,255,255,.1);color:#fff}
+.admin-main{max-width:1400px;margin:0 auto;padding:28px 24px 80px}
+.admin-main h1{font-size:24px;margin:0 0 4px}
+.admin-main h2{font-size:15px;margin:32px 0 10px;text-transform:uppercase;letter-spacing:1.2px;color:#706d65}
+.admin-lead{color:#706d65;margin:0 0 24px;font-size:14px}
+.admin-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:8px}
+.admin-card{background:#fffefb;border:1px solid #d9d5cc;border-radius:10px;padding:16px}
+.admin-card dt{font-size:11px;text-transform:uppercase;letter-spacing:1.1px;color:#706d65;margin-bottom:6px}
+.admin-card dd{margin:0;font-size:26px;font-weight:700}
+.admin-table-wrap{overflow-x:auto;background:#fffefb;border:1px solid #d9d5cc;border-radius:10px}
+.admin-table{border-collapse:collapse;width:100%;min-width:720px;font-size:14px}
+.admin-table th{text-align:left;padding:10px 14px;border-bottom:1px solid #d9d5cc;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#706d65;white-space:nowrap}
+.admin-table td{padding:10px 14px;border-bottom:1px solid #efece5;vertical-align:top}
+.admin-table tr:last-child td{border-bottom:0}
+.admin-empty{padding:28px;color:#706d65;text-align:center}
+.admin-search{display:flex;gap:8px;margin-bottom:14px}
+.admin-search input{flex:1;max-width:360px;min-height:40px;padding:0 12px;border:1px solid #d9d5cc;border-radius:6px;background:#fffefb}
+.admin-search button{min-height:40px;padding:0 16px;border:0;border-radius:6px;background:#1e2a45;color:#fff;font-weight:600}
+.admin-action{min-height:36px;padding:0 12px;border:1px solid #d9d5cc;border-radius:6px;background:#fffefb;font-size:13px;font-weight:600}
+.admin-action[data-tone="danger"]{border-color:#a63d35;color:#a63d35}
+.admin-action:disabled{opacity:.5}
+.admin-flag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.6px;padding:3px 8px;border-radius:20px;background:#efece5;color:#706d65}
+.admin-flag[data-on="true"]{background:#a34a32;color:#fff}
+.admin-note{color:#a63d35;font-size:13px;margin:10px 0 0}

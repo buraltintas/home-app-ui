@@ -1,4 +1,4 @@
-import type {Metadata} from 'next';import {Onest,Unbounded} from 'next/font/google';import {Header} from '@/components/Header';import {SiteFooter} from '@/components/SiteFooter';import {I18nProvider} from '@/i18n/I18nProvider';import type {Locale} from '@/lib/types';import '../globals.css';import '../city-print.css';
+import type {Metadata} from 'next';import {Onest,Unbounded} from 'next/font/google';import {Header} from '@/components/Header';import {SiteFooter} from '@/components/SiteFooter';import {I18nProvider} from '@/i18n/I18nProvider';import type {Locale} from '@/lib/types';import '../../globals.css';import '../../city-print.css';
 const sans=Onest({variable:'--font-sans',subsets:['latin','cyrillic'],display:'swap'});const display=Unbounded({variable:'--font-display',subsets:['latin','cyrillic'],display:'swap'});
 import {asLocale,canonicalFor,locales,shareImage,siteUrl} from '@/lib/site';
 const metadataCopy:Record<Locale,{title:string;description:string}>={

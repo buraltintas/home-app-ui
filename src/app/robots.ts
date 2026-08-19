@@ -6,7 +6,7 @@ import {siteUrl} from '@/lib/site';
 // spent crawl budget that belongs to store pages.
 export default function robots():MetadataRoute.Robots {
   return {
-    rules:{userAgent:'*',allow:'/',disallow:['/api/','/profile','/favorites','/create']},
+    rules:{userAgent:'*',allow:'/',disallow:['/api/','/admin','/profile','/favorites','/create']},
     sitemap:`${siteUrl}/sitemap.xml`,
     host:siteUrl,
   };
