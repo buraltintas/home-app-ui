@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import {groupLabels,legalHubLabel,legalLinks,type LegalGroup} from '@/lib/legal-links';
-import {localePath} from '@/lib/site';
+import {localePath,slogan} from '@/lib/site';
 import type {Locale} from '@/lib/types';
 
 // Only routes that exist are listed. A footer that links to pages still waiting on the
@@ -28,6 +28,7 @@ export function SiteFooter({locale}:{locale:Locale}){
           </ul>
         </nav>;
       })}
+      <p className="site-footer-slogan" lang="tr">{slogan}</p>
       <p className="site-footer-note">{note[locale]}</p>
     </div>
   </footer>;

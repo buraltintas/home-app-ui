@@ -2,7 +2,7 @@ import Link from 'next/link';
 import {AdminSignOut} from './AdminSignOut';
 
 // Rendered only by a page that has already confirmed access. Before signing in there is
-// nothing to navigate: showing six section links to somebody who cannot open any of them
+// nothing to navigate: showing every section link to somebody who cannot open any of them
 // both looks broken and maps out the surface for anyone probing it.
 const tabs=[
   {href:'/admin',label:'Genel bakış'},
@@ -10,6 +10,7 @@ const tabs=[
   {href:'/admin/stores',label:'Mağazalar'},
   {href:'/admin/users',label:'Kullanıcılar'},
   {href:'/admin/reviews',label:'Değerlendirmeler'},
+  {href:'/admin/feedback',label:'Görüşler'},
   {href:'/admin/audit',label:'İşlem kayıtları'},
 ];
 

@@ -21,6 +21,7 @@ export const legalLinks:LegalLink[]=[
   {slug:'commercial-communications',group:'legal',live:true,label:{tr:'Ticari elektronik ileti',en:'Commercial messages',de:'Kommerzielle Nachrichten',ru:'Коммерческие сообщения'}},
 
   {slug:'report-content',group:'community',live:true,label:{tr:'İçerik bildirimi',en:'Report content',de:'Inhalte melden',ru:'Жалоба на контент'}},
+  {slug:'feedback',group:'community',live:true,label:{tr:'Görüş ve öneri',en:'Feedback',de:'Feedback',ru:'Отзывы и предложения'}},
 ];
 
 export const legalHubLabel:Record<Locale,string>={tr:'Hukuki belgeler',en:'Legal documents',de:'Rechtliche Dokumente',ru:'Правовые документы'};

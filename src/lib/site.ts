@@ -4,6 +4,12 @@ import type {Locale} from './types';
 // sitemap, OpenGraph, hreflang and structured data all have to agree exactly, and they
 // only stayed in agreement while each of them built its own strings by hand.
 export const siteUrl=process.env.NEXT_PUBLIC_SITE_URL??'https://bosagezme.com';
+// The tagline completes the name rather than repeating it: set under the mark it reads
+// "Boşa Gezme! / Bize Sor.". `slogan` is the standalone form for places with no mark beside
+// it. Both stay Turkish in every locale -- the line is wordplay on the product's own name,
+// and a translated version is a different, worse line. The name is not translated either.
+export const tagline='Bize Sor.';
+export const slogan='Boşa Gezme, Bize Sor.';
 export const locales:Locale[]=['tr','en','de','ru'];
 export const defaultLocale:Locale='tr';
 
@@ -56,4 +62,4 @@ export function asLocale(value:string|undefined):Locale{
 
 // The default share image. Pages with a photo of their own (a store, a review) set theirs
 // instead; everything else points here.
-export const shareImage={url:'/og',width:1200,height:630,alt:'Boşa Gezme!'};
+export const shareImage={url:'/og',width:1200,height:630,alt:'Boşa Gezme, Bize Sor.'};

@@ -162,7 +162,7 @@
 .site-footer ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .site-footer a{font-size:15px;min-height:44px;display:flex;align-items:center;transition:color .16s ease}
 .site-footer a:hover{color:var(--clay)}
-.site-footer-note{margin:0;color:var(--ink-muted);font-size:14px;line-height:1.55;max-width:340px}
+.site-footer-note{margin:0;color:var(--ink-muted);font-size:14px;line-height:1.55;max-width:340px}.site-footer-slogan{margin:0 0 10px;font-size:17px;font-weight:700;letter-spacing:-.02em;color:var(--ink)}
 /* The mobile navigation is fixed to the bottom of the viewport, so the clearance belongs
    inside the footer. As a margin it produced dead canvas below the footer instead. */
 @media(max-width:900px){.site-footer-inner{padding-bottom:112px}}
@@ -262,4 +262,32 @@ body>main{flex:1 0 auto}
   .profile-page .profile-summary{padding:22px 18px;grid-template-columns:auto minmax(0,1fr)}
   .profile-signout{margin-left:0;width:100%;grid-column:1/-1}
   .profile-summary dl{gap:20px}
+}
+
+/* Feedback. A Read-then-write surface: one measure, the form carrying the page, no
+   decoration competing with the thing a person came to type. */
+.feedback-page{max-width:720px;margin:0 auto;padding:54px 32px 110px}
+.feedback-page h1{font-size:clamp(30px,4.4vw,46px);font-weight:700;letter-spacing:-.035em;line-height:1.04;margin:14px 0 0;text-wrap:balance}
+.feedback-intro{color:var(--ink-muted);line-height:1.6;max-width:56ch;margin:16px 0 34px}
+.feedback-form{display:grid;gap:26px}
+.feedback-kinds{border:0;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px}
+.feedback-kinds legend{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-muted);padding:0;margin-bottom:10px}
+.feedback-kind{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border:1px solid var(--line-strong);border-radius:var(--r-pill);cursor:pointer;font-size:15px;font-weight:500;transition:background-color .16s ease,border-color .16s ease,color .16s ease}
+.feedback-kind input{position:absolute;opacity:0;width:1px;height:1px}
+.feedback-kind[data-selected="true"]{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+.feedback-field{display:grid;gap:8px}
+.feedback-field>span{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-muted)}
+.feedback-field textarea,.feedback-field input{width:100%;padding:14px;border:1px solid var(--line-strong);border-radius:var(--r-md);background:var(--surface);color:inherit;font-size:16px;line-height:1.55}
+.feedback-field textarea{resize:vertical;min-height:170px}
+.feedback-field small{color:var(--ink-muted);font-size:14px;line-height:1.45}
+.feedback-actions{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.feedback-actions small{color:var(--ink-muted);font-size:14px;max-width:38ch}
+.feedback-done{display:grid;gap:18px;justify-items:start;padding:26px;background:var(--accent-wash);border-radius:var(--r-lg)}
+.feedback-done p{margin:0;font-size:19px;font-weight:600}
+@media(prefers-reduced-motion:reduce){.feedback-kind{transition:none}}
+@media(max-width:600px){
+  .feedback-page{padding:28px 18px 120px}
+  .feedback-intro{margin-bottom:26px}
+  .feedback-form{gap:22px}
+  .feedback-actions .button{width:100%}
 }

@@ -7,7 +7,8 @@ import {join} from 'node:path';
 // pushed to one side. It read as an unfinished image with something missing on the right.
 //
 // This renders the same approved logo, unmodified, centred on the brand canvas at the
-// ratio messaging apps actually crop to. Nothing is redrawn or recoloured.
+// ratio messaging apps actually crop to, with the line under it. Nothing is redrawn or
+// recoloured, and the line stays Turkish because it is wordplay on the product's own name.
 //
 // It lives at a fixed path rather than using the opengraph-image file convention, because
 // that convention attaches only where no page sets its own openGraph block -- which most
@@ -21,10 +22,11 @@ export function GET(){
     (
       <div style={{
         width:'100%',height:'100%',display:'flex',alignItems:'center',justifyContent:'center',
-        backgroundColor:'#f7f5f0',
+        backgroundColor:'#faf8f4',flexDirection:'column',gap:28,
       }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={`data:image/png;base64,${logo.toString('base64')}`} width={520} height={520} alt=""/>
+        <img src={`data:image/png;base64,${logo.toString('base64')}`} width={440} height={440} alt=""/>
+        <div style={{fontSize:52,fontWeight:700,letterSpacing:-1.6,color:'#16140f'}}>Boşa Gezme, Bize Sor.</div>
       </div>
     ),
     {width:1200,height:630},
