@@ -51,16 +51,69 @@ Web branding lives under `public/brand/`. The transparent logo is used in the he
 
 ## Routes
 
+Every route below is also reachable under `/en`, `/de` and `/ru`. Turkish is served
+unprefixed and is the canonical Turkish URL, so links written before locale routing
+existed still resolve; `/tr/...` redirects to the unprefixed form so no page has two
+addresses.
+
 | Route | Purpose |
 | --- | --- |
-| `/` | Community home feed |
+| `/` | Community home feed, server-rendered |
 | `/discover` | Natural-language search and hybrid results |
-| `/stores/[id]` | Server-rendered store detail |
+| `/stores/[slug]` | Server-rendered store detail; a uuid URL redirects to the slug |
 | `/reviews/[id]` | Public review detail |
 | `/users/[id]` | Public user profile |
-| `/favorites` | Favorites foundation |
-| `/create` | Visit-review creation foundation |
-| `/profile` | Personal profile and language settings |
+| `/favorites` | Saved stores (sign-in only, `noindex`) |
+| `/create` | Visit-review creation (sign-in only, `noindex`) |
+| `/profile` | Personal profile and language settings (sign-in only, `noindex`) |
+
+Informational and legal routes, all server-rendered in four languages:
+
+| Route | Purpose |
+| --- | --- |
+| `/about` | What the product is, and what it is not |
+| `/contact` | Contact channels |
+| `/legal` | Index of every legal document with version and date |
+| `/terms` | Terms of Service |
+| `/privacy` | Privacy Policy |
+| `/kvkk/aydinlatma-metni` | KVKK disclosure, with the processing condition per activity |
+| `/kvkk/basvuru` | KVKK data-subject application |
+| `/cookies` | Cookie policy and the full cookie inventory |
+| `/location-privacy` | How location is handled, behaviour by behaviour |
+| `/account-deletion` | What deletion removes, anonymises and keeps |
+| `/children-privacy` | Minimum age and data about children |
+| `/commercial-communications` | Transactional versus marketing messages |
+| `/report-content` | Reporting content that breaks the rules |
+
+## Locale routing
+
+`src/proxy.ts` resolves the locale once per request: an explicit URL prefix wins, then
+the visitor's saved choice, then `Accept-Language`, then Turkish. An explicitly prefixed
+URL is never renegotiated, because it is what was linked, shared or crawled. The resolved
+value is passed down as a request header, so no page has to thread a param by hand.
+
+Route handlers, build assets and the metadata files are excluded from the matcher, so the
+BFF boundary, `robots.txt` and `sitemap.xml` are untouched.
+
+Locale previously lived only in a cookie. Googlebot sends no cookies, so every crawl saw
+Turkish and the English, German and Russian dictionaries were unreachable to search
+engines regardless of how complete they were.
+
+## SEO
+
+- Every page states its own canonical. Metadata cascades in the App Router, so a canonical
+  set once in the root layout is inherited by every page below it -- which previously told
+  Google that every store, review and profile page was a duplicate of the homepage.
+- Full `hreflang` set with `x-default` on the unprefixed Turkish address, in the markup and
+  repeated in the sitemap.
+- `sitemap.xml` enumerates stores from the backend catalogue index with their real
+  `lastmod`, in every language. Sign-in-only routes are excluded and carry `noindex`.
+- Structured data: `Organization` and `WebSite` on the homepage, `Store` with breadcrumbs
+  on store pages, `Review` on review pages, `WebPage` on the legal documents.
+- `AggregateRating` is built only from Boşa Gezme! community reviews. The Google-derived
+  rating is deliberately excluded: republishing another site's ratings as your own is what
+  Google's guidelines forbid. A store with no community reviews emits no rating at all
+  rather than a fabricated zero.
 
 ## Setup
 
@@ -113,9 +166,9 @@ Google Identity Services returns an ID token to the browser. The browser sends i
 
 The App Store review identity uses the ordinary email OTP screens; the UI must never expose a special reviewer branch, label, prefill, or code. `ACCOUNT_UNAVAILABLE` clears any local session. Account deletion is permanent for profile, content, history, and social data, even though a later verified login may reactivate the same account ID as a blank profile.
 
-## Fixtures and prototype behavior
+## Data and optimistic updates
 
-Canonical fixtures support store, review, and profile presentation while those prototype surfaces are being integrated. The home feed and discovery search use the live API through the same-origin BFF. An empty feed is represented by `{"items":[],"next_cursor":""}` and renders an intentional empty state. Development photography stays in a presentation adapter and does not add fields to API DTOs.
+The home feed, discovery search, store, review and profile pages all read live data from the API through the same-origin BFF. The home feed is read on the server, so the first response carries real reviews rather than an empty shell. Fixture imagery stays in the presentation layer and is never added to API DTOs.
 
 Feed likes and store favorites update only after the BFF confirms the backend mutation; authentication failures open contextual sign-in without changing counts. Other unfinished prototype surfaces must follow the same rule as they are integrated: commit UI state only after success, or roll back an optimistic update when the request fails.
 
@@ -123,14 +176,30 @@ Feed likes and store favorites update only after the BFF confirms the backend mu
 
 ```text
 src/
-  app/          App Router pages and API route handlers
-  components/   Feed, authentication, search, and store components
+  app/[locale]/ Locale-scoped App Router pages
+  app/api/      BFF route handlers, the only code that talks to the Go API
+  components/   Feed, authentication, search, store and legal-document components
+  content/      Legal and informational copy, held as data in four languages
   i18n/         Turkish, English, German, and Russian dictionaries
-  lib/          Typed API, fixtures, and server utilities
+  lib/          Typed API, URL and structured-data helpers, legal facts
+  proxy.ts      Locale resolution
 public/
   brand/        Role-specific logo, app icon, and social sharing artwork
   images/       Development presentation imagery
 ```
+
+## Legal and company facts
+
+`src/lib/legal-facts.ts` is the single source for company and contact details. Unknown
+values are `null` and are never rendered as placeholder text; documents that cannot be
+honest without the controller's identity are gated behind `legalDocumentsArePublishable`
+and stay out of the search index until it exists.
+
+Legal copy lives in `src/content/legal/` as data rather than markup, so all four languages
+fill the same sections in the same order. A translation that quietly gains or loses a
+clause is a different contract, not a different wording.
+
+Outstanding questions for counsel are tracked in [docs/LEGAL_REVIEW_REQUIRED.md](docs/LEGAL_REVIEW_REQUIRED.md).
 
 ## Validation
 

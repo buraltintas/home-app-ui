@@ -30,7 +30,7 @@ export const about:LegalDoc={
         ]},
         {id:'partner',heading:'Listelenen mağazalar iş ortağı mı?',blocks:[
           {p:'Bir mağazanın burada yer alması, o mağazayla aramızda bir ticari ilişki veya ortaklık bulunduğu anlamına gelmez. Mağazalar keşfedilebilir oldukları için listelenir.'},
-          {p:'Şu anda ücretli yerleşim, sponsorluk veya reklam bulunmamaktadır. İleride ticari iş birlikleri kurulursa, bunlar açıkça belirtilir ve bu sayfa güncellenir.'},
+          {p:'Ücretli yerleşim, sponsorluk veya bir mağazanın öne çıkarılması söz konusu olduğunda, bu durum ilgili yerde açıkça belirtilir. Etiketlenmemiş bir sonuç, ödeme karşılığı öne çıkarılmış değildir.'},
         ]},
         {id:'kaynak',heading:'Mağaza bilgileri nereden geliyor?',blocks:[
           {p:'Mağaza adları, adresleri ve konumları büyük ölçüde Google Places üzerinden gelir. Bir mağaza sayfasında Google kaynaklı puan ve yorum sayısı görürseniz, bunlar Google\'a aittir ve bizim topluluk puanımızdan ayrı bir bölümde gösterilir.'},
@@ -69,7 +69,7 @@ export const about:LegalDoc={
         ]},
         {id:'partner',heading:'Are the stores listed here partners?',blocks:[
           {p:'A store appearing here does not mean there is a commercial relationship or partnership between it and Boşa Gezme!. Stores are listed because they are discoverable.'},
-          {p:'There is currently no paid placement, sponsorship or advertising. If commercial arrangements are introduced in future, they will be clearly marked and this page updated.'},
+          {p:'Wherever paid placement, sponsorship or promotion of a store applies, it is marked clearly at the point you see it. A result without such a label was not promoted in exchange for payment.'},
         ]},
         {id:'kaynak',heading:'Where does store information come from?',blocks:[
           {p:'Store names, addresses and locations largely come from Google Places. Where you see a Google rating and review count on a store page, those belong to Google and are shown in a separate panel from our own community rating.'},
@@ -108,7 +108,7 @@ export const about:LegalDoc={
         ]},
         {id:'partner',heading:'Sind die gelisteten Geschäfte Partner?',blocks:[
           {p:'Dass ein Geschäft hier erscheint, bedeutet nicht, dass zwischen ihm und Boşa Gezme! eine geschäftliche Beziehung oder Partnerschaft besteht. Geschäfte werden gelistet, weil sie auffindbar sind.'},
-          {p:'Derzeit gibt es keine bezahlte Platzierung, kein Sponsoring und keine Werbung. Werden künftig kommerzielle Kooperationen eingeführt, werden sie deutlich gekennzeichnet und diese Seite aktualisiert.'},
+          {p:'Wo bezahlte Platzierung, Sponsoring oder die Hervorhebung eines Geschäfts vorliegt, wird das an der betreffenden Stelle deutlich gekennzeichnet. Ein Ergebnis ohne solche Kennzeichnung wurde nicht gegen Bezahlung hervorgehoben.'},
         ]},
         {id:'kaynak',heading:'Woher stammen die Geschäftsinformationen?',blocks:[
           {p:'Namen, Adressen und Standorte stammen überwiegend aus Google Places. Wo auf einer Geschäftsseite eine Google-Bewertung und Bewertungsanzahl erscheint, gehört diese Google und wird getrennt von unserer Community-Bewertung dargestellt.'},
@@ -147,7 +147,7 @@ export const about:LegalDoc={
         ]},
         {id:'partner',heading:'Являются ли магазины партнёрами?',blocks:[
           {p:'Присутствие магазина здесь не означает наличия коммерческих отношений или партнёрства с Boşa Gezme!. Магазины перечислены потому, что их можно найти.'},
-          {p:'Платного размещения, спонсорства и рекламы сейчас нет. Если в будущем появятся коммерческие соглашения, они будут явно обозначены, а эта страница обновлена.'},
+          {p:'Там, где применяется платное размещение, спонсорство или продвижение магазина, это явно обозначается на месте. Результат без такой пометки не продвигался за плату.'},
         ]},
         {id:'kaynak',heading:'Откуда берутся сведения о магазинах?',blocks:[
           {p:'Названия, адреса и координаты в основном поступают из Google Places. Если на странице магазина показаны рейтинг и число отзывов Google, они принадлежат Google и отображаются отдельно от рейтинга нашего сообщества.'},

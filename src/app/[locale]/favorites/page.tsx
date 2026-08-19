@@ -4,6 +4,7 @@ import {ArrowRight,Heart} from 'lucide-react';
 import Link from 'next/link';
 import {useCallback,useEffect,useState} from 'react';
 import {AuthDialog} from '@/components/AuthDialog';
+import {MascotLoader} from '@/components/MascotLoader';
 import {Rating} from '@/components/Rating';
 import {useI18n} from '@/i18n/I18nProvider';
 import { localePath } from '@/lib/site';
@@ -44,6 +45,11 @@ export default function Page(){
     void checkSession();window.addEventListener('bosagezme:authenticated',handleAuthentication);
     return()=>{active=false;window.removeEventListener('bosagezme:authenticated',handleAuthentication);};
   },[load]);
+
+  // Until the session is known this page cannot say anything true. It used to render the
+  // signed-out screen first and then swap to the list, so a signed-in visitor was briefly
+  // told they had no favourites.
+  if(checking)return <main className="favorites-page"><p className="eyebrow">{t('favorites')}</p><h1>{t('favoritesTitle')}</h1><MascotLoader/></main>;
 
   if(signedIn&&stores.length)return <main className="favorites-page">
     <p className="eyebrow">{t('favorites')}</p>

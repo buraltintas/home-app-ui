@@ -3,7 +3,9 @@ import Image from 'next/image';import Link from 'next/link';import {Heart,Home,S
 const links=[['/',Home,'home'],['/discover',Search,'discover'],['/favorites',Heart,'favorites']] as const;
 export function Header(){
   const {t,locale}=useI18n();const pathname=usePathname();const router=useRouter();
-  const [me,setMe]=useState<Me|null>(null);
+  // undefined means the session has not been read yet, null means signed out. Collapsing
+  // the two made the header show the signed-out icon first and then swap in the avatar.
+  const [me,setMe]=useState<Me|null|undefined>(undefined);
   useEffect(()=>{
     let active=true;
     const checkSession=async()=>{try{const response=await apiFetch('/api/proxy/me',{cache:'no-store'});const profile=response.ok?await response.json() as Me:null;if(active)setMe(profile);}catch{if(active)setMe(null);}};
@@ -19,5 +21,5 @@ export function Header(){
   // The locale prefix is not part of what the navigation is pointing at.
   const here=stripLocale(pathname);
   const profileActive=here.startsWith('/profile');
-  return <header className="site-header"><div className="nav-wrap"><Link href={localePath(locale,'/')} className="brand-link" aria-label={t('wordmark')}><span className="brand-mark"><Image src="/brand/brand-mark.png" width={104} height={104} priority alt=""/></span><span className="brand-name">{t('wordmark')}</span></Link><nav aria-label={t('primaryNavigation')}>{links.map(([href,Icon,label])=>{const active=href==='/'?here===href:here.startsWith(href);return <Link key={href} href={localePath(locale,href)} onClick={href==='/discover'?startFreshSearch:undefined} className={active?'is-active':undefined} aria-current={active?'page':undefined}><Icon/><span>{t(label)}</span></Link>})}<Link href={localePath(locale,"/profile")} className={profileActive?'is-active':undefined} aria-current={profileActive?'page':undefined}>{me?<span className="nav-avatar" aria-hidden="true">{(me.display_name||me.username||me.email).slice(0,1).toLocaleUpperCase(locale)}</span>:<UserRound/>}<span>{t('profile')}</span></Link></nav></div></header>;
+  return <header className="site-header"><div className="nav-wrap"><Link href={localePath(locale,'/')} className="brand-link" aria-label={t('wordmark')}><span className="brand-mark"><Image src="/brand/brand-mark.png" width={104} height={104} priority alt=""/></span><span className="brand-name">{t('wordmark')}</span></Link><nav aria-label={t('primaryNavigation')}>{links.map(([href,Icon,label])=>{const active=href==='/'?here===href:here.startsWith(href);return <Link key={href} href={localePath(locale,href)} onClick={href==='/discover'?startFreshSearch:undefined} className={active?'is-active':undefined} aria-current={active?'page':undefined}><Icon/><span>{t(label)}</span></Link>})}<Link href={localePath(locale,"/profile")} className={profileActive?'is-active':undefined} aria-current={profileActive?'page':undefined}>{me===undefined?<span className="nav-avatar is-loading" aria-hidden="true"/>:me?<span className="nav-avatar" aria-hidden="true">{(me.display_name||me.username||me.email).slice(0,1).toLocaleUpperCase(locale)}</span>:<UserRound/>}<span>{t('profile')}</span></Link></nav></div></header>;
 }
