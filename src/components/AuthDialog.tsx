@@ -1,9 +1,11 @@
 'use client';
+import Link from 'next/link';
 
 import Script from 'next/script';
 import {FormEvent,useCallback,useEffect,useRef,useState} from 'react';
 import {ArrowLeft,X} from 'lucide-react';
 import {useI18n} from '@/i18n/I18nProvider';
+import {localePath} from '@/lib/site';
 
 type GoogleCredentialResponse={credential?:string};
 type GoogleIdentity={accounts:{id:{initialize:(options:{client_id:string;callback:(response:GoogleCredentialResponse)=>void})=>void;renderButton:(element:HTMLElement,options:{type:'standard';theme:'outline';size:'large';text:'continue_with';shape:'rectangular';logo_alignment:'left';width:string})=>void}}};
@@ -91,6 +93,18 @@ export function AuthDialog({open,onClose,onAuthenticated}:{open:boolean;onClose:
         <button disabled={busy||(sent&&code.length!==6)} className="button primary" type="submit">{busy?'…':sent?t('verify'):t('sendCode')}</button>
       </form>:<>
         <p>{t('signInBody')}</p>
+        {/* Contract acceptance and the privacy notice are legally different things, so
+            they are named separately rather than merged into "you agree to everything".
+            No marketing consent is bundled here; there is none to give. */}
+        <p className="auth-legal">
+          {t('authTermsPrefix')}
+          <Link href={localePath(locale,'/terms')} target="_blank">{t('authTermsLink')}</Link>
+          {t('authTermsMiddle')}
+          <Link href={localePath(locale,'/privacy')} target="_blank">{t('authPrivacyLink')}</Link>
+          {t('authPrivacyMiddle')}
+          <Link href={localePath(locale,'/kvkk/aydinlatma-metni')} target="_blank">{t('authKvkkLink')}</Link>
+          {t('authTermsSuffix')}
+        </p>
         {!runtimeConfigReady&&<button className="button secondary" style={{width:'100%',margin:0}} disabled>{t('google')}</button>}
         {runtimeConfigReady&&<div className="google-button-slot" ref={googleButtonRef} style={{width:'100%',minHeight:44,marginTop:10,overflow:'hidden'}}>{(!googleReady||!googleClientId)&&<button className="button secondary" style={{width:'100%',margin:0}} disabled>{t('google')}</button>}</div>}
         {runtimeConfigReady&&!googleClientId&&<p role="alert">{t('googleUnavailable')}</p>}

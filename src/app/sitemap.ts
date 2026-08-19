@@ -1,5 +1,6 @@
 import type {MetadataRoute} from 'next';
 import {getStoreIndex} from '@/lib/server-api';
+import {legalLinks} from '@/lib/legal-links';
 import {localePath,locales,siteUrl,storePath} from '@/lib/site';
 
 // The sitemap listed five hard coded URLs and not one store, so the only pages capable
@@ -26,6 +27,10 @@ export default async function sitemap():Promise<MetadataRoute.Sitemap>{
   return [
     ...entry('/',now,'daily',1),
     ...entry('/discover',now,'daily',.9),
+    // Informational pages change rarely but are how a search or answer engine learns what
+    // this product actually is, so they belong in the index.
+    ...entry('/legal',now,'weekly',.3),
+    ...legalLinks.filter(link=>link.live).flatMap(link=>entry(`/${link.slug}`,now,'weekly',link.slug==='about'?.7:.4)),
     ...stores.flatMap(store=>entry(
       storePath(store),
       new Date(store.updated_at),
