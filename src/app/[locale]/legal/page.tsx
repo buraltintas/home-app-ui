@@ -10,7 +10,8 @@ import {terms} from '@/content/legal/terms';
 import {childrenPrivacy,commercialCommunications,contact,cookies,kvkkBasvuru,reportContent} from '@/content/legal/trust';
 import {getServerI18n} from '@/i18n/server';
 import {legalDocumentsArePublishable} from '@/lib/legal-facts';
-import {absolute,canonicalFor,localePath} from '@/lib/site';
+import {metaDescription} from '@/lib/legal-page';
+import {absolute,canonicalFor,localePath,shareImage} from '@/lib/site';
 import type {Locale} from '@/lib/types';
 
 const copy:Record<Locale,{title:string;summary:string;version:string;updated:string;pendingTitle:string;pendingBody:string}>={
@@ -22,7 +23,8 @@ const copy:Record<Locale,{title:string;summary:string;version:string;updated:str
 
 export async function generateMetadata():Promise<Metadata>{
   const {locale}=await getServerI18n();
-  return {title:copy[locale].title,description:copy[locale].summary,alternates:canonicalFor(locale,'/legal'),openGraph:{url:'/legal',title:copy[locale].title,description:copy[locale].summary}};
+  const description=metaDescription(copy[locale].summary);
+  return {title:copy[locale].title,description,alternates:canonicalFor(locale,'/legal'),openGraph:{url:'/legal',title:copy[locale].title,description,images:[shareImage]}};
 }
 
 export default async function Page(){

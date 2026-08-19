@@ -53,3 +53,7 @@ export function canonicalFor(locale:Locale,path:string){
 export function asLocale(value:string|undefined):Locale{
   return (locales as string[]).includes(value??'')?value as Locale:defaultLocale;
 }
+
+// The default share image. Pages with a photo of their own (a store, a review) set theirs
+// instead; everything else points here.
+export const shareImage={url:'/og',width:1200,height:630,alt:'Boşa Gezme!'};

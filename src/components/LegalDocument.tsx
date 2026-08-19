@@ -18,14 +18,37 @@ const meta:Record<Locale,{version:string;effective:string;updated:string;content
   ru:{version:'Версия',effective:'Вступает в силу',updated:'Обновлено',contents:'Содержание',related:'Связанные документы'},
 };
 
+// Legal copy is held as plain strings so that four languages stay structurally identical,
+// which means a URL or an address written into a sentence arrives here as text. Rather
+// than wrapping each one by hand in every language, they are turned into links at render
+// time: an address somebody is told to write to should be one tap away from doing it.
+const LINKABLE=/(https?:\/\/[^\s)<>]+|[\w.+-]+@[\w-]+\.[\w.-]*[\w-])/g;
+
+function linkify(text:string):React.ReactNode[]{
+  const parts:React.ReactNode[]=[];
+  let last=0;
+  for(const match of text.matchAll(LINKABLE)){
+    const start=match.index??0;
+    // Sentence punctuation is not part of the address, so it stays outside the anchor.
+    const raw=match[0].replace(/[.,;:]+$/,'');
+    if(start>last)parts.push(text.slice(last,start));
+    const href=raw.includes('@')&&!raw.startsWith('http')?`mailto:${raw}`:raw;
+    parts.push(<a key={`${start}-${raw}`} href={href}>{raw}</a>);
+    parts.push(match[0].slice(raw.length));
+    last=start+match[0].length;
+  }
+  if(last<text.length)parts.push(text.slice(last));
+  return parts.length?parts:[text];
+}
+
 function renderBlock(block:Block,index:number){
-  if('p' in block)return <p key={index}>{block.p}</p>;
+  if('p' in block)return <p key={index}>{linkify(block.p)}</p>;
   if('h3' in block)return <h3 key={index}>{block.h3}</h3>;
-  if('ul' in block)return <ul key={index}>{block.ul.map((item,i)=><li key={i}>{item}</li>)}</ul>;
-  if('note' in block)return <p key={index} className="legal-note">{block.note}</p>;
+  if('ul' in block)return <ul key={index}>{block.ul.map((item,i)=><li key={i}>{linkify(item)}</li>)}</ul>;
+  if('note' in block)return <p key={index} className="legal-note">{linkify(block.note)}</p>;
   return <div key={index} className="legal-table-wrap"><table>
     <thead><tr>{block.table.head.map((cell,i)=><th key={i} scope="col">{cell}</th>)}</tr></thead>
-    <tbody>{block.table.rows.map((row,i)=><tr key={i}>{row.map((cell,j)=><td key={j}>{cell}</td>)}</tr>)}</tbody>
+    <tbody>{block.table.rows.map((row,i)=><tr key={i}>{row.map((cell,j)=><td key={j}>{linkify(cell)}</td>)}</tr>)}</tbody>
   </table></div>;
 }
 
@@ -37,7 +60,7 @@ export function LegalDocument({doc,locale,related=[]}:{doc:LegalDoc;locale:Local
     <article>
       <header className="legal-header">
         <h1>{content.title}</h1>
-        <p className="legal-summary">{content.summary}</p>
+        <p className="legal-summary">{linkify(content.summary)}</p>
         <dl className="legal-meta">
           <div><dt>{copy.version}</dt><dd>{doc.version}</dd></div>
           <div><dt>{copy.effective}</dt><dd><time dateTime={doc.effective}>{doc.effective}</time></dd></div>

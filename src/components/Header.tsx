@@ -8,7 +8,15 @@ export function Header(){
   const [me,setMe]=useState<Me|null|undefined>(undefined);
   useEffect(()=>{
     let active=true;
-    const checkSession=async()=>{try{const response=await apiFetch('/api/proxy/me',{cache:'no-store'});const profile=response.ok?await response.json() as Me:null;if(active)setMe(profile);}catch{if(active)setMe(null);}};
+    // A failed read is not proof of being signed out. Only a 401 that survived apiFetch's
+    // refresh-and-retry means that; a network blip or a 5xx used to blank the avatar for
+    // the rest of the session, because nothing re-read it until a full page load.
+    const checkSession=async()=>{try{
+      const response=await apiFetch('/api/proxy/me',{cache:'no-store'});
+      if(!active)return;
+      if(response.ok)setMe(await response.json() as Me);
+      else if(response.status===401)setMe(null);
+    }catch{/* keep whatever we last knew rather than claiming the visitor signed out */}};
     const handleAuthentication=()=>void checkSession();
     // The header is on every page, so it is the one place that can ask the server to
     // re-render whatever it drew while the token was still stale.
@@ -17,7 +25,9 @@ export function Header(){
     window.addEventListener('bosagezme:authenticated',handleAuthentication);
     window.addEventListener(SESSION_REFRESHED,handleRefreshed);
     return()=>{active=false;window.removeEventListener('bosagezme:authenticated',handleAuthentication);window.removeEventListener(SESSION_REFRESHED,handleRefreshed);};
-  },[router]);
+    // Re-read on navigation as well. The header outlives every route change, so a value
+    // that went stale mid-session would otherwise persist until the page was reloaded.
+  },[router,pathname]);
   // The locale prefix is not part of what the navigation is pointing at.
   const here=stripLocale(pathname);
   const profileActive=here.startsWith('/profile');

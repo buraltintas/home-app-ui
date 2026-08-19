@@ -72,6 +72,8 @@ function withLocale(input:NextRequest|NextResponse,locale:Locale):NextResponse{
 
 export const config={
   // Route handlers, build assets and the metadata files are served untouched: the BFF
-  // boundary and robots.txt/sitemap.xml have no locale and must not gain a prefix.
-  matcher:['/((?!api|_next|.*\\..*).*)'],
+  // boundary, robots.txt/sitemap.xml and the share image have no locale and must not gain
+  // a prefix. /og is a route handler without a file extension, so it needs naming here or
+  // it gets rewritten to /tr/og and 404s.
+  matcher:['/((?!api|og|_next|.*\\..*).*)'],
 };

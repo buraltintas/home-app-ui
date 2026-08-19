@@ -3,12 +3,12 @@ import {FeedPage} from '@/components/FeedPage';
 import {JsonLd} from '@/components/JsonLd';
 import {getServerI18n} from '@/i18n/server';
 import {getFeed} from '@/lib/server-api';
-import {canonicalFor} from '@/lib/site';
+import {canonicalFor,shareImage} from '@/lib/site';
 import {organizationJsonLd,websiteJsonLd} from '@/lib/structured-data';
 
 export async function generateMetadata():Promise<Metadata>{
   const {t,locale}=await getServerI18n();
-  return {alternates:canonicalFor(locale,'/'),openGraph:{url:'/',type:'website'},description:t.feedIntro};
+  return {alternates:canonicalFor(locale,'/'),openGraph:{url:'/',type:'website',images:[shareImage]},description:t.feedIntro};
 }
 
 // The feed is read here rather than in an effect, so the homepage arrives with real
