@@ -4,7 +4,7 @@ import '../../globals.css';
 import './admin.css';
 import {SessionKeeper} from '@/components/SessionKeeper';
 
-const sans=Onest({variable:'--font-sans',subsets:['latin'],display:'swap'});
+const sans=Onest({variable:'--font-sans',subsets:['latin','latin-ext'],display:'swap'});
 
 // The operator surface has its own root layout, reached through a route group so the URL
 // is still /admin. It deliberately shares nothing with the product shell: no site header,
