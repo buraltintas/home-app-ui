@@ -52,10 +52,10 @@ function accessTokenExpiresSoon(token:string|undefined):boolean{
   }catch{return true;}
 }
 
-async function renewSession(request:NextRequest):Promise<string[]>{
+async function renewSession(request:NextRequest):Promise<{cookies:string[]}>{
   const access=request.cookies.get('bosagezme_access')?.value;
   const refresh=request.cookies.get('bosagezme_refresh')?.value;
-  if(!refresh||!accessTokenExpiresSoon(access))return [];
+  if(!refresh||!accessTokenExpiresSoon(access))return {cookies:[]};
   try{
     const renewed=await fetch(new URL('/api/auth/refresh',request.nextUrl.origin),{
       method:'POST',
@@ -65,10 +65,9 @@ async function renewSession(request:NextRequest):Promise<string[]>{
     // Update the incoming request too, so the render happening on this very request is
     // built as the signed-in visitor rather than one render behind.
     const updated=cookies.find(value=>value.startsWith('bosagezme_access='));
-    const value=updated?.split(';')[0]?.split('=')[1];
-    if(value)request.cookies.set('bosagezme_access',value);
-    return cookies;
-  }catch{return [];/* a failed renewal leaves the request exactly as it arrived */}
+    // A renewal that returns no new access cookie is a failure; treat it as one.
+    return {cookies:updated?cookies:[]};
+  }catch{return {cookies:[]};/* a failed renewal leaves the request exactly as it arrived */}
 }
 
 export async function proxy(request:NextRequest){
@@ -76,9 +75,17 @@ export async function proxy(request:NextRequest){
   // refreshed session, and the new cookies ride out on whatever that response turns out
   // to be -- rewrite or redirect alike.
   const refreshed=await renewSession(request);
-  const response=route(request);
-  for(const cookie of refreshed)response.headers.append('set-cookie',cookie);
-  return response;
+  if(refreshed.cookies.length){
+    // Renewal is answered with a redirect to the same address rather than by rendering
+    // straight away. Rewriting the forwarded cookie header does not reach cookies() inside
+    // the render, so the page would still be built for an anonymous visitor -- which is
+    // the whole bug. Bouncing once costs a round trip and is unambiguous: the browser
+    // comes back holding a live token and the very first render is the signed-in one.
+    const again=NextResponse.redirect(request.nextUrl,{status:307});
+    for(const cookie of refreshed.cookies)again.headers.append('set-cookie',cookie);
+    return again;
+  }
+  return route(request);
 }
 
 function route(request:NextRequest):NextResponse{
