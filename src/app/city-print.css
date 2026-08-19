@@ -22,7 +22,7 @@ svg{stroke-width:2}
 .feed-layout{max-width:1240px;padding:54px 40px 110px}
 .feed-main{border:0;max-width:none}
 .feed-intro{padding:22px 0 46px;display:grid;grid-template-columns:minmax(0,820px) 170px;gap:60px;align-items:end;animation:ink-in .62s cubic-bezier(.16,1,.3,1) both}
-.feed-intro h1,.search-hero h1,.empty-page h1,.create-page h1{font-family:var(--font-display),sans-serif;font-size:clamp(42px,6.1vw,84px);font-weight:740;line-height:.98;letter-spacing:-.04em;margin:0;max-width:920px;text-wrap:balance}
+.feed-intro h1,.search-hero h1,.empty-page h1,.create-page h1,.favorites-page h1{font-family:var(--font-display),sans-serif;font-size:clamp(42px,6.1vw,84px);font-weight:740;line-height:.98;letter-spacing:-.04em;margin:0;max-width:920px;text-wrap:balance}
 .feed-intro>div>p{max-width:620px;margin:24px 0 0;font-size:18px;line-height:1.6;color:var(--ink-muted)}
 .intro-stamp{justify-self:end;width:148px;height:148px;border:3px solid var(--cobalt);background:var(--sun);color:var(--cobalt);display:flex;flex-direction:column;align-items:center;justify-content:center;rotate:4deg;box-shadow:7px 7px 0 var(--accent)}
 .intro-stamp span{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.12em}
