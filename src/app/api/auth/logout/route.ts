@@ -1,1 +1,1 @@
-import {NextResponse} from 'next/server';export async function POST(){const response=NextResponse.json({status:'signed_out'});response.cookies.delete('bosagezme_access');response.cookies.delete('bosagezme_refresh');return response}
+import {NextResponse} from 'next/server';import {clearSessionCookies} from '@/lib/session-cookies';export async function POST(){const response=NextResponse.json({status:'signed_out'});clearSessionCookies(response);return response}

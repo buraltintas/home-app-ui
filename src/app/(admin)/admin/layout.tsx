@@ -2,6 +2,7 @@ import type {Metadata} from 'next';
 import {Onest} from 'next/font/google';
 import '../../globals.css';
 import './admin.css';
+import {SessionKeeper} from '@/components/SessionKeeper';
 
 const sans=Onest({variable:'--font-sans',subsets:['latin'],display:'swap'});
 
@@ -19,6 +20,10 @@ export default function AdminLayout({children}:{children:React.ReactNode}){
     <header className="admin-header">
       <strong>Boşa Gezme! yönetim</strong>
     </header>
+    {/* The panel renders on the server from the access cookie, so a token that dies while
+        a report is open drops the whole page to the sign-in screen. Renewed here for the
+        same reason as on the product side. */}
+    <SessionKeeper/>
     <main className="admin-main">{children}</main>
   </body></html>;
 }
