@@ -32,9 +32,13 @@ function growToFit(element:HTMLTextAreaElement|null){
 // block rather than a stand-in image.
 function ResultPhoto({item}:{item:SearchResult}) {
   const {t}=useI18n();
-  const photo=item.google?.photo_name;
+  // The live provider response is preferred, and what we already hold for the store is
+  // used when it carries none. A store from our own catalogue -- every promoted one
+  // among them -- reaches the list without a live lookup, and showed a blank tile.
+  const photo=item.google?.photo_name??item.photo?.name;
   if(!photo)return <div className="result-photo result-photo-empty"><span aria-hidden="true">{item.name.trim().charAt(0)}</span><small>{t('noPhoto')}</small></div>;
-  const credit=item.google?.photo_attributions?.length?item.google.photo_attributions.join(' · '):t('photoByGoogle');
+  const attributions=item.google?.photo_name?item.google.photo_attributions:item.photo?.attributions;
+  const credit=attributions?.length?attributions.join(' · '):t('photoByGoogle');
   return <div className="result-photo"><Image src={`/api/places/photo?name=${encodeURIComponent(photo)}&w=520`} width={260} height={195} alt="" unoptimized/><small className="photo-credit">{credit}</small></div>;
 }
 
