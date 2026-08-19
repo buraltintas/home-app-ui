@@ -9,11 +9,14 @@ export async function forwardToBackend({
   path,
   method='GET',
   body,
+  anonymous=false,
 }: {
   request: NextRequest;
   path: string;
   method?: string;
   body?: BodyInit | null;
+  /** Send no credentials. Used by the sign-in routes, which must work while holding a dead one. */
+  anonymous?: boolean;
 }): Promise<Response>{
   const cookieStore=await cookies();
   const target=new URL(`/v1/${path.replace(/^\/+/, '')}`,API_ORIGIN);
@@ -28,7 +31,12 @@ export async function forwardToBackend({
   if(chosenLocale)headers.set('X-Locale',chosenLocale);
   headers.set('Accept-Language',request.headers.get('accept-language')??'tr');
 
-  const accessToken=cookieStore.get('bosagezme_access')?.value;
+  // Signing in must not depend on the credential you are trying to replace. The backend
+  // rejects an invalid bearer token outright, even on routes that need no authentication,
+  // so forwarding a stale access cookie to request-code answered INVALID_TOKEN and left
+  // somebody unable to sign in again until they cleared their cookies by hand. A dead
+  // token is exactly the state you are in when you need to sign in.
+  const accessToken=anonymous?undefined:cookieStore.get('bosagezme_access')?.value;
   if(accessToken)headers.set('Authorization',`Bearer ${accessToken}`);
 
   const visitorSessionId=request.headers.get('x-visitor-session-id')??cookieStore.get('bosagezme_visitor')?.value;

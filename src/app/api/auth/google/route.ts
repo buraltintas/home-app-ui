@@ -3,7 +3,7 @@ import {forwardToBackend} from '@/lib/backend-forward';
 import type {TokenPair} from '@/lib/types';
 
 export async function POST(request:NextRequest){
-  const response=await forwardToBackend({request,path:'auth/google',method:'POST',body:await request.text()});
+  const response=await forwardToBackend({request,path:'auth/google',method:'POST',anonymous:true,body:await request.text()});
   const data=await response.json() as TokenPair|{error?:{code?:string}};
   const outgoing=NextResponse.json(response.ok?{user_id:(data as TokenPair).user_id}:data,{status:response.status});
   if(response.ok){
