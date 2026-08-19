@@ -10,16 +10,16 @@ export const dynamic='force-dynamic';
 const SNAPSHOT_LABELS:[string,string][]=[
   ['registered_users_total','Kayıtlı kullanıcı'],
   ['stores_total','Mağaza'],
-  ['google_imported_stores_total',"Google'dan alınan mağaza"],
-  ['posts_current_total','Yayında olan değerlendirme'],
+  ['google_imported_stores_total',"Google'dan alınan"],
+  ['posts_current_total','Yayında olan yorum'],
   ['searches_lifetime','Toplam arama'],
   ['favorites_current_total','Favori'],
   ['comments_current_total','Yorum'],
   ['likes_current_total','Beğeni'],
   ['follows_current_total','Takip'],
   ['media_current_total','Fotoğraf'],
-  ['posts_created_lifetime','Bugüne kadar yazılan değerlendirme'],
-  ['posts_deleted_lifetime','Silinen değerlendirme'],
+  ['posts_created_lifetime','Toplam yazılan yorum'],
+  ['posts_deleted_lifetime','Silinen yorum'],
 ];
 
 type QueryMetric={normalized_query:string;query_language:string;search_count:number;zero_result_count:number;click_count:number};
