@@ -161,4 +161,10 @@ body>main{flex:1 0 auto}
 .contributor-level{display:inline-block;margin-left:8px;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;padding:3px 7px;border-radius:20px;background:var(--muted);color:var(--ink-muted);vertical-align:middle}
 .contributor-level[data-level="4"],.contributor-level[data-level="5"]{background:var(--accent);color:#fff}
 /* Paid placement has to be identifiable at a glance, not inferred from position. */
-.promoted-flag{margin-left:8px;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;padding:3px 7px;border-radius:20px;background:var(--ink);color:#fff}
+/* Sits beside the category label and borrows its scale, so it reads as one line of
+   metadata rather than a sticker dropped on the card. It still has to be unmistakable --
+   paid placement has to be identifiable at a glance -- so it keeps a border and a dot
+   rather than relying on colour alone, which would disappear for anyone who cannot
+   distinguish it from the category text next to it. */
+.promoted-flag{display:inline-flex;align-items:center;gap:5px;margin-left:10px;padding:2px 8px;border:1px solid color-mix(in srgb,var(--accent) 45%,transparent);border-radius:20px;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--accent);vertical-align:2px}
+.promoted-flag::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--accent)}

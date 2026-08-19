@@ -115,5 +115,9 @@ svg{stroke-width:2}
 .search-hero .location-control{color:color-mix(in srgb,var(--surface) 78%,transparent)}
 .search-hero .location-control>span{color:var(--surface)}
 .search-hero .location-control>button:not(.nearby-button){color:var(--surface)}
-.search-hero .category-links button,
-.search-hero .search-suggestions button{color:var(--ink)}
+/* Only the category pills carry a light background of their own, so only they need dark
+   text. The recent-search buttons are plain text directly on the cobalt panel; darkening
+   those made them unreadable, which is what the first pass at this got wrong. */
+.search-hero .category-links button{color:var(--ink)}
+.search-hero .search-suggestions>div:first-child button{color:var(--surface)}
+.search-hero .search-suggestions h2{color:color-mix(in srgb,var(--surface) 82%,transparent)}
