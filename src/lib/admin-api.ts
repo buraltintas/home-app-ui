@@ -29,10 +29,24 @@ const qs=(params:Record<string,string|number|undefined>)=>{
   return text?`?${text}`:'';
 };
 
+export const PAGE_SIZE=50;
+
+// One extra row is requested and then dropped. It answers "is there a next page?" without
+// a second COUNT over the whole table, which on the searches log is the expensive question.
+export type Page<T>={rows:T[];hasNext:boolean};
+
+async function readPage<T>(path:string,params:Record<string,string|number|undefined>,page:number):Promise<AdminResult<Page<T>>>{
+  const offset=Math.max(0,page)*PAGE_SIZE;
+  const result=await read<{items:T[]}>(`${path}${qs({...params,limit:PAGE_SIZE+1,offset})}`);
+  if(!result.ok)return {ok:false};
+  const items=result.data.items??[];
+  return {ok:true,data:{rows:items.slice(0,PAGE_SIZE),hasNext:items.length>PAGE_SIZE}};
+}
+
 export const getOverview=()=>read<{snapshot:Snapshot;daily:unknown[]}>('overview');
 export const getSearchInsights=()=>read<Record<string,unknown>>('search-insights');
-export const getUsers=(q?:string)=>read<{items:UserRow[]}>(`users${qs({q,limit:100})}`);
-export const getStores=(q?:string,premium?:boolean)=>read<{items:StoreRow[]}>(`stores${qs({q,premium:premium?'true':undefined,limit:100})}`);
-export const getReviews=(q?:string)=>read<{items:ReviewRow[]}>(`reviews${qs({q,limit:100})}`);
-export const getSearches=(q?:string)=>read<{items:SearchRow[]}>(`searches${qs({q,limit:100})}`);
-export const getAudit=()=>read<{items:AuditRow[]}>(`audit${qs({limit:100})}`);
+export const getUsers=(q?:string,page=0)=>readPage<UserRow>('users',{q},page);
+export const getStores=(q?:string,premium?:boolean,page=0)=>readPage<StoreRow>('stores',{q,premium:premium?'true':undefined},page);
+export const getReviews=(q?:string,page=0)=>readPage<ReviewRow>('reviews',{q},page);
+export const getSearches=(q?:string,page=0)=>readPage<SearchRow>('searches',{q},page);
+export const getAudit=(page=0)=>readPage<AuditRow>('audit',{},page);

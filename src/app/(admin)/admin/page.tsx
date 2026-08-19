@@ -1,3 +1,4 @@
+import {AdminNav} from './AdminNav';
 import {AccessDenied} from './AccessDenied';
 import {getOverview,getSearchInsights} from '@/lib/admin-api';
 
@@ -15,6 +16,7 @@ export default async function Page(){
   const search=insights.ok?insights.data:{};
 
   return <>
+    <AdminNav/>
     <h1>Genel bakış</h1>
     <p className="admin-lead">Son 30 gün. Sayılar doğrudan veritabanından okunur.</p>
 

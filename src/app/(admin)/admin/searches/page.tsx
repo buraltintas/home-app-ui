@@ -1,26 +1,31 @@
+import {AdminNav} from '../AdminNav';
 import {AccessDenied} from '../AccessDenied';
+import {AdminPager} from '../AdminPager';
+import {ExportLinks} from '../ExportLinks';
 import {AdminSearch} from '../AdminSearch';
 import {getSearches} from '@/lib/admin-api';
 
 export const dynamic='force-dynamic';
 const when=(v:string)=>new Date(v).toLocaleString('tr-TR');
 
-export default async function Page({searchParams}:{searchParams:Promise<{q?:string}>}){
-  const {q}=await searchParams;
-  const result=await getSearches(q);
+export default async function Page({searchParams}:{searchParams:Promise<{q?:string;page?:string}>}){
+  const {q,page:pageParam}=await searchParams;
+  const page=Math.max(0,Number(pageParam)||0);
+  const result=await getSearches(q,page);
   if(!result.ok)return <AccessDenied/>;
   return <>
+    <AdminNav/>
     <h1>Aramalar</h1>
     <p className="admin-lead">
       Ham arama kaydı. &ldquo;Yedek&rdquo; sütunu boş değilse arama boru hattının bir parçası
       o istekte devre dışı kalmış demektir; <code>ai_</code> ile başlayan değerler sebebini söyler.
     </p>
-    <AdminSearch placeholder="Arama metni"/>
+    <div className="admin-toolbar"><AdminSearch placeholder="Arama metni"/><ExportLinks table="searches" q={q}/></div>
     <div className="admin-table-wrap">
       <table className="admin-table">
         <thead><tr><th>Sorgu</th><th>Dil</th><th>Kapsam</th><th>Sonuç</th><th>Tıklama</th><th>Süre</th><th>Yedek</th><th>Tarih</th></tr></thead>
         <tbody>
-          {result.data.items.map(row=><tr key={row.id}>
+          {result.data.rows.map(row=><tr key={row.id}>
             <td>{row.query}</td>
             <td>{row.query_language||'—'}</td>
             <td>{row.scope||'—'}</td>
@@ -30,9 +35,10 @@ export default async function Page({searchParams}:{searchParams:Promise<{q?:stri
             <td>{row.fallback_state??'—'}</td>
             <td>{when(row.created_at)}</td>
           </tr>)}
-          {result.data.items.length===0&&<tr><td colSpan={8} className="admin-empty">Sonuç yok.</td></tr>}
+          {result.data.rows.length===0&&<tr><td colSpan={8} className="admin-empty">Sonuç yok.</td></tr>}
         </tbody>
       </table>
     </div>
+    <AdminPager page={page} hasNext={result.data.hasNext} count={result.data.rows.length} params={{q}}/>
   </>;
 }

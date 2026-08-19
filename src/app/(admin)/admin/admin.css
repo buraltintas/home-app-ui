@@ -29,3 +29,33 @@
 .admin-flag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.6px;padding:3px 8px;border-radius:20px;background:#efece5;color:#706d65}
 .admin-flag[data-on="true"]{background:#a34a32;color:#fff}
 .admin-note{color:#a63d35;font-size:13px;margin:10px 0 0}
+.admin-pager{display:flex;align-items:center;gap:14px;padding:12px 2px;font-size:14px;color:#706d65}
+.admin-pager a{color:#1e2a45;font-weight:700;min-height:44px;display:inline-flex;align-items:center}
+.admin-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.admin-toolbar .admin-search{margin:0}
+.admin-export{display:flex;gap:8px;margin-left:auto}
+.admin-export a{min-height:40px;padding:0 14px;border:1px solid #d9d5cc;border-radius:6px;background:#fffefb;font-size:13px;font-weight:600;display:inline-flex;align-items:center;color:#262521}
+.print-sheet{padding:0 4px}
+.print-head h1{font-size:20px;margin:0 0 4px}
+.print-head p{margin:0;color:#706d65;font-size:13px}
+.print-hint{margin-top:8px !important}
+.print-button{min-height:40px;padding:0 16px;margin:14px 0;border:0;border-radius:6px;background:#1e2a45;color:#fff;font-weight:600}
+.print-table{border-collapse:collapse;width:100%;font-size:12px;margin-top:10px}
+.print-table th{text-align:left;border-bottom:1.5px solid #262521;padding:6px 8px;font-size:10px;text-transform:uppercase;letter-spacing:.8px}
+.print-table td{border-bottom:1px solid #d9d5cc;padding:6px 8px;vertical-align:top}
+@media print{
+  .admin-header,.print-button,.print-hint{display:none}
+  .admin-main{padding:0;max-width:none}
+  .print-table{font-size:9pt}
+  .print-table thead{display:table-header-group}
+  .print-table tr{break-inside:avoid}
+  @page{margin:14mm;size:A4 landscape}
+}
+.admin-gate{max-width:420px;margin:40px auto}
+.admin-signin{display:grid;gap:14px;background:#fffefb;border:1px solid #d9d5cc;border-radius:12px;padding:22px;margin-top:20px}
+.admin-signin label{display:grid;gap:6px;font-size:13px;font-weight:700}
+.admin-signin input{min-height:46px;padding:0 12px;border:1px solid #d9d5cc;border-radius:6px;background:#f7f5f0;font-size:15px}
+.admin-signin button{min-height:46px;border:0;border-radius:6px;background:#1e2a45;color:#fff;font-weight:700}
+.admin-signin .admin-signin-back{background:none;color:#706d65;font-weight:600;min-height:40px}
+.admin-nav{display:flex;gap:4px;flex-wrap:wrap;margin:0 0 22px}
+.admin-nav a{color:#1e2a45;font-size:14px;font-weight:600;padding:8px 12px;border-radius:6px;background:#efece5;min-height:44px;display:flex;align-items:center}
