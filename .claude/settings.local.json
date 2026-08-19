@@ -50,7 +50,17 @@
       "Bash(psql:*)",
       "Bash(cd /Users/burakaltintas/Documents/home-app-api && sed -n '75,100p' internal/server/server.go && echo \"=== storeDetail ===\" && grep -n \"func \\(s \\\\*Server\\) storeDetail\" -A20 internal/server/server.go)",
       "Bash(PORT=3999 npx next start -p 3999)",
-      "Bash(curl -s \"localhost:3999/api/proxy/feed?limit=1\" -o /tmp/feed.json -w \"%{http_code}\\\\n\"; head -c 300 /tmp/feed.json; echo; echo \"=== homepage server HTML: post markers ===\"; curl -s localhost:3999/ | grep -c 'post-card' ; echo \"=== homepage h1 ===\"; curl -s localhost:3999/ | grep -o '<h1[^>]*>[^<]*</h1>' | head -2)"
+      "Bash(curl -s \"localhost:3999/api/proxy/feed?limit=1\" -o /tmp/feed.json -w \"%{http_code}\\\\n\"; head -c 300 /tmp/feed.json; echo; echo \"=== homepage server HTML: post markers ===\"; curl -s localhost:3999/ | grep -c 'post-card' ; echo \"=== homepage h1 ===\"; curl -s localhost:3999/ | grep -o '<h1[^>]*>[^<]*</h1>' | head -2)",
+      "Bash(npx next *)",
+      "Bash(git reset *)",
+      "Bash(awk 'NR>=107 && NR<=108' internal/user/service.go)",
+      "Bash(npm --version)",
+      "Bash(go clean *)",
+      "Bash(rm -rf ~/Library/Developer/Xcode/\"iOS DeviceSupport\")",
+      "Bash(rm -rf ~/Library/Developer/Xcode/DerivedData)",
+      "Bash(rm -rf ~/Library/Caches/Homebrew)",
+      "Bash(rm -rf ~/Library/Caches/com.todesktop.230313mzl4w4u92.ShipIt)",
+      "Bash(rm -rf ~/Library/Caches/com.anthropic.claudefordesktop.ShipIt)"
     ]
   }
 }
