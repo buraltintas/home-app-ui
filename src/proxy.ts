@@ -28,7 +28,60 @@ function preferredLocale(request:NextRequest):Locale{
   return DEFAULT_LOCALE;
 }
 
-export function proxy(request:NextRequest){
+
+// The access token lives 15 minutes; its cookie lives as long as the refresh token, so a
+// stale token keeps being sent long after it died. Server components cannot write cookies,
+// so serverApi could only degrade to an anonymous read -- which is why a signed-in visitor
+// would suddenly see logged-out pages until they refreshed, and why refreshing fixed it.
+//
+// Proxy runs before rendering and *can* write cookies, so this is the one place the token
+// can be renewed in time for the render that needs it.
+//
+// The payload is decoded, never trusted: it only decides whether to attempt a refresh. The
+// API still verifies the signature on every call.
+function accessTokenExpiresSoon(token:string|undefined):boolean{
+  if(!token)return false;
+  const payload=token.split('.')[1];
+  if(!payload)return true;
+  try{
+    const decoded=JSON.parse(Buffer.from(payload.replace(/-/g,'+').replace(/_/g,'/'),'base64').toString()) as {exp?:number};
+    if(typeof decoded.exp!=='number')return true;
+    // Refresh a little early, so a render that starts just before expiry does not finish
+    // just after it.
+    return decoded.exp*1000-Date.now()<60_000;
+  }catch{return true;}
+}
+
+async function renewSession(request:NextRequest):Promise<string[]>{
+  const access=request.cookies.get('bosagezme_access')?.value;
+  const refresh=request.cookies.get('bosagezme_refresh')?.value;
+  if(!refresh||!accessTokenExpiresSoon(access))return [];
+  try{
+    const renewed=await fetch(new URL('/api/auth/refresh',request.nextUrl.origin),{
+      method:'POST',
+      headers:{cookie:request.headers.get('cookie')??''},
+    });
+    const cookies=renewed.headers.getSetCookie();
+    // Update the incoming request too, so the render happening on this very request is
+    // built as the signed-in visitor rather than one render behind.
+    const updated=cookies.find(value=>value.startsWith('bosagezme_access='));
+    const value=updated?.split(';')[0]?.split('=')[1];
+    if(value)request.cookies.set('bosagezme_access',value);
+    return cookies;
+  }catch{return [];/* a failed renewal leaves the request exactly as it arrived */}
+}
+
+export async function proxy(request:NextRequest){
+  // Renewal happens before routing, so the response it produces already reflects the
+  // refreshed session, and the new cookies ride out on whatever that response turns out
+  // to be -- rewrite or redirect alike.
+  const refreshed=await renewSession(request);
+  const response=route(request);
+  for(const cookie of refreshed)response.headers.append('set-cookie',cookie);
+  return response;
+}
+
+function route(request:NextRequest):NextResponse{
   const {pathname}=request.nextUrl;
   const segment=pathname.split('/')[1]??'';
 
