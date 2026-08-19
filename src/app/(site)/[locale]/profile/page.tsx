@@ -48,7 +48,9 @@ export default function Page(){
     <p className="eyebrow">{t('profile')}</p><h1>{t('profileTitle')}</h1>
     <p>{copy.body}</p>
     <button className="button primary" onClick={()=>setOpen(true)}>{t('signIn')}</button>
-    <Panel title={t('languageSection')} hint={t('languageHint')}><LocaleSwitcher/></Panel>
+    {/* Nothing to collapse on this screen -- there is one setting and no account behind
+        it, so the language control simply stands there. */}
+    <LocaleSwitcher/>
     <AuthDialog open={open} onClose={()=>setOpen(false)}/>
   </main>;
 
