@@ -6,10 +6,10 @@ import type {Locale} from '@/lib/types';
 // Only routes that exist are listed. A footer that links to pages still waiting on the
 // company details would hand every visitor a 404 and every crawler a dead end.
 const note:Record<Locale,string>={
-  tr:'Boşa Gezme! ürün satmaz. Listelenen mağazalar iş ortağı değildir.',
-  en:'Boşa Gezme! does not sell products. Listed stores are not partners.',
-  de:'Boşa Gezme! verkauft keine Produkte. Gelistete Geschäfte sind keine Partner.',
-  ru:'Boşa Gezme! не продаёт товары. Перечисленные магазины не являются партнёрами.',
+  tr:'Boşa Gezme! ürün satmaz. Listelenmek iş ortaklığı anlamına gelmez.',
+  en:'Boşa Gezme! does not sell products. Being listed does not mean a partnership.',
+  de:'Boşa Gezme! verkauft keine Produkte. Eine Listung bedeutet keine Partnerschaft.',
+  ru:'Boşa Gezme! не продаёт товары. Присутствие в списке не означает партнёрства.',
 };
 
 const order:LegalGroup[]=['product','privacy','legal','community'];

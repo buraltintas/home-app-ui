@@ -13,9 +13,13 @@ const age=legalFacts.minimumAge??16;
 // mandatory consumer rights -- are stated openly, which is what makes the rest hold.
 //
 // Second, every disclaimer describes the product as it is. The platform sells nothing,
-// verifies no store ownership, has no partnerships and no advertising, and does not yet
-// operate a moderation system beyond acting on reports sent by email. Claiming otherwise
-// to sound more established would create the liability it was meant to avoid.
+// verifies no store ownership, carries no advertising, and does not yet operate a
+// moderation system beyond acting on reports sent by email. Claiming otherwise to sound
+// more established would create the liability it was meant to avoid.
+//
+// The partnership wording says that listing does not imply a partnership, rather than
+// that no store is a partner. Commercial arrangements are planned, and a clause that
+// becomes false the day the first one is signed is worse than no clause.
 export const terms:LegalDoc={
   slug:'terms',
   version:'1.0',
@@ -25,7 +29,7 @@ export const terms:LegalDoc={
   content:{
     tr:{
       title:'Kullanım Koşulları',
-      summary:`Boşa Gezme!'yi kullanarak bu koşulları kabul etmiş olursunuz. Kısaca: burası mağaza keşfetmeye yarayan bir topluluk platformudur, ürün satmaz, listelenen mağazalarla iş ortaklığı yoktur ve yazdığınız içerikten siz sorumlusunuz.`,
+      summary:`Boşa Gezme!'yi kullanarak bu koşulları kabul etmiş olursunuz. Kısaca: burası mağaza keşfetmeye yarayan bir topluluk platformudur, ürün satmaz, listelenmek iş ortaklığı anlamına gelmez ve yazdığınız içerikten siz sorumlusunuz.`,
       sections:[
         {id:'taraflar',heading:'1. Taraflar ve tanımlar',blocks:[
           {p:`Bu koşullar, platformu işleten ${controller} ("Boşa Gezme!", "biz") ile platformu kullanan kişi ("siz") arasındadır. İletişim: ${mail}`},
@@ -34,7 +38,7 @@ export const terms:LegalDoc={
         {id:'hizmet',heading:'2. Hizmetin kapsamı ve ne olmadığı',blocks:[
           {p:'Boşa Gezme!, fiziksel ev ve yaşam mağazalarını keşfetmeye yarayan bir bilgi ve topluluk platformudur.'},
           {p:'Boşa Gezme! satıcı, mağaza sahibi, tüccar veya herhangi bir mağazanın temsilcisi ya da acentesi değildir. Platform üzerinden satış, sipariş, rezervasyon veya ödeme yapılamaz.'},
-          {p:'Bir mağazanın platformda yer alması, o mağazayla aramızda ticari ilişki, anlaşma veya ortaklık bulunduğu anlamına gelmez. Ücretli yerleşim, sponsorluk veya reklam uygulaması bulunmamaktadır.'},
+          {p:'Bir mağazanın platformda yer alması, tek başına, o mağazayla aramızda ticari ilişki veya ortaklık bulunduğu anlamına gelmez. Şu anda ücretli yerleşim, sponsorluk veya reklam uygulaması yoktur; ileride ticari iş birlikleri kurulursa açıkça belirtilir.'},
         ]},
         {id:'yas',heading:'3. Yaş ve hesap',blocks:[
           {p:`Hesap oluşturabilmek için en az ${age} yaşında olmanız gerekir. ${age} yaşından küçükseniz hesap açamazsınız.`},
@@ -116,7 +120,7 @@ export const terms:LegalDoc={
     },
     en:{
       title:'Terms of Service',
-      summary:'By using Boşa Gezme! you accept these terms. In short: this is a community platform for discovering stores, it sells nothing, listed stores are not partners, and you are responsible for the content you write.',
+      summary:'By using Boşa Gezme! you accept these terms. In short: this is a community platform for discovering stores, it sells nothing, being listed does not mean a partnership, and you are responsible for the content you write.',
       sections:[
         {id:'taraflar',heading:'1. Parties and definitions',blocks:[
           {p:`These terms are between ${controller}, who operates the platform ("Boşa Gezme!", "we"), and the person using it ("you"). Contact: ${mail}`},
@@ -125,7 +129,7 @@ export const terms:LegalDoc={
         {id:'hizmet',heading:'2. What the service is, and what it is not',blocks:[
           {p:'Boşa Gezme! is an information and community platform for discovering physical home and living stores.'},
           {p:'Boşa Gezme! is not a seller, store owner, merchant, agent or representative of any store. No sale, order, reservation or payment can be made through the platform.'},
-          {p:'A store appearing on the platform does not mean there is any commercial relationship, agreement or partnership with it. There is no paid placement, sponsorship or advertising.'},
+          {p:'A store appearing on the platform does not, by itself, mean there is a commercial relationship or partnership with it. There is currently no paid placement, sponsorship or advertising; if commercial arrangements are introduced, they will be clearly marked.'},
         ]},
         {id:'yas',heading:'3. Age and account',blocks:[
           {p:`You must be at least ${age} years old to create an account. If you are under ${age}, you may not open one.`},
@@ -207,7 +211,7 @@ export const terms:LegalDoc={
     },
     de:{
       title:'Nutzungsbedingungen',
-      summary:'Mit der Nutzung von Boşa Gezme! akzeptierst du diese Bedingungen. Kurz gesagt: Dies ist eine Community-Plattform zum Entdecken von Geschäften, sie verkauft nichts, gelistete Geschäfte sind keine Partner, und für deine Inhalte bist du verantwortlich.',
+      summary:'Mit der Nutzung von Boşa Gezme! akzeptierst du diese Bedingungen. Kurz gesagt: Dies ist eine Community-Plattform zum Entdecken von Geschäften, sie verkauft nichts, eine Listung bedeutet keine Partnerschaft, und für deine Inhalte bist du verantwortlich.',
       sections:[
         {id:'taraflar',heading:'1. Parteien und Begriffe',blocks:[
           {p:`Diese Bedingungen gelten zwischen ${controller}, der die Plattform betreibt („Boşa Gezme!“, „wir“), und der nutzenden Person („du“). Kontakt: ${mail}`},
@@ -216,7 +220,7 @@ export const terms:LegalDoc={
         {id:'hizmet',heading:'2. Was der Dienst ist und was nicht',blocks:[
           {p:'Boşa Gezme! ist eine Informations- und Community-Plattform zum Entdecken physischer Wohn- und Einrichtungsgeschäfte.'},
           {p:'Boşa Gezme! ist weder Verkäufer noch Geschäftsinhaber, Händler, Vertreter oder Vermittler eines Geschäfts. Über die Plattform sind kein Verkauf, keine Bestellung, keine Reservierung und keine Zahlung möglich.'},
-          {p:'Das Erscheinen eines Geschäfts bedeutet keine geschäftliche Beziehung, Vereinbarung oder Partnerschaft. Es gibt keine bezahlte Platzierung, kein Sponsoring und keine Werbung.'},
+          {p:'Das Erscheinen eines Geschäfts bedeutet für sich genommen keine geschäftliche Beziehung oder Partnerschaft. Derzeit gibt es keine bezahlte Platzierung, kein Sponsoring und keine Werbung; künftige kommerzielle Kooperationen werden deutlich gekennzeichnet.'},
         ]},
         {id:'yas',heading:'3. Alter und Konto',blocks:[
           {p:`Für ein Konto musst du mindestens ${age} Jahre alt sein. Unter ${age} Jahren darfst du kein Konto anlegen.`},
@@ -298,7 +302,7 @@ export const terms:LegalDoc={
     },
     ru:{
       title:'Условия использования',
-      summary:'Пользуясь Boşa Gezme!, вы принимаете эти условия. Коротко: это платформа сообщества для поиска магазинов, она ничего не продаёт, перечисленные магазины не являются партнёрами, и вы отвечаете за свой контент.',
+      summary:'Пользуясь Boşa Gezme!, вы принимаете эти условия. Коротко: это платформа сообщества для поиска магазинов, она ничего не продаёт, присутствие в списке не означает партнёрства, и вы отвечаете за свой контент.',
       sections:[
         {id:'taraflar',heading:'1. Стороны и определения',blocks:[
           {p:`Настоящие условия заключены между ${controller}, управляющим платформой («Boşa Gezme!», «мы»), и пользователем («вы»). Контакт: ${mail}`},
@@ -307,7 +311,7 @@ export const terms:LegalDoc={
         {id:'hizmet',heading:'2. Чем сервис является и чем не является',blocks:[
           {p:'Boşa Gezme! — информационная платформа сообщества для поиска физических магазинов товаров для дома.'},
           {p:'Boşa Gezme! не является продавцом, владельцем магазина, торговцем, агентом или представителем магазина. Через платформу нельзя купить, заказать, забронировать или оплатить.'},
-          {p:'Присутствие магазина не означает коммерческих отношений, договора или партнёрства. Платного размещения, спонсорства и рекламы нет.'},
+          {p:'Присутствие магазина само по себе не означает коммерческих отношений или партнёрства. Сейчас платного размещения, спонсорства и рекламы нет; будущие коммерческие соглашения будут явно обозначены.'},
         ]},
         {id:'yas',heading:'3. Возраст и аккаунт',blocks:[
           {p:`Для создания аккаунта вам должно быть не менее ${age} лет. Младше ${age} лет создавать аккаунт нельзя.`},

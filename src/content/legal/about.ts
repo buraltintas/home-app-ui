@@ -29,8 +29,8 @@ export const about:LegalDoc={
           {p:'Boşa Gezme! satıcı, mağaza sahibi, tüccar veya herhangi bir mağazanın temsilcisi değildir. Stok, fiyat, çalışma saati veya ürün bulunabilirliği konusunda taraf değildir.'},
         ]},
         {id:'partner',heading:'Listelenen mağazalar iş ortağı mı?',blocks:[
-          {p:'Hayır. Bir mağazanın burada yer alması, o mağazayla aramızda herhangi bir ticari ilişki, anlaşma veya ortaklık olduğu anlamına gelmez.'},
-          {p:'Mağazalar keşfedilebilir oldukları için listelenir, bir şey ödedikleri için değil. Şu anda ücretli yerleşim, sponsorluk veya reklam bulunmamaktadır.'},
+          {p:'Bir mağazanın burada yer alması, o mağazayla aramızda bir ticari ilişki veya ortaklık bulunduğu anlamına gelmez. Mağazalar keşfedilebilir oldukları için listelenir.'},
+          {p:'Şu anda ücretli yerleşim, sponsorluk veya reklam bulunmamaktadır. İleride ticari iş birlikleri kurulursa, bunlar açıkça belirtilir ve bu sayfa güncellenir.'},
         ]},
         {id:'kaynak',heading:'Mağaza bilgileri nereden geliyor?',blocks:[
           {p:'Mağaza adları, adresleri ve konumları büyük ölçüde Google Places üzerinden gelir. Bir mağaza sayfasında Google kaynaklı puan ve yorum sayısı görürseniz, bunlar Google\'a aittir ve bizim topluluk puanımızdan ayrı bir bölümde gösterilir.'},
@@ -68,8 +68,8 @@ export const about:LegalDoc={
           {p:'Boşa Gezme! is not a seller, a store owner, a merchant, or an agent for any store. It is not a party to stock, pricing, opening hours or product availability.'},
         ]},
         {id:'partner',heading:'Are the stores listed here partners?',blocks:[
-          {p:'No. A store appearing here does not mean there is any commercial relationship, agreement or partnership between that store and Boşa Gezme!.'},
-          {p:'Stores are listed because they are discoverable, not because they paid for anything. There is currently no paid placement, sponsorship or advertising.'},
+          {p:'A store appearing here does not mean there is a commercial relationship or partnership between it and Boşa Gezme!. Stores are listed because they are discoverable.'},
+          {p:'There is currently no paid placement, sponsorship or advertising. If commercial arrangements are introduced in future, they will be clearly marked and this page updated.'},
         ]},
         {id:'kaynak',heading:'Where does store information come from?',blocks:[
           {p:'Store names, addresses and locations largely come from Google Places. Where you see a Google rating and review count on a store page, those belong to Google and are shown in a separate panel from our own community rating.'},
@@ -107,8 +107,8 @@ export const about:LegalDoc={
           {p:'Boşa Gezme! ist weder Verkäufer noch Geschäftsinhaber, Händler oder Vertreter eines Geschäfts und ist nicht Partei in Bezug auf Bestand, Preise, Öffnungszeiten oder Verfügbarkeit.'},
         ]},
         {id:'partner',heading:'Sind die gelisteten Geschäfte Partner?',blocks:[
-          {p:'Nein. Dass ein Geschäft hier erscheint, bedeutet nicht, dass zwischen diesem Geschäft und Boşa Gezme! eine geschäftliche Beziehung, Vereinbarung oder Partnerschaft besteht.'},
-          {p:'Geschäfte werden gelistet, weil sie auffindbar sind, nicht weil sie dafür bezahlt haben. Es gibt derzeit keine bezahlte Platzierung, kein Sponsoring und keine Werbung.'},
+          {p:'Dass ein Geschäft hier erscheint, bedeutet nicht, dass zwischen ihm und Boşa Gezme! eine geschäftliche Beziehung oder Partnerschaft besteht. Geschäfte werden gelistet, weil sie auffindbar sind.'},
+          {p:'Derzeit gibt es keine bezahlte Platzierung, kein Sponsoring und keine Werbung. Werden künftig kommerzielle Kooperationen eingeführt, werden sie deutlich gekennzeichnet und diese Seite aktualisiert.'},
         ]},
         {id:'kaynak',heading:'Woher stammen die Geschäftsinformationen?',blocks:[
           {p:'Namen, Adressen und Standorte stammen überwiegend aus Google Places. Wo auf einer Geschäftsseite eine Google-Bewertung und Bewertungsanzahl erscheint, gehört diese Google und wird getrennt von unserer Community-Bewertung dargestellt.'},
@@ -146,8 +146,8 @@ export const about:LegalDoc={
           {p:'Boşa Gezme! не является продавцом, владельцем магазина, торговцем или представителем какого-либо магазина и не отвечает за наличие товара, цены, часы работы и доступность.'},
         ]},
         {id:'partner',heading:'Являются ли магазины партнёрами?',blocks:[
-          {p:'Нет. Присутствие магазина здесь не означает наличия коммерческих отношений, договора или партнёрства с Boşa Gezme!.'},
-          {p:'Магазины перечислены потому, что их можно найти, а не потому, что они за это заплатили. Платного размещения, спонсорства и рекламы сейчас нет.'},
+          {p:'Присутствие магазина здесь не означает наличия коммерческих отношений или партнёрства с Boşa Gezme!. Магазины перечислены потому, что их можно найти.'},
+          {p:'Платного размещения, спонсорства и рекламы сейчас нет. Если в будущем появятся коммерческие соглашения, они будут явно обозначены, а эта страница обновлена.'},
         ]},
         {id:'kaynak',heading:'Откуда берутся сведения о магазинах?',blocks:[
           {p:'Названия, адреса и координаты в основном поступают из Google Places. Если на странице магазина показаны рейтинг и число отзывов Google, они принадлежат Google и отображаются отдельно от рейтинга нашего сообщества.'},
