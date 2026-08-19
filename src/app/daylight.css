@@ -99,6 +99,12 @@ svg{stroke-width:2}
 .external-note,.guidance-card{background:var(--accent-wash);color:var(--ink)}
 .danger-zone{border-radius:var(--r-md);border-width:2px}
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+/* A focus ring answers "where is the keyboard". On a touch screen there is no keyboard
+   to locate, and the ring lands on whatever was last tapped and stays there, which reads
+   as a stuck selection rather than as help. Links and buttons drop it on coarse pointers.
+   Fields keep it: an on-screen keyboard is open and the caret alone is a weak signal of
+   which field it is typing into. */
+@media(pointer:coarse){a:focus-visible,button:focus-visible,summary:focus-visible,[role="button"]:focus-visible{outline:none;box-shadow:none}}
 .post-store h2{font-size:clamp(22px,2.3vw,34px)}
 .post-photo.is-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:var(--muted);color:var(--ink-muted)}
 .post-photo.is-empty span{font-size:clamp(44px,6vw,84px);line-height:1;letter-spacing:-.04em}

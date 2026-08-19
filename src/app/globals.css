@@ -240,6 +240,7 @@ body>main{flex:1 0 auto}
    full-width row: it drew a halo around the whole width of the screen. Inside the summary,
    on the label, is where the eye is already looking. */
 .profile-panel>summary:focus-visible{outline:3px solid var(--accent);outline-offset:-4px}
+@media(pointer:coarse){.profile-panel>summary:focus-visible{outline:none}}
 .profile-panel>summary::after{content:"";position:absolute;right:8px;top:26px;width:10px;height:10px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);transform:rotate(45deg);transition:transform .18s ease}
 .profile-panel[open]>summary::after{transform:rotate(-135deg)}
 .profile-panel-body{padding:2px 0 30px}
