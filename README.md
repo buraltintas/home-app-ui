@@ -4,7 +4,7 @@ The web experience for Boşa Gezme!: an anonymous-first Next.js application that
 
 Canonical production URL: [https://bosagezme.com](https://bosagezme.com). The supplied logo is used without redrawing or recoloring; derived favicon and app-icon assets preserve the original artwork.
 
-This repository currently contains the working frontend prototype, responsive design system, and browser-side API boundary.
+This repository contains the web application, its design system, the browser-side API boundary, and the operator surface.
 
 ## Current experience
 
@@ -14,18 +14,32 @@ This repository currently contains the working frontend prototype, responsive de
 - User-initiated current or manually chosen location for nearby discovery
 - Results that keep Boşa Gezme! community data separate from Google data
 - Server-rendered store, review, and user pages
-- Foundations for favorites, profile, and review creation
+- Favorites, a profile that can be edited, and review creation
+- Contributor levels shown beside an author, derived from their published reviews
+- Paid placement labelled as promoted wherever it appears
+- A feedback screen for telling us what the product gets wrong, with no account required
+- An operator surface at `/admin`, behind an address allowlist and kept out of the index
 - Contextual authentication with Google and passwordless email OTP
 - Confirmed account deletion that clears the HTTP-only session and returns to anonymous mode
 - Interface dictionaries for Turkish, English, German, and Russian
 - A bottom-anchored, label-free, accessible glass navigation rail on mobile web
 - Keyboard focus, semantic HTML, and reduced-motion support
+- A session that renews itself before it expires, guarded by a cross-tab lock so two tabs
+  cannot present the same rotating refresh token
 
 ## Design direction
 
 Boşa Gezme! is a consumer social product for discovering physical stores. It is not ecommerce, a merchant dashboard, or a generic review directory.
 
-The interface is warm, quiet, and editorial. Photography and authored content remain more prominent than interface chrome. The palette combines off-white surfaces, dark ink tones, and a restrained terracotta accent.
+The visual world is **Daylight**, and [DESIGN.md](DESIGN.md) is its authority: a warm
+off-white ground, near-black ink, one honey accent used as an area rather than as a line,
+and clay for the few values that must be read first. One family, Onest, at four weights.
+Soft geometry, generous space, hairline divisions. Photography and authored content remain
+more prominent than interface chrome.
+
+It replaced City Print, which expressed confidence through weight -- rules everywhere, zero
+radius, hard shadows -- and read well on the feed and the store page while turning harsh
+everywhere a person had work to do.
 
 Responsive web uses two intentional compositions:
 
@@ -33,12 +47,30 @@ Responsive web uses two intentional compositions:
 - A viewport-anchored glass navigation rail at 900 px and below
 - Recognizable Lucide icons without visible labels on mobile, while accessible names remain available
 - Material blur restricted to navigation rather than repeated across content
+- Focus rings on coarse pointers only where a keyboard is genuinely open: on a touch screen
+  a ring lands on whatever was last tapped and reads as a stuck selection, so links, buttons
+  and panel headers drop it while fields keep it
 
-The canonical design authority lives in `.agents/skills/home-app-design/SKILL.md` in the Boşa Gezme! API repository.
+The product design authority is `.claude/skills/home-app-design/SKILL.md`, loaded in every
+session in this repository. The same file is kept in the API repository for mobile; editing
+one means editing both. `DESIGN.md` carries the web implementation of that system.
 
 ## Brand assets
 
-Web branding lives under `public/brand/`. The transparent logo is used in the header, the mascot artwork drives browser and PWA icons, and `social-share-banner.png` is the wide Open Graph/Twitter preview. Keep these role-specific files separate; do not substitute the full wordmark for small platform icons.
+Web branding lives under `public/brand/`. The mark is used in the header, the mascot
+artwork drives browser and PWA icons, and `/og` renders the share card at the ratio
+messaging apps crop to -- the transparent full logo with the line under it. The shipped
+`social-share-banner.png` is 3:1 with the logo pinned left, so a preview cropped it to
+mostly empty canvas. Keep these role-specific files separate; do not substitute the full
+wordmark for small platform icons.
+
+The line is **Bize Sor.** It completes the name rather than repeating it, so under the mark
+it reads "Boşa Gezme! / Bize Sor.". It appears in the header lockup, the footer, the share
+card, the emails, and as the eyebrow on the search page -- the one screen where asking us is
+literally what the field below does. It is not repeated on every heading: a line that
+appears everywhere stops being read anywhere. It stays Turkish in every locale and carries
+`lang="tr"`, without which CSS uppercasing cases it by the page language and renders the
+dotless "BIZE".
 
 ## Technology
 
@@ -47,7 +79,7 @@ Web branding lives under `public/brand/`. The transparent logo is used in the he
 - TypeScript
 - Lucide React
 - Browser BFF through Next.js route handlers
-- Source Sans 3 and Source Serif 4
+- Onest, one family at four weights, with Latin, Latin Extended and Cyrillic
 
 ## Routes
 
@@ -65,7 +97,7 @@ addresses.
 | `/users/[id]` | Public user profile |
 | `/favorites` | Saved stores (sign-in only, `noindex`) |
 | `/create` | Visit-review creation (sign-in only, `noindex`) |
-| `/profile` | Personal profile and language settings (sign-in only, `noindex`) |
+| `/profile` | Identity, profile editing, search history, language, account (sign-in only, `noindex`) |
 
 Informational and legal routes, all server-rendered in four languages:
 
@@ -84,6 +116,7 @@ Informational and legal routes, all server-rendered in four languages:
 | `/children-privacy` | Minimum age and data about children |
 | `/commercial-communications` | Transactional versus marketing messages |
 | `/report-content` | Reporting content that breaks the rules |
+| `/feedback` | Telling us what the product gets wrong; no account required |
 
 ## Locale routing
 
@@ -176,13 +209,15 @@ Feed likes and store favorites update only after the BFF confirms the backend mu
 
 ```text
 src/
-  app/[locale]/ Locale-scoped App Router pages
+  app/(site)/[locale]/  Locale-scoped App Router pages
+  app/(admin)/admin/    Operator surface: its own root layout, Turkish only, noindex
   app/api/      BFF route handlers, the only code that talks to the Go API
   components/   Feed, authentication, search, store and legal-document components
   content/      Legal and informational copy, held as data in four languages
   i18n/         Turkish, English, German, and Russian dictionaries
   lib/          Typed API, URL and structured-data helpers, legal facts
   proxy.ts      Locale resolution
+DESIGN.md       The Daylight visual world: tokens, type, primitives, composition
 public/
   brand/        Role-specific logo, app icon, and social sharing artwork
   images/       Development presentation imagery
@@ -201,6 +236,25 @@ clause is a different contract, not a different wording.
 
 Outstanding questions for counsel are tracked in [docs/LEGAL_REVIEW_REQUIRED.md](docs/LEGAL_REVIEW_REQUIRED.md).
 
+## Operator surface
+
+`/admin` is a separate root layout reached through a route group, so the URL stays `/admin`
+while the page shares nothing with the product shell: no site header, no footer, no locale
+provider. Administration is a different job from browsing, and mixing the two chrome sets
+makes it easy to forget which one you are looking at. It is Turkish only.
+
+Access is the ordinary email sign-in; the backend decides authorisation from an address
+allowlist and answers 404 rather than 403 to anybody else, because a 403 confirms the route
+exists. Signing in there signs you out of the product session first: the two are separate
+jobs and mixing them is how somebody administers while believing they are browsing.
+
+It is kept out of the index in three independent places, because one is easy to undo by
+accident: `robots.ts`, the layout metadata, and the proxy matcher that never locale-rewrites
+it.
+
+Sections: overview, searches, stores, users, reviews, feedback, audit log. Reports export to
+Excel and to a print sheet, and tables page rather than truncate.
+
 ## Validation
 
 ```bash
@@ -209,6 +263,10 @@ npm run lint
 npm test
 npm run build
 ```
+
+`npm test` currently runs the type check; there is no browser or unit suite yet. Until
+there is, every regression is found in production by a person using the site, which is
+where the last several were found.
 
 ## Related repositories
 
