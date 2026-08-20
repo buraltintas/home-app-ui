@@ -63,3 +63,7 @@ export function asLocale(value:string|undefined):Locale{
 // The default share image. Pages with a photo of their own (a store, a review) set theirs
 // instead; everything else points here.
 export const shareImage={url:'/og',width:1200,height:630,alt:'Boşa Gezme, Bize Sor.'};
+// What a link preview shows in a chat window. It is not the page title: that one has to
+// describe the page for a search engine, while a card is read next to a logo, where the
+// brand and its line carry it and the description underneath says what the thing is.
+export const shareTitle='Boşa Gezme! Bize Sor.';
