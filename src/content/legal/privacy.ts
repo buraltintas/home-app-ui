@@ -13,9 +13,9 @@ const mail=legalFacts.privacyEmail??'';
 // saved location is stored precisely, and that the email address outlives deletion.
 export const privacy:LegalDoc={
   slug:'privacy',
-  version:'1.0',
+  version:'1.1',
   effective:'2026-08-19',
-  updated:'2026-08-19',
+  updated:'2026-08-20',
   requiresEntity:true,
   content:{
     tr:{
@@ -40,6 +40,7 @@ export const privacy:LegalDoc={
             'İsteğe bağlı özel profil: ilişki durumu, çocuk yaş aralıkları, konut durumu, meslek, yaş aralığı, ilgi alanları',
             'İçerik: değerlendirmeler, puanlar, yorumlar, yüklediğiniz görseller',
             'Etkileşim: beğeni, favori, takip',
+            'Bize gönderdiğiniz görüş ve öneriler: mesajınız ve yazdıysanız yanıt için verdiğiniz e-posta adresi. Bunlar yayınlanmaz.',
           ]},
           {h3:'Kullanırken oluşan'},
           {ul:[
@@ -106,6 +107,7 @@ export const privacy:LegalDoc={
             'Optional private profile: relationship status, children’s age ranges, housing status, occupation, age range, interests',
             'Content: reviews, ratings, comments, images you upload',
             'Interactions: likes, favourites, follows',
+            'Feedback you send us: your message, and the email address you give for a reply if you give one. It is never published.',
           ]},
           {h3:'What arises from use'},
           {ul:[
@@ -172,6 +174,7 @@ export const privacy:LegalDoc={
             'Optionales privates Profil: Beziehungsstatus, Altersgruppen von Kindern, Wohnsituation, Beruf, Altersgruppe, Interessen',
             'Inhalte: Bewertungen, Noten, Kommentare, hochgeladene Bilder',
             'Interaktionen: Likes, Favoriten, Follows',
+            'Rückmeldungen an uns: deine Nachricht und, falls angegeben, die E-Mail-Adresse für eine Antwort. Sie werden nicht veröffentlicht.',
           ]},
           {h3:'Was bei der Nutzung entsteht'},
           {ul:[
@@ -238,6 +241,7 @@ export const privacy:LegalDoc={
             'Необязательный приватный профиль: семейное положение, возрастные группы детей, жильё, профессия, возраст, интересы',
             'Контент: отзывы, оценки, комментарии, загруженные изображения',
             'Взаимодействия: лайки, избранное, подписки',
+            'Отзывы, отправленные нам: ваше сообщение и, если вы его указали, адрес эл. почты для ответа. Они не публикуются.',
           ]},
           {h3:'Что возникает при использовании'},
           {ul:[

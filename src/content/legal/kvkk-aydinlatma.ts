@@ -14,9 +14,9 @@ const mail=legalFacts.privacyEmail??'';
 // full precision), it is stated rather than smoothed over.
 export const kvkkAydinlatma:LegalDoc={
   slug:'kvkk/aydinlatma-metni',
-  version:'1.0',
+  version:'1.1',
   effective:'2026-08-19',
-  updated:'2026-08-19',
+  updated:'2026-08-20',
   requiresEntity:true,
   content:{
     tr:{
@@ -41,6 +41,7 @@ export const kvkkAydinlatma:LegalDoc={
             ['Özel profil bilgileri','İlişki durumu, çocuk yaş aralıkları, konut durumu, meslek, yaş aralığı, ilgi alanları','Önerilerin kişiselleştirilmesi','m.5/1 — açık rıza (tamamı isteğe bağlıdır)'],
             ['Görsel yükleme','Yüklediğiniz görseller ve teknik meta verileri','İçeriğin yayımlanması','m.5/2-c — sözleşmenin ifası'],
             ['Ziyaretçi oturumu','Anonim oturum kimliği','Giriş yapmadan gezinebilme','m.5/2-f — meşru menfaat'],
+            ['Görüş ve öneri gönderme','Mesajınız ve yanıt isterseniz verdiğiniz e-posta adresi','Ürünün iyileştirilmesi ve size dönüş yapılabilmesi','m.5/2-f — meşru menfaat (ürünün geliştirilmesi)'],
             ['Güvenlik ve işlem kayıtları','İstek kimliği, hata ve erişim kayıtları','Sistem güvenliği ve hukuki yükümlülük','m.5/2-ç — hukuki yükümlülük ve m.5/2-f'],
           ]}},
           {note:'Açık rızaya dayanan iki faaliyet (kaydedilen konum ve özel profil bilgileri) hizmete erişimin şartı değildir. Rızanızı vermeseniz de platformu kullanabilirsiniz; verdikten sonra da her zaman geri alabilirsiniz.'},
@@ -113,6 +114,7 @@ export const kvkkAydinlatma:LegalDoc={
             ['Private profile details','Relationship status, children’s age ranges, housing status, occupation, age range, interests','Personalising recommendations','art. 5/1 — explicit consent (entirely optional)'],
             ['Media upload','Images you upload and their technical metadata','Publishing your content','art. 5/2-c — performance of a contract'],
             ['Visitor session','Anonymous session identifier','Browsing without signing in','art. 5/2-f — legitimate interest'],
+            ['Sending feedback','Your message and, if you ask for a reply, the email address you give','Improving the product and being able to answer you','Art. 5/2-f — legitimate interest (improving the product)'],
             ['Security and operational logs','Request identifier, error and access logs','System security and legal obligations','art. 5/2-ç — legal obligation, and art. 5/2-f'],
           ]}},
           {note:'The two activities based on explicit consent (saved location and private profile details) are not a condition of using the service. You can use the platform without giving them, and you can withdraw consent at any time afterwards.'},
@@ -185,6 +187,7 @@ export const kvkkAydinlatma:LegalDoc={
             ['Private Profilangaben','Beziehungsstatus, Altersgruppen von Kindern, Wohnsituation, Beruf, Altersgruppe, Interessen','Personalisierung von Empfehlungen','Art. 5/1 — ausdrückliche Einwilligung (freiwillig)'],
             ['Medien-Upload','Hochgeladene Bilder und deren technische Metadaten','Veröffentlichung deiner Inhalte','Art. 5/2-c — Vertragserfüllung'],
             ['Besuchersitzung','Anonyme Sitzungskennung','Nutzung ohne Anmeldung','Art. 5/2-f — berechtigtes Interesse'],
+            ['Rückmeldung senden','Deine Nachricht und, wenn du eine Antwort möchtest, die angegebene E-Mail-Adresse','Verbesserung des Produkts und Antwort an dich','Art. 5/2-f — berechtigtes Interesse (Produktverbesserung)'],
             ['Sicherheits- und Betriebsprotokolle','Anfragekennung, Fehler- und Zugriffsprotokolle','Systemsicherheit und rechtliche Pflichten','Art. 5/2-ç — rechtliche Pflicht und Art. 5/2-f'],
           ]}},
           {note:'Die beiden auf ausdrücklicher Einwilligung beruhenden Tätigkeiten sind keine Bedingung für die Nutzung des Dienstes. Du kannst die Plattform ohne sie nutzen und die Einwilligung jederzeit widerrufen.'},
@@ -257,6 +260,7 @@ export const kvkkAydinlatma:LegalDoc={
             ['Приватные данные профиля','Семейное положение, возрастные группы детей, жильё, профессия, возраст, интересы','Персонализация рекомендаций','ст. 5/1 — явное согласие (полностью добровольно)'],
             ['Загрузка изображений','Загруженные изображения и их технические метаданные','Публикация вашего контента','ст. 5/2-c — исполнение договора'],
             ['Сессия посетителя','Анонимный идентификатор сессии','Просмотр без входа','ст. 5/2-f — законный интерес'],
+            ['Отправка отзыва','Ваше сообщение и, если вы хотите ответ, указанный адрес эл. почты','Улучшение продукта и возможность вам ответить','ст. 5/2-f — законный интерес (улучшение продукта)'],
             ['Журналы безопасности','Идентификатор запроса, журналы ошибок и доступа','Безопасность системы и правовые обязанности','ст. 5/2-ç — правовая обязанность и ст. 5/2-f'],
           ]}},
           {note:'Две деятельности на основе явного согласия не являются условием пользования сервисом. Вы можете пользоваться платформой без них и в любой момент отозвать согласие.'},
