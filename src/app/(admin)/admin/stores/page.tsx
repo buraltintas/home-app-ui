@@ -6,9 +6,10 @@ import {ExportLinks} from '../ExportLinks';
 import {AdminSearch} from '../AdminSearch';
 import {CategoryEditor} from '../CategoryEditor';
 import {getCategories,getStores} from '@/lib/admin-api';
+import {adminDate} from '@/lib/admin-time';
 
 export const dynamic='force-dynamic';
-const when=(v:string)=>new Date(v).toLocaleDateString('tr-TR');
+const when=adminDate;
 
 export default async function Page({searchParams}:{searchParams:Promise<{q?:string;page?:string}>}){
   const {q,page:pageParam}=await searchParams;

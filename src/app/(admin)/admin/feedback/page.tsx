@@ -4,9 +4,10 @@ import {AdminAction} from '../AdminAction';
 import {AdminPager} from '../AdminPager';
 import {AdminSearch} from '../AdminSearch';
 import {getFeedback} from '@/lib/admin-api';
+import {adminDateTime} from '@/lib/admin-time';
 
 export const dynamic='force-dynamic';
-const when=(v:string)=>new Date(v).toLocaleString('tr-TR',{dateStyle:'short',timeStyle:'short'});
+const when=adminDateTime;
 const KINDS:Record<string,string>={suggestion:'Öneri',problem:'Sorun',praise:'Beğeni',other:'Diğer'};
 const STATUS:Record<string,string>={new:'Yeni',read:'Okundu',handled:'Kapandı'};
 

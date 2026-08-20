@@ -3,9 +3,10 @@ import {AccessDenied} from '../AccessDenied';
 import {AdminPager} from '../AdminPager';
 import {ExportLinks} from '../ExportLinks';
 import {getAudit} from '@/lib/admin-api';
+import {adminDateTime} from '@/lib/admin-time';
 
 export const dynamic='force-dynamic';
-const when=(v:string)=>new Date(v).toLocaleString('tr-TR');
+const when=adminDateTime;
 
 export default async function Page({searchParams}:{searchParams:Promise<{page?:string}>}){
   const {page:pageParam}=await searchParams;

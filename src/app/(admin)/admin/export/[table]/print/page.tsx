@@ -1,6 +1,7 @@
 import {AccessDenied} from '../../../AccessDenied';
 import {PrintTrigger} from './PrintTrigger';
 import {cell, exportableTables, loadTable} from '@/lib/admin-export';
+import {ADMIN_TIME_ZONE} from '@/lib/admin-time';
 
 export const dynamic='force-dynamic';
 
@@ -21,7 +22,7 @@ export default async function Page({params,searchParams}:{
     <PrintTrigger/>
     <header className="print-head">
       <h1>{data.title}</h1>
-      <p>Boşa Gezme! · {new Date().toLocaleString('tr-TR')} · {data.rows.length} kayıt{q?` · filtre: “${q}”`:''}</p>
+      <p>Boşa Gezme! · {new Date().toLocaleString('tr-TR',{timeZone:ADMIN_TIME_ZONE,dateStyle:'short',timeStyle:'short'})} · {data.rows.length} kayıt{q?` · filtre: “${q}”`:''}</p>
       <p className="print-hint">Yazdırma penceresinde hedefi <strong>PDF olarak kaydet</strong> seçerek dosyayı alabilirsin.</p>
     </header>
     <table className="print-table">

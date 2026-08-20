@@ -1,5 +1,6 @@
 import 'server-only';
 import {serverApi} from './server-api';
+import {ADMIN_TIME_ZONE} from './admin-time';
 
 // Exports read the same admin routes the tables read, so an export can never show data the
 // panel would not. They ask for a much larger page than the screen does: the table is
@@ -58,7 +59,9 @@ export async function loadTable(table:string,q?:string):Promise<Table|null>{
 export function cell(value:unknown,key:string):string{
   if(value===null||value===undefined||value==='')return '';
   if(typeof value==='boolean')return value?'Evet':'Hayır';
-  if(key.endsWith('_at'))return new Date(String(value)).toLocaleString('tr-TR');
+  // Same trap as the tables: the export runs on the server, and the server is UTC, so a
+  // spreadsheet of timestamps would have been three hours out with no sign that it was.
+  if(key.endsWith('_at'))return new Date(String(value)).toLocaleString('tr-TR',{timeZone:ADMIN_TIME_ZONE,dateStyle:'short',timeStyle:'medium'});
   if(typeof value==='object')return JSON.stringify(value);
   return String(value);
 }
