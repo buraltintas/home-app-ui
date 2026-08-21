@@ -41,7 +41,6 @@ export default async function Page(){
       {docs.map(doc=><li key={doc.slug}>
         <Link href={localePath(locale,`/${doc.slug}`)}><strong>{doc.content[locale].title}</strong></Link>
         <p>{doc.content[locale].summary}</p>
-        <small>{text.version} {doc.version} · {text.updated} <time dateTime={doc.updated}>{doc.updated}</time></small>
       </li>)}
     </ul>
     {!legalDocumentsArePublishable&&<aside className="legal-pending" role="note">

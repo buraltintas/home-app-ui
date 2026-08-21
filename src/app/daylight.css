@@ -148,3 +148,11 @@ svg{stroke-width:2}
 /* The reason a location attempt failed sits with the control that failed, not at the foot
    of the page where the person who pressed it will never scroll. */
 .location-error{margin:0;padding:12px 14px;background:color-mix(in srgb,var(--error) 10%,var(--surface));border-left:3px solid var(--error);border-radius:var(--r-sm);color:var(--ink);font-size:15px;line-height:1.45}
+/* Two letters, quiet, in the bar. It sits before the destinations because it changes what
+   they say, not where they go. */
+.header-locale{display:inline-flex;align-items:center;margin-left:auto}
+.header-locale select{min-height:44px;padding:0 6px 0 10px;border:1px solid var(--line);border-radius:var(--r-pill);background:transparent;color:var(--ink-muted);font-size:13px;font-weight:600;letter-spacing:.04em}
+.header-locale select:hover{color:var(--ink);border-color:var(--line-strong)}
+.site-header nav{margin-left:12px}
+@media(max-width:900px){.header-locale{margin-left:auto}.site-header nav{margin-left:0}}
+@media(max-width:600px){.header-locale select{padding:0 4px 0 8px;font-size:12px}}
