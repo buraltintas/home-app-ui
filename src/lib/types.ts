@@ -19,10 +19,11 @@ export type SearchIntent = {
 };
 export type GoogleExternal = { provider: 'google'; place_id: string; rating: number; rating_count: number; photo_name?: string; photo_attributions?: string[] };
 export type StoredPhoto = { name: string; attributions?: string[] };
+export type OwnPhoto = { media_id: string };
 export type SearchResult = {
   id: string; search_result_impression_id: string; source: SearchSource; name: string; address: string;
   city?: string; district?: string; latitude: number; longitude: number; distance_meters?: number; categories: string[];
-  platform?: PlatformStats & { store_id: string }; google?: GoogleExternal; photo?: StoredPhoto; premium?: boolean;
+  platform?: PlatformStats & { store_id: string }; google?: GoogleExternal; photo?: StoredPhoto; own_photo?: OwnPhoto; premium?: boolean;
 };
 export type SearchGuidance = { code: 'HOME_LIVING_ONLY'; reason: 'out_of_scope' | 'unclear'; message: string; examples: [string, string] };
 export type SearchResponse = { search_id: string; visitor_session_id?: string; intent: SearchIntent; results: SearchResult[]; guidance?: SearchGuidance; fallback_state?: string };

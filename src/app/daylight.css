@@ -139,3 +139,9 @@ svg{stroke-width:2}
   .store-actions{gap:6px;margin-top:4px}
   .store-actions button{min-width:64px;min-height:56px;gap:5px;font-size:11px;font-weight:600}
 }
+
+/* Location comes first on this page, so the field waits for it. A locked control that says
+   what it is waiting for is honest; one that takes a query and quietly refuses is not. */
+.search-hero .location-control{margin-top:18px;margin-bottom:4px}.search-hero .location-lead{margin:22px 0 0;font-size:17px;line-height:1.5;color:var(--ink);max-width:44ch;font-weight:500}
+.search-hero .location-sheet{margin-top:16px}
+@media(max-width:600px){.search-hero .location-control{margin-top:16px}}

@@ -54,7 +54,9 @@ export default async function Page({params}:Props){
   // do not stay on a second URL competing with the canonical one.
   if(store.slug&&id!==store.slug)permanentRedirect(storePath(store));
   const google=googleSource(store);
-  const photoCredit=google?.photo_attributions?.length?google.photo_attributions.join(' · '):t.photoByGoogle;
+  // A bare personal name under a photograph of a shop reads as the shop's name, so the
+  // credit says what it is. The provider requires it to be shown either way.
+  const photoCredit=google?.photo_attributions?.length?`${t.photoBy}: ${google.photo_attributions.join(' · ')}`:t.photoByGoogle;
   const trail=[{name:t.discover??'',path:'/discover'},...(store.city?[{name:store.city,path:'/discover'}]:[]),{name:store.name,path:storePath(store)}].filter(entry=>entry.name);
   return <main className="store-page">
     <JsonLd data={[storeJsonLd(store,recent_posts),breadcrumbJsonLd(trail)]}/>

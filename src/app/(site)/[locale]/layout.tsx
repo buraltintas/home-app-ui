@@ -4,10 +4,10 @@ import type {Metadata} from 'next';import {Onest} from 'next/font/google';import
 const sans=Onest({variable:'--font-sans',subsets:['latin','latin-ext','cyrillic'],display:'swap'});
 import {asLocale,canonicalFor,locales,shareImage,shareTitle,siteUrl} from '@/lib/site';
 const metadataCopy:Record<Locale,{title:string;description:string}>={
-  tr:{title:'Boşa Gezme! — Gerçek mağazalar, gerçek deneyimler',description:'Doğrulanmış topluluk ziyaretleriyle gerçek ev ve yaşam mağazalarını keşfet.'},
-  en:{title:'Boşa Gezme! — Real stores, real experiences',description:'Discover real physical home and living stores through verified community visits.'},
-  de:{title:'Boşa Gezme! — Echte Geschäfte, echte Erlebnisse',description:'Entdecke echte Wohn- und Einrichtungsgeschäfte durch verifizierte Besuche der Community.'},
-  ru:{title:'Boşa Gezme! — Настоящие магазины, реальные впечатления',description:'Открывайте настоящие магазины товаров для дома благодаря проверенным визитам сообщества.'},
+  tr:{title:'Boşa Gezme! Bize Sor. — Gerçek mağazalar, gerçek deneyimler',description:'Boşa Gezme!, gerçek ev ve yaşam mağazalarını değerlendirmeye yarayan bir topluluk platformudur.'},
+  en:{title:'Boşa Gezme! Bize Sor. — Real stores, real experiences',description:'Boşa Gezme! is a community platform for reviewing real home and living stores.'},
+  de:{title:'Boşa Gezme! Bize Sor. — Echte Geschäfte, echte Erlebnisse',description:'Boşa Gezme! ist eine Community-Plattform für Bewertungen echter Wohn- und Einrichtungsgeschäfte.'},
+  ru:{title:'Boşa Gezme! Bize Sor. — Настоящие магазины, реальные впечатления',description:'Boşa Gezme! — сообщество, где оценивают настоящие магазины товаров для дома.'},
 };
 // Every language is a real URL now, so the root can carry the site wide hreflang set for
 // the homepage. Child routes state their own.
