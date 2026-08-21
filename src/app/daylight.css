@@ -156,3 +156,8 @@ svg{stroke-width:2}
 .site-header nav{margin-left:12px}
 @media(max-width:900px){.header-locale{margin-left:auto}.site-header nav{margin-left:0}}
 @media(max-width:600px){.header-locale select{padding:0 4px 0 8px;font-size:12px}}
+/* The count is the reason a category is where it is in the list, so it travels with the
+   name -- quiet, and never competing with it. */
+.category-links button{display:inline-flex;align-items:center;gap:8px}
+.category-links button small{font-size:12px;font-weight:600;color:var(--ink-muted);font-variant-numeric:tabular-nums}
+.category-links button:hover small{color:inherit}
