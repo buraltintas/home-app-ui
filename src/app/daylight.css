@@ -145,3 +145,6 @@ svg{stroke-width:2}
 .search-hero .location-control{margin-top:18px;margin-bottom:4px}.search-hero .location-lead{margin:22px 0 0;font-size:17px;line-height:1.5;color:var(--ink);max-width:44ch;font-weight:500}
 .search-hero .location-sheet{margin-top:16px}
 @media(max-width:600px){.search-hero .location-control{margin-top:16px}}
+/* The reason a location attempt failed sits with the control that failed, not at the foot
+   of the page where the person who pressed it will never scroll. */
+.location-error{margin:0;padding:12px 14px;background:color-mix(in srgb,var(--error) 10%,var(--surface));border-left:3px solid var(--error);border-radius:var(--r-sm);color:var(--ink);font-size:15px;line-height:1.45}

@@ -182,7 +182,7 @@ function ReviewWizard({storeId}:{storeId:string}){
     <div>
       <p className="eyebrow">{t('reviewFor')}</p>
       <h1>{store.store.name}</h1>
-      <p className="review-store-address"><Store aria-hidden="true"/>{[store.store.address,store.store.city].filter(Boolean).join(', ')}</p>
+      <p className="review-store-address"><Store aria-hidden="true"/>{store.store.address||[store.store.district,store.store.city].filter(Boolean).join(', ')}</p>
     </div>
 
     <ol className="review-steps">{steps.map(([label,Icon],index)=>{
