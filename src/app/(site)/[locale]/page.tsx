@@ -16,9 +16,9 @@ export async function generateMetadata():Promise<Metadata>{
 // an empty shell -- nothing for a crawler to read and nothing for a slow connection to
 // show. FeedPage still refetches when the session changes; it just no longer starts empty.
 export default async function Page(){
-  const [{t,locale},posts]=await Promise.all([getServerI18n(),getFeed()]);
+  const [{t,locale},feed]=await Promise.all([getServerI18n(),getFeed()]);
   return <>
     <JsonLd data={[organizationJsonLd(t.feedIntro),websiteJsonLd(t.feedIntro,locale)]}/>
-    <FeedPage initialPosts={posts}/>
+    <FeedPage initialPosts={feed.items} initialCursor={feed.cursor}/>
   </>;
 }

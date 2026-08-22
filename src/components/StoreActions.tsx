@@ -1,6 +1,6 @@
 'use client';
 
-import {Bookmark,Check,Map,PenLine,Share2} from 'lucide-react';
+import {Bookmark,Check,Map,PenLine,Phone,Share2} from 'lucide-react';
 import {useRouter} from 'next/navigation';
 import {useState} from 'react';
 import {useI18n} from '@/i18n/I18nProvider';
@@ -9,9 +9,9 @@ import {apiFetch} from '@/lib/api-client';
 import {originSearchHeaders} from '@/lib/search-origin';
 import {AuthDialog} from './AuthDialog';
 
-type Props={storeId:string;name:string;latitude:number;longitude:number;initialFavorited:boolean};
+type Props={storeId:string;name:string;latitude:number;longitude:number;initialFavorited:boolean;phone?:string};
 
-export function StoreActions({storeId,name,latitude,longitude,initialFavorited}:Props){
+export function StoreActions({storeId,name,latitude,longitude,initialFavorited,phone}:Props){
   const {t,locale}=useI18n();
   const router=useRouter();
   const [favorited,setFavorited]=useState(initialFavorited);
@@ -65,6 +65,7 @@ export function StoreActions({storeId,name,latitude,longitude,initialFavorited}:
   return <><div className="store-actions">
     <button onClick={()=>void toggleFavorite()} disabled={busy} aria-pressed={favorited}>{favorited?<Check/>:<Bookmark/>}{favorited?t('saved'):t('save')}</button>
     <button onClick={directions}><Map/>{t('directions')}</button>
+    {phone&&<a href={`tel:${phone.replace(/[^\d+]/g,'')}`}><Phone/>{t('callStore')}</a>}
     <button onClick={()=>void review()}><PenLine/>{t('review')}</button>
     <button onClick={()=>void share()}><Share2/>{t('share')}</button>
   </div>
