@@ -148,14 +148,22 @@ svg{stroke-width:2}
 /* The reason a location attempt failed sits with the control that failed, not at the foot
    of the page where the person who pressed it will never scroll. */
 .location-error{margin:0;padding:12px 14px;background:color-mix(in srgb,var(--error) 10%,var(--surface));border-left:3px solid var(--error);border-radius:var(--r-sm);color:var(--ink);font-size:15px;line-height:1.45}
-/* Two letters, quiet, in the bar. It sits before the destinations because it changes what
-   they say, not where they go. */
-.header-locale{display:inline-flex;align-items:center;margin-left:auto}
-.header-locale select{min-height:44px;padding:0 6px 0 10px;border:1px solid var(--line);border-radius:var(--r-pill);background:transparent;color:var(--ink-muted);font-size:13px;font-weight:600;letter-spacing:.04em}
-.header-locale select:hover{color:var(--ink);border-color:var(--line-strong)}
-.site-header nav{margin-left:12px}
-@media(max-width:900px){.header-locale{margin-left:auto}.site-header nav{margin-left:0}}
-@media(max-width:600px){.header-locale select{padding:0 4px 0 8px;font-size:12px}}
+/* Two letters in the bar, its own menu underneath. It sits before the destinations because
+   it changes what they say, not where they go. */
+.header-locale{position:relative;display:inline-flex;align-items:center;margin-left:14px}
+.header-locale-trigger{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 10px;border:1px solid var(--line);border-radius:var(--r-pill);background:transparent;color:var(--ink-muted);font-size:13px;font-weight:600;letter-spacing:.04em}
+.header-locale-trigger:hover{color:var(--ink);border-color:var(--line-strong)}
+.header-locale-caret{width:11px;height:8px;flex:none;transition:transform .16s ease}
+.header-locale-trigger[aria-expanded="true"] .header-locale-caret{transform:rotate(180deg)}
+.header-locale-menu{position:absolute;top:calc(100% + 8px);right:0;z-index:40;min-width:184px;margin:0;padding:6px;list-style:none;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);box-shadow:var(--lift, 0 8px 24px rgba(22,20,15,.08))}
+.header-locale-menu button{display:flex;align-items:center;gap:10px;width:100%;min-height:44px;padding:0 10px;border:0;border-radius:var(--r-sm);background:transparent;text-align:left;font-size:15px;color:var(--ink)}
+.header-locale-menu button:hover{background:var(--muted)}
+.header-locale-menu .is-current{background:var(--accent-wash)}
+.header-locale-code{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--ink-muted);min-width:22px}
+/* Below 900 the destinations move to the floating rail, so nothing else is left in the
+   bar to push against and the control claims the right edge itself. */
+@media(max-width:900px){.header-locale{margin-left:auto}}
+@media(max-width:600px){.header-locale-trigger{padding:0 8px;font-size:12px}}
 /* The count is the reason a category is where it is in the list, so it travels with the
    name -- quiet, and never competing with it. */
 .category-links button{display:inline-flex;align-items:center;gap:8px}
