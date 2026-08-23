@@ -105,6 +105,11 @@ export function AuthDialog({open,onClose,onAuthenticated}:{open:boolean;onClose:
           <Link href={localePath(locale,'/kvkk/aydinlatma-metni')} target="_blank">{t('authKvkkLink')}</Link>
           {t('authTermsSuffix')}
         </p>
+        {/* The terms say a person under sixteen may not open an account, and until now
+            nothing at all asked. A declaration is the proportionate control here: we do
+            not want a birth date -- that is more personal data than the rule needs -- but
+            the published rule has to be put to the person it applies to. */}
+        <p className="auth-legal auth-age">{t('authAgeNotice')}</p>
         {!runtimeConfigReady&&<button className="button secondary" style={{width:'100%',margin:0}} disabled>{t('google')}</button>}
         {runtimeConfigReady&&<div className="google-button-slot" ref={googleButtonRef} style={{width:'100%',minHeight:44,marginTop:10,overflow:'hidden'}}>{(!googleReady||!googleClientId)&&<button className="button secondary" style={{width:'100%',margin:0}} disabled>{t('google')}</button>}</div>}
         {runtimeConfigReady&&!googleClientId&&<p role="alert">{t('googleUnavailable')}</p>}
