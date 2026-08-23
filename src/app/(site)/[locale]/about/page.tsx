@@ -4,7 +4,6 @@ import {LegalDocument} from '@/components/LegalDocument';
 import {about} from '@/content/legal/about';
 import {getServerI18n} from '@/i18n/server';
 import {legalJsonLd,legalMetadata} from '@/lib/legal-page';
-import {legalRelated} from '@/lib/legal-links';
 
 export async function generateMetadata():Promise<Metadata>{
   const {locale}=await getServerI18n();
@@ -15,6 +14,6 @@ export default async function Page(){
   const {locale}=await getServerI18n();
   return <>
     <JsonLd data={legalJsonLd(about,locale)}/>
-    <LegalDocument doc={about} locale={locale} related={legalRelated(locale,'about')}/>
+    <LegalDocument doc={about} locale={locale}/>
   </>;
 }

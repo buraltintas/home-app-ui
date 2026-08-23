@@ -1,7 +1,5 @@
-import Link from 'next/link';
 import type {Block,LegalDoc} from '@/content/legal/types';
 import {legalDocumentsArePublishable} from '@/lib/legal-facts';
-import {localePath} from '@/lib/site';
 import type {Locale} from '@/lib/types';
 
 const pendingNotice:Record<Locale,{title:string;body:string}>={
@@ -11,11 +9,11 @@ const pendingNotice:Record<Locale,{title:string;body:string}>={
   ru:{title:'Документ ожидает юридической проверки',body:'Текст ниже описывает, как продукт работает в действительности, но не имеет силы: личность и контактные данные оператора данных пока не указаны. До этого момента документ не следует считать обязывающим.'},
 };
 
-const meta:Record<Locale,{version:string;effective:string;updated:string;contents:string;related:string}>={
-  tr:{version:'Sürüm',effective:'Yürürlük',updated:'Son güncelleme',contents:'İçindekiler',related:'İlgili belgeler'},
-  en:{version:'Version',effective:'Effective',updated:'Last updated',contents:'Contents',related:'Related documents'},
-  de:{version:'Version',effective:'Gültig ab',updated:'Zuletzt aktualisiert',contents:'Inhalt',related:'Verwandte Dokumente'},
-  ru:{version:'Версия',effective:'Вступает в силу',updated:'Обновлено',contents:'Содержание',related:'Связанные документы'},
+const meta:Record<Locale,{effective:string;updated:string;contents:string}>={
+  tr:{effective:'Yürürlük',updated:'Son güncelleme',contents:'İçindekiler'},
+  en:{effective:'Effective',updated:'Last updated',contents:'Contents'},
+  de:{effective:'Gültig ab',updated:'Zuletzt aktualisiert',contents:'Inhalt'},
+  ru:{effective:'Вступает в силу',updated:'Обновлено',contents:'Содержание'},
 };
 
 // Legal copy is held as plain strings so that four languages stay structurally identical,
@@ -52,7 +50,7 @@ function renderBlock(block:Block,index:number){
   </table></div>;
 }
 
-export function LegalDocument({doc,locale,related=[]}:{doc:LegalDoc;locale:Locale;related?:{href:string;label:string}[]}){
+export function LegalDocument({doc,locale}:{doc:LegalDoc;locale:Locale}){
   const content=doc.content[locale];
   const copy=meta[locale];
   const pending=doc.requiresEntity&&!legalDocumentsArePublishable;
@@ -62,7 +60,6 @@ export function LegalDocument({doc,locale,related=[]}:{doc:LegalDoc;locale:Local
         <h1>{content.title}</h1>
         <p className="legal-summary">{linkify(content.summary)}</p>
         <dl className="legal-meta">
-          <div><dt>{copy.version}</dt><dd>{doc.version}</dd></div>
           <div><dt>{copy.effective}</dt><dd><time dateTime={doc.effective}>{doc.effective}</time></dd></div>
           <div><dt>{copy.updated}</dt><dd><time dateTime={doc.updated}>{doc.updated}</time></dd></div>
         </dl>
@@ -83,10 +80,6 @@ export function LegalDocument({doc,locale,related=[]}:{doc:LegalDoc;locale:Local
         {section.blocks.map(renderBlock)}
       </section>)}
 
-      {related.length>0&&<nav className="legal-related" aria-label={copy.related}>
-        <h2>{copy.related}</h2>
-        <ul>{related.map(entry=><li key={entry.href}><Link href={localePath(locale,entry.href)}>{entry.label}</Link></li>)}</ul>
-      </nav>}
     </article>
   </main>;
 }

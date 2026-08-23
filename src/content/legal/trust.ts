@@ -300,7 +300,7 @@ export const contact:LegalDoc={
   version:'1.0',effective:'2026-08-19',updated:'2026-08-19',requiresEntity:true,
   content:{
     tr:{title:'İletişim',
-      summary:`Her konu için tek bir adres kullanıyoruz: ${mail}. Konuyu e-postanın başlığına yazarsanız daha hızlı ilerler.`,
+      summary:`Tüm konular için tek bir adres kullanıyoruz: ${mail}. Eğer konuyu e-postanın başlığına yazarsanız, çözüme daha hızlı ulaşmamıza yardımcı olursunuz.`,
       sections:[
         {id:'kanallar',heading:'Hangi konu için ne yazmalı',blocks:[
           {table:{head:['Konu','E-posta konusu olarak yazın'],rows:[
@@ -319,7 +319,7 @@ export const contact:LegalDoc={
         ]},
       ]},
     en:{title:'Contact',
-      summary:`We use a single address for everything: ${mail}. Putting the subject in the email subject line moves things along faster.`,
+      summary:`We use a single address for everything: ${mail}. Putting the topic in the subject line helps us get to a resolution faster.`,
       sections:[
         {id:'kanallar',heading:'What to write for which subject',blocks:[
           {table:{head:['Subject','Write as the email subject'],rows:[

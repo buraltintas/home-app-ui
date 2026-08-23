@@ -35,13 +35,3 @@ export const groupLabels:Record<LegalGroup,Record<Locale,string>>={
 
 // Related links stay short: the three or four documents a reader of this one is most
 // likely to want next, rather than the whole index repeated at the foot of every page.
-export function legalRelated(locale:Locale,currentSlug:string){
-  const sameGroup=legalLinks.find(link=>link.slug===currentSlug)?.group;
-  return [
-    ...legalLinks
-      .filter(link=>link.live&&link.slug!==currentSlug&&link.group===sameGroup)
-      .slice(0,4)
-      .map(link=>({href:`/${link.slug}`,label:link.label[locale]})),
-    {href:'/legal',label:legalHubLabel[locale]},
-  ];
-}

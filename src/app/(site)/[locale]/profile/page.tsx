@@ -5,7 +5,6 @@ import {AuthDialog} from '@/components/AuthDialog';
 import {SignOutButton} from '@/components/SignOutButton';
 import {ContributorLevel} from '@/components/ContributorLevel';
 import {MascotLoader} from '@/components/MascotLoader';
-import {LocaleSwitcher} from '@/components/LocaleSwitcher';
 import {PastSearches} from '@/components/PastSearches';
 import {ProfileEditor} from '@/components/ProfileEditor';
 import {useI18n} from '@/i18n/I18nProvider';
@@ -48,9 +47,6 @@ export default function Page(){
     <p className="eyebrow">{t('profile')}</p><h1>{t('profileTitle')}</h1>
     <p>{copy.body}</p>
     <button className="button primary" onClick={()=>setOpen(true)}>{t('signIn')}</button>
-    {/* Nothing to collapse on this screen -- there is one setting and no account behind
-        it, so the language control simply stands there. */}
-    <LocaleSwitcher/>
     <AuthDialog open={open} onClose={()=>setOpen(false)}/>
   </main>;
 
@@ -61,10 +57,8 @@ export default function Page(){
       <div className="profile-avatar">{(me.display_name||me.username||me.email).slice(0,1).toLocaleUpperCase(locale)}</div>
       <div className="profile-summary-identity"><strong>{me.display_name||me.username}<ContributorLevel level={me.level}/></strong><span>@{me.username}</span><span>{me.email}</span></div>
       <dl>
-        <div><dd>{me.follower_count}</dd><dt>{t('followers')}</dt></div>
-        <div><dd>{me.following_count}</dd><dt>{t('following')}</dt></div>
-        <div><dd>{me.post_count}</dd><dt>{t('profileReviews')}</dt></div>
-        <div><dd>{me.favorite_count}</dd><dt>{t('favorites')}</dt></div>
+        <div><dd>{me.post_count}</dd><dt>{t('profileRatings')}</dt></div>
+        <div><dd>{me.favorite_count}</dd><dt>{t('savedStores')}</dt></div>
       </dl>
       <SignOutButton className="button secondary profile-signout"/>
     </section>
@@ -73,9 +67,6 @@ export default function Page(){
     </Panel>
     <Panel title={t('pastSearches')} hint={t('pastSearchesHint')}>
       <PastSearches heading={false}/>
-    </Panel>
-    <Panel title={t('languageSection')} hint={t('languageHint')}>
-      <LocaleSwitcher/>
     </Panel>
     <Panel title={t('accountSection')} hint={t('accountHint')}>
       <div className="danger-zone">

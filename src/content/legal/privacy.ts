@@ -20,7 +20,7 @@ export const privacy:LegalDoc={
   content:{
     tr:{
       title:'Gizlilik Politikası',
-      summary:`Bu sayfa, Boşa Gezme!'nin hangi bilgileri topladığını, bunların nereye gittiğini ve ne kadar saklandığını sade bir dille anlatır. Veri sorumlusu ${controller}. Hukuki dayanakların faaliyet bazında dökümü KVKK aydınlatma metnindedir.`,
+      summary:`Bu sayfa, Boşa Gezme!'nin hangi bilgileri topladığını, bu verilerin nereye gittiğini ve ne kadar saklandığını sade bir dille anlatır. Veri sorumlusu ${controller}'tır. Hukuki dayanakların faaliyet bazında dökümü KVKK aydınlatma metnindedir.`,
       sections:[
         {id:'ozet',heading:'Kısa özet',blocks:[
           {ul:[
