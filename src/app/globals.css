@@ -164,7 +164,7 @@
 .site-footer ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .site-footer a{font-size:15px;min-height:44px;display:flex;align-items:center;transition:color .16s ease}
 .site-footer a:hover{color:var(--clay)}
-.site-footer-note{margin:0;color:var(--ink-muted);font-size:14px;line-height:1.55;max-width:340px}.site-footer-slogan{margin:0 0 10px;font-size:17px;font-weight:700;letter-spacing:-.02em;color:var(--ink)}
+.site-footer-note{margin:0;color:var(--ink-muted);font-size:14px;line-height:1.55;max-width:340px}.site-footer-social ul{display:flex;flex-wrap:wrap;gap:6px 16px;list-style:none;margin:0;padding:0}.site-footer-slogan{margin:0 0 10px;font-size:17px;font-weight:700;letter-spacing:-.02em;color:var(--ink)}
 /* The mobile navigation is fixed to the bottom of the viewport, so the clearance belongs
    inside the footer. As a margin it produced dead canvas below the footer instead. */
 @media(max-width:900px){.site-footer-inner{padding-bottom:112px}}

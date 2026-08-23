@@ -12,6 +12,21 @@ const note:Record<Locale,string>={
   ru:'Boşa Gezme! не продаёт товары. Наличие магазина в списке не означает партнёрства.',
 };
 
+
+// The accounts as they were opened. Only the ones with a public profile URL we are sure
+// of are linked -- a footer link that lands on the wrong handle is worse than no link.
+const social:{label:string;href:string}[]=[
+  {label:'Instagram',href:'https://www.instagram.com/bosagezme'},
+  {label:'X',href:'https://x.com/Bosagezme'},
+  {label:'TikTok',href:'https://www.tiktok.com/@bosagezme'},
+  {label:'Threads',href:'https://www.threads.net/@bosagezme'},
+  {label:'Facebook',href:'https://www.facebook.com/Bosagezme'},
+  {label:'LinkedIn',href:'https://www.linkedin.com/in/bo%C5%9Fa-gezme-91a8b142a'},
+  {label:'Reddit',href:'https://www.reddit.com/user/Bosagezme'},
+];
+
+const followLabel:Record<Locale,string>={tr:'Bizi takip edin',en:'Follow us',de:'Folge uns',ru:'Мы в соцсетях'};
+
 const order:LegalGroup[]=['product','privacy','legal','community'];
 
 export function SiteFooter({locale}:{locale:Locale}){
@@ -28,6 +43,10 @@ export function SiteFooter({locale}:{locale:Locale}){
           </ul>
         </nav>;
       })}
+      <nav aria-label={followLabel[locale]} className="site-footer-social">
+        <h2>{followLabel[locale]}</h2>
+        <ul>{social.map(account=><li key={account.label}><a href={account.href} target="_blank" rel="me noopener noreferrer">{account.label}</a></li>)}</ul>
+      </nav>
       <p className="site-footer-slogan" lang="tr">{slogan}</p>
       <p className="site-footer-note">{note[locale]}</p>
     </div>
