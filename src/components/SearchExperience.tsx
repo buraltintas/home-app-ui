@@ -8,7 +8,7 @@ import type { Coordinates, LocationResult, SearchHistory, SearchResponse, Search
 import { useI18n } from '@/i18n/I18nProvider';
 import { localePath ,slogan} from '@/lib/site';
 import { apiFetch } from '@/lib/api-client';
-import { locationMessage, locationPermission, requestPosition } from '@/lib/location';
+import { locationMessage, locationPermission, rememberedPosition, requestPosition } from '@/lib/location';
 import { seasonalPool } from '@/i18n/search-seasons';
 import { rememberOriginSearch } from '@/lib/search-origin';
 import { RESET_EVENT, SNAPSHOT_KEY } from '@/lib/search-session';
@@ -144,7 +144,13 @@ export function SearchExperience() {
     if(!sheetOpen||manual.trim().length<2)return;
     const controller=new AbortController();
     const timer=window.setTimeout(async()=>{setLookingUp(true);
-      try{const response=await apiFetch(`/api/proxy/locations/search?q=${encodeURIComponent(manual.trim())}&limit=5`,{signal:controller.signal,headers:{'X-Locale':locale}});if(!response.ok)throw new Error();const result=await response.json() as {items:LocationResult[]};setCandidates(result.items);setLookingUp(false);}catch(err){if((err as Error).name!=='AbortError')setCandidates([]);}
+      // Any idea of where this person is makes the list dramatically better: without one,
+      // typing "bostanl" in Antalya offers the Bostanlı in Afyonkarahisar, because the
+      // provider falls back to ranking by fame. A remembered fix is enough of a hint, and
+      // it is only ever a hint -- the point searched is resolved from the place picked.
+      const near=rememberedPosition();
+      const bias=near?`&latitude=${near.latitude}&longitude=${near.longitude}`:'';
+      try{const response=await apiFetch(`/api/proxy/locations/search?q=${encodeURIComponent(manual.trim())}&limit=5${bias}`,{signal:controller.signal,headers:{'X-Locale':locale}});if(!response.ok)throw new Error();const result=await response.json() as {items:LocationResult[]};setCandidates(result.items);setLookingUp(false);}catch(err){if((err as Error).name!=='AbortError')setCandidates([]);}
     },350);
     return()=>{window.clearTimeout(timer);controller.abort();};
   },[sheetOpen,manual,locale]);
