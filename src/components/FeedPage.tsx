@@ -5,6 +5,7 @@ import Image from 'next/image';
 import type {Post} from '@/lib/types';
 import {useI18n} from '@/i18n/I18nProvider';
 import {apiFetch,SESSION_REFRESHED} from '@/lib/api-client';
+import {HomeSearchBar} from './HomeSearchBar';
 import {PostCard} from './PostCard';
 
 type FeedResponse={items:Post[];next_cursor?:string};
@@ -77,7 +78,7 @@ export function FeedPage({initialPosts,initialCursor}:{initialPosts?:Post[];init
 
   return <main className="feed-layout"><section className="feed-main">
     <header className="feed-intro">
-      <div className="intro-copy"><h1>{t('feedTitle')}</h1><p>{t('feedIntro')}</p></div>
+      <div className="intro-copy"><h1>{t('feedTitle')}</h1><p>{t('feedIntro')}</p><HomeSearchBar/></div>
       <div className="intro-stamp" aria-hidden="true"><span className="intro-stamp-image"><Image src="/brand/mascot-magnifier.png" width={92} height={92} alt=""/></span><span>{t('discover')}</span></div>
     </header>
     {posts===null&&!error&&<div className="feed-state" aria-live="polite"><div className="feed-skeleton"/><p>{t('feedLoading')}</p></div>}

@@ -79,6 +79,8 @@ export function SearchExperience() {
   const [candidates,setCandidates]=useState<LocationResult[]>([]);const [lookingUp,setLookingUp]=useState(false);
   const [location,setLocation]=useState<SearchPlace>();
   const [restored,setRestored]=useState(false);
+  // A query carried in from the homepage, waiting for the page to settle before it runs.
+  const pending=useRef<string>('');
   const [history,setHistory]=useState<SearchHistory[]>([]);
   const [rotation,setRotation]=useState(0);
   const field=useRef<HTMLTextAreaElement>(null);
@@ -94,8 +96,13 @@ export function SearchExperience() {
   useEffect(()=>{
     let snapshot:SearchSnapshot|undefined;
     try{const raw=sessionStorage.getItem(SNAPSHOT_KEY);if(raw)snapshot=JSON.parse(raw) as SearchSnapshot;}catch{}
+    // Someone who typed on the homepage arrives with their words in the address bar. Those
+    // win over whatever the last visit left behind -- they were written a second ago, and
+    // the results from before are about something else.
+    const asked=new URLSearchParams(window.location.search).get('q')?.trim();
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    if(snapshot){setQuery(snapshot.query);setLocation(snapshot.location);setData(snapshot.data);}
+    if(asked){setQuery(asked);if(snapshot?.location)setLocation(snapshot.location);pending.current=asked;}
+    else if(snapshot){setQuery(snapshot.query);setLocation(snapshot.location);setData(snapshot.data);}
     // Offering the same three examples on every visit teaches people the product only
     // understands those three.
     setRotation(Math.floor(Math.random()*997));
@@ -186,6 +193,17 @@ export function SearchExperience() {
     try{const response=await apiFetch('/api/proxy/search',{method:'POST',headers:{'Content-Type':'application/json','X-Locale':locale},body:JSON.stringify({query:nextQuery.trim(),...(nextLocation?.coordinates??{})})});if(!response.ok)throw await response.json();setData(await response.json() as SearchResponse);}catch{setError(t('searchError'));}finally{setLoading(false);}
   };
   const submit=(event:FormEvent)=>{event.preventDefault();void runSearch();};
+
+  useEffect(()=>{
+    if(!restored||!pending.current)return;
+    const asked=pending.current;
+    pending.current='';
+    // Without a location the search cannot run, and runSearch already handles that: it
+    // keeps the words and opens the location step. Either way the person does not retype.
+    void runSearch(asked);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[restored,location]);
+
   const locateMe=async()=>{
     // Browsing is happy with a recent fix, so a device that cannot answer right now
     // still gets nearby results instead of an error.

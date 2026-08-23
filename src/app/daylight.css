@@ -71,6 +71,13 @@ svg{stroke-width:2}
    field below it does. */.search-slogan{margin:0 0 14px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-ink)}
 .search-title span{font-size:clamp(72px,11vw,160px);line-height:.7;color:var(--accent-ink)}
 .search-hero h1{max-width:900px;font-size:clamp(44px,6vw,78px)}
+.home-search{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--r-lg);padding:8px 8px 8px 18px;margin-top:28px;max-width:580px;box-shadow:var(--lift)}
+.home-search svg{color:var(--ink-muted)}
+.home-search input{flex:1;min-width:0;border:0;outline:0;background:none;font-size:17px;color:var(--ink);min-height:44px}
+.home-search input::placeholder{color:var(--ink-muted)}
+.home-search button{min-height:44px;padding:0 22px;border:0;border-radius:var(--r-md);background:var(--ink);color:var(--surface);font-size:15px;font-weight:600;white-space:nowrap}
+.home-search button:hover{background:var(--accent-ink)}
+@media(max-width:600px){.home-search{grid-template-columns:auto 1fr;padding:10px 12px;gap:10px}.home-search button{grid-column:1/-1;width:100%}}
 .search-form{grid-template-columns:auto 1fr auto;gap:14px;background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--r-lg);padding:8px 8px 8px 20px;margin-top:40px;color:var(--ink)}
 .search-form textarea{font-size:17px}
 .search-form button{border-radius:var(--r-md);background:var(--ink);color:var(--surface);min-width:120px}
