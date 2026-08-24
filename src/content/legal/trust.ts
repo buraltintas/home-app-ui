@@ -380,14 +380,13 @@ export const contact:LegalDoc={
 
 export const childrenPrivacy:LegalDoc={
   slug:'children-privacy',
-  version:'1.0',effective:'2026-08-19',updated:'2026-08-19',requiresEntity:true,
+  version:'1.1',effective:'2026-08-19',updated:'2026-08-25',requiresEntity:true,
   content:{
-    tr:{title:'Çocukların gizliliği',
+    tr:{title:'Yaş ve Kullanım Koşulları',
       summary:`Bu platform ${age} yaşından küçükler için tasarlanmamıştır ve hesap açmak için en az ${age} yaşında olmak gerekir.`,
       sections:[
         {id:'yas',heading:'Yaş sınırı',blocks:[
           {p:`Hesap oluşturmak için en az ${age} yaşında olmanız gerekir. ${age} yaşından küçük olduğunu öğrendiğimiz hesapları kapatırız.`},
-          {note:'Şu anda yaş doğrulaması teknik olarak yapılmamaktadır; yaş sınırı bir kural olarak uygulanır ve ihlal bildirildiğinde işlem yapılır.'},
         ]},
         {id:'neden',heading:'Neden önemli',blocks:[
           {p:'Bu platformda yazdığınız değerlendirmeler ve yüklediğiniz görseller herkese açıktır. Ayrıca arama ve ziyaret doğrulama konum bilgisi kullanır. Bu iki özellik, çocuklar için ayrıca dikkat gerektiren niteliktedir.'},
@@ -400,12 +399,11 @@ export const childrenPrivacy:LegalDoc={
           {p:`Yaş sınırının altındaki bir kişinin hesabı olduğunu düşünüyorsanız ${mail} adresine bildirin.`},
         ]},
       ]},
-    en:{title:'Children’s privacy',
+    en:{title:'Age and Terms of Use',
       summary:`This platform is not designed for people under ${age}, and you must be at least ${age} to create an account.`,
       sections:[
         {id:'yas',heading:'Age limit',blocks:[
           {p:`You must be at least ${age} to create an account. We close accounts we learn belong to someone under ${age}.`},
-          {note:'There is currently no technical age verification; the age limit is applied as a rule and acted on when a breach is reported.'},
         ]},
         {id:'neden',heading:'Why it matters',blocks:[
           {p:'Reviews you write and images you upload here are public. Search and visit verification also use location. Both warrant particular care where children are concerned.'},
@@ -418,12 +416,11 @@ export const childrenPrivacy:LegalDoc={
           {p:`If you believe someone under the age limit has an account, report it to ${mail}.`},
         ]},
       ]},
-    de:{title:'Datenschutz für Kinder',
+    de:{title:'Alter und Nutzungsbedingungen',
       summary:`Diese Plattform ist nicht für Personen unter ${age} Jahren bestimmt; für ein Konto musst du mindestens ${age} Jahre alt sein.`,
       sections:[
         {id:'yas',heading:'Altersgrenze',blocks:[
           {p:`Für ein Konto musst du mindestens ${age} Jahre alt sein. Konten von Personen unter ${age} schließen wir, sobald wir davon erfahren.`},
-          {note:'Eine technische Altersverifikation gibt es derzeit nicht; die Grenze gilt als Regel und wird bei Meldungen durchgesetzt.'},
         ]},
         {id:'neden',heading:'Warum das wichtig ist',blocks:[
           {p:'Deine Bewertungen und hochgeladenen Bilder sind öffentlich. Suche und Besuchsbestätigung nutzen zudem den Standort. Beides erfordert bei Kindern besondere Sorgfalt.'},
@@ -436,12 +433,11 @@ export const childrenPrivacy:LegalDoc={
           {p:`Wenn du glaubst, dass eine Person unter der Altersgrenze ein Konto hat, melde das an ${mail}.`},
         ]},
       ]},
-    ru:{title:'Конфиденциальность детей',
+    ru:{title:'Возраст и условия использования',
       summary:`Платформа не предназначена для лиц младше ${age} лет; для создания аккаунта нужно быть не младше ${age}.`,
       sections:[
         {id:'yas',heading:'Возрастное ограничение',blocks:[
           {p:`Для создания аккаунта нужно быть не младше ${age} лет. Аккаунты лиц младше ${age}, о которых нам станет известно, закрываются.`},
-          {note:'Технической проверки возраста сейчас нет; ограничение применяется как правило и реализуется по обращениям.'},
         ]},
         {id:'neden',heading:'Почему это важно',blocks:[
           {p:'Ваши отзывы и загруженные изображения публичны. Поиск и подтверждение визита используют местоположение. И то и другое требует особой осторожности в отношении детей.'},

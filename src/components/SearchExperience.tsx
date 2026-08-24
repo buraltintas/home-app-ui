@@ -56,7 +56,9 @@ const dialable=(phone:string)=>phone.replace(/[^\d+]/g,'');
 
 function Result({item,onSelect,onCall}:{item:SearchResult;onSelect:()=>void;onCall:()=>void}) {
   const {t,locale}=useI18n();
-  const categoryText=item.categories.map(category=>categoryLabels[locale][category]??category).join(' · ');
+  // The API guarantees an array, but this read path stays defensive: one malformed or
+  // cached store result must never replace the whole result page with a global error.
+  const categoryText=(item.categories??[]).map(category=>categoryLabels[locale][category]??category).join(' · ');
   const card=<article className="search-result"><ResultPhoto item={item}/><div><p className="result-category">{categoryText}{item.premium&&<span className="promoted-flag">{t('promoted')}</span>}</p><h2>{item.name}</h2><p className="result-address">{item.address}</p>{item.distance_meters!==undefined&&<p className="distance">{(item.distance_meters/1000).toLocaleString(locale,{maximumFractionDigits:1})} km</p>}{item.platform?<div className="dual-score"><div><span>{t('communityRating')}</span><strong><Rating value={item.platform.average_rating}/></strong><small>{item.platform.review_count} {t('reviews')} · {item.platform.favorite_count} {t('favorites').toLowerCase()}</small></div>{item.google&&<div><span>{t('googleRating')}</span><strong><Rating value={item.google.rating}/></strong><small>{item.google.rating_count} {t('reviews')}</small></div>}</div>:<div className="google-only"><strong>{t('newHere')}</strong><p>{t('firstReview')}</p>{item.google&&<span>{t('googleRating')} <Rating value={item.google.rating}/> · {item.google.rating_count} {t('reviews')}</span>}</div>}</div><ArrowRight aria-hidden="true"/></article>;
   // The call sits outside the link rather than inside it: an anchor cannot contain
   // another anchor, and more to the point, tapping a phone number should place a call,

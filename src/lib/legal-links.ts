@@ -15,7 +15,7 @@ export const legalLinks:LegalLink[]=[
   {slug:'cookies',group:'privacy',live:true,label:{tr:'Çerez Politikası',en:'Cookie Policy',de:'Cookie-Richtlinie',ru:'Политика cookie'}},
   {slug:'location-privacy',group:'privacy',live:true,label:{tr:'Konum gizliliği',en:'Location privacy',de:'Standortdatenschutz',ru:'Конфиденциальность геоданных'}},
   {slug:'account-deletion',group:'privacy',live:true,label:{tr:'Hesap silme',en:'Account deletion',de:'Konto löschen',ru:'Удаление аккаунта'}},
-  {slug:'children-privacy',group:'privacy',live:true,label:{tr:'Çocukların gizliliği',en:'Children’s privacy',de:'Datenschutz für Kinder',ru:'Конфиденциальность детей'}},
+  {slug:'children-privacy',group:'privacy',live:true,label:{tr:'Yaş ve Kullanım Koşulları',en:'Age and Terms of Use',de:'Alter und Nutzungsbedingungen',ru:'Возраст и условия использования'}},
 
   {slug:'terms',group:'legal',live:true,label:{tr:'Kullanım Koşulları',en:'Terms of Service',de:'Nutzungsbedingungen',ru:'Условия использования'}},
   {slug:'commercial-communications',group:'legal',live:true,label:{tr:'Ticari elektronik ileti',en:'Commercial messages',de:'Kommerzielle Nachrichten',ru:'Коммерческие сообщения'}},
