@@ -12,6 +12,8 @@ export type LocationFailure='unsupported'|'denied'|'blocked'|'unavailable'|'time
 export type LocationOutcome={ok:true;position:Position;cached?:boolean}|{ok:false;reason:LocationFailure};
 
 const REMEMBERED='bosagezme:last-location';
+const LIVE_SESSION='bosagezme:live-location-session';
+const LIVE_POSITION='bosagezme:live-location';
 // A remembered fix is a convenience for browsing, never proof of a visit, so it is only
 // offered where being roughly right is better than asking again.
 const REMEMBERED_MAX_AGE=6*60*60*1000;
@@ -20,6 +22,7 @@ const REMEMBERED_MAX_AGE=6*60*60*1000;
 // can never become visit evidence.
 const RECENT_LIVE_MAX_AGE=2*60*1000;
 let recentLivePosition:Position|undefined;
+let liveWatch:number|undefined;
 
 type Attempt={options:PositionOptions;deadline:number;target:number};
 // Good enough to place someone on a street, which is all a search needs.
@@ -69,7 +72,7 @@ export async function locationPermission():Promise<PermissionState|'unknown'>{
 export function rememberedPosition():Position|undefined{
   if(typeof window==='undefined')return undefined;
   try{
-    const raw=window.localStorage.getItem(REMEMBERED);
+    const raw=window.sessionStorage.getItem(REMEMBERED);
     if(!raw)return undefined;
     const position=JSON.parse(raw) as Position;
     if(typeof position?.latitude!=='number'||typeof position?.longitude!=='number')return undefined;
@@ -78,18 +81,61 @@ export function rememberedPosition():Position|undefined{
 }
 
 function remember(position:Position){
-  try{window.localStorage.setItem(REMEMBERED,JSON.stringify(position));}catch{}
+  try{
+    window.sessionStorage.setItem(REMEMBERED,JSON.stringify(position));
+    // Older releases kept this privacy-sensitive hint beyond the browser session.
+    // The product promise is now explicit: closing the tab ends the location session.
+    window.localStorage.removeItem(REMEMBERED);
+  }catch{}
 }
 
 function rememberLive(position:Position){
   recentLivePosition=position;
   remember(position);
+  try{
+    window.sessionStorage.setItem(LIVE_SESSION,'1');
+    window.sessionStorage.setItem(LIVE_POSITION,JSON.stringify(position));
+  }catch{}
+  startLiveWatch();
 }
 
 function recentLive():Position|undefined{
+  if(!recentLivePosition&&typeof window!=='undefined'){
+    try{
+      const raw=window.sessionStorage.getItem(LIVE_POSITION);
+      if(raw)recentLivePosition=JSON.parse(raw) as Position;
+    }catch{}
+  }
   if(!recentLivePosition)return undefined;
   if(Date.now()-recentLivePosition.captured_at>RECENT_LIVE_MAX_AGE){recentLivePosition=undefined;return undefined;}
   return recentLivePosition;
+}
+
+export function hasLiveLocationSession(){
+  if(typeof window==='undefined')return false;
+  try{return window.sessionStorage.getItem(LIVE_SESSION)==='1';}catch{return false;}
+}
+
+// After one deliberate location grant, keep the best device fix warm for the rest of
+// this tab session. Client-side navigation must not turn a permission the user already
+// gave into another step. Browsers pause watchers in a background tab, so verification
+// still requests a fresh fix when the remembered live reading is older than two minutes.
+function startLiveWatch(){
+  if(typeof navigator==='undefined'||!navigator.geolocation||liveWatch!==undefined)return;
+  liveWatch=navigator.geolocation.watchPosition(
+    fix=>{
+      const position=toPosition(fix);
+      recentLivePosition=position;
+      remember(position);
+      try{window.sessionStorage.setItem(LIVE_POSITION,JSON.stringify(position));}catch{}
+    },
+    ()=>undefined,
+    {enableHighAccuracy:true,maximumAge:30000,timeout:20000},
+  );
+}
+
+export function resumeLiveLocationSession(){
+  if(hasLiveLocationSession())startLiveWatch();
 }
 
 // Each failure gets its own wording, because "permission needed" is actively wrong

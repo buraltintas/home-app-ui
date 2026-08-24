@@ -3,13 +3,13 @@
 import {Camera,Check,MapPin,Star,Store,X} from 'lucide-react';
 import Image from 'next/image';
 import {useRouter,useSearchParams} from 'next/navigation';
-import {ChangeEvent,Suspense,useCallback,useEffect,useState} from 'react';
+import {ChangeEvent,Suspense,useCallback,useEffect,useRef,useState} from 'react';
 import {AuthDialog} from '@/components/AuthDialog';
 import {MascotLoader} from '@/components/MascotLoader';
 import {useI18n} from '@/i18n/I18nProvider';
 import { localePath } from '@/lib/site';
 import {apiFetch} from '@/lib/api-client';
-import {locationMessage,requestPosition} from '@/lib/location';
+import {hasLiveLocationSession,locationMessage,locationPermission,requestPosition} from '@/lib/location';
 import {readOriginSearch} from '@/lib/search-origin';
 import type {MediaUpload,StoreDetail,VisitVerification} from '@/lib/types';
 
@@ -37,6 +37,7 @@ function ReviewWizard({storeId}:{storeId:string}){
   const [text,setText]=useState('');
   const [submitting,setSubmitting]=useState(false);
   const [submitError,setSubmitError]=useState('');
+  const autoVerificationAttempted=useRef(false);
 
   const checkSession=useCallback(async()=>{
     try{const response=await apiFetch('/api/proxy/me',{cache:'no-store'});return response.ok;}catch{return false;}
@@ -62,7 +63,7 @@ function ReviewWizard({storeId}:{storeId:string}){
     return()=>{active=false;};
   },[checkSession,storeId,t]);
 
-  const submitVerification=async(latitude:number,longitude:number,accuracy:number)=>{
+  const submitVerification=useCallback(async(latitude:number,longitude:number,accuracy:number)=>{
     const response=await apiFetch(`/api/proxy/stores/${storeId}/visit-verifications`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude,longitude,accuracy_meters:accuracy})});
     if(response.status===401){setSignedIn(false);setAuth(true);return;}
     if(!response.ok){
@@ -73,9 +74,9 @@ function ReviewWizard({storeId}:{storeId:string}){
     }
     setVerification(await response.json() as VisitVerification);
     setStep(2);
-  };
+  },[storeId,t]);
 
-  const verify=async()=>{
+  const verify=useCallback(async()=>{
     setVerifying(true);setVerifyError('');
     try{
       // Reuse the live fix that Discover just captured in this tab. Persistent/manual
@@ -90,7 +91,22 @@ function ReviewWizard({storeId}:{storeId:string}){
       await submitVerification(latitude,longitude,accuracy_meters);
     }catch{setVerifyError(t('verifyError'));}
     finally{setVerifying(false);}
-  };
+  },[submitVerification,t]);
+
+  // Discover already established a device-location session. Opening the review flow
+  // should therefore verify in the background, not ask the user to press another
+  // location button. A manually typed search location never enables this path.
+  useEffect(()=>{
+    if(signedIn!==true||verification||autoVerificationAttempted.current)return;
+    let active=true;
+    void(async()=>{
+      const canVerify=hasLiveLocationSession()||await locationPermission()==='granted';
+      if(!active||!canVerify)return;
+      autoVerificationAttempted.current=true;
+      await verify();
+    })();
+    return()=>{active=false;};
+  },[signedIn,verification,verify]);
 
   const addPhoto=async(event:ChangeEvent<HTMLInputElement>)=>{
     const file=event.target.files?.[0];

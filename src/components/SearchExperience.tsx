@@ -177,7 +177,11 @@ export function SearchExperience() {
       const outcome=await requestPosition({allowRemembered:true});
       if(!active)return;
       setAutoLocating(false);
-      if(outcome.ok)setLocation({label:t('currentLocation'),coordinates:{latitude:outcome.position.latitude,longitude:outcome.position.longitude}});
+      if(outcome.ok){
+        setLocation({label:t('currentLocation'),coordinates:{latitude:outcome.position.latitude,longitude:outcome.position.longitude}});
+        setLocationOpen(false);
+        setError('');
+      }
     })();
     return()=>{active=false;};
   },[restored,location,t]);
@@ -188,19 +192,26 @@ export function SearchExperience() {
   // the query is kept so the visitor returns to it once a place is chosen.
   const runSearch=async(nextQuery=query,nextLocation=location)=>{
     if(nextQuery.trim().length<2)return;
-    if(!nextLocation){setQuery(nextQuery);setLocationOpen(true);setError(t('locationRequired'));return;}
+    if(!nextLocation){
+      // Keep the search waiting while an already-authorised device fix arrives. The
+      // location effect below resumes it automatically, so permission is not exposed
+      // as another user step. This also makes a manually picked place continue the
+      // query without requiring a second press of Search.
+      pending.current=nextQuery;
+      setQuery(nextQuery);setLocationOpen(true);setError(t('locationRequired'));return;
+    }
     setLoading(true);setError('');
     try{const response=await apiFetch('/api/proxy/search',{method:'POST',headers:{'Content-Type':'application/json','X-Locale':locale},body:JSON.stringify({query:nextQuery.trim(),...(nextLocation?.coordinates??{})})});if(!response.ok)throw await response.json();setData(await response.json() as SearchResponse);}catch{setError(t('searchError'));}finally{setLoading(false);}
   };
   const submit=(event:FormEvent)=>{event.preventDefault();void runSearch();};
 
   useEffect(()=>{
-    if(!restored||!pending.current)return;
+    if(!restored||!pending.current||!location)return;
     const asked=pending.current;
     pending.current='';
-    // Without a location the search cannot run, and runSearch already handles that: it
-    // keeps the words and opens the location step. Either way the person does not retype.
-    void runSearch(asked);
+    // The query waits above until either the already-authorised device fix arrives or
+    // the visitor deliberately chooses a place. In both cases it resumes by itself.
+    void runSearch(asked,location);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[restored,location]);
 
