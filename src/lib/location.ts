@@ -15,6 +15,11 @@ const REMEMBERED='bosagezme:last-location';
 // A remembered fix is a convenience for browsing, never proof of a visit, so it is only
 // offered where being roughly right is better than asking again.
 const REMEMBERED_MAX_AGE=6*60*60*1000;
+// A live fix can bridge a client-side navigation from Discover to the review flow.
+// It stays in memory and expires quickly, so a typed or hours-old browsing location
+// can never become visit evidence.
+const RECENT_LIVE_MAX_AGE=2*60*1000;
+let recentLivePosition:Position|undefined;
 
 type Attempt={options:PositionOptions;deadline:number;target:number};
 // Good enough to place someone on a street, which is all a search needs.
@@ -76,6 +81,17 @@ function remember(position:Position){
   try{window.localStorage.setItem(REMEMBERED,JSON.stringify(position));}catch{}
 }
 
+function rememberLive(position:Position){
+  recentLivePosition=position;
+  remember(position);
+}
+
+function recentLive():Position|undefined{
+  if(!recentLivePosition)return undefined;
+  if(Date.now()-recentLivePosition.captured_at>RECENT_LIVE_MAX_AGE){recentLivePosition=undefined;return undefined;}
+  return recentLivePosition;
+}
+
 // Each failure gets its own wording, because "permission needed" is actively wrong
 // advice when the browser has already blocked us or the device itself is switched off.
 export function locationMessage(reason:LocationFailure){
@@ -89,10 +105,14 @@ export function locationMessage(reason:LocationFailure){
   return 'locationPermissionNeeded' as const;
 }
 
-// allowRemembered is opt-in: browsing happily reuses a recent fix, while verifying a
-// visit must always measure where the device is right now.
-export async function requestPosition({allowRemembered=false}:{allowRemembered?:boolean}={}):Promise<LocationOutcome>{
+// Browsing may opt into a persisted approximation. Review verification can only opt
+// into a live fix captured in this tab within the last two minutes.
+export async function requestPosition({allowRemembered=false,allowRecentLive=false}:{allowRemembered?:boolean;allowRecentLive?:boolean}={}):Promise<LocationOutcome>{
   if(typeof navigator==='undefined'||!navigator.geolocation)return {ok:false,reason:'unsupported'};
+  if(allowRecentLive){
+    const position=recentLive();
+    if(position)return {ok:true,position,cached:true};
+  }
   const blocked=await locationPermission()==='denied';
   const failure=(error:unknown):LocationFailure=>{
     const code=(error as GeolocationPositionError|undefined)?.code;
@@ -102,7 +122,7 @@ export async function requestPosition({allowRemembered=false}:{allowRemembered?:
   let reason:LocationFailure;
   try{
     const position=toPosition(await acquire(PRECISE));
-    remember(position);
+    rememberLive(position);
     return {ok:true,position};
   }catch(error){
     reason=failure(error);
@@ -111,7 +131,7 @@ export async function requestPosition({allowRemembered=false}:{allowRemembered?:
   }
   try{
     const position=toPosition(await acquire(COARSE));
-    remember(position);
+    rememberLive(position);
     return {ok:true,position};
   }catch(error){
     reason=failure(error);
