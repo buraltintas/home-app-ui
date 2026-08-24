@@ -12,7 +12,7 @@ export type LocationFailure='unsupported'|'denied'|'blocked'|'unavailable'|'time
 export type LocationOutcome={ok:true;position:Position;cached?:boolean}|{ok:false;reason:LocationFailure};
 
 const REMEMBERED='bosagezme:last-location';
-const LIVE_SESSION='bosagezme:live-location-session';
+const LOCATION_ENABLED='bosagezme:device-location-enabled';
 const LIVE_POSITION='bosagezme:live-location';
 // A remembered fix is a convenience for browsing, never proof of a visit, so it is only
 // offered where being roughly right is better than asking again.
@@ -72,7 +72,7 @@ export async function locationPermission():Promise<PermissionState|'unknown'>{
 export function rememberedPosition():Position|undefined{
   if(typeof window==='undefined')return undefined;
   try{
-    const raw=window.sessionStorage.getItem(REMEMBERED);
+    const raw=window.localStorage.getItem(REMEMBERED);
     if(!raw)return undefined;
     const position=JSON.parse(raw) as Position;
     if(typeof position?.latitude!=='number'||typeof position?.longitude!=='number')return undefined;
@@ -81,19 +81,18 @@ export function rememberedPosition():Position|undefined{
 }
 
 function remember(position:Position){
-  try{
-    window.sessionStorage.setItem(REMEMBERED,JSON.stringify(position));
-    // Older releases kept this privacy-sensitive hint beyond the browser session.
-    // The product promise is now explicit: closing the tab ends the location session.
-    window.localStorage.removeItem(REMEMBERED);
-  }catch{}
+  try{window.localStorage.setItem(REMEMBERED,JSON.stringify(position));}catch{}
 }
 
 function rememberLive(position:Position){
   recentLivePosition=position;
   remember(position);
   try{
-    window.sessionStorage.setItem(LIVE_SESSION,'1');
+    // This records the user's product choice, not the permission itself. The browser
+    // remains the authority and can revoke access at any time. Persisting the choice
+    // lets Safari and other browsers without a reliable Permissions API refresh the
+    // location silently when Boşa Gezme! is opened again.
+    window.localStorage.setItem(LOCATION_ENABLED,'1');
     window.sessionStorage.setItem(LIVE_POSITION,JSON.stringify(position));
   }catch{}
   startLiveWatch();
@@ -111,15 +110,24 @@ function recentLive():Position|undefined{
   return recentLivePosition;
 }
 
-export function hasLiveLocationSession(){
+export function hasDeviceLocationPreference(){
   if(typeof window==='undefined')return false;
-  try{return window.sessionStorage.getItem(LIVE_SESSION)==='1';}catch{return false;}
+  try{return window.localStorage.getItem(LOCATION_ENABLED)==='1';}catch{return false;}
 }
 
-// After one deliberate location grant, keep the best device fix warm for the rest of
-// this tab session. Client-side navigation must not turn a permission the user already
-// gave into another step. Browsers pause watchers in a background tab, so verification
-// still requests a fresh fix when the remembered live reading is older than two minutes.
+// `granted` is safe to use silently. `prompt` must always stay behind the explained
+// user action. Safari may report no Permissions API at all, so a previous successful
+// in-product choice is the only reliable signal there.
+export async function canUseDeviceLocationWithoutPrompt(){
+  const permission=await locationPermission();
+  return permission==='granted'||(permission==='unknown'&&hasDeviceLocationPreference());
+}
+
+// After one deliberate location grant, keep the best device fix warm while the app is
+// open and resume it on the next visit. Client-side navigation or closing the tab must
+// not turn a permission the user already gave into another step. Browsers pause watchers
+// in the background, so verification still requests a fresh fix when the current live
+// reading is older than two minutes.
 function startLiveWatch(){
   if(typeof navigator==='undefined'||!navigator.geolocation||liveWatch!==undefined)return;
   liveWatch=navigator.geolocation.watchPosition(
@@ -134,8 +142,8 @@ function startLiveWatch(){
   );
 }
 
-export function resumeLiveLocationSession(){
-  if(hasLiveLocationSession())startLiveWatch();
+export async function resumeLiveLocationSession(){
+  if(await canUseDeviceLocationWithoutPrompt())startLiveWatch();
 }
 
 // Each failure gets its own wording, because "permission needed" is actively wrong

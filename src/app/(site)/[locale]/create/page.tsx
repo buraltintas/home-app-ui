@@ -9,7 +9,7 @@ import {MascotLoader} from '@/components/MascotLoader';
 import {useI18n} from '@/i18n/I18nProvider';
 import { localePath } from '@/lib/site';
 import {apiFetch} from '@/lib/api-client';
-import {hasLiveLocationSession,locationMessage,locationPermission,requestPosition} from '@/lib/location';
+import {canUseDeviceLocationWithoutPrompt,locationMessage,requestPosition} from '@/lib/location';
 import {readOriginSearch} from '@/lib/search-origin';
 import type {MediaUpload,StoreDetail,VisitVerification} from '@/lib/types';
 
@@ -93,14 +93,14 @@ function ReviewWizard({storeId}:{storeId:string}){
     finally{setVerifying(false);}
   },[submitVerification,t]);
 
-  // Discover already established a device-location session. Opening the review flow
+  // Discover already established the device-location preference. Opening the review flow
   // should therefore verify in the background, not ask the user to press another
   // location button. A manually typed search location never enables this path.
   useEffect(()=>{
     if(signedIn!==true||verification||autoVerificationAttempted.current)return;
     let active=true;
     void(async()=>{
-      const canVerify=hasLiveLocationSession()||await locationPermission()==='granted';
+      const canVerify=await canUseDeviceLocationWithoutPrompt();
       if(!active||!canVerify)return;
       autoVerificationAttempted.current=true;
       await verify();

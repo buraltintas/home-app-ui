@@ -8,7 +8,7 @@ import type { Coordinates, LocationResult, SearchHistory, SearchResponse, Search
 import { useI18n } from '@/i18n/I18nProvider';
 import { localePath ,slogan} from '@/lib/site';
 import { apiFetch } from '@/lib/api-client';
-import { locationMessage, locationPermission, rememberedPosition, requestPosition } from '@/lib/location';
+import { canUseDeviceLocationWithoutPrompt, locationMessage, rememberedPosition, requestPosition } from '@/lib/location';
 import { seasonalPool } from '@/i18n/search-seasons';
 import { rememberOriginSearch } from '@/lib/search-origin';
 import { RESET_EVENT, SNAPSHOT_KEY } from '@/lib/search-session';
@@ -171,7 +171,7 @@ export function SearchExperience() {
     if(!restored||location)return;
     let active=true;
     void (async()=>{
-      if(await locationPermission()!=='granted')return;
+      if(!await canUseDeviceLocationWithoutPrompt())return;
       if(!active)return;
       setAutoLocating(true);
       const outcome=await requestPosition({allowRemembered:true});
