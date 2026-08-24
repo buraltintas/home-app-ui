@@ -1,5 +1,6 @@
 import type {Metadata} from 'next';
 import Image from 'next/image';
+import Link from 'next/link';
 import {permanentRedirect} from 'next/navigation';
 import {PostCard} from '@/components/PostCard';
 import {Rating} from '@/components/Rating';
@@ -7,11 +8,18 @@ import {StoreActions} from '@/components/StoreActions';
 import {JsonLd} from '@/components/JsonLd';
 import {getStore} from '@/lib/server-api';
 import {getServerI18n} from '@/i18n/server';
-import {canonicalFor,storePath} from '@/lib/site';
+import {canonicalFor,localePath,storePath} from '@/lib/site';
 import {breadcrumbJsonLd,storeJsonLd} from '@/lib/structured-data';
-import type {Store} from '@/lib/types';
+import type {Locale,Store} from '@/lib/types';
 
 type Props={params:Promise<{id:string}>};
+
+const contributionCopy:Record<Locale,{title:string;body:string;action:string;levels:string;correction:string}>={
+  tr:{title:'Bu mağazaya gittin mi?',body:'Deneyimin bir sonraki kişinin doğru mağazayı seçmesine yardım eder. Doğrulanmış her değerlendirme katkı seviyeni de yükseltir.',action:'Değerlendir',levels:'Katkı seviyeleri ne işe yarar?',correction:'Mağaza bilgisinde düzenleme öner'},
+  en:{title:'Have you visited this store?',body:'Your experience helps the next person choose the right store. Every verified review also raises your contributor level.',action:'Write a review',levels:'What are contributor levels for?',correction:'Suggest an edit to store information'},
+  de:{title:'Warst du in diesem Geschäft?',body:'Deine Erfahrung hilft der nächsten Person, das passende Geschäft zu wählen. Jede bestätigte Bewertung erhöht auch deine Beitragsstufe.',action:'Bewertung schreiben',levels:'Wozu dienen Beitragsstufen?',correction:'Änderung der Geschäftsinformationen vorschlagen'},
+  ru:{title:'Вы были в этом магазине?',body:'Ваш опыт поможет следующему человеку выбрать подходящий магазин. Каждый подтверждённый отзыв также повышает ваш уровень участника.',action:'Оставить отзыв',levels:'Для чего нужны уровни участника?',correction:'Предложить исправление данных магазина'},
+};
 
 // Everything Google gives us for a store lives in the external source attribution
 // jsonb. Nothing here is invented: a missing field is simply not rendered.
@@ -57,6 +65,8 @@ export default async function Page({params}:Props){
   // A bare personal name under a photograph of a shop reads as the shop's name, so the
   // credit says what it is. The provider requires it to be shown either way.
   const photoCredit=google?.photo_attributions?.length?`${t.photoBy}: ${google.photo_attributions.join(' · ')}`:t.photoByGoogle;
+  const contribution=contributionCopy[locale];
+  const correctionPath=localePath(locale,`/feedback?store=${encodeURIComponent(store.id)}&name=${encodeURIComponent(store.name)}`);
   const trail=[{name:t.discover??'',path:'/discover'},...(store.city?[{name:store.city,path:'/discover'}]:[]),{name:store.name,path:storePath(store)}].filter(entry=>entry.name);
   return <main className="store-page">
     <JsonLd data={[storeJsonLd(store,recent_posts),breadcrumbJsonLd(trail)]}/>
@@ -81,6 +91,12 @@ export default async function Page({params}:Props){
         <h2>{t.storeQuestion}</h2>
         {store.localized_description&&<p>{store.localized_description}</p>}
         <address>{[store.address,[store.district,store.city].filter(Boolean).join('/')].filter(Boolean).join(', ')}</address>
+        <Link className="store-correction-link" href={correctionPath}>{contribution.correction}</Link>
+        <aside className="review-invitation">
+          <h2>{contribution.title}</h2>
+          <p>{contribution.body}</p>
+          <div><Link className="button primary" href={localePath(locale,`/create?store=${store.id}`)}>{contribution.action}</Link><Link href={localePath(locale,'/about#katki')}>{contribution.levels}</Link></div>
+        </aside>
         {google&&<aside className="external-panel" aria-label={t.googleData}>
           <p className="eyebrow">{t.googleData}</p>
           {google.rating_count!==undefined&&<p className="external-rating"><Rating value={google.rating??0}/> <span>{google.rating_count} {t.reviews}</span></p>}

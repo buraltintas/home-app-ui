@@ -16,10 +16,10 @@ const KINDS:{value:string;key:TranslationKey}[]=[
 // little as it can: what kind of thing this is, the thing itself, and an address only if
 // the sender wants an answer. Signing in is not required for the same reason browsing is
 // not -- somebody who cannot use the product is exactly who needs to be able to say so.
-export function FeedbackForm(){
+export function FeedbackForm({initialKind='suggestion',initialMessage=''}:{initialKind?:string;initialMessage?:string}={}){
   const {t}=useI18n();
-  const [kind,setKind]=useState('suggestion');
-  const [message,setMessage]=useState('');
+  const [kind,setKind]=useState(initialKind);
+  const [message,setMessage]=useState(initialMessage);
   const [email,setEmail]=useState('');
   const [sending,setSending]=useState(false);
   const [sent,setSent]=useState(false);
@@ -37,7 +37,7 @@ export function FeedbackForm(){
         body:JSON.stringify({kind,message:message.trim(),contact_email:email.trim()}),
       });
       if(!response.ok)throw new Error();
-      setSent(true);setMessage('');setEmail('');
+      setSent(true);setMessage(initialMessage);setEmail('');
     }catch{setError(t('feedbackError'));}
     finally{setSending(false);}
   };

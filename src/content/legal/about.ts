@@ -9,7 +9,7 @@ export const about:LegalDoc={
   slug:'about',
   version:'1.0',
   effective:'2026-08-18',
-  updated:'2026-08-18',
+  updated:'2026-08-24',
   requiresEntity:false,
   content:{
     tr:{
@@ -41,12 +41,16 @@ export const about:LegalDoc={
           {p:'Bir mağaza için değerlendirme yazabilmek için önce o mağazanın yanında olduğunuzu doğrulamanız gerekir. Bu, değerlendirmelerin gerçekten oraya gitmiş insanlardan gelmesini sağlamak içindir.'},
           {p:'Değerlendirmeler yazanların kendi görüşleridir. Boşa Gezme! her değerlendirmeyi onaylamaz ve içeriğinden yazarı sorumludur.'},
         ]},
+        {id:'katki',heading:'Katkı seviyesi ne işe yarar?',blocks:[
+          {p:'Katkı seviyesi, yayımladığınız doğrulanmış değerlendirme sayısına göre topluluğa yaptığınız katkıyı gösterir. İlk değerlendirmede Yeni gezgin, 5 değerlendirmede Kaşif, 15 değerlendirmede Deneyimli, 40 değerlendirmede Rehber ve 100 değerlendirmede Usta rehber olursunuz.'},
+          {p:'Bu seviye para, indirim veya mağaza ayrıcalığı değildir. Profilinizde ve paylaşımlarınızda, diğer insanlara ne kadar deneyim aktardığınızı gösteren bir topluluk işaretidir.'},
+        ]},
         {id:'konum',heading:'Konum keşfi nasıl etkiliyor?',blocks:[
           {p:'Sonuçlar mesafeye göre sıralanır, bu yüzden arama bir konum gerektirir. Konumunuzu cihazınızdan alabilir veya listeden bir yer seçebilirsiniz.'},
           {p:'Konumunuzun tam olarak nasıl işlendiğini, neyin saklanıp neyin saklanmadığını konum gizliliği sayfasında ayrıntılı olarak anlattık.'},
         ]},
         {id:'duzeltme',heading:'Yanlış mağaza bilgisi nasıl bildirilir?',blocks:[
-          {p:'Bir mağazanın adresi, kategorisi veya durumu yanlışsa bize bildirebilirsiniz. Bildirim kanalları hazırlanma aşamasındadır ve tamamlandığında iletişim sayfasında yayımlanacaktır.'},
+          {p:'Bir mağazanın adresi, kategorisi veya durumu yanlışsa mağaza sayfasındaki “Mağaza bilgisinde düzenleme öner” bağlantısını kullanabilir veya info@bosagezme.com adresine yazabilirsiniz.'},
           {note:'Şu anda mağaza sahipliği doğrulama süreci bulunmamaktadır. Bir mağaza sayfasını yönettiğini beyan eden kişileri doğrulayan bir mekanizma yoktur.'},
         ]},
       ],
@@ -80,12 +84,16 @@ export const about:LegalDoc={
           {p:'To write a review of a store, you first have to confirm that you are at that store. This is what keeps reviews coming from people who genuinely went.'},
           {p:'Reviews are the opinions of the people who wrote them. Boşa Gezme! does not endorse every review, and their authors are responsible for their content.'},
         ]},
+        {id:'katki',heading:'What are contributor levels for?',blocks:[
+          {p:'Your contributor level reflects how many verified reviews you have published. You become a New explorer after the first review, Explorer at 5, Seasoned at 15, Guide at 40, and Master guide at 100.'},
+          {p:'A level is not money, a discount, or a store benefit. It is a community marker on your profile and contributions that shows how much first-hand experience you have shared.'},
+        ]},
         {id:'konum',heading:'How does location affect discovery?',blocks:[
           {p:'Results are ordered by distance, which is why search needs a location. You can take it from your device or choose a place from a list.'},
           {p:'Exactly how your location is processed, and what is and is not stored, is set out in detail on the location privacy page.'},
         ]},
         {id:'duzeltme',heading:'How can incorrect store information be reported?',blocks:[
-          {p:'If a store’s address, category or status is wrong, you can tell us. Reporting channels are being prepared and will be published on the contact page once complete.'},
+          {p:'If a store’s address, category or status is wrong, use the “Suggest an edit to store information” link on its page or email info@bosagezme.com.'},
           {note:'There is currently no store ownership verification process. No mechanism verifies people who claim to manage a store page.'},
         ]},
       ],
@@ -119,12 +127,16 @@ export const about:LegalDoc={
           {p:'Um ein Geschäft zu bewerten, musst du zunächst bestätigen, dass du dort bist. So bleiben Bewertungen bei Menschen, die tatsächlich dort waren.'},
           {p:'Bewertungen sind die Meinungen ihrer Verfasserinnen und Verfasser. Boşa Gezme! macht sich nicht jede Bewertung zu eigen; für den Inhalt sind die Verfassenden verantwortlich.'},
         ]},
+        {id:'katki',heading:'Wozu dienen Beitragsstufen?',blocks:[
+          {p:'Deine Beitragsstufe richtet sich nach der Zahl deiner veröffentlichten, bestätigten Bewertungen. Nach der ersten Bewertung bist du Neu unterwegs, bei 5 Entdecker, bei 15 Erfahren, bei 40 Guide und bei 100 Meister-Guide.'},
+          {p:'Eine Stufe ist weder Geld noch Rabatt oder ein Vorteil bei einem Geschäft. Sie zeigt in deinem Profil und deinen Beiträgen, wie viel eigene Erfahrung du mit der Community geteilt hast.'},
+        ]},
         {id:'konum',heading:'Wie beeinflusst der Standort das Entdecken?',blocks:[
           {p:'Ergebnisse werden nach Entfernung sortiert, deshalb benötigt die Suche einen Standort. Du kannst ihn von deinem Gerät übernehmen oder einen Ort aus einer Liste wählen.'},
           {p:'Wie dein Standort genau verarbeitet wird und was gespeichert wird, steht ausführlich auf der Seite zum Standortdatenschutz.'},
         ]},
         {id:'duzeltme',heading:'Wie melde ich falsche Geschäftsangaben?',blocks:[
-          {p:'Wenn Adresse, Kategorie oder Status eines Geschäfts falsch sind, kannst du uns das mitteilen. Die Meldewege werden vorbereitet und nach Fertigstellung auf der Kontaktseite veröffentlicht.'},
+          {p:'Wenn Adresse, Kategorie oder Status eines Geschäfts falsch sind, nutze den Link „Änderung der Geschäftsinformationen vorschlagen“ auf der Geschäftsseite oder schreibe an info@bosagezme.com.'},
           {note:'Derzeit gibt es kein Verfahren zur Überprüfung der Geschäftsinhaberschaft. Es existiert kein Mechanismus, der Personen prüft, die angeben, eine Geschäftsseite zu verwalten.'},
         ]},
       ],
@@ -158,12 +170,16 @@ export const about:LegalDoc={
           {p:'Чтобы написать отзыв о магазине, нужно сначала подтвердить, что вы находитесь в нём. Так отзывы остаются от людей, которые действительно там были.'},
           {p:'Отзывы отражают мнение их авторов. Boşa Gezme! не поддерживает каждый отзыв, за содержание отвечают авторы.'},
         ]},
+        {id:'katki',heading:'Для чего нужны уровни участника?',blocks:[
+          {p:'Уровень участника зависит от количества опубликованных подтверждённых отзывов. После первого отзыва присваивается уровень Новичок, после 5 — Исследователь, после 15 — Опытный, после 40 — Гид, после 100 — Мастер-гид.'},
+          {p:'Уровень не является деньгами, скидкой или привилегией магазина. Это знак сообщества в профиле и публикациях, показывающий, каким объёмом личного опыта вы поделились.'},
+        ]},
         {id:'konum',heading:'Как местоположение влияет на поиск?',blocks:[
           {p:'Результаты сортируются по расстоянию, поэтому поиску нужно местоположение. Его можно взять с устройства или выбрать место из списка.'},
           {p:'Как именно обрабатывается ваше местоположение и что сохраняется, подробно описано на странице о конфиденциальности геоданных.'},
         ]},
         {id:'duzeltme',heading:'Как сообщить о неверных данных магазина?',blocks:[
-          {p:'Если адрес, категория или статус магазина указаны неверно, сообщите нам. Каналы для обращений готовятся и будут опубликованы на странице контактов.'},
+          {p:'Если адрес, категория или статус магазина указаны неверно, воспользуйтесь ссылкой «Предложить исправление данных магазина» на его странице или напишите на info@bosagezme.com.'},
           {note:'Процедуры подтверждения владения магазином сейчас нет. Механизм проверки лиц, заявляющих об управлении страницей магазина, отсутствует.'},
         ]},
       ],
