@@ -63,10 +63,10 @@ export function StoreActions({storeId,name,latitude,longitude,initialFavorited,p
   };
 
   return <><div className="store-actions">
+    <button className="store-review-action" onClick={()=>void review()}><PenLine/>{t('review')}</button>
     <button onClick={()=>void toggleFavorite()} disabled={busy} aria-pressed={favorited}>{favorited?<Check/>:<Bookmark/>}{favorited?t('saved'):t('save')}</button>
     <button onClick={directions}><Map/>{t('directions')}</button>
     {phone&&<a href={`tel:${phone.replace(/[^\d+]/g,'')}`}><Phone/>{t('callStore')}</a>}
-    <button onClick={()=>void review()}><PenLine/>{t('review')}</button>
     <button onClick={()=>void share()}><Share2/>{t('share')}</button>
   </div>
   {status&&<p className="action-status" role="status">{status}</p>}
