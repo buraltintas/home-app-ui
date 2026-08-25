@@ -7,6 +7,7 @@ import {AdminSearch} from '../AdminSearch';
 import {CategoryEditor} from '../CategoryEditor';
 import {getCategories,getStores} from '@/lib/admin-api';
 import {adminDate} from '@/lib/admin-time';
+import {StoreCoverEditor} from '../StoreCoverEditor';
 
 export const dynamic='force-dynamic';
 const when=adminDate;
@@ -29,10 +30,11 @@ export default async function Page({searchParams}:{searchParams:Promise<{q?:stri
     <div className="admin-toolbar"><AdminSearch placeholder="Mağaza adı veya şehir"/><ExportLinks table="stores" q={q}/></div>
     <div className="admin-table-wrap">
       <table className="admin-table">
-        <thead><tr><th>Mağaza</th><th>Şehir</th><th>Yorum</th><th>Puan</th><th>Durum</th><th>Kategoriler</th><th>Eklendi</th><th></th></tr></thead>
+        <thead><tr><th>Mağaza</th><th>Kapak</th><th>Şehir</th><th>Yorum</th><th>Puan</th><th>Durum</th><th>Kategoriler</th><th>Eklendi</th><th></th></tr></thead>
         <tbody>
           {result.data.rows.map(store=><tr key={store.id}>
             <td>{store.name}</td>
+            <td><StoreCoverEditor storeId={store.id} initialMediaId={store.cover_media_id}/></td>
             <td>{store.city}</td>
             <td>{store.review_count}</td>
             <td>{store.review_count?store.average_rating.toFixed(1):'—'}</td>
@@ -50,7 +52,7 @@ export default async function Page({searchParams}:{searchParams:Promise<{q?:stri
               <CategoryEditor storeId={store.id} selected={store.categories} options={options}/>
             </td>
           </tr>)}
-          {result.data.rows.length===0&&<tr><td colSpan={8} className="admin-empty">Sonuç yok.</td></tr>}
+          {result.data.rows.length===0&&<tr><td colSpan={9} className="admin-empty">Sonuç yok.</td></tr>}
         </tbody>
       </table>
     </div>

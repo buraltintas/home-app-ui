@@ -17,7 +17,7 @@ async function read<T>(path:string):Promise<AdminResult<T>>{
 
 export type Snapshot={total_users?:number;total_stores?:number;total_posts?:number;total_searches?:number}&Record<string,unknown>;
 export type UserRow={id:string;email:string;username:string;display_name:string;status:string;review_count:number;created_at:string;deleted_at?:string};
-export type StoreRow={id:string;name:string;slug:string;city:string;is_premium:boolean;categories:string[];review_count:number;average_rating:number;created_at:string};
+export type StoreRow={id:string;name:string;slug:string;city:string;is_premium:boolean;cover_media_id?:string;categories:string[];review_count:number;average_rating:number;created_at:string};
 export type CategoryOption={slug:string;name:string};
 export type ReviewRow={id:string;store_id:string;store_name:string;user_id:string;author:string;rating:number;text:string;created_at:string;deleted:boolean};
 export type SearchRow={id:string;query:string;user_id?:string;query_language:string;scope:string;result_count:number;click_count:number;duration_ms?:number;fallback_state?:string;created_at:string};

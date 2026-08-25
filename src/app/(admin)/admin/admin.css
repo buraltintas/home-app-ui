@@ -78,6 +78,15 @@
 .admin-cats{display:flex;flex-wrap:wrap;gap:4px;max-width:220px}
 .admin-cats span{font-size:11px;padding:2px 7px;border-radius:0;background:var(--muted);color:var(--ink-muted)}
 .admin-cats em{font-size:11px;color:var(--error);font-style:normal}
+.store-cover-editor{display:grid;grid-template-columns:104px minmax(92px,1fr);gap:8px;align-items:center;min-width:230px}
+.store-cover-preview,.store-cover-fallback{width:104px;height:78px;border:1px solid color-mix(in srgb,var(--cobalt) 22%,transparent);background:var(--muted);object-fit:cover}
+.store-cover-fallback{display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--ink-muted);text-align:center}
+.store-cover-fallback span{font-weight:700}
+.store-cover-fallback small{font-size:11px}
+.store-cover-actions{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.admin-link-action{padding:0;border:0;background:transparent;color:var(--ink-muted);font-size:12px;text-decoration:underline;text-underline-offset:3px}
+.admin-link-action:disabled{opacity:.5}
+.store-cover-error{grid-column:1/-1;margin:0;max-width:230px;color:var(--error);font-size:12px}
 
 /* The panel had no narrow-screen styles at all -- one media query, and it was for print.
    It is used from a phone, so it gets designed for one: the tab row scrolls sideways on

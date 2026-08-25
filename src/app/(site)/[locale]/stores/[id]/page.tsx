@@ -11,6 +11,7 @@ import {getServerI18n} from '@/i18n/server';
 import {canonicalFor,localePath,storePath} from '@/lib/site';
 import {breadcrumbJsonLd,storeJsonLd} from '@/lib/structured-data';
 import type {Locale,Store} from '@/lib/types';
+import {storePhotoURL} from '@/lib/store-photo';
 
 type Props={params:Promise<{id:string}>};
 
@@ -47,8 +48,7 @@ export async function generateMetadata({params}:Props):Promise<Metadata>{
   const description=store.localized_description??`${store.name}${place?`, ${place}`:''} — ${t.community}`;
   // Every store link shared anywhere previewed as the generic homepage card, because
   // this page set no openGraph of its own and inherited the root layout's.
-  const google=googleSource(store);
-  const image=google?.photo_name?`/api/places/photo?name=${encodeURIComponent(google.photo_name)}&w=1200`:undefined;
+  const image=storePhotoURL(store.photo,1200);
   return {title,description,
     alternates:canonicalFor(locale,storePath(store)),
     openGraph:{type:'website',url:storePath(store),title,description,...(image?{images:[{url:image,width:1200,height:630,alt:store.name}]}:{})},
@@ -64,15 +64,16 @@ export default async function Page({params}:Props){
   const google=googleSource(store);
   // A bare personal name under a photograph of a shop reads as the shop's name, so the
   // credit says what it is. The provider requires it to be shown either way.
-  const photoCredit=google?.photo_attributions?.length?`${t.photoBy}: ${google.photo_attributions.join(' · ')}`:t.photoByGoogle;
+  const photo=storePhotoURL(store.photo,1200);
+  const photoCredit=store.photo?.attributions?.length?`${t.photoBy}: ${store.photo.attributions.join(' · ')}`:t.photoByGoogle;
   const contribution=contributionCopy[locale];
   const correctionPath=localePath(locale,`/feedback?store=${encodeURIComponent(store.id)}&name=${encodeURIComponent(store.name)}`);
   const trail=[{name:t.discover??'',path:'/discover'},...(store.city?[{name:store.city,path:'/discover'}]:[]),{name:store.name,path:storePath(store)}].filter(entry=>entry.name);
   return <main className="store-page">
     <JsonLd data={[storeJsonLd(store,recent_posts),breadcrumbJsonLd(trail)]}/>
     <section className="store-hero">
-      {google?.photo_name
-        ?<figure className="store-hero-photo"><Image src={`/api/places/photo?name=${encodeURIComponent(google.photo_name)}&w=1200`} fill style={{objectFit:'cover'}} sizes="100vw" priority unoptimized alt=""/><figcaption>{photoCredit}</figcaption></figure>
+      {photo
+        ?<figure className="store-hero-photo"><Image src={photo} fill style={{objectFit:'cover'}} sizes="100vw" priority unoptimized alt=""/>{store.photo?.source==='google'&&<figcaption>{photoCredit}</figcaption>}</figure>
         :<div className="store-hero-photo store-hero-empty"><span aria-hidden="true">{store.name.trim().charAt(0)}</span><small>{t.noPhoto}</small></div>}
     </section>
     <section className="store-overview">

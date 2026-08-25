@@ -11,6 +11,7 @@ import {apiFetch} from '@/lib/api-client';
 import {Rating,Verified} from './Rating';
 import {AuthDialog} from './AuthDialog';
 import {ContributorLevel} from './ContributorLevel';
+import {storePhotoURL} from '@/lib/store-photo';
 
 type PostCardProps={post:Post;showStoreName?:boolean};
 
@@ -48,9 +49,10 @@ export function PostCard({post,showStoreName=true}:PostCardProps){
   };
 
   const place=[post.store_district,post.store_city].filter(Boolean).join(', ');
-  // A review card carries its author's own photographs. When there are none the card
-  // says so rather than borrowing a stock interior that was never this store.
+  // Authored review media remains primary. Without it, the card uses the exact same store
+  // cover as search and detail; that fallback opens the store, where Google credit is shown.
   const media=post.media[0];
+  const storePhoto=storePhotoURL(post.store_photo,960);
   const likes=post.like_count+(liked&&!post.viewer_has_liked?1:!liked&&post.viewer_has_liked?-1:0);
 
   return <article className="post-card">
@@ -66,7 +68,9 @@ export function PostCard({post,showStoreName=true}:PostCardProps){
 
     {media
       ?<Link href={localePath(locale,`/reviews/${post.id}`)} className="post-photo"><Image src={`/api/media/${media.id}`} fill sizes="(max-width: 760px) 100vw, 760px" alt={post.store_name} priority/></Link>
-      :<Link href={localePath(locale,`/reviews/${post.id}`)} className="post-photo is-empty"><span aria-hidden="true">{post.store_name.slice(0,2).toLocaleUpperCase(locale)}</span><small>{t('noPhoto')}</small></Link>}
+      :storePhoto
+        ?<Link href={localePath(locale,`/stores/${post.store_id}`)} className="post-photo"><Image src={storePhoto} fill sizes="(max-width: 760px) 100vw, 760px" alt={post.store_name} unoptimized/></Link>
+        :<Link href={localePath(locale,`/reviews/${post.id}`)} className="post-photo is-empty"><span aria-hidden="true">{post.store_name.slice(0,2).toLocaleUpperCase(locale)}</span><small>{t('noPhoto')}</small></Link>}
 
     <div className="post-details">
       <div className="post-meta"><Rating value={post.rating}/><Verified label={t('verified')}/></div>

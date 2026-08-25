@@ -15,6 +15,7 @@ import { RESET_EVENT, SNAPSHOT_KEY } from '@/lib/search-session';
 import { categoryLabels, searchExamples } from '@/i18n/dictionaries';
 import { Rating } from './Rating';
 import { SearchOverlay } from './SearchOverlay';
+import {storePhotoURL} from '@/lib/store-photo';
 
 type SearchPlace={source?:'device'|'manual';label:string;city?:string;placeID?:string;address?:string;accuracyMeters?:number;coordinates:Coordinates};
 type SearchSnapshot={query:string;location?:SearchPlace;data?:SearchResponse};
@@ -46,18 +47,17 @@ function growToFit(element:HTMLTextAreaElement|null){
 // block rather than a stand-in image.
 function ResultPhoto({item}:{item:SearchResult}) {
   const {t}=useI18n();
-  // A photograph taken by somebody who went there outranks the provider's frame, so the
-  // store's own community picture comes first. Behind it: the live provider response, then
-  // whatever we already hold -- a store from our own catalogue, every promoted one among
-  // them, reaches the list without a live lookup and would otherwise be a blank tile.
-  const own=item.own_photo?.media_id;
-  const photo=item.google?.photo_name??item.photo?.name;
-  if(own)return <div className="result-photo"><Image src={`/api/media/${own}`} width={260} height={195} alt="" unoptimized/></div>;
-  if(!photo)return <div className="result-photo result-photo-empty"><span aria-hidden="true">{item.name.trim().charAt(0)}</span><small>{t('noPhoto')}</small></div>;
+  // An administrator-selected cover is the store's canonical image. Without one, the live
+  // Google result is freshest; a stored Google reference covers internal/promoted results.
+  const adminCover=item.photo?.source==='admin'?storePhotoURL(item.photo,520):undefined;
+  const liveGoogle=item.google?.photo_name;
+  const storedGoogle=item.photo?.source==='google'?storePhotoURL(item.photo,520):undefined;
+  const src=adminCover??(liveGoogle?`/api/places/photo?name=${encodeURIComponent(liveGoogle)}&w=520`:undefined)??storedGoogle;
+  if(!src)return <div className="result-photo result-photo-empty"><span aria-hidden="true">{item.name.trim().charAt(0)}</span><small>{t('noPhoto')}</small></div>;
   // Search uses a compact thumbnail that opens the full store page. The full-size hero
   // carries the provider's author attribution; repeating a personal name under every
   // result makes the list harder to scan and can be omitted for linked thumbnails.
-  return <div className="result-photo"><Image src={`/api/places/photo?name=${encodeURIComponent(photo)}&w=520`} width={260} height={195} alt="" unoptimized/></div>;
+  return <div className="result-photo"><Image src={src} width={260} height={195} alt="" unoptimized/></div>;
 }
 
 // A result normally carries a store id and links to its detail page. One without an id
