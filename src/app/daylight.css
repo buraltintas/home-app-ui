@@ -88,9 +88,10 @@ svg{stroke-width:2}
 .search-suggestions h2{font-size:13px;font-weight:600;letter-spacing:.08em;color:var(--ink-muted)}
 .search-suggestions button{color:var(--ink)}
 .search-suggestions>div:first-child button{border-bottom-color:var(--line-strong)}
-.category-links button,.filter-row button{border-radius:var(--r-pill);background:var(--surface);border:1px solid var(--line-strong);color:var(--ink)}
-@media(hover:hover){.category-links button:hover{background:var(--accent-wash);border-color:var(--line-strong);color:var(--ink)}}
-.category-links button:active{background:var(--accent-wash);color:var(--ink);transform:scale(.98)}
+.category-links button{color:var(--ink)}
+.filter-row button{border-radius:var(--r-pill);background:var(--surface);border:1px solid var(--line-strong);color:var(--ink)}
+@media(hover:hover){.category-links button:hover{background:var(--accent-wash);color:var(--ink)}}
+.category-links button:active{background:var(--muted);color:var(--ink);transform:translateY(1px)}
 .location-working{display:flex;align-items:center;gap:10px;margin:0;font-size:15px;color:var(--ink-muted)}.location-pulse{width:10px;height:10px;border-radius:var(--r-pill);background:var(--accent);animation:location-pulse 1.2s ease-in-out infinite}@keyframes location-pulse{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1.15)}}@media(prefers-reduced-motion:reduce){.location-pulse{animation:none;opacity:1}}
 .location-sheet{border-radius:var(--r-md);background:var(--surface);color:var(--ink);border-top:0;}
 .location-sheet h2,.guidance-card h2,.zero-state h2{}
@@ -180,9 +181,15 @@ svg{stroke-width:2}
 @media(max-width:600px){.header-locale-trigger{padding:0 8px;font-size:12px}}
 /* The count is the reason a category is where it is in the list, so it travels with the
    name -- quiet, and never competing with it. */
-.category-links button{display:inline-flex;align-items:center;gap:8px}
-.category-links button small{font-size:12px;font-weight:600;color:var(--ink-muted);font-variant-numeric:tabular-nums}
+.category-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 24px}
+.category-links button{display:grid;grid-template-columns:48px minmax(0,1fr);align-items:center;gap:12px;min-width:0;min-height:72px;padding:10px 4px;border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent;text-align:left;transition:background-color .18s ease-out,transform .18s ease-out}
+.category-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:var(--r-md);background:var(--surface);color:var(--accent-ink)}
+.category-icon svg{width:25px;height:25px}
+.category-links button>span:last-child{min-width:0;font-size:15px;font-weight:600;line-height:1.25;overflow-wrap:anywhere}
+.category-links button small{display:block;margin-top:4px;font-size:11px;font-weight:500;color:var(--ink-muted);font-variant-numeric:tabular-nums}
 .category-links button:hover small{color:inherit}
+@media(max-width:1100px) and (min-width:701px){.category-links{grid-template-columns:1fr}}
+@media(max-width:420px){.category-links{grid-template-columns:1fr 1fr;gap:0 12px}.category-links button{grid-template-columns:40px minmax(0,1fr);gap:9px;min-height:64px;padding:8px 0}.category-icon{width:40px;height:40px}.category-icon svg{width:22px;height:22px}.category-links button>span:last-child{font-size:13px}}
 .store-correction-link{display:inline-flex;align-items:center;min-height:44px;margin-top:12px;color:var(--ink-muted);font-size:15px;text-decoration:underline;text-underline-offset:4px}
 .store-correction-link:hover{color:var(--ink)}
 .store-contribution{max-width:1320px;margin:0 auto;padding:28px 32px 0}
