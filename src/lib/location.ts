@@ -8,7 +8,7 @@
 // have instead of failing. If the precise attempt is refused by the hardware we retry
 // coarsely, and only a genuine permission refusal stops us.
 export type Position={latitude:number;longitude:number;accuracy_meters?:number;captured_at:number};
-export type LocationFailure='unsupported'|'denied'|'blocked'|'unavailable'|'timeout';
+export type LocationFailure='unsupported'|'denied'|'blocked'|'unavailable'|'timeout'|'inaccurate';
 export type LocationOutcome={ok:true;position:Position;cached?:boolean}|{ok:false;reason:LocationFailure};
 export type SearchLocationPreference={source:'device'|'manual';label:string;city?:string;place_id?:string;address?:string;latitude:number;longitude:number;accuracy_meters?:number;updated_at:number};
 
@@ -33,6 +33,11 @@ const PRECISE:Attempt={options:{enableHighAccuracy:true,timeout:15000,maximumAge
 // Indoors a satellite fix may never arrive. A wifi or cell reading still places the
 // device in the right neighbourhood, and that beats refusing to answer.
 const COARSE:Attempt={options:{enableHighAccuracy:false,timeout:12000,maximumAge:120000},deadline:12000,target:1500};
+// Review verification can safely accept a wider horizontal-accuracy estimate because
+// the backend adds the full estimate to the measured store distance. A 700 m reading
+// therefore reduces, rather than expands, the part of the 2 km boundary available to
+// the measured distance.
+const VISIT:Attempt={options:{enableHighAccuracy:true,timeout:20000,maximumAge:30000},deadline:20000,target:1000};
 
 function toPosition(fix:GeolocationPosition):Position{
   return {latitude:fix.coords.latitude,longitude:fix.coords.longitude,accuracy_meters:fix.coords.accuracy,captured_at:Date.now()};
@@ -184,11 +189,38 @@ export function locationMessage(reason:LocationFailure){
   // permission state, but the browser/site settings path works for both denied states.
   if(reason==='blocked'||reason==='denied')return 'locationBlocked' as const;
   if(reason==='timeout')return 'locationTimeout' as const;
+  if(reason==='inaccurate')return 'verifyAccuracy' as const;
   // The browser was allowed but the operating system returned nothing, which it does
   // when location services are switched off for the browser itself. No amount of
   // retrying inside the page fixes that, so we point at the real setting.
   if(reason==='unavailable')return 'locationDeviceOff' as const;
   return 'locationPermissionNeeded' as const;
+}
+
+// A visit proof never uses the persisted discovery point. It may reuse only a live fix
+// captured in the last two minutes, otherwise it waits for a new high-accuracy reading.
+// Unlike discovery, it does not make a second coarse request: returning an arbitrarily
+// broad neighbourhood estimate here only produces a confusing server rejection.
+export async function requestVisitPosition():Promise<LocationOutcome>{
+  if(typeof navigator==='undefined'||!navigator.geolocation)return {ok:false,reason:'unsupported'};
+  const live=recentLive();
+  if(live&&typeof live.accuracy_meters==='number'&&live.accuracy_meters<=VISIT.target){
+    return {ok:true,position:live,cached:true};
+  }
+  const blocked=await locationPermission()==='denied';
+  try{
+    const position=toPosition(await acquire(VISIT));
+    if(typeof position.accuracy_meters!=='number'||position.accuracy_meters>VISIT.target){
+      return {ok:false,reason:'inaccurate'};
+    }
+    rememberLive(position);
+    return {ok:true,position};
+  }catch(error){
+    const code=(error as GeolocationPositionError|undefined)?.code;
+    if(code===1)return {ok:false,reason:blocked?'blocked':'denied'};
+    if(code===3)return {ok:false,reason:'timeout'};
+    return {ok:false,reason:'unavailable'};
+  }
 }
 
 // Browsing may opt into a persisted approximation. Review verification can only opt

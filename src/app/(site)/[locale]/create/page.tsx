@@ -9,7 +9,7 @@ import {MascotLoader} from '@/components/MascotLoader';
 import {useI18n} from '@/i18n/I18nProvider';
 import { localePath } from '@/lib/site';
 import {apiFetch} from '@/lib/api-client';
-import {canUseDeviceLocationWithoutPrompt,locationMessage,requestPosition} from '@/lib/location';
+import {canUseDeviceLocationWithoutPrompt,locationMessage,requestVisitPosition} from '@/lib/location';
 import {readOriginSearch} from '@/lib/search-origin';
 import type {MediaUpload,StoreDetail,VisitVerification} from '@/lib/types';
 
@@ -81,7 +81,7 @@ function ReviewWizard({storeId}:{storeId:string}){
     try{
       // Reuse the live fix that Discover just captured in this tab. Persistent/manual
       // discovery locations are deliberately excluded from review evidence.
-      const outcome=await requestPosition({allowRecentLive:true});
+      const outcome=await requestVisitPosition();
       if(!outcome.ok){
         setVerifyError(t(locationMessage(outcome.reason)));
         return;
