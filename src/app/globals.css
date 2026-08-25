@@ -288,10 +288,27 @@ body>main{flex:1 0 auto}
 .feedback-done p{margin:0;font-size:19px;font-weight:600}
 .google-button-slot{width:100%;height:48px;margin-top:10px;overflow:hidden;display:grid;place-items:center}
 .google-button-slot>.button{height:48px}
+
+/* Monthly community proof sits below the suggestion tools as a compact editorial list.
+   It is intentionally not another grid of cards: the label explains why each store is
+   here, while a rule and arrow keep the interaction consistent with search prompts. */
+.store-highlights{margin-top:48px;padding-top:24px;border-top:1px solid var(--line)}
+.store-highlights>h2{margin:0 0 12px;color:var(--clay);font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.store-highlights>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px}
+.store-highlight{position:relative;display:grid;gap:4px;min-height:112px;padding:18px 48px 18px 0;border-bottom:1px solid var(--line);color:inherit}
+.store-highlight>span{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted)}
+.store-highlight>strong{font-size:clamp(20px,2.2vw,28px);line-height:1.08;letter-spacing:-.03em;overflow-wrap:anywhere}
+.store-highlight>small{font-size:13px;line-height:1.45;color:var(--ink-muted)}
+.store-highlight>svg{position:absolute;right:4px;top:50%;width:20px;height:20px;transform:translateY(-50%);transition:transform .16s ease}
+.store-highlight:hover>svg{transform:translate(5px,-50%)}
 @media(prefers-reduced-motion:reduce){.feedback-kind{transition:none}}
 @media(max-width:600px){
   .feedback-page{padding:28px 18px 120px}
   .feedback-intro{margin-bottom:26px}
   .feedback-form{gap:22px}
   .feedback-actions .button{width:100%}
+  .store-highlights{margin-top:34px}
+  .store-highlights>div{grid-template-columns:1fr;gap:4px}
+  .store-highlight{min-height:104px}
 }
+@media(prefers-reduced-motion:reduce){.store-highlight>svg{transition:none}}
