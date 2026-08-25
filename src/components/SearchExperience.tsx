@@ -3,12 +3,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, LocateFixed, MapPin, Search, X, Phone} from 'lucide-react';
-import { FormEvent, useEffect, useRef, useState } from 'react';
-import type { Coordinates, LocationResult, MonthlyStoreHighlights, SearchHistory, SearchResponse, SearchResult, StoreHighlight } from '@/lib/types';
+import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
+import type { Coordinates, LocationResult, Me, MonthlyStoreHighlights, SearchHistory, SearchResponse, SearchResult, StoreHighlight } from '@/lib/types';
 import { useI18n } from '@/i18n/I18nProvider';
 import { localePath ,slogan} from '@/lib/site';
 import { apiFetch } from '@/lib/api-client';
-import { canUseDeviceLocationWithoutPrompt, locationMessage, rememberedPosition, requestPosition } from '@/lib/location';
+import { canUseDeviceLocationWithoutPrompt, clearSearchLocation, LOCATION_UPDATE_EVENT, locationMessage, rememberedPosition, requestPosition, savedSearchLocation, saveSearchLocation } from '@/lib/location';
 import { seasonalPool } from '@/i18n/search-seasons';
 import { rememberOriginSearch } from '@/lib/search-origin';
 import { RESET_EVENT, SNAPSHOT_KEY } from '@/lib/search-session';
@@ -16,7 +16,7 @@ import { categoryLabels, searchExamples } from '@/i18n/dictionaries';
 import { Rating } from './Rating';
 import { SearchOverlay } from './SearchOverlay';
 
-type SearchPlace={label:string;city?:string;coordinates:Coordinates};
+type SearchPlace={source?:'device'|'manual';label:string;city?:string;placeID?:string;address?:string;accuracyMeters?:number;coordinates:Coordinates};
 type SearchSnapshot={query:string;location?:SearchPlace;data?:SearchResponse};
 
 function HighlightLink({item,label,metric}:{item:StoreHighlight;label:string;metric:string}){
@@ -36,7 +36,9 @@ function HighlightLink({item,label,metric}:{item:StoreHighlight;label:string;met
 function growToFit(element:HTMLTextAreaElement|null){
   if(!element)return;
   element.style.height='auto';
-  element.style.height=`${element.scrollHeight}px`;
+  // Fractional line-height rounding can leave the second placeholder line clipped by a
+  // pixel at mobile widths. A tiny buffer keeps both placeholder and typed copy visible.
+  element.style.height=`${element.scrollHeight+2}px`;
 }
 
 // Google photos are streamed through the BFF and never optimised, because caching
@@ -52,11 +54,10 @@ function ResultPhoto({item}:{item:SearchResult}) {
   const photo=item.google?.photo_name??item.photo?.name;
   if(own)return <div className="result-photo"><Image src={`/api/media/${own}`} width={260} height={195} alt="" unoptimized/></div>;
   if(!photo)return <div className="result-photo result-photo-empty"><span aria-hidden="true">{item.name.trim().charAt(0)}</span><small>{t('noPhoto')}</small></div>;
-  const attributions=item.google?.photo_name?item.google.photo_attributions:item.photo?.attributions;
-  // The provider requires the credit to travel with the photograph, but a bare personal
-  // name under a picture of a shop reads as the shop's name. It is labelled as a credit.
-  const credit=attributions?.length?`${t('photoBy')}: ${attributions.join(' · ')}`:t('photoByGoogle');
-  return <div className="result-photo"><Image src={`/api/places/photo?name=${encodeURIComponent(photo)}&w=520`} width={260} height={195} alt="" unoptimized/><small className="photo-credit">{credit}</small></div>;
+  // Search uses a compact thumbnail that opens the full store page. The full-size hero
+  // carries the provider's author attribution; repeating a personal name under every
+  // result makes the list harder to scan and can be omitted for linked thumbnails.
+  return <div className="result-photo"><Image src={`/api/places/photo?name=${encodeURIComponent(photo)}&w=520`} width={260} height={195} alt="" unoptimized/></div>;
 }
 
 // A result normally carries a store id and links to its detail page. One without an id
@@ -90,13 +91,55 @@ export function SearchExperience() {
   const [autoLocating,setAutoLocating]=useState(false);
   const [manual,setManual]=useState('');
   const [candidates,setCandidates]=useState<LocationResult[]>([]);const [lookingUp,setLookingUp]=useState(false);
-  const [location,setLocation]=useState<SearchPlace>();
+  const [location,setLocationState]=useState<SearchPlace>();
   const [restored,setRestored]=useState(false);
   // A query carried in from the homepage, waiting for the page to settle before it runs.
   const pending=useRef<string>('');
   const [history,setHistory]=useState<SearchHistory[]>([]);
   const [rotation,setRotation]=useState(0);
   const field=useRef<HTMLTextAreaElement>(null);
+
+  const setLocation=useCallback((selected:SearchPlace|undefined)=>{
+    if(!selected){
+      clearSearchLocation();
+      void apiFetch('/api/proxy/me/discovery-location',{method:'DELETE'}).catch(()=>undefined);
+    }
+    setLocationState(selected);
+  },[]);
+
+  const selectLocation=useCallback((selected:SearchPlace)=>{
+    setLocationState(selected);
+    saveSearchLocation({
+      source:selected.source??'device',label:selected.label,city:selected.city,place_id:selected.placeID,address:selected.address,
+      latitude:selected.coordinates.latitude,longitude:selected.coordinates.longitude,accuracy_meters:selected.accuracyMeters,updated_at:Date.now(),
+    });
+    // Anonymous discovery remains fully functional. Signed-in visitors additionally get
+    // the same private preference on another device; a 401 or a coarse device fix is not
+    // allowed to interrupt the search they just asked for.
+    const body=selected.source==='manual'
+      ?{source:'manual',place_id:selected.placeID}
+      :{source:'device',latitude:selected.coordinates.latitude,longitude:selected.coordinates.longitude,accuracy_meters:selected.accuracyMeters};
+    if(selected.source==='manual'||(selected.accuracyMeters!==undefined&&selected.accuracyMeters<=1000)){
+      void apiFetch('/api/proxy/me/discovery-location',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).catch(()=>undefined);
+    }
+  },[]);
+
+  // Keep a device-selected discovery point current for the whole browser session. A
+  // manual place is never overwritten by the device until the visitor explicitly picks
+  // “use current location” again.
+  useEffect(()=>{
+    const update=(event:Event)=>{
+      const position=(event as CustomEvent<{latitude:number;longitude:number;accuracy_meters?:number}>).detail;
+      const selected=savedSearchLocation();
+      if(selected?.source!=='device')return;
+      setLocationState(current=>current?.source==='device'?{...current,accuracyMeters:position.accuracy_meters,coordinates:{latitude:position.latitude,longitude:position.longitude}}:current);
+      if(position.accuracy_meters!==undefined&&position.accuracy_meters<=1000){
+        void apiFetch('/api/proxy/me/discovery-location',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:'device',latitude:position.latitude,longitude:position.longitude,accuracy_meters:position.accuracy_meters})}).catch(()=>undefined);
+      }
+    };
+    window.addEventListener(LOCATION_UPDATE_EVENT,update);
+    return()=>window.removeEventListener(LOCATION_UPDATE_EVENT,update);
+  },[]);
 
   // Opening a result and coming back must not throw the results away. The snapshot is
   // per tab and only holds what the user already typed and already received.
@@ -113,14 +156,36 @@ export function SearchExperience() {
     // win over whatever the last visit left behind -- they were written a second ago, and
     // the results from before are about something else.
     const asked=new URLSearchParams(window.location.search).get('q')?.trim();
+    const saved=savedSearchLocation();
+    const persisted=saved?{source:saved.source,label:saved.label,city:saved.city,placeID:saved.place_id,address:saved.address,accuracyMeters:saved.accuracy_meters,coordinates:{latitude:saved.latitude,longitude:saved.longitude}} satisfies SearchPlace:undefined;
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    if(asked){setQuery(asked);if(snapshot?.location)setLocation(snapshot.location);pending.current=asked;}
-    else if(snapshot){setQuery(snapshot.query);setLocation(snapshot.location);setData(snapshot.data);}
+    if(asked){setQuery(asked);const initial=snapshot?.location??persisted;if(initial)setLocation(initial);pending.current=asked;}
+    else if(snapshot){setQuery(snapshot.query);const initial=snapshot.location??persisted;if(initial)setLocation(initial);setData(snapshot.data);}
+    else if(persisted)setLocation(persisted);
     // Offering the same three examples on every visit teaches people the product only
     // understands those three.
     setRotation(Math.floor(Math.random()*997));
     setRestored(true);
-  },[]);
+  },[setLocation]);
+
+  // Local storage gives the fastest return path. The private profile is the cross-device
+  // fallback for signed-in visitors and only fills the gap when this browser has no
+  // explicit choice of its own.
+  useEffect(()=>{
+    if(!restored||savedSearchLocation())return;
+    let active=true;
+    apiFetch('/api/proxy/me',{cache:'no-store'})
+      .then(async response=>response.ok?await response.json() as Me:undefined)
+      .then(me=>{
+        const saved=me?.discovery_location;
+        if(!active||!saved)return;
+        const selected:SearchPlace={source:saved.source,label:saved.label||t('currentLocation'),city:saved.source==='manual'?saved.label:undefined,placeID:saved.place_id,address:saved.address,accuracyMeters:saved.accuracy_meters,coordinates:{latitude:saved.latitude,longitude:saved.longitude}};
+        saveSearchLocation({source:saved.source,label:selected.label,city:selected.city,place_id:saved.place_id,address:saved.address,latitude:saved.latitude,longitude:saved.longitude,accuracy_meters:saved.accuracy_meters,updated_at:Date.parse(saved.updated_at)||Date.now()});
+        setLocationState(current=>current??selected);
+      })
+      .catch(()=>undefined);
+    return()=>{active=false;};
+  },[restored,t]);
 
   // Signed-in visitors get their own last searches back instead of an invented one.
   // Anonymous visitors answer 401 here, which is the normal case and not an error.
@@ -168,12 +233,12 @@ export function SearchExperience() {
       // typing "bostanl" in Antalya offers the Bostanlı in Afyonkarahisar, because the
       // provider falls back to ranking by fame. A remembered fix is enough of a hint, and
       // it is only ever a hint -- the point searched is resolved from the place picked.
-      const near=rememberedPosition();
+      const near=location?.coordinates??rememberedPosition();
       const bias=near?`&latitude=${near.latitude}&longitude=${near.longitude}`:'';
       try{const response=await apiFetch(`/api/proxy/locations/search?q=${encodeURIComponent(manual.trim())}&limit=5${bias}`,{signal:controller.signal,headers:{'X-Locale':locale}});if(!response.ok)throw new Error();const result=await response.json() as {items:LocationResult[]};setCandidates(result.items);setLookingUp(false);}catch(err){if((err as Error).name!=='AbortError')setCandidates([]);}
     },350);
     return()=>{window.clearTimeout(timer);controller.abort();};
-  },[sheetOpen,manual,locale]);
+  },[sheetOpen,manual,locale,location]);
 
   // A browser that has already been granted permission does not need to be asked again,
   // so the fix is taken as soon as the page settles and the visitor simply arrives with
@@ -191,13 +256,13 @@ export function SearchExperience() {
       if(!active)return;
       setAutoLocating(false);
       if(outcome.ok){
-        setLocation({label:t('currentLocation'),coordinates:{latitude:outcome.position.latitude,longitude:outcome.position.longitude}});
+        selectLocation({source:'device',label:t('currentLocation'),accuracyMeters:outcome.position.accuracy_meters,coordinates:{latitude:outcome.position.latitude,longitude:outcome.position.longitude}});
         setLocationOpen(false);
         setError('');
       }
     })();
     return()=>{active=false;};
-  },[restored,location,t]);
+  },[restored,location,t,selectLocation]);
 
   // Results are ordered near to far, so a search without a location is not a weaker
   // search but a meaningless one: it cannot tell a store down the road from one in the
@@ -235,8 +300,8 @@ export function SearchExperience() {
     // A refused or missing fix is not a failed search. The location sheet stays open so
     // the visitor can pick a place by name and keep going.
     if(!outcome.ok){setError(t(locationMessage(outcome.reason)));return;}
-    const selected={label:t('currentLocation'),coordinates:{latitude:outcome.position.latitude,longitude:outcome.position.longitude}};
-    setLocation(selected);setLocationOpen(false);setError('');
+    const selected:SearchPlace={source:'device',label:t('currentLocation'),accuracyMeters:outcome.position.accuracy_meters,coordinates:{latitude:outcome.position.latitude,longitude:outcome.position.longitude}};
+    selectLocation(selected);setLocationOpen(false);setError('');
   };
   // The list carries no coordinates -- a prediction has none, and a point we search
   // around should be fetched from the provider rather than taken from the page. So the
@@ -247,7 +312,7 @@ export function SearchExperience() {
       const response=await apiFetch(`/api/proxy/locations/resolve?place_id=${encodeURIComponent(candidate.place_id)}`,{headers:{'X-Locale':locale}});
       if(!response.ok)throw new Error();
       const place=await response.json() as LocationResult;
-      setLocation({label:place.name,city:place.name,coordinates:{latitude:place.latitude,longitude:place.longitude}});
+      selectLocation({source:'manual',label:place.name,city:place.name,placeID:place.place_id,address:place.address,coordinates:{latitude:place.latitude,longitude:place.longitude}});
       setLocationOpen(false);
     }catch{setError(t('locationResolveError'));}
   };

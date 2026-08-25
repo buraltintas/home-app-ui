@@ -10,10 +10,13 @@
 export type Position={latitude:number;longitude:number;accuracy_meters?:number;captured_at:number};
 export type LocationFailure='unsupported'|'denied'|'blocked'|'unavailable'|'timeout';
 export type LocationOutcome={ok:true;position:Position;cached?:boolean}|{ok:false;reason:LocationFailure};
+export type SearchLocationPreference={source:'device'|'manual';label:string;city?:string;place_id?:string;address?:string;latitude:number;longitude:number;accuracy_meters?:number;updated_at:number};
 
 const REMEMBERED='bosagezme:last-location';
 const LOCATION_ENABLED='bosagezme:device-location-enabled';
 const LIVE_POSITION='bosagezme:live-location';
+const SEARCH_LOCATION='bosagezme:search-location';
+export const LOCATION_UPDATE_EVENT='bosagezme:location-update';
 // A remembered fix is a convenience for browsing, never proof of a visit, so it is only
 // offered where being roughly right is better than asking again.
 const REMEMBERED_MAX_AGE=6*60*60*1000;
@@ -80,8 +83,34 @@ export function rememberedPosition():Position|undefined{
   }catch{return undefined;}
 }
 
+// This is the place the visitor deliberately chose for discovery, not visit evidence.
+// It stays until they change or clear it so closing a tab never turns location into a
+// repeated onboarding step. Device choices are refreshed whenever the browser supplies
+// a better fix; manual choices remain exactly where the visitor selected them.
+export function savedSearchLocation():SearchLocationPreference|undefined{
+  if(typeof window==='undefined')return undefined;
+  try{
+    const raw=window.localStorage.getItem(SEARCH_LOCATION);
+    if(!raw)return undefined;
+    const location=JSON.parse(raw) as SearchLocationPreference;
+    if((location?.source!=='device'&&location?.source!=='manual')||!location.label||typeof location.latitude!=='number'||typeof location.longitude!=='number')return undefined;
+    return location;
+  }catch{return undefined;}
+}
+
+export function saveSearchLocation(location:SearchLocationPreference){
+  try{window.localStorage.setItem(SEARCH_LOCATION,JSON.stringify(location));}catch{}
+}
+
+export function clearSearchLocation(){
+  try{window.localStorage.removeItem(SEARCH_LOCATION);}catch{}
+}
+
 function remember(position:Position){
   try{window.localStorage.setItem(REMEMBERED,JSON.stringify(position));}catch{}
+  const selected=savedSearchLocation();
+  if(selected?.source==='device')saveSearchLocation({...selected,latitude:position.latitude,longitude:position.longitude,accuracy_meters:position.accuracy_meters,updated_at:Date.now()});
+  window.dispatchEvent(new CustomEvent<Position>(LOCATION_UPDATE_EVENT,{detail:position}));
 }
 
 function rememberLive(position:Position){
@@ -150,7 +179,10 @@ export async function resumeLiveLocationSession(){
 // advice when the browser has already blocked us or the device itself is switched off.
 export function locationMessage(reason:LocationFailure){
   if(reason==='unsupported')return 'locationUnavailable' as const;
-  if(reason==='blocked')return 'locationBlocked' as const;
+  // Once a geolocation request has returned a permission error, telling the visitor to
+  // wait for another prompt is stale advice. Some Safari versions cannot expose the
+  // permission state, but the browser/site settings path works for both denied states.
+  if(reason==='blocked'||reason==='denied')return 'locationBlocked' as const;
   if(reason==='timeout')return 'locationTimeout' as const;
   // The browser was allowed but the operating system returned nothing, which it does
   // when location services are switched off for the browser itself. No amount of

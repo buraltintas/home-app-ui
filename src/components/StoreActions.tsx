@@ -6,7 +6,7 @@ import {useState} from 'react';
 import {useI18n} from '@/i18n/I18nProvider';
 import { localePath } from '@/lib/site';
 import {apiFetch} from '@/lib/api-client';
-import {originSearchHeaders} from '@/lib/search-origin';
+import {originSearchHeaders,readOriginSearch} from '@/lib/search-origin';
 import {AuthDialog} from './AuthDialog';
 
 type Props={storeId:string;name:string;latitude:number;longitude:number;initialFavorited:boolean;phone?:string};
@@ -47,6 +47,14 @@ export function StoreActions({storeId,name,latitude,longitude,initialFavorited,p
 
   const directions=()=>window.open(`https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`,'_blank','noopener,noreferrer');
 
+  const call=()=>{
+    const origin=readOriginSearch();
+    if(!origin)return;
+    // The telephone action remains immediate. Attribution is fire-and-forget so opening
+    // the dialler can never be delayed by analytics or a transient network failure.
+    void apiFetch(`/api/proxy/searches/${origin.search_id}/interactions`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({search_result_id:origin.search_result_id,event_type:'call_click',idempotency_key:`call_click:${origin.search_result_id}`})}).catch(()=>undefined);
+  };
+
   const share=async()=>{
     const url=window.location.href;
     try{
@@ -66,7 +74,7 @@ export function StoreActions({storeId,name,latitude,longitude,initialFavorited,p
     <button className="store-review-action" onClick={()=>void review()}><PenLine/>{t('review')}</button>
     <button onClick={()=>void toggleFavorite()} disabled={busy} aria-pressed={favorited}>{favorited?<Check/>:<Bookmark/>}{favorited?t('saved'):t('save')}</button>
     <button onClick={directions}><Map/>{t('directions')}</button>
-    {phone&&<a href={`tel:${phone.replace(/[^\d+]/g,'')}`}><Phone/>{t('callStore')}</a>}
+    {phone&&<a href={`tel:${phone.replace(/[^\d+]/g,'')}`} onClick={call}><Phone/>{t('callStore')}</a>}
     <button onClick={()=>void share()}><Share2/>{t('share')}</button>
   </div>
   {status&&<p className="action-status" role="status">{status}</p>}
