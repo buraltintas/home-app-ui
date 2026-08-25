@@ -1,10 +1,8 @@
 'use client';
 
-import {Bookmark,Check,Map,PenLine,Phone,Share2} from 'lucide-react';
-import {useRouter} from 'next/navigation';
+import {Bookmark,Check,Map,Phone,Share2} from 'lucide-react';
 import {useState} from 'react';
 import {useI18n} from '@/i18n/I18nProvider';
-import { localePath } from '@/lib/site';
 import {apiFetch} from '@/lib/api-client';
 import {originSearchHeaders,readOriginSearch} from '@/lib/search-origin';
 import {AuthDialog} from './AuthDialog';
@@ -12,15 +10,14 @@ import {AuthDialog} from './AuthDialog';
 type Props={storeId:string;name:string;latitude:number;longitude:number;initialFavorited:boolean;phone?:string};
 
 export function StoreActions({storeId,name,latitude,longitude,initialFavorited,phone}:Props){
-  const {t,locale}=useI18n();
-  const router=useRouter();
+  const {t}=useI18n();
   const [favorited,setFavorited]=useState(initialFavorited);
   const [busy,setBusy]=useState(false);
   const [status,setStatus]=useState('');
   const [auth,setAuth]=useState(false);
   // What the user was trying to do when the sign-in dialog opened, so the intent is
   // resumed afterwards instead of silently dropped.
-  const [pending,setPending]=useState<'favorite'|'review'>();
+  const [pending,setPending]=useState(false);
 
   const toggleFavorite=async()=>{
     if(busy)return;
@@ -28,21 +25,12 @@ export function StoreActions({storeId,name,latitude,longitude,initialFavorited,p
     setBusy(true);setStatus('');setFavorited(next);
     try{
       const response=await apiFetch(`/api/proxy/stores/${storeId}/favorite`,{method:next?'POST':'DELETE',headers:originSearchHeaders()});
-      if(response.status===401){setFavorited(!next);setPending('favorite');setAuth(true);return;}
+      if(response.status===401){setFavorited(!next);setPending(true);setAuth(true);return;}
       // An optimistic flip is not success. Only a 2xx keeps it.
       if(!response.ok)throw new Error();
       setStatus(next?t('saved'):'');
     }catch{setFavorited(!next);setStatus(t('saveError'));}
     finally{setBusy(false);}
-  };
-
-  const review=async()=>{
-    setStatus('');
-    try{
-      const response=await apiFetch('/api/proxy/me',{cache:'no-store'});
-      if(!response.ok){setPending('review');setAuth(true);return;}
-    }catch{setPending('review');setAuth(true);return;}
-    router.push(localePath(locale,`/create?store=${storeId}`));
   };
 
   const directions=()=>window.open(`https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`,'_blank','noopener,noreferrer');
@@ -65,18 +53,16 @@ export function StoreActions({storeId,name,latitude,longitude,initialFavorited,p
   };
 
   const resume=()=>{
-    const intent=pending;setPending(undefined);
-    if(intent==='favorite')void toggleFavorite();
-    if(intent==='review')router.push(localePath(locale,`/create?store=${storeId}`));
+    const shouldFavorite=pending;setPending(false);
+    if(shouldFavorite)void toggleFavorite();
   };
 
   return <><div className="store-actions">
-    <button className="store-review-action" onClick={()=>void review()}><PenLine/>{t('review')}</button>
     <button onClick={()=>void toggleFavorite()} disabled={busy} aria-pressed={favorited}>{favorited?<Check/>:<Bookmark/>}{favorited?t('saved'):t('save')}</button>
     <button onClick={directions}><Map/>{t('directions')}</button>
     {phone&&<a href={`tel:${phone.replace(/[^\d+]/g,'')}`} onClick={call}><Phone/>{t('callStore')}</a>}
     <button onClick={()=>void share()}><Share2/>{t('share')}</button>
   </div>
   {status&&<p className="action-status" role="status">{status}</p>}
-  <AuthDialog open={auth} onClose={()=>{setAuth(false);setPending(undefined);}} onAuthenticated={resume}/></>;
+  <AuthDialog open={auth} onClose={()=>{setAuth(false);setPending(false);}} onAuthenticated={resume}/></>;
 }

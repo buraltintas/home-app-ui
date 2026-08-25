@@ -42,7 +42,7 @@ export const about:LegalDoc={
           {p:'Değerlendirmeler yazanların kendi görüşleridir. Boşa Gezme! her değerlendirmeyi onaylamaz ve içeriğinden yazarı sorumludur.'},
         ]},
         {id:'katki',heading:'Katkı seviyesi ne işe yarar?',blocks:[
-          {p:'Katkı seviyesi, yayımladığınız doğrulanmış değerlendirme sayısına göre topluluğa yaptığınız katkıyı gösterir. İlk değerlendirmede Yeni gezgin, 5 değerlendirmede Kaşif, 15 değerlendirmede Deneyimli, 40 değerlendirmede Rehber ve 100 değerlendirmede Usta rehber olursunuz.'},
+          {p:'Katkı seviyesi, yayımladığınız doğrulanmış değerlendirme sayısına göre topluluğa yaptığınız katkıyı gösterir. İlk değerlendirmede Yeni gezgin, 5 değerlendirmede Kaşif, 15 değerlendirmede Deneyimli, 40 değerlendirmede Rehber ve 100 değerlendirmede Usta Rehber olursunuz.'},
           {p:'Bu seviye para, indirim veya mağaza ayrıcalığı değildir. Profilinizde ve paylaşımlarınızda, diğer insanlara ne kadar deneyim aktardığınızı gösteren bir topluluk işaretidir.'},
         ]},
         {id:'konum',heading:'Konum keşfi nasıl etkiliyor?',blocks:[

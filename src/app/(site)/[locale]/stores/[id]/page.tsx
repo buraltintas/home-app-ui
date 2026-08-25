@@ -14,11 +14,11 @@ import type {Locale,Store} from '@/lib/types';
 
 type Props={params:Promise<{id:string}>};
 
-const contributionCopy:Record<Locale,{title:string;body:string;action:string;levels:string;correction:string}>={
-  tr:{title:'Bu mağazaya gittin mi?',body:'Deneyimin bir sonraki kişinin doğru mağazayı seçmesine yardım eder. Doğrulanmış her değerlendirme katkı seviyeni de yükseltir.',action:'Değerlendir',levels:'Katkı seviyeleri ne işe yarar?',correction:'Mağaza bilgisinde düzenleme öner'},
-  en:{title:'Have you visited this store?',body:'Your experience helps the next person choose the right store. Every verified review also raises your contributor level.',action:'Write a review',levels:'What are contributor levels for?',correction:'Suggest an edit to store information'},
-  de:{title:'Warst du in diesem Geschäft?',body:'Deine Erfahrung hilft der nächsten Person, das passende Geschäft zu wählen. Jede bestätigte Bewertung erhöht auch deine Beitragsstufe.',action:'Bewertung schreiben',levels:'Wozu dienen Beitragsstufen?',correction:'Änderung der Geschäftsinformationen vorschlagen'},
-  ru:{title:'Вы были в этом магазине?',body:'Ваш опыт поможет следующему человеку выбрать подходящий магазин. Каждый подтверждённый отзыв также повышает ваш уровень участника.',action:'Оставить отзыв',levels:'Для чего нужны уровни участника?',correction:'Предложить исправление данных магазина'},
+const contributionCopy:Record<Locale,{title:string;body:string;action:string;progress:string;levels:string;correction:string}>={
+  tr:{title:'Bu mağazaya gittin mi?',body:'Deneyimin bir sonraki kişinin doğru mağazayı seçmesine yardım eder. Doğrulanmış her değerlendirme katkı seviyeni de yükseltir.',action:'Değerlendirme yap',progress:'Katkı seviyeni yükselt',levels:'Katkı seviyeleri ne işe yarar?',correction:'Mağaza bilgisinde düzenleme öner'},
+  en:{title:'Have you visited this store?',body:'Your experience helps the next person choose the right store. Every verified review also raises your contributor level.',action:'Write a review',progress:'Raise your contributor level',levels:'What are contributor levels for?',correction:'Suggest an edit to store information'},
+  de:{title:'Warst du in diesem Geschäft?',body:'Deine Erfahrung hilft der nächsten Person, das passende Geschäft zu wählen. Jede bestätigte Bewertung erhöht auch deine Beitragsstufe.',action:'Bewertung abgeben',progress:'Beitragsstufe erhöhen',levels:'Wozu dienen Beitragsstufen?',correction:'Änderung der Geschäftsinformationen vorschlagen'},
+  ru:{title:'Вы были в этом магазине?',body:'Ваш опыт поможет следующему человеку выбрать подходящий магазин. Каждый подтверждённый отзыв также повышает ваш уровень участника.',action:'Оставить оценку',progress:'Повысить уровень участника',levels:'Для чего нужны уровни участника?',correction:'Предложить исправление данных магазина'},
 };
 
 // Everything Google gives us for a store lives in the external source attribution
@@ -85,18 +85,21 @@ export default async function Page({params}:Props){
       <div className="store-score"><span>{t.savedBy}</span><strong>{store.platform.favorite_count}</strong><small>{t.people}</small></div>
       <StoreActions storeId={store.id} name={store.name} latitude={store.latitude} longitude={store.longitude} initialFavorited={store.viewer_has_favorited} phone={store.phone}/>
     </section>
+    <section className="store-contribution" aria-label={contribution.title}>
+      <aside className="review-invitation">
+        <div className="review-invitation-copy"><h2>{contribution.title}</h2><p>{contribution.body}</p></div>
+        <div className="review-invitation-actions">
+          <Link className="button store-contribution-action" href={localePath(locale,`/create?store=${store.id}`)}>{contribution.action}</Link>
+          <Link className="contribution-progress" href={localePath(locale,'/about#katki')}><span aria-hidden="true">↗</span><span><strong>{contribution.progress}</strong><small>{contribution.levels}</small></span></Link>
+        </div>
+      </aside>
+    </section>
     <section className="store-body">
       <div className="store-description">
         <p className="eyebrow">{t.about}</p>
-        <h2>{t.storeQuestion}</h2>
         {store.localized_description&&<p>{store.localized_description}</p>}
         <address>{[store.address,[store.district,store.city].filter(Boolean).join('/')].filter(Boolean).join(', ')}</address>
         <Link className="store-correction-link" href={correctionPath}>{contribution.correction}</Link>
-        <aside className="review-invitation">
-          <h2>{contribution.title}</h2>
-          <p>{contribution.body}</p>
-          <div><Link className="button primary" href={localePath(locale,`/create?store=${store.id}`)}>{contribution.action}</Link><Link href={localePath(locale,'/about#katki')}>{contribution.levels}</Link></div>
-        </aside>
         {google&&<aside className="external-panel" aria-label={t.googleData}>
           <p className="eyebrow">{t.googleData}</p>
           {google.rating_count!==undefined&&<p className="external-rating"><Rating value={google.rating??0}/> <span>{google.rating_count} {t.reviews}</span></p>}

@@ -113,8 +113,6 @@ svg{stroke-width:2}
 .store-actions svg{width:20px;height:20px;flex:none}
 .store-actions button:disabled{cursor:not-allowed;opacity:.55}
 .store-actions button:hover,.store-actions a:hover{background:var(--muted)}
-.store-actions .store-review-action{min-width:116px;padding-inline:18px;background:var(--clay);color:var(--surface)}
-.store-actions .store-review-action:hover{background:color-mix(in srgb,var(--clay) 88%,var(--ink))}
 .external-note,.guidance-card{background:var(--accent-wash);color:var(--ink)}
 .danger-zone{border-radius:var(--r-md);border-width:2px}
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
@@ -154,7 +152,6 @@ svg{stroke-width:2}
   .store-score small{line-height:1.25}
   .store-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:4px;overflow:visible}
   .store-actions button,.store-actions a{min-width:0;min-height:56px;gap:5px;padding:6px 4px;font-size:11px;font-weight:600}
-  .store-actions .store-review-action{grid-column:1/-1;min-height:52px;flex-direction:row;justify-content:center;gap:8px;padding-inline:18px;font-size:14px}
 }
 
 /* Location comes first on this page, so the field waits for it. A locked control that says
@@ -164,7 +161,7 @@ svg{stroke-width:2}
 @media(max-width:600px){.search-hero .location-control{margin-top:16px}}
 /* The reason a location attempt failed sits with the control that failed, not at the foot
    of the page where the person who pressed it will never scroll. */
-.location-error{margin:0;padding:12px 14px;background:color-mix(in srgb,var(--error) 10%,var(--surface));border-left:3px solid var(--error);border-radius:var(--r-sm);color:var(--ink);font-size:15px;line-height:1.45}
+.location-error{margin:0;padding:12px 14px;background:color-mix(in srgb,var(--error) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--error) 34%,var(--line));border-radius:var(--r-sm);color:var(--ink);font-size:15px;line-height:1.45}
 /* Two letters in the bar, its own menu underneath. It sits before the destinations because
    it changes what they say, not where they go. */
 .header-locale{position:relative;display:inline-flex;align-items:center;margin-left:14px}
@@ -188,9 +185,16 @@ svg{stroke-width:2}
 .category-links button:hover small{color:inherit}
 .store-correction-link{display:inline-flex;align-items:center;min-height:44px;margin-top:12px;color:var(--ink-muted);font-size:15px;text-decoration:underline;text-underline-offset:4px}
 .store-correction-link:hover{color:var(--ink)}
-.review-invitation{margin-top:32px;padding:24px;background:var(--accent-wash);border-radius:var(--r-lg)}
-.review-invitation h2{margin:0;font-size:24px;line-height:1.2;letter-spacing:-.02em}
-.review-invitation p{margin:10px 0 18px;color:var(--ink-muted);font-size:16px;line-height:1.55}
-.review-invitation>div{display:flex;align-items:center;flex-wrap:wrap;gap:12px 18px}
-.review-invitation .button{display:inline-flex;align-items:center;text-decoration:none}
-.review-invitation>div>a:last-child{min-height:44px;display:inline-flex;align-items:center;color:var(--ink);font-size:14px;font-weight:600;text-underline-offset:4px}
+.store-contribution{max-width:1320px;margin:0 auto;padding:28px 32px 0}
+.review-invitation{min-width:0;margin:0;padding:28px 30px;background:var(--accent-wash);border:1px solid color-mix(in srgb,var(--clay) 22%,var(--line));border-radius:var(--r-lg);display:grid;grid-template-columns:minmax(0,1fr) minmax(230px,320px);align-items:center;gap:28px}
+.review-invitation>*{min-width:0}
+.review-invitation h2{margin:0;font-size:28px;line-height:1.15;letter-spacing:-.025em}
+.review-invitation p{max-width:720px;margin:10px 0 0;color:var(--ink-muted);font-size:16px;line-height:1.55}
+.review-invitation-actions{display:grid;gap:10px}
+.review-invitation .store-contribution-action{display:flex;align-items:center;justify-content:center;min-height:52px;background:var(--clay);color:var(--surface);text-decoration:none}
+.review-invitation .store-contribution-action:hover{background:color-mix(in srgb,var(--clay) 88%,var(--ink))}
+.contribution-progress{min-height:58px;padding:9px 12px;border:1px solid color-mix(in srgb,var(--clay) 28%,var(--line));border-radius:var(--r-sm);display:grid;grid-template-columns:34px 1fr;align-items:center;gap:9px;color:var(--ink);text-decoration:none;background:color-mix(in srgb,var(--surface) 72%,transparent)}
+.contribution-progress>span:first-child{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--surface);font-size:20px}
+.contribution-progress>span:last-child{display:grid;gap:2px}
+.contribution-progress strong{font-size:14px}.contribution-progress small{color:var(--ink-muted);font-size:11px}
+@media(max-width:720px){.store-overview,.store-body{max-width:100vw}.store-contribution{width:100%;max-width:100vw;padding:20px 18px 0;overflow:hidden}.review-invitation{width:100%;max-width:calc(100vw - 36px);padding:22px 20px;grid-template-columns:minmax(0,1fr);gap:20px}.review-invitation h2{font-size:24px}.review-invitation p{overflow-wrap:anywhere}.review-invitation-actions{width:100%;max-width:100%}}
