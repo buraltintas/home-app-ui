@@ -3,10 +3,9 @@
 //
 // Acquisition is layered. We watch rather than take a single reading, because the first
 // fix a device emits is often a coarse one that sharpens a second later; a one-shot call
-// either takes that coarse value or times out waiting for perfection. We keep the best
-// fix seen, settle as soon as it is good enough, and on a deadline return the best we
-// have instead of failing. If the precise attempt is refused by the hardware we retry
-// coarsely, and only a genuine permission refusal stops us.
+// either takes that coarse value or times out waiting for perfection. Discovery returns
+// a safe cached or coarse fix immediately and lets the live watcher sharpen it in the
+// background. Visit verification has its own fresh, high-accuracy path below.
 export type Position={latitude:number;longitude:number;accuracy_meters?:number;captured_at:number};
 export type LocationFailure='unsupported'|'denied'|'blocked'|'unavailable'|'timeout'|'inaccurate';
 export type LocationOutcome={ok:true;position:Position;cached?:boolean}|{ok:false;reason:LocationFailure};
@@ -29,10 +28,9 @@ let liveWatch:number|undefined;
 
 type Attempt={options:PositionOptions;deadline:number;target:number};
 // Good enough to place someone on a street, which is all a search needs.
-const PRECISE:Attempt={options:{enableHighAccuracy:true,timeout:15000,maximumAge:0},deadline:15000,target:60};
 // Indoors a satellite fix may never arrive. A wifi or cell reading still places the
 // device in the right neighbourhood, and that beats refusing to answer.
-const COARSE:Attempt={options:{enableHighAccuracy:false,timeout:12000,maximumAge:120000},deadline:12000,target:1500};
+const DISCOVERY:Attempt={options:{enableHighAccuracy:false,timeout:6000,maximumAge:120000},deadline:6000,target:1500};
 // Review verification can safely accept a wider horizontal-accuracy estimate because
 // the backend adds the full estimate to the measured store distance. A 700 m reading
 // therefore reduces, rather than expands, the part of the 2 km boundary available to
@@ -188,7 +186,10 @@ export function locationMessage(reason:LocationFailure){
   // wait for another prompt is stale advice. Some Safari versions cannot expose the
   // permission state, but the browser/site settings path works for both denied states.
   if(reason==='blocked'||reason==='denied')return 'locationBlocked' as const;
-  if(reason==='timeout')return 'locationTimeout' as const;
+  // A browser timeout is not actionable advice to move around the room. On desktop it
+  // usually means the OS is not supplying the browser with a location at all, so use
+  // the same device-settings guidance as an unavailable provider.
+  if(reason==='timeout')return 'locationDeviceOff' as const;
   if(reason==='inaccurate')return 'verifyAccuracy' as const;
   // The browser was allowed but the operating system returned nothing, which it does
   // when location services are switched off for the browser itself. No amount of
@@ -231,6 +232,14 @@ export async function requestPosition({allowRemembered=false,allowRecentLive=fal
     const position=recentLive();
     if(position)return {ok:true,position,cached:true};
   }
+  // Search does not need a fresh GPS lock before it can render. Returning the last
+  // successful browser fix first avoids a 15 + 12 second loading state after the user
+  // has already granted access. The session watcher refreshes this point and publishes
+  // the sharper coordinates through LOCATION_UPDATE_EVENT as soon as they arrive.
+  if(allowRemembered){
+    const previous=rememberedPosition();
+    if(previous){startLiveWatch();return {ok:true,position:previous,cached:true};}
+  }
   const blocked=await locationPermission()==='denied';
   const failure=(error:unknown):LocationFailure=>{
     const code=(error as GeolocationPositionError|undefined)?.code;
@@ -238,25 +247,17 @@ export async function requestPosition({allowRemembered=false,allowRecentLive=fal
     return code===3?'timeout':'unavailable';
   };
   let reason:LocationFailure;
+  // A Wi-Fi/cell fix is normally available almost immediately and is sufficient for
+  // nearby discovery. Do not stack a second long GPS attempt after this one: the live
+  // watcher is already doing that work, while the visitor can choose a place by name.
   try{
-    const position=toPosition(await acquire(PRECISE));
+    const position=toPosition(await acquire(DISCOVERY));
     rememberLive(position);
     return {ok:true,position};
   }catch(error){
     reason=failure(error);
     // A refusal would only be refused again, and retrying reads as ignoring the answer.
     if(reason==='denied'||reason==='blocked')return {ok:false,reason};
-  }
-  try{
-    const position=toPosition(await acquire(COARSE));
-    rememberLive(position);
-    return {ok:true,position};
-  }catch(error){
-    reason=failure(error);
-  }
-  if(allowRemembered){
-    const previous=rememberedPosition();
-    if(previous)return {ok:true,position:previous,cached:true};
   }
   return {ok:false,reason};
 }
