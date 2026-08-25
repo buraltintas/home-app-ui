@@ -9,23 +9,19 @@ export const about:LegalDoc={
   slug:'about',
   version:'1.0',
   effective:'2026-08-18',
-  updated:'2026-08-24',
+  updated:'2026-08-25',
   requiresEntity:false,
   content:{
     tr:{
       title:'Boşa Gezme! nedir?',
-      summary:'Boşa Gezme!, gerçek ev ve yaşam mağazalarını keşfetmeye yarayan bir topluluk platformudur. Ürün satmaz; oraya gerçekten gitmiş insanların değerlendirmeleriyle, gitmeye değer olup olmadığına karar vermenize yardım eder.',
+      summary:'Boşa Gezme!, fiziksel ev ve yaşam mağazalarını değerlendirmeye yarayan bir topluluk platformudur. Perde, halı, mobilya, aydınlatma, mutfak ve ev tekstili gibi ev ve yaşam ürünlerini satan gerçek mağazaları bulmanızı ve oraya gerçekten gitmiş insanların değerlendirmelerini görmenizi sağlar. Platformun gelişimi adına size de değerlendirme yapma imkânı tanır. Platformun nihai amacı, tamamı platform kullanıcıları tarafından yapılmış değerlendirme havuzu ile, kullanıcıları en kısa sürede kendilerine en uygun mağazaya yönlendirmektir.',
       sections:[
-        {id:'nedir',heading:'Boşa Gezme! nedir?',blocks:[
-          {p:'Boşa Gezme!, fiziksel ev ve yaşam mağazalarını keşfetmeye yarayan bir topluluk platformudur. Perde, halı, mobilya, aydınlatma, mutfak ve ev tekstili gibi ürünler satan gerçek dükkânları bulmanızı ve oraya gitmiş insanların ne bulduğunu okumanızı sağlar.'},
-          {p:'Adı, çözmeye çalıştığı sorunu anlatır: bir mağazaya gidip aradığınızı bulamamak. Ürünün tamamı bu boşa giden yolculuğu azaltmak üzerine kuruludur.'},
-        ]},
         {id:'nasil',heading:'Nasıl çalışır?',blocks:[
-          {p:'Döngü dört adımdır: keşfedin, gidin, deneyiminizi yazın, bir sonraki kişinin keşfetmesine yardım edin.'},
-          {p:'Ne aradığınızı kendi cümlelerinizle yazarsınız. Sonuçlar size en yakından en uzağa sıralanır; topluluğun daha önce değerlendirdiği ve sizinle aynı şehirde olan mağazalar öne çıkar. Bir mağazaya gittiğinizde, oradayken ziyaretinizi doğrulayıp deneyiminizi yazabilirsiniz.'},
+          {p:'Döngü dört adımdan oluşur: keşfedin, gidin, değerlendirin, bir sonraki kişinin seçimine yardım edin.'},
+          {p:'Önce ne aradığınızı kendi cümlelerinizle yazarsınız. Sonuçlar size en yakından en uzağa sıralanır; topluluğun daha önce değerlendirdiği ve sizinle aynı şehirde olan mağazalar öne çıkar. Bir mağazaya gittiğinizde, oradayken ziyaretinizi doğrulayıp değerlendirmenizi yapabilirsiniz.'},
         ]},
         {id:'satis',heading:'Boşa Gezme! ürün satıyor mu?',blocks:[
-          {p:'Hayır. Bu platformda satış, sepet, sipariş veya ödeme işlevi yoktur. Hiçbir ürün burada satın alınamaz.'},
+          {p:'Hayır. Bu platformda satış, sepete atma, sipariş verme veya ödeme işlevi yoktur. Hiçbir ürün buradan satın alınamaz.'},
           {p:'Boşa Gezme! satıcı, mağaza sahibi, tüccar veya herhangi bir mağazanın temsilcisi değildir. Stok, fiyat, çalışma saati veya ürün bulunabilirliği konusunda taraf değildir.'},
         ]},
         {id:'partner',heading:'Listelenen mağazalar iş ortağı mı?',blocks:[
@@ -45,30 +41,28 @@ export const about:LegalDoc={
           {p:'Katkı seviyesi, yayımladığınız doğrulanmış değerlendirme sayısına göre topluluğa yaptığınız katkıyı gösterir. İlk değerlendirmede Yeni gezgin, 5 değerlendirmede Kaşif, 15 değerlendirmede Deneyimli, 40 değerlendirmede Rehber ve 100 değerlendirmede Usta Rehber olursunuz.'},
           {p:'Bu seviye para, indirim veya mağaza ayrıcalığı değildir. Profilinizde ve paylaşımlarınızda, diğer insanlara ne kadar deneyim aktardığınızı gösteren bir topluluk işaretidir.'},
         ]},
-        {id:'konum',heading:'Konum keşfi nasıl etkiliyor?',blocks:[
+        {id:'konum',heading:'Mağaza konumları listelemeyi nasıl etkiliyor',blocks:[
           {p:'Sonuçlar mesafeye göre sıralanır, bu yüzden arama bir konum gerektirir. Konumunuzu cihazınızdan alabilir veya listeden bir yer seçebilirsiniz.'},
           {p:'Konumunuzun tam olarak nasıl işlendiğini, neyin saklanıp neyin saklanmadığını konum gizliliği sayfasında ayrıntılı olarak anlattık.'},
         ]},
-        {id:'duzeltme',heading:'Yanlış mağaza bilgisi nasıl bildirilir?',blocks:[
+        {id:'duzeltme',heading:'Mağazalara ait hatalı bilgi nasıl bildirilir?',blocks:[
           {p:'Bir mağazanın adresi, kategorisi veya durumu yanlışsa mağaza sayfasındaki “Mağaza bilgisinde düzenleme öner” bağlantısını kullanabilir veya info@bosagezme.com adresine yazabilirsiniz.'},
-          {note:'Şu anda mağaza sahipliği doğrulama süreci bulunmamaktadır. Bir mağaza sayfasını yönettiğini beyan eden kişileri doğrulayan bir mekanizma yoktur.'},
+        ]},
+        {id:'magaza-hesabi',heading:'Mağaza hesabı açabilir miyim?',blocks:[
+          {p:'Şu anda mağaza sahipliği doğrulama süreci bulunmamaktadır.'},
         ]},
       ],
     },
     en:{
       title:'What is Boşa Gezme!?',
-      summary:'Boşa Gezme! is a community platform for discovering real, physical home and living stores. It does not sell anything; it helps you decide whether a trip is worth making, using reviews from people who actually went.',
+      summary:'Boşa Gezme! is a community platform for reviewing physical home and living stores. It helps you find real stores selling curtains, rugs, furniture, lighting, kitchenware, home textiles and other home and living products, and see reviews from people who actually visited them. You can also contribute your own review as the platform grows. Its ultimate aim is to use a review pool created entirely by platform users to direct each person to the store that suits them best, as quickly as possible.',
       sections:[
-        {id:'nedir',heading:'What is Boşa Gezme!?',blocks:[
-          {p:'Boşa Gezme! is a community platform for discovering physical home and living stores. It helps you find real shops selling things like curtains, rugs, furniture, lighting, kitchenware and home textiles, and read what people who went there actually found.'},
-          {p:'The name describes the problem it addresses: travelling to a store and not finding what you came for. The whole product is built around making that wasted trip less likely.'},
-        ]},
         {id:'nasil',heading:'How does it work?',blocks:[
-          {p:'The loop has four steps: discover, visit, write about your experience, help the next person discover.'},
-          {p:'You describe what you are looking for in your own words. Results are ordered from nearest to farthest, with stores the community has already reviewed in your own city coming first. When you go to a store, you can verify your visit while you are there and write about your experience.'},
+          {p:'The loop has four steps: discover, visit, review, help the next person choose.'},
+          {p:'First, you describe what you are looking for in your own words. Results are ordered from nearest to farthest; stores in your city that the community has already reviewed are prioritised. When you visit a store, you can verify your visit while you are there and submit your review.'},
         ]},
         {id:'satis',heading:'Does Boşa Gezme! sell products?',blocks:[
-          {p:'No. There is no sale, cart, order or payment functionality on this platform. Nothing can be purchased here.'},
+          {p:'No. This platform has no sales, add-to-cart, ordering or payment functionality. Nothing can be purchased here.'},
           {p:'Boşa Gezme! is not a seller, a store owner, a merchant, or an agent for any store. It is not a party to stock, pricing, opening hours or product availability.'},
         ]},
         {id:'partner',heading:'Are the stores listed here partners?',blocks:[
@@ -88,27 +82,25 @@ export const about:LegalDoc={
           {p:'Your contributor level reflects how many verified reviews you have published. You become a New explorer after the first review, Explorer at 5, Seasoned at 15, Guide at 40, and Master guide at 100.'},
           {p:'A level is not money, a discount, or a store benefit. It is a community marker on your profile and contributions that shows how much first-hand experience you have shared.'},
         ]},
-        {id:'konum',heading:'How does location affect discovery?',blocks:[
+        {id:'konum',heading:'How do store locations affect listing?',blocks:[
           {p:'Results are ordered by distance, which is why search needs a location. You can take it from your device or choose a place from a list.'},
           {p:'Exactly how your location is processed, and what is and is not stored, is set out in detail on the location privacy page.'},
         ]},
-        {id:'duzeltme',heading:'How can incorrect store information be reported?',blocks:[
+        {id:'duzeltme',heading:'How can incorrect information about a store be reported?',blocks:[
           {p:'If a store’s address, category or status is wrong, use the “Suggest an edit to store information” link on its page or email info@bosagezme.com.'},
-          {note:'There is currently no store ownership verification process. No mechanism verifies people who claim to manage a store page.'},
+        ]},
+        {id:'magaza-hesabi',heading:'Can I open a store account?',blocks:[
+          {p:'There is currently no store ownership verification process.'},
         ]},
       ],
     },
     de:{
       title:'Was ist Boşa Gezme!?',
-      summary:'Boşa Gezme! ist eine Community-Plattform zum Entdecken echter Wohn- und Einrichtungsgeschäfte. Sie verkauft nichts, sondern hilft mit Bewertungen von Menschen, die tatsächlich dort waren, zu entscheiden, ob sich der Weg lohnt.',
+      summary:'Boşa Gezme! ist eine Community-Plattform zur Bewertung physischer Wohn- und Einrichtungsgeschäfte. Sie hilft dabei, echte Geschäfte für Vorhänge, Teppiche, Möbel, Beleuchtung, Küchenbedarf, Heimtextilien und andere Wohnprodukte zu finden und Bewertungen von Menschen zu lesen, die tatsächlich dort waren. Mit einer eigenen Bewertung kannst du ebenfalls zur Weiterentwicklung der Plattform beitragen. Das Ziel ist, Menschen mithilfe eines vollständig von der Community aufgebauten Bewertungspools so schnell wie möglich zum für sie passenden Geschäft zu führen.',
       sections:[
-        {id:'nedir',heading:'Was ist Boşa Gezme!?',blocks:[
-          {p:'Boşa Gezme! ist eine Community-Plattform zum Entdecken physischer Wohn- und Einrichtungsgeschäfte. Sie hilft, echte Läden für Vorhänge, Teppiche, Möbel, Beleuchtung, Küchenbedarf und Heimtextilien zu finden und zu lesen, was Besucherinnen und Besucher dort tatsächlich vorgefunden haben.'},
-          {p:'Der Name beschreibt das Problem: zu einem Geschäft zu fahren und das Gesuchte nicht zu finden. Das gesamte Produkt ist darauf ausgerichtet, diesen vergeblichen Weg unwahrscheinlicher zu machen.'},
-        ]},
         {id:'nasil',heading:'Wie funktioniert es?',blocks:[
-          {p:'Der Kreislauf hat vier Schritte: entdecken, hingehen, die Erfahrung aufschreiben, der nächsten Person beim Entdecken helfen.'},
-          {p:'Du beschreibst in eigenen Worten, was du suchst. Die Ergebnisse werden von nah nach fern sortiert, wobei Geschäfte in deiner Stadt, die die Community bereits bewertet hat, zuerst erscheinen. Vor Ort kannst du deinen Besuch bestätigen und deine Erfahrung schreiben.'},
+          {p:'Der Kreislauf hat vier Schritte: entdecken, hingehen, bewerten und der nächsten Person bei der Auswahl helfen.'},
+          {p:'Zuerst beschreibst du in eigenen Worten, was du suchst. Die Ergebnisse werden von nah nach fern sortiert; bereits von der Community bewertete Geschäfte in deiner Stadt werden priorisiert. Wenn du ein Geschäft besuchst, kannst du deinen Besuch vor Ort bestätigen und deine Bewertung abgeben.'},
         ]},
         {id:'satis',heading:'Verkauft Boşa Gezme! Produkte?',blocks:[
           {p:'Nein. Es gibt auf dieser Plattform keinen Verkauf, keinen Warenkorb, keine Bestellung und keine Zahlungsfunktion. Hier kann nichts gekauft werden.'},
@@ -131,27 +123,25 @@ export const about:LegalDoc={
           {p:'Deine Beitragsstufe richtet sich nach der Zahl deiner veröffentlichten, bestätigten Bewertungen. Nach der ersten Bewertung bist du Neu unterwegs, bei 5 Entdecker, bei 15 Erfahren, bei 40 Guide und bei 100 Meister-Guide.'},
           {p:'Eine Stufe ist weder Geld noch Rabatt oder ein Vorteil bei einem Geschäft. Sie zeigt in deinem Profil und deinen Beiträgen, wie viel eigene Erfahrung du mit der Community geteilt hast.'},
         ]},
-        {id:'konum',heading:'Wie beeinflusst der Standort das Entdecken?',blocks:[
+        {id:'konum',heading:'Wie beeinflussen Geschäftsstandorte die Reihenfolge?',blocks:[
           {p:'Ergebnisse werden nach Entfernung sortiert, deshalb benötigt die Suche einen Standort. Du kannst ihn von deinem Gerät übernehmen oder einen Ort aus einer Liste wählen.'},
           {p:'Wie dein Standort genau verarbeitet wird und was gespeichert wird, steht ausführlich auf der Seite zum Standortdatenschutz.'},
         ]},
-        {id:'duzeltme',heading:'Wie melde ich falsche Geschäftsangaben?',blocks:[
+        {id:'duzeltme',heading:'Wie kann ich fehlerhafte Angaben zu einem Geschäft melden?',blocks:[
           {p:'Wenn Adresse, Kategorie oder Status eines Geschäfts falsch sind, nutze den Link „Änderung der Geschäftsinformationen vorschlagen“ auf der Geschäftsseite oder schreibe an info@bosagezme.com.'},
-          {note:'Derzeit gibt es kein Verfahren zur Überprüfung der Geschäftsinhaberschaft. Es existiert kein Mechanismus, der Personen prüft, die angeben, eine Geschäftsseite zu verwalten.'},
+        ]},
+        {id:'magaza-hesabi',heading:'Kann ich ein Geschäftskonto eröffnen?',blocks:[
+          {p:'Derzeit gibt es kein Verfahren zur Überprüfung der Geschäftsinhaberschaft.'},
         ]},
       ],
     },
     ru:{
       title:'Что такое Boşa Gezme!?',
-      summary:'Boşa Gezme! — это сообщество для поиска настоящих магазинов товаров для дома. Платформа ничего не продаёт: она помогает решить, стоит ли ехать, опираясь на отзывы тех, кто там действительно был.',
+      summary:'Boşa Gezme! — это платформа сообщества для оценки физических магазинов товаров для дома. Она помогает находить настоящие магазины штор, ковров, мебели, освещения, кухонных принадлежностей, домашнего текстиля и других товаров для дома и читать отзывы людей, которые действительно там побывали. Вы также можете внести свой вклад в развитие платформы, оставив отзыв. Конечная цель — с помощью полностью созданной пользователями базы отзывов как можно быстрее направить каждого в наиболее подходящий магазин.',
       sections:[
-        {id:'nedir',heading:'Что такое Boşa Gezme!?',blocks:[
-          {p:'Boşa Gezme! — это платформа сообщества для поиска физических магазинов товаров для дома. Она помогает найти настоящие магазины со шторами, коврами, мебелью, освещением, посудой и домашним текстилем и прочитать, что там нашли побывавшие люди.'},
-          {p:'Название описывает проблему, которую платформа решает: приехать в магазин и не найти то, за чем ехали. Весь продукт построен вокруг того, чтобы такие поездки случались реже.'},
-        ]},
         {id:'nasil',heading:'Как это работает?',blocks:[
-          {p:'Цикл состоит из четырёх шагов: найти, съездить, описать свой опыт, помочь следующему.'},
-          {p:'Вы описываете своими словами, что ищете. Результаты сортируются от ближайших к дальним, причём магазины в вашем городе, уже оценённые сообществом, идут первыми. Находясь в магазине, вы можете подтвердить визит и написать отзыв.'},
+          {p:'Цикл состоит из четырёх шагов: найти, съездить, оценить и помочь следующему человеку с выбором.'},
+          {p:'Сначала вы описываете своими словами, что ищете. Результаты сортируются от ближайших к дальним; магазины в вашем городе, уже оценённые сообществом, получают приоритет. Посетив магазин, вы можете на месте подтвердить визит и оставить отзыв.'},
         ]},
         {id:'satis',heading:'Продаёт ли Boşa Gezme! товары?',blocks:[
           {p:'Нет. На платформе нет продаж, корзины, заказов и оплаты. Здесь ничего нельзя купить.'},
@@ -174,13 +164,15 @@ export const about:LegalDoc={
           {p:'Уровень участника зависит от количества опубликованных подтверждённых отзывов. После первого отзыва присваивается уровень Новичок, после 5 — Исследователь, после 15 — Опытный, после 40 — Гид, после 100 — Мастер-гид.'},
           {p:'Уровень не является деньгами, скидкой или привилегией магазина. Это знак сообщества в профиле и публикациях, показывающий, каким объёмом личного опыта вы поделились.'},
         ]},
-        {id:'konum',heading:'Как местоположение влияет на поиск?',blocks:[
+        {id:'konum',heading:'Как местоположение магазинов влияет на порядок выдачи?',blocks:[
           {p:'Результаты сортируются по расстоянию, поэтому поиску нужно местоположение. Его можно взять с устройства или выбрать место из списка.'},
           {p:'Как именно обрабатывается ваше местоположение и что сохраняется, подробно описано на странице о конфиденциальности геоданных.'},
         ]},
-        {id:'duzeltme',heading:'Как сообщить о неверных данных магазина?',blocks:[
+        {id:'duzeltme',heading:'Как сообщить об ошибочных сведениях о магазине?',blocks:[
           {p:'Если адрес, категория или статус магазина указаны неверно, воспользуйтесь ссылкой «Предложить исправление данных магазина» на его странице или напишите на info@bosagezme.com.'},
-          {note:'Процедуры подтверждения владения магазином сейчас нет. Механизм проверки лиц, заявляющих об управлении страницей магазина, отсутствует.'},
+        ]},
+        {id:'magaza-hesabi',heading:'Можно ли открыть аккаунт магазина?',blocks:[
+          {p:'Сейчас процедуры подтверждения владения магазином нет.'},
         ]},
       ],
     },
