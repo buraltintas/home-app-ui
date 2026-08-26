@@ -35,11 +35,11 @@ export function PostCard({post,showStoreName=true}:PostCardProps){
     }finally{setBusy(null);}
   };
 
-  // Sharing a review means sharing its page. Where the platform has no share sheet the
-  // link goes to the clipboard instead, so the button always does something.
+  // Feed shares lead to the store, not to a person's review. This keeps private-looking
+  // review copy and the author's name out of messaging previews and matches store sharing.
   const share=async()=>{
-    const url=new URL(`/reviews/${post.id}`,window.location.origin).toString();
-    const payload={title:post.store_name,text:post.text.slice(0,140),url};
+    const url=new URL(localePath(locale,`/stores/${post.store_id}`),window.location.origin).toString();
+    const payload={title:post.store_name,text:'Boşa Gezme! Bize Sor.',url};
     try{
       if(navigator.share){await navigator.share(payload);return;}
       await navigator.clipboard.writeText(url);

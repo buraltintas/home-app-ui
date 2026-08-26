@@ -81,7 +81,7 @@ export function AuthDialog({open,onClose,onAuthenticated}:{open:boolean;onClose:
 
   return <div className="dialog-backdrop" role="presentation" onMouseDown={closeDialog}>
     <Script id={`google-identity-${locale}`} src={`https://accounts.google.com/gsi/client?hl=${locale}`} strategy="afterInteractive" onLoad={()=>{googleInitializedRef.current=false;setGoogleReady(false);window.setTimeout(()=>setGoogleReady(true),0)}} onError={()=>setError(t('googleUnavailable'))}/>
-    <section className="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="auth-title" aria-busy={busy} onMouseDown={event=>event.stopPropagation()}>
+    <section className="auth-dialog" data-mode={emailMode?'email':'choice'} role="dialog" aria-modal="true" aria-labelledby="auth-title" aria-busy={busy} onMouseDown={event=>event.stopPropagation()}>
       <button className="icon-button dialog-close" onClick={closeDialog} aria-label={t('close')}><X/></button>
       <p className="eyebrow">{t('wordmark')}</p>
       <h2 id="auth-title">{emailMode?(sent?t('codeTitle'):t('emailTitle')):t('signInTitle')}</h2>

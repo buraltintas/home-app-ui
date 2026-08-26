@@ -3,9 +3,8 @@
 import {Camera,Check,MapPin,Star,Store,X} from 'lucide-react';
 import Image from 'next/image';
 import {useRouter,useSearchParams} from 'next/navigation';
-import {ChangeEvent,Suspense,useCallback,useEffect,useRef,useState} from 'react';
+import {ChangeEvent,Suspense,useCallback,useEffect,useLayoutEffect,useRef,useState} from 'react';
 import {AuthDialog} from '@/components/AuthDialog';
-import {MascotLoader} from '@/components/MascotLoader';
 import {useI18n} from '@/i18n/I18nProvider';
 import { localePath } from '@/lib/site';
 import {apiFetch} from '@/lib/api-client';
@@ -15,6 +14,13 @@ import type {MediaUpload,StoreDetail,VisitVerification} from '@/lib/types';
 
 const UUID=/^[0-9a-f-]{36}$/i;
 type Draft={id:string;url:string};
+
+function ReviewLoadingState(){
+  return <main className="create-page create-page-loading" aria-busy="true" aria-label="Loading">
+    <div className="review-loading-copy"><span/><span/><span/></div>
+    <div className="review-loading-steps"><span/><span/><span/><span/></div>
+  </main>;
+}
 
 // A review only means something attached to a store, so this screen is reachable
 // only as /create?store=<id>. Without one there is nothing to review and the user is
@@ -155,7 +161,7 @@ function ReviewWizard({storeId}:{storeId:string}){
   };
 
   if(loadError)return <main className="create-page"><div className="empty-state"><h1>{t('storeUnavailable')}</h1><button className="button primary" onClick={()=>router.push(localePath(locale,'/discover'))}>{t('discover')}</button></div></main>;
-  if(!store||signedIn===undefined)return <main className="create-page"><MascotLoader/></main>;
+  if(!store||signedIn===undefined)return <ReviewLoadingState/>;
 
   const steps=[[t('verifyLocation'),MapPin],[t('addRating'),Star],[t('addPhotos'),Camera],[t('tellExperience'),Check]] as const;
   const textLength=text.trim().length;
@@ -213,11 +219,14 @@ function CreateRoute(){
   const router=useRouter();
   const storeId=useSearchParams().get('store')??'';
   const valid=UUID.test(storeId);
+  // A store link is often opened from low on the detail page. Reset before paint so the
+  // new review flow never appears halfway down the page and then jumps to its heading.
+  useLayoutEffect(()=>{window.scrollTo(0,0);},[]);
   useEffect(()=>{if(!valid)router.replace(localePath(locale,'/discover'));},[router,valid,locale]);
   if(!valid)return <main className="create-page"><div className="empty-state"><h1>{t('chooseStoreToReview')}</h1><p>{t('chooseStoreBody')}</p></div></main>;
   return <ReviewWizard storeId={storeId}/>;
 }
 
 export default function Page(){
-  return <Suspense fallback={<main className="create-page"><MascotLoader/></main>}><CreateRoute/></Suspense>;
+  return <Suspense fallback={<ReviewLoadingState/>}><CreateRoute/></Suspense>;
 }

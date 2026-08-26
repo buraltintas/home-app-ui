@@ -42,11 +42,11 @@ export const about:LegalDoc={
           {p:'Bu seviye para, indirim veya mağaza ayrıcalığı değildir. Profilinizde ve paylaşımlarınızda, diğer insanlara ne kadar deneyim aktardığınızı gösteren bir topluluk işaretidir.'},
         ]},
         {id:'konum',heading:'Mağaza konumları listelemeyi nasıl etkiliyor',blocks:[
-          {p:'Sonuçlar mesafeye göre sıralanır, bu yüzden arama bir konum gerektirir. Konumunuzu cihazınızdan alabilir veya listeden bir yer seçebilirsiniz.'},
-          {p:'Konumunuzun tam olarak nasıl işlendiğini, neyin saklanıp neyin saklanmadığını konum gizliliği sayfasında ayrıntılı olarak anlattık.'},
+          {p:'Sonuçlar mesafeye göre sıralanır, bu yüzden her arama bir konum gerektirir. Konumunuz, cihaz ayarlarından otomatik olarak alınabilir veya arama çubuğundan kendiniz bir konum girebilirsiniz.'},
+          {p:'Konumunuzun tam olarak nasıl işlendiğini, neyin saklanıp neyin saklanmadığını konum gizliliği sayfasında ayrıntılı olarak bulabilirsiniz.'},
         ]},
         {id:'duzeltme',heading:'Mağazalara ait hatalı bilgi nasıl bildirilir?',blocks:[
-          {p:'Bir mağazanın adresi, kategorisi veya durumu yanlışsa mağaza sayfasındaki “Mağaza bilgisinde düzenleme öner” bağlantısını kullanabilir veya info@bosagezme.com adresine yazabilirsiniz.'},
+          {p:'Bir mağazanın adresi, kategorisi veya durumu yanlışsa mağaza sayfasındaki “Mağaza bilgilerinde düzenleme öner.” bağlantısını kullanabilir veya info@bosagezme.com adresine yazabilirsiniz.'},
         ]},
         {id:'magaza-hesabi',heading:'Mağaza hesabı açabilir miyim?',blocks:[
           {p:'Şu anda mağaza sahipliği doğrulama süreci bulunmamaktadır.'},
@@ -83,8 +83,8 @@ export const about:LegalDoc={
           {p:'A level is not money, a discount, or a store benefit. It is a community marker on your profile and contributions that shows how much first-hand experience you have shared.'},
         ]},
         {id:'konum',heading:'How do store locations affect listing?',blocks:[
-          {p:'Results are ordered by distance, which is why search needs a location. You can take it from your device or choose a place from a list.'},
-          {p:'Exactly how your location is processed, and what is and is not stored, is set out in detail on the location privacy page.'},
+          {p:'Results are ordered by distance, so every search needs a location. It can be read automatically from your device settings, or you can enter a location yourself in the search bar.'},
+          {p:'You can find full details on how your location is processed, and what is and is not stored, on the location privacy page.'},
         ]},
         {id:'duzeltme',heading:'How can incorrect information about a store be reported?',blocks:[
           {p:'If a store’s address, category or status is wrong, use the “Suggest an edit to store information” link on its page or email info@bosagezme.com.'},
@@ -124,8 +124,8 @@ export const about:LegalDoc={
           {p:'Eine Stufe ist weder Geld noch Rabatt oder ein Vorteil bei einem Geschäft. Sie zeigt in deinem Profil und deinen Beiträgen, wie viel eigene Erfahrung du mit der Community geteilt hast.'},
         ]},
         {id:'konum',heading:'Wie beeinflussen Geschäftsstandorte die Reihenfolge?',blocks:[
-          {p:'Ergebnisse werden nach Entfernung sortiert, deshalb benötigt die Suche einen Standort. Du kannst ihn von deinem Gerät übernehmen oder einen Ort aus einer Liste wählen.'},
-          {p:'Wie dein Standort genau verarbeitet wird und was gespeichert wird, steht ausführlich auf der Seite zum Standortdatenschutz.'},
+          {p:'Ergebnisse werden nach Entfernung sortiert, deshalb benötigt jede Suche einen Standort. Er kann automatisch aus deinen Geräteeinstellungen übernommen oder von dir in der Suchleiste eingegeben werden.'},
+          {p:'Ausführliche Informationen dazu, wie dein Standort verarbeitet wird und was gespeichert beziehungsweise nicht gespeichert wird, findest du auf der Seite zum Standortdatenschutz.'},
         ]},
         {id:'duzeltme',heading:'Wie kann ich fehlerhafte Angaben zu einem Geschäft melden?',blocks:[
           {p:'Wenn Adresse, Kategorie oder Status eines Geschäfts falsch sind, nutze den Link „Änderung der Geschäftsinformationen vorschlagen“ auf der Geschäftsseite oder schreibe an info@bosagezme.com.'},
@@ -165,8 +165,8 @@ export const about:LegalDoc={
           {p:'Уровень не является деньгами, скидкой или привилегией магазина. Это знак сообщества в профиле и публикациях, показывающий, каким объёмом личного опыта вы поделились.'},
         ]},
         {id:'konum',heading:'Как местоположение магазинов влияет на порядок выдачи?',blocks:[
-          {p:'Результаты сортируются по расстоянию, поэтому поиску нужно местоположение. Его можно взять с устройства или выбрать место из списка.'},
-          {p:'Как именно обрабатывается ваше местоположение и что сохраняется, подробно описано на странице о конфиденциальности геоданных.'},
+          {p:'Результаты сортируются по расстоянию, поэтому для каждого поиска требуется местоположение. Оно может определяться автоматически из настроек устройства, либо вы можете самостоятельно указать место в строке поиска.'},
+          {p:'Подробности о том, как обрабатывается ваше местоположение и какие данные сохраняются или не сохраняются, приведены на странице о конфиденциальности геоданных.'},
         ]},
         {id:'duzeltme',heading:'Как сообщить об ошибочных сведениях о магазине?',blocks:[
           {p:'Если адрес, категория или статус магазина указаны неверно, воспользуйтесь ссылкой «Предложить исправление данных магазина» на его странице или напишите на info@bosagezme.com.'},

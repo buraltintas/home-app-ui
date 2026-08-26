@@ -16,10 +16,16 @@ import {storePhotoURL} from '@/lib/store-photo';
 type Props={params:Promise<{id:string}>};
 
 const contributionCopy:Record<Locale,{title:string;body:string;action:string;progress:string;levels:string;correction:string}>={
-  tr:{title:'Bu mağazaya gittin mi?',body:'Deneyimin bir sonraki kişinin doğru mağazayı seçmesine yardım eder. Doğrulanmış her değerlendirme katkı seviyeni de yükseltir.',action:'Değerlendirme yap',progress:'Katkı seviyeni yükselt',levels:'Katkı seviyeleri ne işe yarar?',correction:'Mağaza bilgisinde düzenleme öner'},
+  tr:{title:'Bu mağazaya gittin mi?',body:'Deneyimin bir sonraki kişinin doğru mağazayı seçmesine yardım eder. Doğrulanmış her değerlendirme katkı seviyeni de yükseltir.',action:'Değerlendirme yap',progress:'Katkı seviyeni yükselt',levels:'Katkı seviyeleri ne işe yarar?',correction:'Mağaza bilgilerinde düzenleme öner.'},
   en:{title:'Have you visited this store?',body:'Your experience helps the next person choose the right store. Every verified review also raises your contributor level.',action:'Write a review',progress:'Raise your contributor level',levels:'What are contributor levels for?',correction:'Suggest an edit to store information'},
   de:{title:'Warst du in diesem Geschäft?',body:'Deine Erfahrung hilft der nächsten Person, das passende Geschäft zu wählen. Jede bestätigte Bewertung erhöht auch deine Beitragsstufe.',action:'Bewertung abgeben',progress:'Beitragsstufe erhöhen',levels:'Wozu dienen Beitragsstufen?',correction:'Änderung der Geschäftsinformationen vorschlagen'},
   ru:{title:'Вы были в этом магазине?',body:'Ваш опыт поможет следующему человеку выбрать подходящий магазин. Каждый подтверждённый отзыв также повышает ваш уровень участника.',action:'Оставить оценку',progress:'Повысить уровень участника',levels:'Для чего нужны уровни участника?',correction:'Предложить исправление данных магазина'},
+};
+const externalNote:Record<Locale,string>={
+  tr:'Google verileri Boşa Gezme! topluluk puanlarından bağımsızdır. Bu nedenle ayrı olarak gösterilir.',
+  en:'Google data is independent of Boşa Gezme! community ratings. It is therefore shown separately.',
+  de:'Google-Daten sind unabhängig von den Community-Bewertungen auf Boşa Gezme! und werden deshalb separat angezeigt.',
+  ru:'Данные Google не зависят от оценок сообщества Boşa Gezme!, поэтому показываются отдельно.',
 };
 
 // Everything Google gives us for a store lives in the external source attribution
@@ -67,7 +73,7 @@ export default async function Page({params}:Props){
   const photo=storePhotoURL(store.photo,1200);
   const photoCredit=store.photo?.attributions?.length?`${t.photoBy}: ${store.photo.attributions.join(' · ')}`:t.photoByGoogle;
   const contribution=contributionCopy[locale];
-  const correctionPath=localePath(locale,`/feedback?store=${encodeURIComponent(store.id)}&name=${encodeURIComponent(store.name)}`);
+  const correctionPath=localePath(locale,`/store-correction?store=${encodeURIComponent(store.id)}&name=${encodeURIComponent(store.name)}`);
   const trail=[{name:t.discover??'',path:'/discover'},...(store.city?[{name:store.city,path:'/discover'}]:[]),{name:store.name,path:storePath(store)}].filter(entry=>entry.name);
   return <main className="store-page">
     <JsonLd data={[storeJsonLd(store,recent_posts),breadcrumbJsonLd(trail)]}/>
@@ -104,7 +110,7 @@ export default async function Page({params}:Props){
         {google&&<aside className="external-panel" aria-label={t.googleData}>
           <p className="eyebrow">{t.googleData}</p>
           {google.rating_count!==undefined&&<p className="external-rating"><Rating value={google.rating??0}/> <span>{google.rating_count} {t.reviews}</span></p>}
-          <p className="external-note">{t.externalSeparation}</p>
+          <p className="external-note">{externalNote[locale]}</p>
           {google.attributions?.length?<p className="external-attribution">{google.attributions.join(' · ')}</p>:null}
           {google.refreshed_at&&<small>{t.googleUpdated}: {new Date(google.refreshed_at).toLocaleDateString(locale)}</small>}
         </aside>}

@@ -5,6 +5,7 @@ import {AuthDialog} from '@/components/AuthDialog';
 import {SignOutButton} from '@/components/SignOutButton';
 import {ContributorLevel} from '@/components/ContributorLevel';
 import {MascotLoader} from '@/components/MascotLoader';
+import {MyReviews} from '@/components/MyReviews';
 import {PastSearches} from '@/components/PastSearches';
 import {ProfileEditor} from '@/components/ProfileEditor';
 import {useI18n} from '@/i18n/I18nProvider';
@@ -18,6 +19,7 @@ const accountCopy:Record<Locale,{body:string;danger:string;title:string;confirm:
   ru:{body:'Войдите, чтобы управлять отзывами и личными настройками.',danger:'Действия с аккаунтом',title:'Удалить аккаунт?',confirm:'Удалить аккаунт',cancel:'Отмена',failed:'Не удалось удалить аккаунт.'},
 };
 const deleteBody:Record<Locale,string>={tr:'Yorumlarınız, arama geçmişiniz, profil bilgileriniz ve sosyal bağlantılarınız kaldırılır. Daha sonra aynı e-postayla giriş yapabilirsiniz ancak silinen veriler geri gelmez.',en:'Your reviews, search history, profile information, and social connections will be removed. You can sign in later with the same email, but deleted data cannot be restored.',de:'Deine Bewertungen, dein Suchverlauf, deine Profilangaben und deine sozialen Verbindungen werden entfernt. Du kannst dich später mit derselben E-Mail-Adresse anmelden, gelöschte Daten werden jedoch nicht wiederhergestellt.',ru:'Ваши отзывы, история поиска, данные профиля и социальные связи будут удалены. Позже вы сможете войти с тем же адресом электронной почты, но удалённые данные нельзя восстановить.'};
+const reviewCopy:Record<Locale,{title:string;hint:string}>={tr:{title:'Değerlendirmelerim',hint:'Daha önce paylaştığın mağaza deneyimleri'},en:{title:'My reviews',hint:'Store experiences you shared before'},de:{title:'Meine Bewertungen',hint:'Deine bisherigen Erfahrungen mit Geschäften'},ru:{title:'Мои отзывы',hint:'Ваши опубликованные впечатления о магазинах'}};
 
 // One panel of the profile. Everything below the identity card is collapsed by default:
 // the page was a single column of unrelated blocks -- search history, language, account
@@ -64,6 +66,9 @@ export default function Page(){
     </section>
     <Panel title={t('editProfile')} hint={t('editProfileHint')}>
       <ProfileEditor me={me} onSaved={setMe}/>
+    </Panel>
+    <Panel title={reviewCopy[locale].title} hint={reviewCopy[locale].hint}>
+      <MyReviews userId={me.id} locale={locale}/>
     </Panel>
     <Panel title={t('pastSearches')} hint={t('pastSearchesHint')}>
       <PastSearches heading={false}/>

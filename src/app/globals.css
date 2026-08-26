@@ -51,7 +51,7 @@
 .mascot-loader p{margin:0;font-size:15px;font-weight:600;color:var(--ink-muted)}
 @media(max-width:600px){.mascot-loader{padding:40px 18px 56px}.mascot-loader img{width:132px;height:132px}}
 
-.external-panel{margin-top:36px;padding:20px 22px;background:var(--surface);border-left:3px solid var(--line-strong);display:flex;flex-direction:column;gap:8px}
+.external-panel{margin-top:36px;padding:20px 22px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);display:flex;flex-direction:column;gap:8px}
 .external-panel>.eyebrow{margin-bottom:2px}
 .external-rating{display:flex;align-items:center;gap:8px;margin:0;font-weight:700}
 .external-rating span{font-weight:600;color:var(--ink-muted);font-size:14px}
@@ -62,6 +62,7 @@
 .action-status{margin:8px 0 0;font-size:13px;color:var(--ink-muted)}
 
 .review-step{display:flex;flex-direction:column;gap:16px;align-items:flex-start}
+.review-step>.form-error{width:100%;margin:0;padding:16px 18px;background:color-mix(in srgb,var(--error) 8%,var(--surface));border:1px solid color-mix(in srgb,var(--error) 34%,var(--line));border-radius:var(--r-md);color:var(--error);line-height:1.5}
 .manual-location{align-self:stretch;display:grid;gap:12px;padding:22px;background:var(--surface);border-radius:var(--r-md);}
 .manual-location h3{margin:0;font-size:22px;font-weight:600;letter-spacing:-.03em}
 .manual-location>p{margin:0;color:var(--ink-muted);line-height:1.5}
@@ -83,7 +84,13 @@
 .empty-state h1,.empty-state h2{font-size:clamp(26px,3vw,34px);font-weight:600;letter-spacing:-.035em;margin:0}
 .empty-state p{margin:0;color:var(--ink-muted);line-height:1.55;max-width:520px}
 @media(max-width:600px){}
-.review-store-address{margin:0;color:var(--ink-muted)}
+.create-page h1{font-size:clamp(34px,4.2vw,50px);overflow-wrap:anywhere;margin-bottom:20px}
+.review-store-address{margin:0;color:var(--ink-muted);display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.review-store-address svg{width:18px;height:18px;margin-top:5px;flex:none}
+.create-page-loading span{display:block;background:var(--muted);border-radius:5px}
+.review-loading-copy,.review-loading-steps{display:grid;gap:16px}
+.review-loading-copy span:first-child{height:12px;width:34%}.review-loading-copy span:nth-child(2){height:52px;width:88%}.review-loading-copy span:last-child{height:22px;width:70%}
+.review-loading-steps span{height:72px;width:100%}
 .review-nav{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
 .rating-picker{display:flex;gap:8px;flex-wrap:wrap}
 .rating-picker button{min-width:56px;min-height:56px;border:1px solid var(--line);background:var(--surface);border-radius:var(--r-md);font-size:18px;font-weight:700;cursor:pointer;transition:background-color .16s ease}
@@ -132,7 +139,7 @@
 .legal-meta div{display:grid;gap:3px}
 .legal-meta dt{font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--clay)}
 .legal-meta dd{margin:0;font-weight:700}
-.legal-pending{margin:0 0 40px;padding:20px 22px;border-radius:var(--r-md);background:var(--surface);border-left:5px solid var(--accent);display:grid;gap:8px}
+.legal-pending{margin:0 0 40px;padding:20px 22px;border-radius:var(--r-md);background:var(--surface);border:1px solid color-mix(in srgb,var(--accent) 42%,var(--line));display:grid;gap:8px}
 .legal-pending strong{font-size:15px}
 .legal-pending p{margin:0;color:var(--ink-muted);line-height:1.55}
 .legal-toc{margin:0 0 48px;padding:24px;background:var(--surface);border-radius:var(--r-md);}
@@ -250,6 +257,12 @@ body>main{flex:1 0 auto}
 .profile-panel[open]>summary::after{transform:rotate(-135deg)}
 .profile-panel-body{padding:2px 0 30px}
 .profile-panel .past-searches{margin:0;max-width:none}
+.profile-review-list{border:1px solid var(--line);border-bottom:0}
+.profile-review-list .post-card{padding:28px 32px}
+.profile-reviews-empty{margin:0;color:var(--ink-muted)}
+.profile-review-skeleton{display:grid;gap:12px;max-width:520px}
+.profile-review-skeleton span{height:14px;background:var(--muted);border-radius:4px}
+.profile-review-skeleton span:nth-child(2){width:84%}.profile-review-skeleton span:nth-child(3){width:62%}
 .profile-panel .danger-zone{width:100%;margin:0;border-radius:var(--r-md);border-width:2px}
 .profile-panel .locale-field{display:grid;gap:8px;justify-items:start}
 .profile-form{display:grid;gap:20px}
@@ -273,6 +286,9 @@ body>main{flex:1 0 auto}
    decoration competing with the thing a person came to type. */
 .feedback-page{max-width:720px;margin:0 auto;padding:54px 32px 110px}
 .feedback-page h1{font-size:clamp(30px,4.4vw,46px);font-weight:700;letter-spacing:-.035em;line-height:1.04;margin:14px 0 0;text-wrap:balance}
+.store-correction-context{display:grid;gap:2px;margin:0 0 28px;padding:16px 18px;background:var(--muted);border-radius:var(--r-md)}
+.store-correction-context span{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-muted);font-weight:750}
+.store-correction-context strong{font-size:18px}
 .feedback-intro{color:var(--ink-muted);line-height:1.6;max-width:56ch;margin:16px 0 34px}
 .feedback-form{display:grid;gap:26px}
 .feedback-kinds{border:0;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px}
@@ -291,6 +307,7 @@ body>main{flex:1 0 auto}
 .feedback-done p{margin:0;font-size:19px;font-weight:600}
 .google-button-slot{width:100%;height:48px;margin-top:10px;overflow:hidden;display:grid;place-items:center}
 .google-button-slot>.button{height:48px}
+@media(min-width:601px){.auth-dialog[data-mode="choice"]{min-height:604px}}
 
 /* Monthly community proof sits below the suggestion tools as a compact editorial list.
    It is intentionally not another grid of cards: the label explains why each store is
