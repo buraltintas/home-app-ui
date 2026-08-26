@@ -17,6 +17,7 @@ import { categoryLabels, searchExamples } from '@/i18n/dictionaries';
 import { Rating } from './Rating';
 import { SearchOverlay } from './SearchOverlay';
 import { LocationAlert } from './LocationAlert';
+import {mapsLink} from '@/lib/maps';
 import {storePhotoURL} from '@/lib/store-photo';
 import {CategoryIcon} from './CategoryIcon';
 
@@ -84,7 +85,7 @@ function Result({item,onSelect,onCall}:{item:SearchResult;onSelect:()=>void;onCa
     {/* No directions here. A list is where somebody is still choosing; directions belong
         on the page for the store they chose. This one is different -- it answers "is this
         place real, is it open", which is a question people ask while still deciding. */}
-    {item.google?.place_id&&<a className="result-google" href={`https://www.google.com/maps/place/?q=place_id:${encodeURIComponent(item.google.place_id)}`} target="_blank" rel="noopener noreferrer"><MapPin aria-hidden="true"/>{t('seeOnGoogleMaps')}</a>}
+    {item.google?.place_id&&<a className="result-google" href={mapsLink(item.latitude,item.longitude,item.google.place_id)} target="_blank" rel="noopener noreferrer"><MapPin aria-hidden="true"/>{t('seeOnGoogleMaps')}</a>}
   </div>;
 }
 

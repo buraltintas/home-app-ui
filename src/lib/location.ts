@@ -129,7 +129,14 @@ export function watchLocationConsent(onForgotten:()=>void):()=>void{
   if(typeof navigator==='undefined'||!navigator.permissions?.query)return()=>undefined;
   let status:PermissionStatus|undefined;
   const check=()=>{
-    if(status?.state!=='denied')return;
+    // Anything other than "granted" means the grant is gone. Watching only for "denied"
+    // missed the ordinary case: resetting a site's permission in Chrome puts it back to
+    // "ask", not to "denied", so somebody who removed our access kept being located from
+    // the copy we had saved. Reported twice from the live site before this was right.
+    //
+    // Clearing on "prompt" is safe on a first visit too, because there is nothing stored
+    // to clear.
+    if(!status||status.state==='granted')return;
     forgetDeviceLocation();
     onForgotten();
   };

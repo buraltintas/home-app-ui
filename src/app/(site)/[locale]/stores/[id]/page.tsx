@@ -1,4 +1,5 @@
 import type {Metadata} from 'next';
+import {mapsLink} from '@/lib/maps';
 import Image from 'next/image';
 import Link from 'next/link';
 import {permanentRedirect} from 'next/navigation';
@@ -120,7 +121,7 @@ export default async function Page({params}:Props){
               up on another site without meaning to. This gets pressed on purpose, and a
               product confident enough to show what Google says reads as more trustworthy
               than one that hides it. */}
-          {google.place_id&&<a className="external-link" href={`https://www.google.com/maps/place/?q=place_id:${encodeURIComponent(google.place_id)}`} target="_blank" rel="noopener noreferrer">{t.seeOnGoogleMaps}</a>}
+          {google.place_id&&<a className="external-link" href={mapsLink(store.latitude,store.longitude,google.place_id)} target="_blank" rel="noopener noreferrer">{t.seeOnGoogleMaps}</a>}
         </aside>}
       </div>
       <div className="store-reviews">

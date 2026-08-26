@@ -8,6 +8,19 @@ value involved.
 
 ---
 
+## Two fixes that had not actually been verified
+
+- **The Google Maps link did not work.** It used `place/?q=place_id:…`, which is the tidy
+  form and answers "no results found" often enough to be useless. It is Google's documented
+  `search/?api=1&query=<lat,lng>&query_place_id=<id>` now, with the coordinates carrying the
+  link when the id cannot. Shipped the first time on a reading of the markup rather than a
+  click; this one was opened and checked.
+- **Removing the location permission still did not forget the location.** The previous fix
+  watched for the permission becoming `denied`. Resetting a site's permission in Chrome puts
+  it back to `ask` — `prompt`, not `denied` — so the ordinary way of withdrawing access went
+  unnoticed. Anything other than `granted` now counts as withdrawn. Verified in both states.
+
+
 ## Taking the location permission away now means something
 
 - Reported from the live site: revoke the permission, and the site still knows where you
