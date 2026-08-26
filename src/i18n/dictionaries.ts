@@ -40,8 +40,14 @@ export const searchHighlightCopy={
   de:{monthlyStandouts:'Geschäfte, die diesen Monat auffallen',mostImproved:'Am stärksten verbessert',mostReviewed:'Am häufigsten bewertet',ratingIncrease:'Punkte besser',reviewsThisMonth:'Bewertungen diesen Monat'},
   ru:{monthlyStandouts:'Магазины месяца',mostImproved:'Самый заметный рост',mostReviewed:'Больше всего оценок',ratingIncrease:'рост рейтинга',reviewsThisMonth:'оценок за месяц'},
 } as const;
-export type TranslationKey=keyof typeof dictionaries.en|keyof typeof feedStateCopy.en|keyof typeof hardeningCopy.en|keyof typeof googleAuthCopy.en|keyof typeof profileCopy.en|keyof typeof feedbackCopy.en|keyof typeof searchHighlightCopy.en;
-export const getDictionary=(locale:Locale)=>({...dictionaries[locale],...feedStateCopy[locale],...hardeningCopy[locale],...googleAuthCopy[locale],...profileCopy[locale],...feedbackCopy[locale],...searchHighlightCopy[locale]});
+export const reviewPolicyCopy={
+  tr:{reviewDistanceLimit:'Bu mağazada değerlendirme yapabilmek için en fazla {distance} uzakta olmalısın.'},
+  en:{reviewDistanceLimit:'You must be within {distance} of this store to review it.'},
+  de:{reviewDistanceLimit:'Für eine Bewertung darfst du höchstens {distance} von diesem Geschäft entfernt sein.'},
+  ru:{reviewDistanceLimit:'Чтобы оставить отзыв, нужно находиться не дальше {distance} от магазина.'},
+} as const;
+export type TranslationKey=keyof typeof dictionaries.en|keyof typeof feedStateCopy.en|keyof typeof hardeningCopy.en|keyof typeof googleAuthCopy.en|keyof typeof profileCopy.en|keyof typeof feedbackCopy.en|keyof typeof searchHighlightCopy.en|keyof typeof reviewPolicyCopy.en;
+export const getDictionary=(locale:Locale)=>({...dictionaries[locale],...feedStateCopy[locale],...hardeningCopy[locale],...googleAuthCopy[locale],...profileCopy[locale],...feedbackCopy[locale],...searchHighlightCopy[locale],...reviewPolicyCopy[locale]});
 export const categoryLabels:Record<Locale,Record<string,string>>={
   tr:{furniture:'Mobilya',home_textile:'Ev tekstili',lighting:'Aydınlatma',decoration:'Dekorasyon',kitchenware:'Mutfak eşyaları',bathroom:'Banyo',carpet:'Halı',curtain:'Perde',bedding:'Nevresim takımı',tableware:'Sofra takımı',storage:'Düzenleme ve depolama',home_accessories:'Ev aksesuarları',household:'Ev gereçleri'},
   en:{furniture:'Furniture',home_textile:'Home textile',lighting:'Lighting',decoration:'Decoration',kitchenware:'Kitchenware',bathroom:'Bathroom',carpet:'Rugs',curtain:'Curtains',bedding:'Bedding',tableware:'Tableware',storage:'Storage & organization',home_accessories:'Home accessories',household:'Household goods'},

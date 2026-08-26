@@ -36,6 +36,7 @@ function ReviewWizard({storeId}:{storeId:string}){
   const [verification,setVerification]=useState<VisitVerification>();
   const [verifying,setVerifying]=useState(false);
   const [verifyError,setVerifyError]=useState('');
+  const [reviewRadiusMeters,setReviewRadiusMeters]=useState(2000);
   const [rating,setRating]=useState(0);
   const [photos,setPhotos]=useState<Draft[]>([]);
   const [uploading,setUploading]=useState(false);
@@ -66,6 +67,19 @@ function ReviewWizard({storeId}:{storeId:string}){
         if(active)setStore(detail);
       }catch{if(active)setLoadError(t('storeUnavailable'));}
     })();
+    void(async()=>{
+      try{
+        const response=await fetch('/api/runtime-config',{cache:'no-store'});
+        if(!response.ok)return;
+        const config=await response.json() as {reviewRadiusMeters?:number};
+        if(active&&typeof config.reviewRadiusMeters==='number'&&config.reviewRadiusMeters>0){
+          setReviewRadiusMeters(config.reviewRadiusMeters);
+        }
+      }catch{
+        // The backend remains authoritative. This value only improves the explanation
+        // shown after a rejection, so the documented default is a safe degradation.
+      }
+    })();
     return()=>{active=false;};
   },[checkSession,storeId,t]);
 
@@ -74,13 +88,19 @@ function ReviewWizard({storeId}:{storeId:string}){
     if(response.status===401){setSignedIn(false);setAuth(true);return;}
     if(!response.ok){
       const body=await response.json().catch(()=>undefined) as {error?:{code?:string}}|undefined;
-      if(body?.error?.code==='STORE_VISIT_NOT_VERIFIED'){setVerifyError(t('verifyTooFar'));return;}
+      if(body?.error?.code==='STORE_VISIT_NOT_VERIFIED'){
+        const distance=reviewRadiusMeters>=1000
+          ?`${new Intl.NumberFormat(locale,{maximumFractionDigits:1}).format(reviewRadiusMeters/1000)} km`
+          :`${new Intl.NumberFormat(locale,{maximumFractionDigits:0}).format(reviewRadiusMeters)} m`;
+        setVerifyError(t('reviewDistanceLimit').replace('{distance}',distance));
+        return;
+      }
       if(body?.error?.code==='LOCATION_ACCURACY_TOO_LOW'){setVerifyError(t('verifyAccuracy'));return;}
       throw new Error();
     }
     setVerification(await response.json() as VisitVerification);
     setStep(2);
-  },[storeId,t]);
+  },[locale,reviewRadiusMeters,storeId,t]);
 
   const verify=useCallback(async()=>{
     setVerifying(true);setVerifyError('');

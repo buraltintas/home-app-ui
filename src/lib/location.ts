@@ -23,6 +23,9 @@ const REMEMBERED_MAX_AGE=6*60*60*1000;
 // It stays in memory and expires quickly, so a typed or hours-old browsing location
 // can never become visit evidence.
 const RECENT_LIVE_MAX_AGE=2*60*1000;
+// A device-selected discovery fix remains valid long enough to open one of its results
+// and start a review. Manual locations never enter this path.
+const RECENT_DEVICE_VISIT_MAX_AGE=10*60*1000;
 let recentLivePosition:Position|undefined;
 let liveWatch:number|undefined;
 
@@ -208,7 +211,14 @@ export async function requestVisitPosition():Promise<LocationOutcome>{
   if(live&&typeof live.accuracy_meters==='number'&&live.accuracy_meters<=VISIT.target){
     return {ok:true,position:live,cached:true};
   }
-  const blocked=await locationPermission()==='denied';
+  // Discover has already obtained this fix from the device and the background watcher
+  // keeps its timestamp current. Requiring the browser to produce the same coordinates
+  // again on the next page created a second permission-looking step and failed on iOS.
+  const selected=savedSearchLocation();
+  if(selected?.source==='device'&&Date.now()-selected.updated_at<=RECENT_DEVICE_VISIT_MAX_AGE&&typeof selected.accuracy_meters==='number'&&selected.accuracy_meters<=VISIT.target){
+    return {ok:true,position:{latitude:selected.latitude,longitude:selected.longitude,accuracy_meters:selected.accuracy_meters,captured_at:selected.updated_at},cached:true};
+  }
+  const permission=await locationPermission();
   try{
     const position=toPosition(await acquire(VISIT));
     if(typeof position.accuracy_meters!=='number'||position.accuracy_meters>VISIT.target){
@@ -218,7 +228,7 @@ export async function requestVisitPosition():Promise<LocationOutcome>{
     return {ok:true,position};
   }catch(error){
     const code=(error as GeolocationPositionError|undefined)?.code;
-    if(code===1)return {ok:false,reason:blocked?'blocked':'denied'};
+    if(code===1)return {ok:false,reason:permission==='denied'?'blocked':permission==='granted'?'unavailable':'denied'};
     if(code===3)return {ok:false,reason:'timeout'};
     return {ok:false,reason:'unavailable'};
   }

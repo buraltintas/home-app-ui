@@ -99,6 +99,10 @@ export function SearchExperience() {
   const [history,setHistory]=useState<SearchHistory[]>([]);
   const [rotation,setRotation]=useState(0);
   const field=useRef<HTMLTextAreaElement>(null);
+  const searchSequence=useRef(0);
+  const searchAbort=useRef<AbortController|null>(null);
+
+  useEffect(()=>()=>searchAbort.current?.abort(),[]);
 
   const setLocation=useCallback((selected:SearchPlace|undefined)=>{
     if(!selected){
@@ -279,8 +283,24 @@ export function SearchExperience() {
       pending.current=nextQuery;
       setQuery(nextQuery);setLocationOpen(true);setError(t('locationRequired'));return;
     }
-    setLoading(true);setError('');
-    try{const response=await apiFetch('/api/proxy/search',{method:'POST',headers:{'Content-Type':'application/json','X-Locale':locale},body:JSON.stringify({query:nextQuery.trim(),...(nextLocation?.coordinates??{})})});if(!response.ok)throw await response.json();setData(await response.json() as SearchResponse);}catch{setError(t('searchError'));}finally{setLoading(false);}
+    searchAbort.current?.abort();
+    const controller=new AbortController();
+    searchAbort.current=controller;
+    const sequence=++searchSequence.current;
+    // Old results are about the old words. Clear them at the request boundary and only
+    // let the newest response settle state, so a slower earlier search cannot overwrite
+    // a correction the visitor typed immediately afterwards.
+    setLoading(true);setError('');setData(undefined);
+    try{
+      const response=await apiFetch('/api/proxy/search',{method:'POST',signal:controller.signal,headers:{'Content-Type':'application/json','X-Locale':locale},body:JSON.stringify({query:nextQuery.trim(),...(nextLocation?.coordinates??{})})});
+      if(!response.ok)throw await response.json();
+      const responseData=await response.json() as SearchResponse;
+      if(sequence===searchSequence.current)setData(responseData);
+    }catch(reason){
+      if(sequence===searchSequence.current&&(reason as Error)?.name!=='AbortError')setError(t('searchError'));
+    }finally{
+      if(sequence===searchSequence.current)setLoading(false);
+    }
   };
   const submit=(event:FormEvent)=>{event.preventDefault();void runSearch();};
 
