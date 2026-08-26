@@ -8,6 +8,15 @@ value involved.
 
 ---
 
+## Documentation rule
+
+- `AGENTS.md` now states what this file is for and when it must be written: every change a
+  person would want explained later, newest first, in the same commit as the change. Not a
+  list of files touched — what changed and why it was worth changing, because "fixed the
+  search" tells the next person nothing. The same rule is in the API and mobile
+  repositories, each pointing at the documents that are load-bearing there.
+
+
 ## Admin panel, paid placement, contributor levels
 
 - **Admin panel** at `/admin`, in its own route group with its own root layout — no site

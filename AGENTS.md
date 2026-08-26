@@ -38,6 +38,26 @@ Before changing screens, tokens, navigation, content, responsive behavior, or ac
 - Restrict material blur/glass to the floating navigation; do not spread glassmorphism across content.
 - Respect `prefers-reduced-motion`.
 
+## Keep the log
+
+Every change that a person would want explained later goes in `docs/CHANGELOG.md`, newest
+first, in the same commit as the change itself. Not a list of files touched — what changed,
+and why it was worth changing. A defect entry says what was actually broken, because "fixed
+the search" tells the next person nothing and "the same query returned different stores
+because the classifier ran at the default temperature" tells them everything.
+
+The other documents are load-bearing too, and stale ones are worse than missing ones:
+
+- `DESIGN.md` — tokens, type, primitives. Changing a colour or a radius without changing
+  this leaves the file lying to whoever reads it next.
+- `PRODUCT.md` — what the product is and refuses to be.
+- `AGENTS.md` (this file) — a rule that had to be learned the hard way belongs here, so it
+  is learned once.
+- `docs/LEGAL_REVIEW_REQUIRED.md` — anything published that makes a claim we have to keep.
+
+**No secrets in any of them.** Describe a security-relevant change by its effect, never by
+repeating the value involved.
+
 ## Required checks
 
 Run before committing:
