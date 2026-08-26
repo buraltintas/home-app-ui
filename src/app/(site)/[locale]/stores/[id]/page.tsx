@@ -81,9 +81,14 @@ export default async function Page({params}:Props){
   return <main className="store-page">
     <JsonLd data={[storeJsonLd(store,recent_posts),breadcrumbJsonLd(trail)]}/>
     <section className="store-hero">
+      {/* Roughly one store in twelve has no photograph, and not because we failed to fetch
+          one: Google Maps shows pictures from sources the Places API does not hand out, so
+          for those there is nothing to fetch. A blank grey block states that fact and does
+          nothing about it, and the only thing that fixes it is somebody going there and
+          taking a picture -- so the space asks for exactly that. */}
       {photo
         ?<figure className="store-hero-photo"><Image src={photo} fill style={{objectFit:'cover'}} sizes="100vw" priority unoptimized alt=""/>{store.photo?.source==='google'&&<figcaption>{photoCredit}</figcaption>}</figure>
-        :<div className="store-hero-photo store-hero-empty"><span aria-hidden="true">{store.name.trim().charAt(0)}</span><small>{t.noPhoto}</small></div>}
+        :<div className="store-hero-photo store-hero-empty"><span className="store-hero-initial" aria-hidden="true">{store.name.trim().charAt(0)}</span><p>{t.noPhotoYet}</p><Link className="button secondary" href={localePath(locale,`/create?store=${store.id}`)}>{t.addFirstPhoto}</Link></div>}
     </section>
     <section className="store-overview">
       <div className="store-copy">

@@ -8,6 +8,20 @@ value involved.
 
 ---
 
+## A store with no photograph now asks for one
+
+- Roughly one store in twelve has none, and not because the fetch failed. Checked against
+  Google directly, through both Place Details and Text Search: for these places the Places
+  API returns zero photos. Google Maps shows pictures from sources it does not license out
+  through the API, so there is nothing on our side left to try.
+- What was there was a full-width grey block with the store's initial and the words "no
+  photo" — stating the problem and doing nothing about it, at the top of the page. It now
+  says no photograph exists yet and offers the one thing that fixes it: a link straight into
+  writing a review of that store, which is where a photograph comes from.
+- Forty pages that were dead space are now forty invitations, and the mechanism is the one
+  already built — a community photograph outranks the provider's.
+
+
 ## Two fixes that had not actually been verified
 
 - **The Google Maps link did not work.** It used `place/?q=place_id:…`, which is the tidy
