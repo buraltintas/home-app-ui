@@ -8,6 +8,24 @@ value involved.
 
 ---
 
+## The location error moved to where people look
+
+- It used to sit at the bottom of the panel, under the button that had just appeared to do
+  nothing. People pressed "use my location", saw no change, and never read the sentence
+  explaining why. It leads the panel now, full width, and carries a **Try again** button —
+  previously somebody who fixed their browser setting came back to the page with no way
+  forward except guessing.
+- When the browser has *blocked* location — the one case where "press Allow" is wrong
+  advice, because it will never ask again — the box also shows where the address bar keeps
+  its lock. Drawn rather than screenshotted: a screenshot of Chrome stops being true the
+  next time Chrome moves something. Shown only in that case; offered when the browser
+  simply has not asked yet, it sends somebody hunting for a lock that will do nothing.
+- `npm run build` was failing on the type-check step with a heap exhaustion, before any of
+  this and unrelated to it — the project has outgrown Node's default heap. Both `build` and
+  `typecheck` now ask for more, so the check the contributing rules require can actually be
+  run.
+
+
 ## Documentation rule
 
 - `AGENTS.md` now states what this file is for and when it must be written: every change a

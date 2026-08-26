@@ -162,6 +162,12 @@ svg{stroke-width:2}
 @media(max-width:600px){.search-hero .location-control{margin-top:16px}}
 /* The reason a location attempt failed sits with the control that failed, not at the foot
    of the page where the person who pressed it will never scroll. */
+.location-alert{grid-column:1/-1;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start;margin:0 0 20px;padding:16px 18px;background:color-mix(in srgb,var(--error) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--error) 34%,var(--line));border-radius:var(--r-md)}
+.location-alert>svg{color:var(--error);margin-top:2px}
+.location-alert p{margin:0 0 12px;font-size:16px;line-height:1.5;color:var(--ink)}
+.location-alert .button{min-height:44px}
+.location-hint-art{display:block;width:100%;max-width:240px;height:auto;margin:0 0 14px}
+@media(max-width:600px){.location-alert{padding:14px;gap:10px}.location-alert .button{width:100%;justify-content:center}}
 .location-error{margin:0;padding:12px 14px;background:color-mix(in srgb,var(--error) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--error) 34%,var(--line));border-radius:var(--r-sm);color:var(--ink);font-size:15px;line-height:1.45}
 /* Two letters in the bar, its own menu underneath. It sits before the destinations because
    it changes what they say, not where they go. */
