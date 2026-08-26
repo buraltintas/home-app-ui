@@ -9,7 +9,7 @@ import { useI18n } from '@/i18n/I18nProvider';
 import { localePath ,slogan} from '@/lib/site';
 import { apiFetch } from '@/lib/api-client';
 import type { LocationFailure } from '@/lib/location';
-import { watchLocationConsent, canUseDeviceLocationWithoutPrompt, clearSearchLocation, LOCATION_UPDATE_EVENT, locationMessage, rememberedPosition, requestPosition, savedSearchLocation, saveSearchLocation } from '@/lib/location';
+import { deviceLocationAllowed, forgetDeviceLocation, watchLocationConsent, canUseDeviceLocationWithoutPrompt, clearSearchLocation, LOCATION_UPDATE_EVENT, locationMessage, rememberedPosition, requestPosition, savedSearchLocation, saveSearchLocation } from '@/lib/location';
 import { seasonalPool } from '@/i18n/search-seasons';
 import { rememberOriginSearch } from '@/lib/search-origin';
 import { RESET_EVENT, SNAPSHOT_KEY } from '@/lib/search-session';
@@ -259,6 +259,22 @@ export function SearchExperience() {
   // Taking the permission away has to mean something. Until now it did not: the browser
   // stopped answering, but we kept answering from a copy we had saved -- which from the
   // outside is indistinguishable from still tracking somebody who asked us to stop.
+  // Checked on every mount, not only when the browser reports a change. A permission taken
+  // away while this screen was closed produces no event to hear, and a saved device
+  // location would otherwise be restored as though the grant were still there.
+  useEffect(()=>{
+    let active=true;
+    void deviceLocationAllowed().then(allowed=>{
+      if(!active||allowed)return;
+      const saved=savedSearchLocation();
+      if(!saved||saved.source!=='device')return;
+      forgetDeviceLocation();
+      setLocation(undefined);
+      setData(undefined);
+    });
+    return()=>{active=false;};
+  },[setLocation]);
+
   useEffect(()=>watchLocationConsent(()=>{
     setLocation(undefined);
     setData(undefined);

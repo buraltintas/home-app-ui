@@ -115,6 +115,15 @@ export function saveSearchLocation(location:SearchLocationPreference){
 //
 // A place they typed themselves is left alone. That was never the device's to give, so
 // revoking the device permission says nothing about it.
+// Whether a stored device location may still be used. Anything other than a live grant
+// means it may not: the person took the permission away, and answering from a copy we kept
+// is the thing they were trying to stop. "unknown" is a browser without the Permissions
+// API, where there is nothing to check and refusing would break location entirely.
+export async function deviceLocationAllowed():Promise<boolean>{
+  const state=await locationPermission();
+  return state==='granted'||state==='unknown';
+}
+
 export function forgetDeviceLocation(){
   try{
     window.localStorage.removeItem(REMEMBERED);
@@ -288,11 +297,27 @@ export async function requestPosition({allowRemembered=false,allowRecentLive=fal
   // successful browser fix first avoids a 15 + 12 second loading state after the user
   // has already granted access. The session watcher refreshes this point and publishes
   // the sharper coordinates through LOCATION_UPDATE_EVENT as soon as they arrive.
-  if(allowRemembered){
+  // Consent is checked before the saved copy is offered, not after. The previous attempt
+  // put the check in a watcher on one screen, which meant a permission revoked anywhere
+  // else went unnoticed and this line answered from storage as though nothing had changed.
+  // Guarding at the point of use covers every screen at once, including ones written
+  // later, because everything that needs a position comes through here.
+  const consent=await locationPermission();
+  // A grant that is gone means the saved copy goes with it, whichever way it went: pressing
+  // Block leaves the state "denied", resetting the site's permission leaves it "prompt",
+  // and both mean the person withdrew what they gave us.
+  //
+  // But only the copy goes. A "prompt" state is the browser saying it will ask again, so
+  // the live attempt below still runs and the person still gets the choice -- refusing here
+  // would answer a question they were never asked.
+  if(consent==='denied'||consent==='prompt'){
+    forgetDeviceLocation();
+  }
+  if(allowRemembered&&consent!=='denied'&&consent!=='prompt'){
     const previous=rememberedPosition();
     if(previous){startLiveWatch();return {ok:true,position:previous,cached:true};}
   }
-  const blocked=await locationPermission()==='denied';
+  const blocked=consent==='denied';
   const failure=(error:unknown):LocationFailure=>{
     const code=(error as GeolocationPositionError|undefined)?.code;
     if(code===1)return blocked?'blocked':'denied';

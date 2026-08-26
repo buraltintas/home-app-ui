@@ -8,6 +8,22 @@ value involved.
 
 ---
 
+## Consent is checked where the location is used, not where it changes
+
+- Third attempt at the same report, and the first two were the same mistake in different
+  shapes: the check lived in a watcher on one screen. A permission revoked while that screen
+  was closed produced no event to hear, so a saved copy was still served — reported as
+  "close it, open it, close it again, and it still finds me".
+- The gate now sits in `requestPosition`, which everything that needs a position goes
+  through, so it covers every screen including ones written later. The saved discovery
+  location is re-checked on mount as well, because a permission taken away while the app was
+  closed leaves no event behind either.
+- A `prompt` state clears the saved copy but does **not** refuse the request. Resetting a
+  site's permission leaves it there, and the browser is saying it will ask again — refusing
+  would answer a question the person was never given the chance to answer. Only `denied`
+  produces the blocked guidance.
+
+
 ## A store with no photograph now asks for one
 
 - Roughly one store in twelve has none, and not because the fetch failed. Checked against
