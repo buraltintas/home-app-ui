@@ -38,6 +38,20 @@ Before changing screens, tokens, navigation, content, responsive behavior, or ac
 - Restrict material blur/glass to the floating navigation; do not spread glassmorphism across content.
 - Respect `prefers-reduced-motion`.
 
+## Rules are general, or they are not rules
+
+A rule that names a store, a city or a brand is not a rule, it is a patch. This product
+covers every city in Turkey; nobody can maintain a list of the cases that need special
+handling, and the attempt fails quietly — whatever nobody thought to add stays broken.
+
+A rule has to hold for a store nobody has looked at, in a city nobody has visited. Prefer,
+in order: the provider's own data, because it is complete; words the whole trade uses,
+because every business of that kind uses them; and nothing else. Not a brand list, not a
+per-store exception, not a fix for the one example in the bug report.
+
+When a report names one case, fix the class it belongs to, then look for the rest of the
+class — there is always more than the one reported.
+
 ## Keep the log
 
 Every change that a person would want explained later goes in `docs/CHANGELOG.md`, newest
