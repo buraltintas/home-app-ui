@@ -9,7 +9,7 @@ import { useI18n } from '@/i18n/I18nProvider';
 import { localePath ,slogan} from '@/lib/site';
 import { apiFetch } from '@/lib/api-client';
 import type { LocationFailure } from '@/lib/location';
-import { canUseDeviceLocationWithoutPrompt, clearSearchLocation, LOCATION_UPDATE_EVENT, locationMessage, rememberedPosition, requestPosition, savedSearchLocation, saveSearchLocation } from '@/lib/location';
+import { watchLocationConsent, canUseDeviceLocationWithoutPrompt, clearSearchLocation, LOCATION_UPDATE_EVENT, locationMessage, rememberedPosition, requestPosition, savedSearchLocation, saveSearchLocation } from '@/lib/location';
 import { seasonalPool } from '@/i18n/search-seasons';
 import { rememberOriginSearch } from '@/lib/search-origin';
 import { RESET_EVENT, SNAPSHOT_KEY } from '@/lib/search-session';
@@ -254,6 +254,15 @@ export function SearchExperience() {
     },350);
     return()=>{window.clearTimeout(timer);controller.abort();};
   },[sheetOpen,manual,locale,location]);
+
+  // Taking the permission away has to mean something. Until now it did not: the browser
+  // stopped answering, but we kept answering from a copy we had saved -- which from the
+  // outside is indistinguishable from still tracking somebody who asked us to stop.
+  useEffect(()=>watchLocationConsent(()=>{
+    setLocation(undefined);
+    setData(undefined);
+    setLocationOpen(true);
+  }),[setLocation]);
 
   // A browser that has already been granted permission does not need to be asked again,
   // so the fix is taken as soon as the page settles and the visitor simply arrives with

@@ -108,6 +108,41 @@ export function saveSearchLocation(location:SearchLocationPreference){
   try{window.localStorage.setItem(SEARCH_LOCATION,JSON.stringify(location));}catch{}
 }
 
+// Somebody who takes the permission away has withdrawn their consent, and the only honest
+// reading of that is that we stop using what it gave us. Nothing here read the device
+// again -- the browser would refuse -- but we were still answering from a copy we had kept,
+// which looks identical from the outside and is the thing they were trying to stop.
+//
+// A place they typed themselves is left alone. That was never the device's to give, so
+// revoking the device permission says nothing about it.
+export function forgetDeviceLocation(){
+  try{
+    window.localStorage.removeItem(REMEMBERED);
+    const selected=savedSearchLocation();
+    if(selected?.source==='device')window.localStorage.removeItem(SEARCH_LOCATION);
+  }catch{}
+}
+
+// Watches for the permission being taken away, and forgets immediately when it is. Called
+// on mount as well, because a person may have revoked it in another tab, or yesterday.
+export function watchLocationConsent(onForgotten:()=>void):()=>void{
+  if(typeof navigator==='undefined'||!navigator.permissions?.query)return()=>undefined;
+  let status:PermissionStatus|undefined;
+  const check=()=>{
+    if(status?.state!=='denied')return;
+    forgetDeviceLocation();
+    onForgotten();
+  };
+  let cancelled=false;
+  void navigator.permissions.query({name:'geolocation'}).then(result=>{
+    if(cancelled)return;
+    status=result;
+    check();
+    result.addEventListener('change',check);
+  }).catch(()=>undefined);
+  return()=>{cancelled=true;status?.removeEventListener('change',check);};
+}
+
 export function clearSearchLocation(){
   try{window.localStorage.removeItem(SEARCH_LOCATION);}catch{}
 }

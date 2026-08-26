@@ -8,6 +8,21 @@ value involved.
 
 ---
 
+## Taking the location permission away now means something
+
+- Reported from the live site: revoke the permission, and the site still knows where you
+  are. It was true. Nothing read the device again — the browser refuses — but two copies
+  were kept in the visitor's own storage: the last fix, for six hours, and the chosen
+  discovery location, indefinitely. We were answering from those.
+- From the outside that is indistinguishable from continuing to track somebody who asked us
+  to stop, and the only honest reading of a withdrawn permission is that we stop using what
+  it gave us. Both device-derived copies are dropped the moment the permission goes,
+  watched live through the Permissions API and checked again on load — a person may have
+  revoked it in another tab, or yesterday.
+- A place somebody typed themselves is left alone. That was never the device's to give, so
+  revoking the device permission says nothing about it.
+
+
 ## A way through to Google, on purpose
 
 - Store pages and result rows carry a **See on Google Maps** link beside the Google block.
