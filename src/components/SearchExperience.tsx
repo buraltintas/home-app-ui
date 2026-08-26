@@ -81,6 +81,10 @@ function Result({item,onSelect,onCall}:{item:SearchResult;onSelect:()=>void;onCa
   return <div className="result-row">
     {item.id?<Link href={localePath(locale,`/stores/${item.id}`)} onClick={onSelect}>{card}</Link>:card}
     {item.phone&&<a className="result-call" href={`tel:${dialable(item.phone)}`} onClick={onCall}><Phone aria-hidden="true"/><span>{t('callStore')}</span><strong>{item.phone}</strong></a>}
+    {/* No directions here. A list is where somebody is still choosing; directions belong
+        on the page for the store they chose. This one is different -- it answers "is this
+        place real, is it open", which is a question people ask while still deciding. */}
+    {item.google?.place_id&&<a className="result-google" href={`https://www.google.com/maps/place/?q=place_id:${encodeURIComponent(item.google.place_id)}`} target="_blank" rel="noopener noreferrer"><MapPin aria-hidden="true"/>{t('seeOnGoogleMaps')}</a>}
   </div>;
 }
 

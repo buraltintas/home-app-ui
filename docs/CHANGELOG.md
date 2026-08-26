@@ -8,6 +8,17 @@ value involved.
 
 ---
 
+## A way through to Google, on purpose
+
+- Store pages and result rows carry a **See on Google Maps** link beside the Google block.
+  Deliberately a link of its own rather than making the rating clickable: a clickable rating
+  gets pressed by accident, so somebody reading a number ends up on another site without
+  meaning to. This gets pressed on purpose.
+- No directions link on the result row. A list is where somebody is still choosing;
+  directions belong on the page for the store they chose. The Google link is different — it
+  answers "is this place real, is it open", which is a question people ask while deciding.
+
+
 ## The location error moved to where people look
 
 - It used to sit at the bottom of the panel, under the button that had just appeared to do

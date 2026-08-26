@@ -30,13 +30,15 @@ const externalNote:Record<Locale,string>={
 
 // Everything Google gives us for a store lives in the external source attribution
 // jsonb. Nothing here is invented: a missing field is simply not rendered.
-type GoogleSource={photo_name?:string;photo_attributions?:string[];attributions?:string[];rating?:number;rating_count?:number;refreshed_at?:string};
+type GoogleSource={place_id?:string;photo_name?:string;photo_attributions?:string[];attributions?:string[];rating?:number;rating_count?:number;refreshed_at?:string};
 function googleSource(store:Store):GoogleSource|undefined{
   const source=store.external_sources?.find(entry=>entry.provider==='google');
   if(!source)return undefined;
   const attribution=source.attribution as Record<string,unknown>;
+  const placeID=typeof source.external_id==='string'?source.external_id:undefined;
   const list=(value:unknown)=>Array.isArray(value)?value.filter((entry):entry is string=>typeof entry==='string'):undefined;
   return {
+    place_id:placeID,
     photo_name:typeof attribution.photo_name==='string'?attribution.photo_name:undefined,
     photo_attributions:list(attribution.photo_attributions),
     attributions:list(attribution.attributions),
@@ -113,6 +115,12 @@ export default async function Page({params}:Props){
           <p className="external-note">{externalNote[locale]}</p>
           {google.attributions?.length?<p className="external-attribution">{google.attributions.join(' · ')}</p>:null}
           {google.refreshed_at&&<small>{t.googleUpdated}: {new Date(google.refreshed_at).toLocaleDateString(locale)}</small>}
+          {/* Deliberately a link of its own rather than making the rating clickable. A
+              clickable rating gets pressed by accident -- somebody reading a number ends
+              up on another site without meaning to. This gets pressed on purpose, and a
+              product confident enough to show what Google says reads as more trustworthy
+              than one that hides it. */}
+          {google.place_id&&<a className="external-link" href={`https://www.google.com/maps/place/?q=place_id:${encodeURIComponent(google.place_id)}`} target="_blank" rel="noopener noreferrer">{t.seeOnGoogleMaps}</a>}
         </aside>}
       </div>
       <div className="store-reviews">
