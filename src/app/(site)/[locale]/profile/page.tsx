@@ -20,6 +20,7 @@ const accountCopy:Record<Locale,{body:string;danger:string;title:string;confirm:
 };
 const deleteBody:Record<Locale,string>={tr:'Yorumlarınız, arama geçmişiniz, profil bilgileriniz ve sosyal bağlantılarınız kaldırılır. Daha sonra aynı e-postayla giriş yapabilirsiniz ancak silinen veriler geri gelmez.',en:'Your reviews, search history, profile information, and social connections will be removed. You can sign in later with the same email, but deleted data cannot be restored.',de:'Deine Bewertungen, dein Suchverlauf, deine Profilangaben und deine sozialen Verbindungen werden entfernt. Du kannst dich später mit derselben E-Mail-Adresse anmelden, gelöschte Daten werden jedoch nicht wiederhergestellt.',ru:'Ваши отзывы, история поиска, данные профиля и социальные связи будут удалены. Позже вы сможете войти с тем же адресом электронной почты, но удалённые данные нельзя восстановить.'};
 const reviewCopy:Record<Locale,{title:string;hint:string}>={tr:{title:'Değerlendirmelerim',hint:'Daha önce paylaştığın mağaza deneyimleri'},en:{title:'My reviews',hint:'Store experiences you shared before'},de:{title:'Meine Bewertungen',hint:'Deine bisherigen Erfahrungen mit Geschäften'},ru:{title:'Мои отзывы',hint:'Ваши опубликованные впечатления о магазинах'}};
+const profileEditorHint:Record<Locale,string>={tr:'Görünen adın ve profil bilgilerin',en:'Your display name and profile details',de:'Dein Anzeigename und deine Profilangaben',ru:'Ваше отображаемое имя и данные профиля'};
 
 // One panel of the profile. Everything below the identity card is collapsed by default:
 // the page was a single column of unrelated blocks -- search history, language, account
@@ -56,15 +57,15 @@ export default function Page(){
     <p className="eyebrow">{t('profile')}</p>
     <h1>{t('profileTitle')}</h1>
     <section className="profile-summary">
-      <div className="profile-avatar">{(me.display_name||me.username||me.email).slice(0,1).toLocaleUpperCase(locale)}</div>
-      <div className="profile-summary-identity"><strong>{me.display_name||me.username}<ContributorLevel level={me.level}/></strong><span>@{me.username}</span><span>{me.email}</span></div>
+      <div className="profile-avatar">{(me.display_name||me.email).slice(0,1).toLocaleUpperCase(locale)}</div>
+      <div className="profile-summary-identity"><strong>{me.display_name||me.email}<ContributorLevel level={me.level}/></strong><span>{me.email}</span></div>
       <dl>
         <div><dd>{me.post_count}</dd><dt>{t('profileRatings')}</dt></div>
         <div><dd>{me.favorite_count}</dd><dt>{t('savedStores')}</dt></div>
       </dl>
       <SignOutButton className="button secondary profile-signout"/>
     </section>
-    <Panel title={t('editProfile')} hint={t('editProfileHint')}>
+    <Panel title={t('editProfile')} hint={profileEditorHint[locale]}>
       <ProfileEditor me={me} onSaved={setMe}/>
     </Panel>
     <Panel title={reviewCopy[locale].title} hint={reviewCopy[locale].hint}>

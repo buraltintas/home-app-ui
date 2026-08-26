@@ -9,12 +9,9 @@ import type {Me} from '@/lib/types';
 // one, so a name chosen at sign-up could never be changed. Only the public fields are
 // offered here: the private household questions belong to the survey that asks them, not
 // to a settings form.
-const USERNAME=/^[A-Za-z0-9_]+$/;
-
 export function ProfileEditor({me,onSaved}:{me:Me;onSaved:(next:Me)=>void}){
   const {t}=useI18n();
   const [displayName,setDisplayName]=useState(me.display_name??'');
-  const [username,setUsername]=useState(me.username??'');
   const [saving,setSaving]=useState(false);
   const [error,setError]=useState('');
   const [saved,setSaved]=useState('');
@@ -24,17 +21,10 @@ export function ProfileEditor({me,onSaved}:{me:Me;onSaved:(next:Me)=>void}){
     setError('');setSaved('');
     const next:Record<string,string>={};
     if(displayName.trim()!==(me.display_name??''))next.display_name=displayName.trim();
-    if(username.trim()!==(me.username??''))next.username=username.trim();
     if(Object.keys(next).length===0){setSaved(t('nothingToSave'));return;}
-    // The same rule the API enforces, checked here so a rejected name is explained rather
-    // than returned as a bare failure.
-    if(next.username!==undefined&&(next.username.length<3||next.username.length>30||!USERNAME.test(next.username))){
-      setError(t('usernameInvalid'));return;
-    }
     setSaving(true);
     try{
       const response=await apiFetch('/api/proxy/me',{method:'PATCH',headers:{'content-type':'application/json'},body:JSON.stringify(next)});
-      if(response.status===409){setError(t('usernameTaken'));return;}
       if(!response.ok)throw new Error();
       // The handler answers with the saved profile, so what is shown next is what the
       // server actually stored rather than what was typed.
@@ -47,10 +37,6 @@ export function ProfileEditor({me,onSaved}:{me:Me;onSaved:(next:Me)=>void}){
   return <form className="profile-form" onSubmit={event=>void submit(event)}>
     <label><span>{t('displayNameLabel')}</span>
       <input value={displayName} maxLength={100} onChange={event=>setDisplayName(event.target.value)}/>
-    </label>
-    <label><span>{t('usernameLabel')}</span>
-      <input value={username} maxLength={30} autoCapitalize="none" autoCorrect="off" spellCheck={false} onChange={event=>setUsername(event.target.value)}/>
-      <small>{t('usernameHint')}</small>
     </label>
     <div className="profile-form-actions">
       <button className="button primary" type="submit" disabled={saving}>{saving?'…':t('saveProfile')}</button>

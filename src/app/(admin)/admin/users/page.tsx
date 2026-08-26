@@ -23,14 +23,14 @@ export default async function Page({searchParams}:{searchParams:Promise<{q?:stri
       sildiğiyle birebir aynı işlemi çalıştırır: içerik boşaltılır, profil anonimleşir, e-posta
       adresi hesabın yeniden açılabilmesi için saklanır.
     </p>
-    <div className="admin-toolbar"><AdminSearch placeholder="E-posta veya kullanıcı adı"/><ExportLinks table="users" q={q}/></div>
+    <div className="admin-toolbar"><AdminSearch placeholder="E-posta veya görünen ad"/><ExportLinks table="users" q={q}/></div>
     <div className="admin-table-wrap">
       <table className="admin-table">
         <thead><tr><th>E-posta</th><th>Kullanıcı</th><th>Durum</th><th>Yorum</th><th>Kayıt</th><th></th></tr></thead>
         <tbody>
           {result.data.rows.map(user=><tr key={user.id}>
             <td>{user.email}</td>
-            <td>{user.display_name||user.username||'—'}</td>
+            <td>{user.display_name||user.email}</td>
             <td><span className="admin-flag" data-on={user.status!=='active'}>{user.status.toUpperCase()}</span></td>
             <td>{user.review_count}</td>
             <td>{when(user.created_at)}</td>

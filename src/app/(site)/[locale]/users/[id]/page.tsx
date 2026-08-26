@@ -7,7 +7,7 @@ import {canonicalFor,userPath} from '@/lib/site';
 export async function generateMetadata({params}:{params:Promise<{id:string}>}):Promise<Metadata>{
   const [{id},{locale}]=await Promise.all([params,getServerI18n()]);
   const profile=await getProfile(id);
-  const title=`${profile.display_name} (@${profile.username})`;
+  const title=profile.display_name;
   const description=profile.bio||undefined;
   return {title,description,alternates:canonicalFor(locale,userPath(profile.id)),openGraph:{type:'profile',url:userPath(profile.id),title,description}};
 }
@@ -22,7 +22,6 @@ export default async function Page({params}:{params:Promise<{id:string}>}){
     <header className="public-profile">
       <div className="profile-avatar">{profile.display_name.slice(0,1).toLocaleUpperCase(locale)}</div>
       <div>
-        <p className="eyebrow">@{profile.username}</p>
         <h1>{profile.display_name}</h1>
         {profile.bio&&<p>{profile.bio}</p>}
         {profile.city&&<span>{profile.city}</span>}

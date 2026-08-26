@@ -60,7 +60,7 @@ export function PostCard({post,showStoreName=true}:PostCardProps){
     <div className="post-heading">
       <header className="post-author">
         <div className="avatar">{post.display_name.slice(0,1).toLocaleUpperCase(locale)}</div>
-        <div><strong>{post.display_name}<ContributorLevel level={post.author_level}/></strong><span>@{post.username} · {new Intl.DateTimeFormat(locale,{day:'numeric',month:'short'}).format(new Date(post.created_at))}</span></div>
+        <div><strong>{post.display_name}<ContributorLevel level={post.author_level}/></strong><span>{new Intl.DateTimeFormat(locale,{day:'numeric',month:'short'}).format(new Date(post.created_at))}</span></div>
         <button className="icon-button" disabled={busy==='save'} aria-label={t('save')} aria-pressed={saved} onClick={()=>void mutate('save')}><Bookmark className={saved?'active-icon':''}/></button>
       </header>
       {showStoreName&&<Link href={localePath(locale,`/stores/${post.store_id}`)} className="post-store"><h2>{post.store_name}</h2>{place&&<p>{place}</p>}</Link>}

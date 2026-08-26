@@ -40,7 +40,7 @@ export function CommentThread({postId,comments}:{postId:string;comments:Comment[
         <div className="avatar" aria-hidden="true">{comment.display_name.slice(0,1).toLocaleUpperCase(locale)}</div>
         <div>
           <strong>{comment.display_name}</strong>
-          <span>@{comment.username} · {new Intl.DateTimeFormat(locale,{day:'numeric',month:'short'}).format(new Date(comment.created_at))}</span>
+          <span>{new Intl.DateTimeFormat(locale,{day:'numeric',month:'short'}).format(new Date(comment.created_at))}</span>
           <p>{comment.body}</p>
         </div>
       </li>)}</ul>}

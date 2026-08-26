@@ -35,7 +35,7 @@ export const accountDeletion:LegalDoc={
         ]},
         {id:'anonimlestirilenler',heading:'Silinmeyip anonimleştirilenler',blocks:[
           {p:'Yazdığınız değerlendirmelerin ve yorumların metni boşaltılır ve içerik kaldırılmış olarak işaretlenir. Kayıtların kendisi, bağlı oldukları mağaza istatistiklerinin ve konuşma zincirlerinin tutarlı kalması için veritabanında kalır ancak içerikleri okunamaz.'},
-          {p:'Görünen profiliniz anonimleştirilir: kullanıcı adınız serbest bırakılır, görünen adınız "Deleted user" olur, biyografiniz, şehriniz ve profil görseliniz kaldırılır.'},
+          {p:'Görünen profiliniz anonimleştirilir: görünen adınız "Deleted user" olur; biyografiniz, şehriniz ve profil görseliniz kaldırılır. Herkese açık olmayan teknik hesap kimliği de sıfırlanır.'},
           {p:'Yüklediğiniz görseller silinmiş olarak işaretlenir. Ürün içi analitik kayıtlarındaki kullanıcı bağlantısı koparılır.'},
           {p:'Tüm oturumlarınız iptal edilir, yani açık olan diğer cihazlardan da çıkış yapılmış olur.'},
         ]},
@@ -45,7 +45,7 @@ export const accountDeletion:LegalDoc={
           {note:'Bu, silme işleminin "her şey gider" anlamına gelmediği tek noktadır ve bu yüzden burada açıkça yazılmıştır.'},
         ]},
         {id:'geri-donus',heading:'Yeniden etkinleştirme',blocks:[
-          {p:'Aynı e-posta adresiyle yeniden giriş yaparsanız hesabınız etkinleştirilir ve size varsayılan bir kullanıcı adı ile görünen ad verilir.'},
+          {p:'Aynı e-posta adresiyle yeniden giriş yaparsanız hesabınız etkinleştirilir; yeni bir teknik hesap kimliği ve varsayılan görünen ad oluşturulur.'},
           {p:'Hesabınız geri gelir, içeriğiniz gelmez. Silinen değerlendirmelerinizin ve yorumlarınızın metni boşaltılmıştır ve geri getirilemez. Beğenileriniz, favorileriniz, takipleriniz ve arama geçmişiniz de geri gelmez.'},
         ]},
       ],
@@ -74,7 +74,7 @@ export const accountDeletion:LegalDoc={
         ]},
         {id:'anonimlestirilenler',heading:'What is anonymised rather than deleted',blocks:[
           {p:'The text of your reviews and comments is emptied and the entries are marked as removed. The records themselves stay in the database so that store statistics and conversation threads remain consistent, but their content is no longer readable.'},
-          {p:'Your visible profile is anonymised: your username is released, your display name becomes "Deleted user", and your bio, city and profile image are removed.'},
+          {p:'Your visible profile is anonymised: your display name becomes "Deleted user", and your bio, city and profile image are removed. The non-public technical account identifier is reset as well.'},
           {p:'Images you uploaded are marked deleted. The link between you and internal product analytics records is severed.'},
           {p:'All your sessions are revoked, so you are signed out on other devices too.'},
         ]},
@@ -84,7 +84,7 @@ export const accountDeletion:LegalDoc={
           {note:'This is the single point at which deletion does not mean "everything is gone", which is why it is stated plainly here.'},
         ]},
         {id:'geri-donus',heading:'Reactivation',blocks:[
-          {p:'Signing in again with the same email address reactivates your account and gives you a fresh default username and display name.'},
+          {p:'Signing in again with the same email address reactivates your account and creates a fresh technical account identifier and default display name.'},
           {p:'Your account returns; your content does not. The text of your deleted reviews and comments was emptied and cannot be restored. Your likes, favourites, follows and search history do not return either.'},
         ]},
       ],
@@ -113,7 +113,7 @@ export const accountDeletion:LegalDoc={
         ]},
         {id:'anonimlestirilenler',heading:'Was anonymisiert statt gelöscht wird',blocks:[
           {p:'Der Text deiner Bewertungen und Kommentare wird geleert und die Einträge als entfernt markiert. Die Datensätze selbst bleiben in der Datenbank, damit Geschäftsstatistiken und Kommentarverläufe konsistent bleiben, ihr Inhalt ist jedoch nicht mehr lesbar.'},
-          {p:'Dein sichtbares Profil wird anonymisiert: Dein Benutzername wird freigegeben, dein Anzeigename wird „Deleted user“, und Biografie, Stadt und Profilbild werden entfernt.'},
+          {p:'Dein sichtbares Profil wird anonymisiert: Dein Anzeigename wird „Deleted user“, und Biografie, Stadt und Profilbild werden entfernt. Die nicht öffentliche technische Kontokennung wird ebenfalls zurückgesetzt.'},
           {p:'Von dir hochgeladene Bilder werden als gelöscht markiert. Die Verbindung zwischen dir und internen Produktanalysedaten wird getrennt.'},
           {p:'Alle deine Sitzungen werden widerrufen, du wirst also auch auf anderen Geräten abgemeldet.'},
         ]},
@@ -123,7 +123,7 @@ export const accountDeletion:LegalDoc={
           {note:'Dies ist der einzige Punkt, an dem Löschung nicht „alles ist weg“ bedeutet, und deshalb steht er hier ausdrücklich.'},
         ]},
         {id:'geri-donus',heading:'Reaktivierung',blocks:[
-          {p:'Eine erneute Anmeldung mit derselben E-Mail-Adresse reaktiviert dein Konto und vergibt einen neuen Standard-Benutzernamen und Anzeigenamen.'},
+          {p:'Eine erneute Anmeldung mit derselben E-Mail-Adresse reaktiviert dein Konto und erstellt eine neue technische Kontokennung und einen Standard-Anzeigenamen.'},
           {p:'Dein Konto kehrt zurück, deine Inhalte nicht. Der Text deiner gelöschten Bewertungen und Kommentare wurde geleert und kann nicht wiederhergestellt werden. Likes, Favoriten, Gefolgte und Suchverlauf kehren ebenfalls nicht zurück.'},
         ]},
       ],
@@ -152,7 +152,7 @@ export const accountDeletion:LegalDoc={
         ]},
         {id:'anonimlestirilenler',heading:'Что обезличивается, а не удаляется',blocks:[
           {p:'Текст ваших отзывов и комментариев очищается, а записи помечаются как удалённые. Сами записи остаются в базе, чтобы статистика магазинов и ветки обсуждений оставались согласованными, но их содержимое больше не читается.'},
-          {p:'Ваш видимый профиль обезличивается: имя пользователя освобождается, отображаемое имя становится «Deleted user», а описание, город и изображение профиля удаляются.'},
+          {p:'Ваш видимый профиль обезличивается: отображаемое имя становится «Deleted user», а описание, город и изображение профиля удаляются. Непубличный технический идентификатор также сбрасывается.'},
           {p:'Загруженные вами изображения помечаются как удалённые. Связь между вами и записями внутренней аналитики разрывается.'},
           {p:'Все ваши сессии отзываются, то есть выход выполняется и на других устройствах.'},
         ]},
@@ -162,7 +162,7 @@ export const accountDeletion:LegalDoc={
           {note:'Это единственный случай, когда удаление не означает «исчезло всё», поэтому он указан прямо.'},
         ]},
         {id:'geri-donus',heading:'Восстановление',blocks:[
-          {p:'Повторный вход с тем же адресом электронной почты восстанавливает аккаунт и присваивает новое имя пользователя и отображаемое имя по умолчанию.'},
+          {p:'Повторный вход с тем же адресом электронной почты восстанавливает аккаунт и создаёт новый технический идентификатор и отображаемое имя по умолчанию.'},
           {p:'Аккаунт возвращается, содержимое — нет. Текст удалённых отзывов и комментариев был очищен и не восстанавливается. Отметки «нравится», избранное, подписки и история поиска также не возвращаются.'},
         ]},
       ],

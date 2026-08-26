@@ -35,7 +35,7 @@ export const privacy:LegalDoc={
         {id:'toplanan',heading:'Toplanan bilgiler',blocks:[
           {h3:'Siz verdikçe'},
           {ul:[
-            'Hesap: e-posta adresi, kullanıcı adı, görünen ad, dil tercihi',
+            'Hesap: e-posta adresi, herkese açık olmayan teknik hesap kimliği, görünen ad, dil tercihi',
             'İsteğe bağlı profil: biyografi, şehir, profil görseli',
             'İsteğe bağlı özel profil: ilişki durumu, çocuk yaş aralıkları, konut durumu, meslek, yaş aralığı, ilgi alanları',
             'İçerik: değerlendirmeler, puanlar, yorumlar, yüklediğiniz görseller',
@@ -102,7 +102,7 @@ export const privacy:LegalDoc={
         {id:'toplanan',heading:'What is collected',blocks:[
           {h3:'What you provide'},
           {ul:[
-            'Account: email address, username, display name, language preference',
+            'Account: email address, a non-public technical account identifier, display name, language preference',
             'Optional profile: bio, city, profile image',
             'Optional private profile: relationship status, children’s age ranges, housing status, occupation, age range, interests',
             'Content: reviews, ratings, comments, images you upload',
@@ -169,7 +169,7 @@ export const privacy:LegalDoc={
         {id:'toplanan',heading:'Was erhoben wird',blocks:[
           {h3:'Was du angibst'},
           {ul:[
-            'Konto: E-Mail-Adresse, Benutzername, Anzeigename, Spracheinstellung',
+            'Konto: E-Mail-Adresse, nicht öffentliche technische Kontokennung, Anzeigename, Spracheinstellung',
             'Optionales Profil: Biografie, Stadt, Profilbild',
             'Optionales privates Profil: Beziehungsstatus, Altersgruppen von Kindern, Wohnsituation, Beruf, Altersgruppe, Interessen',
             'Inhalte: Bewertungen, Noten, Kommentare, hochgeladene Bilder',
@@ -236,7 +236,7 @@ export const privacy:LegalDoc={
         {id:'toplanan',heading:'Что собирается',blocks:[
           {h3:'Что предоставляете вы'},
           {ul:[
-            'Аккаунт: адрес почты, имя пользователя, отображаемое имя, язык',
+            'Аккаунт: адрес почты, непубличный технический идентификатор, отображаемое имя, язык',
             'Необязательный профиль: описание, город, изображение профиля',
             'Необязательный приватный профиль: семейное положение, возрастные группы детей, жильё, профессия, возраст, интересы',
             'Контент: отзывы, оценки, комментарии, загруженные изображения',

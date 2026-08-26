@@ -30,7 +30,7 @@ export const kvkkAydinlatma:LegalDoc={
         {id:'faaliyetler',heading:'Faaliyet bazında işleme şartları',blocks:[
           {p:'Her satır, o faaliyet için fiilen dayanılan işleme şartını gösterir.'},
           {table:{head:['Faaliyet','İşlenen veri','Amaç','Hukuki sebep (KVKK)'],rows:[
-            ['Hesap oluşturma ve giriş','E-posta adresi, kullanıcı adı, görünen ad','Hesabın kurulması ve kimlik doğrulama','m.5/2-c — sözleşmenin kurulması ve ifası için zorunlu olması'],
+            ['Hesap oluşturma ve giriş','E-posta adresi, herkese açık olmayan teknik hesap kimliği, görünen ad','Hesabın kurulması ve kimlik doğrulama','m.5/2-c — sözleşmenin kurulması ve ifası için zorunlu olması'],
             ['E-posta ile tek kullanımlık kod','E-posta, kodun özeti, IP adresinin özeti, deneme sayısı','Girişin güvenliği ve kötüye kullanımın önlenmesi','m.5/2-f — meşru menfaat (hesap güvenliği)'],
             ['Google ile giriş','Google tarafından sağlanan kimlik ve e-posta','Kimlik doğrulama','m.5/2-c — sözleşmenin ifası'],
             ['Oturum yönetimi','Yenileme jetonunun özeti, istemci türü, cihaz bilgisi','Oturumun sürdürülmesi ve çalınmış jetonun tespiti','m.5/2-f — meşru menfaat (güvenlik)'],
@@ -103,7 +103,7 @@ export const kvkkAydinlatma:LegalDoc={
         {id:'faaliyetler',heading:'Processing conditions, activity by activity',blocks:[
           {p:'Each row names the processing condition actually relied on for that activity.'},
           {table:{head:['Activity','Data','Purpose','Legal ground (KVKK)'],rows:[
-            ['Account creation and sign-in','Email address, username, display name','Creating the account and verifying identity','art. 5/2-c — necessary for the performance of a contract'],
+            ['Account creation and sign-in','Email address, non-public technical account identifier, display name','Creating the account and verifying identity','art. 5/2-c — necessary for the performance of a contract'],
             ['Email one-time code','Email, hash of the code, hash of the request IP, attempt count','Sign-in security and abuse prevention','art. 5/2-f — legitimate interest (account security)'],
             ['Google sign-in','Identifier and email provided by Google','Authentication','art. 5/2-c — performance of a contract'],
             ['Session management','Hash of the refresh token, client type, device metadata','Maintaining the session and detecting stolen tokens','art. 5/2-f — legitimate interest (security)'],
@@ -176,7 +176,7 @@ export const kvkkAydinlatma:LegalDoc={
         {id:'faaliyetler',heading:'Verarbeitungsgrundlagen nach Tätigkeit',blocks:[
           {p:'Jede Zeile nennt die für diese Tätigkeit tatsächlich herangezogene Verarbeitungsgrundlage.'},
           {table:{head:['Tätigkeit','Daten','Zweck','Rechtsgrundlage (KVKK)'],rows:[
-            ['Kontoerstellung und Anmeldung','E-Mail-Adresse, Benutzername, Anzeigename','Einrichtung des Kontos und Authentifizierung','Art. 5/2-c — zur Vertragserfüllung erforderlich'],
+            ['Kontoerstellung und Anmeldung','E-Mail-Adresse, nicht öffentliche technische Kontokennung, Anzeigename','Einrichtung des Kontos und Authentifizierung','Art. 5/2-c — zur Vertragserfüllung erforderlich'],
             ['Einmalcode per E-Mail','E-Mail, Hash des Codes, Hash der Anfrage-IP, Versuchszähler','Anmeldesicherheit und Missbrauchsprävention','Art. 5/2-f — berechtigtes Interesse (Kontosicherheit)'],
             ['Google-Anmeldung','Von Google bereitgestellte Kennung und E-Mail','Authentifizierung','Art. 5/2-c — Vertragserfüllung'],
             ['Sitzungsverwaltung','Hash des Refresh-Tokens, Client-Typ, Gerätedaten','Aufrechterhaltung der Sitzung und Erkennung gestohlener Token','Art. 5/2-f — berechtigtes Interesse (Sicherheit)'],
@@ -249,7 +249,7 @@ export const kvkkAydinlatma:LegalDoc={
         {id:'faaliyetler',heading:'Основания обработки по видам деятельности',blocks:[
           {p:'В каждой строке указано основание, которое фактически применяется к этой деятельности.'},
           {table:{head:['Деятельность','Данные','Цель','Правовое основание (KVKK)'],rows:[
-            ['Создание аккаунта и вход','Адрес эл. почты, имя пользователя, отображаемое имя','Создание аккаунта и проверка личности','ст. 5/2-c — необходимо для исполнения договора'],
+            ['Создание аккаунта и вход','Адрес эл. почты, непубличный технический идентификатор, отображаемое имя','Создание аккаунта и проверка личности','ст. 5/2-c — необходимо для исполнения договора'],
             ['Одноразовый код по почте','Почта, хеш кода, хеш IP-адреса, число попыток','Безопасность входа и предотвращение злоупотреблений','ст. 5/2-f — законный интерес (безопасность)'],
             ['Вход через Google','Идентификатор и почта от Google','Аутентификация','ст. 5/2-c — исполнение договора'],
             ['Управление сессиями','Хеш токена обновления, тип клиента, данные устройства','Поддержание сессии и выявление украденных токенов','ст. 5/2-f — законный интерес'],

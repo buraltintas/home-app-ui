@@ -19,7 +19,7 @@ const columns:Record<string,Column[]>={
     {key:'average_rating',label:'Puan'},{key:'created_at',label:'Eklendi'},
   ],
   users:[
-    {key:'email',label:'E-posta'},{key:'display_name',label:'Ad'},{key:'username',label:'Kullanıcı adı'},
+    {key:'email',label:'E-posta'},{key:'display_name',label:'Ad'},
     {key:'status',label:'Durum'},{key:'review_count',label:'Yorum'},{key:'created_at',label:'Kayıt'},
   ],
   reviews:[
