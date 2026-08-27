@@ -8,6 +8,25 @@ value involved.
 
 ---
 
+## Back did not mean "the previous step" on the review page
+
+- Reported from Safari: pressing back on the review page did not return to the previous
+  page. The four steps of the review wizard were component state, so the browser had no
+  record that a person had moved through them at all. Back was therefore answered by the
+  only entry that existed, and the half-written review went with it.
+- The step now lives in the address and every forward move pushes a history entry, so the
+  back button and the iOS edge swipe walk the wizard backwards one step at a time and only
+  leave the flow from the first step. The in-page **Geri** buttons go through history too,
+  so both kinds of back agree instead of disagreeing.
+- Evidence of the visit is what unlocks the rest of the flow, so a step claimed by the URL
+  is honoured only once that evidence exists; a reload or a shared link is repaired back to
+  the first step on entry. Step one gained a **Devam** button, because back can now land
+  there after the visit has already been verified.
+- Not yet confirmed as the whole of the report: the exact case was not reproducible in the
+  Safari engine while signed out, from the store page, on desktop and iPhone viewports,
+  with and without a locale prefix, and opening the link directly. What is fixed here is
+  the defect that is provable.
+
 ## A position outlived the device that produced it
 
 - Reported: the phone's location services are off, the browser permission is still granted,

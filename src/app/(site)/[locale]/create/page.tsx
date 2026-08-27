@@ -30,7 +30,7 @@ function ReviewWizard({storeId}:{storeId:string}){
   const router=useRouter();
   const [store,setStore]=useState<StoreDetail>();
   const [loadError,setLoadError]=useState('');
-  const [step,setStep]=useState(1);
+  const searchParams=useSearchParams();
   const [auth,setAuth]=useState(false);
   const [signedIn,setSignedIn]=useState<boolean>();
   const [verification,setVerification]=useState<VisitVerification>();
@@ -45,6 +45,22 @@ function ReviewWizard({storeId}:{storeId:string}){
   const [submitting,setSubmitting]=useState(false);
   const [submitError,setSubmitError]=useState('');
   const autoVerificationAttempted=useRef(false);
+
+  // The four steps are history entries, not component state. On a phone the back button
+  // -- and the edge swipe that means the same thing -- is how people undo, and a wizard
+  // that keeps its position in state cannot answer that: back leaves the flow altogether
+  // and takes the half-written review with it. The step therefore lives in the URL, and
+  // every forward move pushes an entry, so the browser's own back walks the wizard
+  // backwards one step at a time.
+  const requestedStep=Math.min(Math.max(Math.trunc(Number(searchParams.get('step')))||1,1),4);
+  // Evidence of the visit is what unlocks the rest of the flow, so a step claimed by the
+  // URL is only honoured once that evidence exists.
+  const step=verification?requestedStep:1;
+  const stepUrl=useCallback((next:number)=>`?store=${encodeURIComponent(storeId)}${next>1?`&step=${next}`:''}`,[storeId]);
+  const advance=useCallback((next:number)=>{window.history.pushState(null,'',stepUrl(next));},[stepUrl]);
+  // A reload or a shared link can claim progress this session does not have. The address
+  // is repaired once on entry so the flow always starts where the evidence starts.
+  useEffect(()=>{window.history.replaceState(null,'',stepUrl(1));},[stepUrl]);
 
   const checkSession=useCallback(async()=>{
     try{const response=await apiFetch('/api/proxy/me',{cache:'no-store'});return response.ok;}catch{return false;}
@@ -99,8 +115,8 @@ function ReviewWizard({storeId}:{storeId:string}){
       throw new Error();
     }
     setVerification(await response.json() as VisitVerification);
-    setStep(2);
-  },[locale,reviewRadiusMeters,storeId,t]);
+    advance(2);
+  },[advance,locale,reviewRadiusMeters,storeId,t]);
 
   const verify=useCallback(async()=>{
     setVerifying(true);setVerifyError('');
@@ -203,13 +219,14 @@ function ReviewWizard({storeId}:{storeId:string}){
         ?<p className="review-ok" role="status"><Check aria-hidden="true"/>{t('verifyDone')}</p>
         :<button className="button primary" onClick={()=>void verify()} disabled={verifying||!signedIn}>{verifying?t('verifying'):verifyError?t('locationRetry'):t('verifyNow')}</button>}
       {verifyError&&<p className="form-error" role="alert">{verifyError}</p>}
+      {verification&&<div className="review-nav"><button className="button primary" onClick={()=>advance(2)}>{t('continue')}</button></div>}
     </section>}
 
     {step===2&&<section className="review-step">
       <fieldset className="rating-picker"><legend>{t('ratingLabel')}</legend>{[1,2,3,4,5].map(value=>
         <label key={value}><input type="radio" name="rating" value={value} checked={rating===value} onChange={()=>setRating(value)}/><Star aria-hidden="true" className={value<=rating?'is-on':undefined}/><span>{value}</span></label>)}
       </fieldset>
-      <div className="review-nav"><button className="button quiet" onClick={()=>setStep(1)}>{t('back')}</button><button className="button primary" onClick={()=>setStep(3)} disabled={rating<1}>{t('continue')}</button></div>
+      <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>advance(3)} disabled={rating<1}>{t('continue')}</button></div>
     </section>}
 
     {step===3&&<section className="review-step">
@@ -219,7 +236,7 @@ function ReviewWizard({storeId}:{storeId:string}){
       </div>
       <label className="button secondary photo-input"><Camera aria-hidden="true"/>{t('addPhotos')}<input type="file" accept="image/jpeg,image/png,image/webp" onChange={event=>void addPhoto(event)} disabled={uploading||photos.length>=10}/></label>
       {uploadError&&<p className="form-error" role="alert">{uploadError}</p>}
-      <div className="review-nav"><button className="button quiet" onClick={()=>setStep(2)}>{t('back')}</button><button className="button primary" onClick={()=>setStep(4)} disabled={uploading}>{t('continue')}</button></div>
+      <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>advance(4)} disabled={uploading}>{t('continue')}</button></div>
     </section>}
 
     {step===4&&<section className="review-step">
@@ -227,7 +244,7 @@ function ReviewWizard({storeId}:{storeId:string}){
       <small>{textLength}/5000</small>
       {textLength>0&&textLength<3&&<p className="form-error" role="alert">{t('reviewTooShort')}</p>}
       {submitError&&<p className="form-error" role="alert">{submitError}</p>}
-      <div className="review-nav"><button className="button quiet" onClick={()=>setStep(3)}>{t('back')}</button><button className="button primary" onClick={()=>void submit()} disabled={submitting||textLength<3||rating<1||!verification}>{submitting?t('loading'):t('submitReview')}</button></div>
+      <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>void submit()} disabled={submitting||textLength<3||rating<1||!verification}>{submitting?t('loading'):t('submitReview')}</button></div>
     </section>}
 
     <AuthDialog open={auth} onClose={()=>setAuth(false)} onAuthenticated={()=>{setSignedIn(true);setAuth(false);}}/>
