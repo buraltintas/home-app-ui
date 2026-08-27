@@ -8,6 +8,23 @@ value involved.
 
 ---
 
+## The store's own website, and a button that sits in its frame
+
+- Store pages show the shop's website where Google publishes one. Not a social account:
+  Google has no such field — checked, asking for one is a 400 — and guessing a handle from
+  a shop's name would put somebody else's Instagram on the page. There are seven different
+  businesses called "Taç" in this catalogue.
+- **`.button` had no vertical centring.** On a `<button>` the browser does it; on an
+  `<a class="button">` it does not, so the label sat high in a 48px box. Reported on the new
+  "add the first one" link, and it would have happened to every future link styled as a
+  button. Fixed on the class rather than the instance.
+- Google sign-in is set to use FedCM. Nothing in this code changed and it stopped working,
+  which points at the browser: Chrome's removal of third-party cookies breaks the old popup
+  credential flow, and FedCM is Google's replacement. Stated plainly because it could not be
+  verified from here — the button renders inside Google's own iframe and its popup does not
+  open in an embedded browser.
+
+
 ## Consent is checked where the location is used, not where it changes
 
 - Third attempt at the same report, and the first two were the same mistake in different

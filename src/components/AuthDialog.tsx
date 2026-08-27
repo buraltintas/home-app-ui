@@ -8,7 +8,7 @@ import {useI18n} from '@/i18n/I18nProvider';
 import {localePath} from '@/lib/site';
 
 type GoogleCredentialResponse={credential?:string};
-type GoogleIdentity={accounts:{id:{initialize:(options:{client_id:string;callback:(response:GoogleCredentialResponse)=>void})=>void;renderButton:(element:HTMLElement,options:{type:'standard';theme:'outline';size:'large';text:'continue_with';shape:'rectangular';logo_alignment:'left';width:string})=>void}}};
+type GoogleIdentity={accounts:{id:{initialize:(options:{client_id:string;callback:(response:GoogleCredentialResponse)=>void;use_fedcm_for_prompt?:boolean;use_fedcm_for_button?:boolean})=>void;renderButton:(element:HTMLElement,options:{type:'standard';theme:'outline';size:'large';text:'continue_with';shape:'rectangular';logo_alignment:'left';width:string})=>void}}};
 
 declare global{interface Window{google?:GoogleIdentity}}
 
@@ -59,11 +59,15 @@ export function AuthDialog({open,onClose,onAuthenticated}:{open:boolean;onClose:
   },[completeAuthentication,locale,t]);
   useEffect(()=>{googleCallbackRef.current=response=>void authenticateWithGoogle(response)},[authenticateWithGoogle]);
 
+  // Google's button used to open a popup and hand back a credential. Chrome's removal of
+  // third-party cookies broke that quietly -- nothing here changed, the browser did, which
+  // is why it "stopped working by itself". FedCM is Google's replacement path and the
+  // browser asks for the account itself instead of the popup carrying a cookie.
   useEffect(()=>{
     if(!open||emailMode||!runtimeConfigReady||!googleReady||!googleClientId||!window.google||!googleButtonRef.current)return;
     const container=googleButtonRef.current;
     container.replaceChildren();
-    if(!googleInitializedRef.current){window.google.accounts.id.initialize({client_id:googleClientId,callback:response=>googleCallbackRef.current(response)});googleInitializedRef.current=true}
+    if(!googleInitializedRef.current){window.google.accounts.id.initialize({client_id:googleClientId,callback:response=>googleCallbackRef.current(response),use_fedcm_for_prompt:true,use_fedcm_for_button:true});googleInitializedRef.current=true}
     window.google.accounts.id.renderButton(container,{type:'standard',theme:'outline',size:'large',text:'continue_with',shape:'rectangular',logo_alignment:'left',width:String(Math.min(388,container.clientWidth))});
   },[authenticateWithGoogle,emailMode,googleClientId,googleReady,locale,open,runtimeConfigReady]);
 

@@ -127,6 +127,10 @@ export default async function Page({params}:Props){
               product confident enough to show what Google says reads as more trustworthy
               than one that hides it. */}
           {google.place_id&&<a className="external-link" href={mapsLink(store.latitude,store.longitude,google.place_id)} target="_blank" rel="noopener noreferrer">{t.seeOnGoogleMaps}</a>}
+          {/* The store's own site, where it has one. Not a social account: Google does not
+              publish those, and guessing a handle from a name would put somebody else's
+              Instagram on this page. This is the store speaking for itself. */}
+          {store.website&&<a className="external-link" href={store.website} target="_blank" rel="noopener noreferrer">{t.storeWebsite}</a>}
         </aside>}
       </div>
       <div className="store-reviews">
