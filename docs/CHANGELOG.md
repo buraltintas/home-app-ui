@@ -8,6 +8,23 @@ value involved.
 
 ---
 
+## The Google button that was not a button yet
+
+- Reported: "continue with Google" does nothing on the first attempt, and reloading once
+  fixes it. It was not Google and it was not the browser. While Google's script is on its
+  way there is no button to press, and what stood in its place was a disabled copy of the
+  real one carrying the real label. On a cold cache that copy is on screen for about two
+  seconds: people saw "Google ile devam et", pressed it, nothing happened. A reload hits
+  the cached script, the real button is there immediately, and it works -- which is the
+  whole of "it only fails the first time".
+- A disabled control that is indistinguishable from a working one is worse than no control:
+  it gives no cursor, no message and no reason. The placeholder now reads as work in
+  progress -- muted, a spinner, no border, nothing to aim at -- and says what it is waiting
+  for. It vacates the moment the real button exists rather than when the script merely
+  reports itself loaded.
+- It is also a sibling of Google's container now instead of a child of it. Google replaces
+  the contents of that node, and React must not be holding anything inside it.
+
 ## A standout store was a name and a number
 
 - The two monthly standouts were the only place a store appeared without its photograph.

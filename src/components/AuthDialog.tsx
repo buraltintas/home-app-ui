@@ -20,6 +20,7 @@ export function AuthDialog({open,onClose,onAuthenticated}:{open:boolean;onClose:
   const [googleReady,setGoogleReady]=useState(false);
   const [googleClientId,setGoogleClientId]=useState('');
   const [runtimeConfigReady,setRuntimeConfigReady]=useState(false);
+  const [googleButtonReady,setGoogleButtonReady]=useState(false);
   const [emailMode,setEmailMode]=useState(false);
   const [sent,setSent]=useState(false);
   const [email,setEmail]=useState('');
@@ -44,7 +45,7 @@ export function AuthDialog({open,onClose,onAuthenticated}:{open:boolean;onClose:
     return()=>{active=false;};
   },[]);
 
-  const resetFlow=useCallback(()=>{setEmailMode(false);setSent(false);setEmail('');setCode('');setError('');setBusy(false)},[]);
+  const resetFlow=useCallback(()=>{setEmailMode(false);setSent(false);setEmail('');setCode('');setError('');setBusy(false);setGoogleButtonReady(false)},[]);
   const closeDialog=useCallback(()=>{resetFlow();onClose()},[onClose,resetFlow]);
   const completeAuthentication=useCallback(()=>{window.dispatchEvent(new Event('bosagezme:authenticated'));onAuthenticated?.();closeDialog()},[closeDialog,onAuthenticated]);
   const authenticateWithGoogle=useCallback(async({credential}:GoogleCredentialResponse)=>{
@@ -68,7 +69,8 @@ export function AuthDialog({open,onClose,onAuthenticated}:{open:boolean;onClose:
     const container=googleButtonRef.current;
     container.replaceChildren();
     if(!googleInitializedRef.current){window.google.accounts.id.initialize({client_id:googleClientId,callback:response=>googleCallbackRef.current(response),use_fedcm_for_prompt:true,use_fedcm_for_button:true});googleInitializedRef.current=true}
-    window.google.accounts.id.renderButton(container,{type:'standard',theme:'outline',size:'large',text:'continue_with',shape:'rectangular',logo_alignment:'left',width:String(Math.min(388,container.clientWidth))});
+    window.google.accounts.id.renderButton(container,{type:'standard',theme:'outline',size:'large',text:'continue_with',shape:'rectangular',logo_alignment:'left',width:String(Math.min(388,container.parentElement?.clientWidth??container.clientWidth))});
+    setGoogleButtonReady(true);
   },[authenticateWithGoogle,emailMode,googleClientId,googleReady,locale,open,runtimeConfigReady]);
 
   if(!open)return null;
@@ -114,10 +116,22 @@ export function AuthDialog({open,onClose,onAuthenticated}:{open:boolean;onClose:
             not want a birth date -- that is more personal data than the rule needs -- but
             the published rule has to be put to the person it applies to. */}
         <p className="auth-legal auth-age">{t('authAgeNotice')}</p>
-        <div className="google-button-slot" ref={googleButtonRef}>{(!runtimeConfigReady||!googleReady||!googleClientId)&&<button className="button secondary" style={{width:'100%',margin:0}} disabled>{t('google')}</button>}</div>
+        {/* Google's script takes a moment to arrive, and until it does there is no button
+            to press. What stood here was a disabled copy of the real one, carrying the
+            real label: on a cold cache people saw "Google ile devam et", pressed it, and
+            nothing happened -- then reloaded, hit the cached script, and it worked. That
+            is the whole of "it only fails the first time".
+            The placeholder now says what it is doing and vacates the moment the real
+            button exists, and it is a sibling of the slot rather than a child of it,
+            because Google replaces the contents of its own container and React must not
+            be holding a node inside it. */}
+        <div className="google-button-slot">
+          <div ref={googleButtonRef}/>
+          {!googleButtonReady&&<p className="google-button-loading" role="status" aria-busy="true">{t('googleLoading')}</p>}
+        </div>
         {runtimeConfigReady&&!googleClientId&&<p role="alert">{t('googleUnavailable')}</p>}
         {error&&<p role="alert">{error}</p>}
-        <button className="button secondary" disabled={busy} onClick={()=>setEmailMode(true)}>{t('email')}</button>
+        <button className="button secondary" disabled={busy} onClick={()=>{setGoogleButtonReady(false);setEmailMode(true)}}>{t('email')}</button>
         <button className="button quiet" disabled={busy} onClick={closeDialog}>{t('later')}</button>
       </>}
     </section>

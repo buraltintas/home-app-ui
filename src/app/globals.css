@@ -307,6 +307,14 @@ body>main{flex:1 0 auto}
 .feedback-done p{margin:0;font-size:19px;font-weight:600}
 .google-button-slot{width:100%;height:48px;margin-top:10px;overflow:hidden;display:grid;place-items:center}
 .google-button-slot>.button{height:48px}
+/* What waits here while Google's script arrives must not look like the button it is
+   standing in for. A disabled copy of the real thing was pressed and did nothing, which
+   is indistinguishable from broken. This reads as work in progress: no border, no
+   affordance, nothing to aim at. */
+.google-button-loading{width:100%;height:48px;margin:0;display:flex;align-items:center;justify-content:center;gap:10px;border-radius:6px;background:var(--muted);color:var(--ink-muted);font-size:15px;cursor:default;user-select:none}
+.google-button-loading::before{content:"";width:16px;height:16px;border-radius:50%;border:2px solid var(--line-strong);border-top-color:transparent;animation:google-button-spin .8s linear infinite}
+@keyframes google-button-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.google-button-loading::before{animation:none}}
 @media(min-width:601px){.auth-dialog[data-mode="choice"]{min-height:604px}}
 
 /* Monthly community proof sits below the suggestion tools as a compact editorial list.
