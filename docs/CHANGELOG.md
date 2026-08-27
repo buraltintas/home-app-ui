@@ -8,6 +8,20 @@ value involved.
 
 ---
 
+## A position outlived the device that produced it
+
+- Reported: the phone's location services are off, the browser permission is still granted,
+  and the site keeps finding you. It did, and the reason was a single ignored error. The
+  background watch that refreshes the position had `()=>undefined` as its failure handler,
+  so every failed read was discarded and the saved copy went on answering as though the
+  device were still vouching for it.
+- A refusal or an unavailable device now clears the saved position and tells the screen,
+  which drops what it is showing. **A timeout does not** — a fix indoors can simply take too
+  long, and treating slowness as withdrawal would throw away a perfectly good location every
+  time somebody walks into a shop.
+- Both directions are checked: device off clears it, timeout keeps it.
+
+
 ## The store's own website, and a button that sits in its frame
 
 - Store pages show the shop's website where Google publishes one. Not a social account:

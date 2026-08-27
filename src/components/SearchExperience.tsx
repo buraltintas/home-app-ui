@@ -9,7 +9,7 @@ import { useI18n } from '@/i18n/I18nProvider';
 import { localePath ,slogan} from '@/lib/site';
 import { apiFetch } from '@/lib/api-client';
 import type { LocationFailure } from '@/lib/location';
-import { deviceLocationAllowed, forgetDeviceLocation, watchLocationConsent, canUseDeviceLocationWithoutPrompt, clearSearchLocation, LOCATION_UPDATE_EVENT, locationMessage, rememberedPosition, requestPosition, savedSearchLocation, saveSearchLocation } from '@/lib/location';
+import { LOCATION_LOST_EVENT, deviceLocationAllowed, forgetDeviceLocation, watchLocationConsent, canUseDeviceLocationWithoutPrompt, clearSearchLocation, LOCATION_UPDATE_EVENT, locationMessage, rememberedPosition, requestPosition, savedSearchLocation, saveSearchLocation } from '@/lib/location';
 import { seasonalPool } from '@/i18n/search-seasons';
 import { rememberOriginSearch } from '@/lib/search-origin';
 import { RESET_EVENT, SNAPSHOT_KEY } from '@/lib/search-session';
@@ -273,6 +273,15 @@ export function SearchExperience() {
       setData(undefined);
     });
     return()=>{active=false;};
+  },[setLocation]);
+
+  // The device stopped vouching for the position we were showing -- its location services
+  // went off, or the browser withdrew access mid-session. Either way what is on screen is
+  // no longer something we can stand behind, so it goes.
+  useEffect(()=>{
+    const lost=()=>{setLocation(undefined);setData(undefined);};
+    window.addEventListener(LOCATION_LOST_EVENT,lost);
+    return()=>window.removeEventListener(LOCATION_LOST_EVENT,lost);
   },[setLocation]);
 
   useEffect(()=>watchLocationConsent(()=>{

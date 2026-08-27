@@ -214,6 +214,19 @@ export async function canUseDeviceLocationWithoutPrompt(){
 // not turn a permission the user already gave into another step. Browsers pause watchers
 // in the background, so verification still requests a fresh fix when the current live
 // reading is older than two minutes.
+// Fired when a position we were holding can no longer be confirmed by the device. The UI
+// drops what it is showing rather than leaving somebody looking at a location the phone
+// itself has stopped vouching for.
+export const LOCATION_LOST_EVENT='bosagezme:location-lost';
+
+function stopLiveWatch(){
+  if(liveWatch===undefined)return;
+  navigator.geolocation.clearWatch(liveWatch);
+  liveWatch=undefined;
+  recentLivePosition=undefined;
+  try{window.sessionStorage.removeItem(LIVE_POSITION);}catch{}
+}
+
 function startLiveWatch(){
   if(typeof navigator==='undefined'||!navigator.geolocation||liveWatch!==undefined)return;
   liveWatch=navigator.geolocation.watchPosition(
@@ -223,7 +236,20 @@ function startLiveWatch(){
       remember(position);
       try{window.sessionStorage.setItem(LIVE_POSITION,JSON.stringify(position));}catch{}
     },
-    ()=>undefined,
+    error=>{
+      // This handler used to swallow everything, and that is how a saved position outlived
+      // the thing that produced it: turning off the device's location services makes every
+      // live read fail, and with the failure ignored the stored copy went on answering as
+      // though nothing had happened.
+      //
+      // A timeout is not evidence of anything -- a fix indoors can simply take too long --
+      // so only a refusal or an unavailable device counts. Both mean the position we hold
+      // can no longer be confirmed, and an unconfirmable position is not one to answer with.
+      if(error?.code===3)return;
+      stopLiveWatch();
+      forgetDeviceLocation();
+      window.dispatchEvent(new Event(LOCATION_LOST_EVENT));
+    },
     {enableHighAccuracy:true,maximumAge:30000,timeout:20000},
   );
 }
