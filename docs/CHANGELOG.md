@@ -8,6 +8,15 @@ value involved.
 
 ---
 
+## A standout store was a name and a number
+
+- The two monthly standouts were the only place a store appeared without its photograph.
+  Read as a name and a metric they were a statistic; with the store's own picture they are
+  a place somebody could walk into, which is the whole premise of the product.
+- The same photograph, chosen the same way as in the result list, with the store's initial
+  standing in for one that has none. The heading lost "bu ay" -- the month is already in
+  the metric beside it, and saying it twice made the card read like a report.
+
 ## Back did not mean "the previous step" on the review page
 
 - Reported from Safari: pressing back on the review page did not return to the previous

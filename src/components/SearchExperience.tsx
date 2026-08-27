@@ -27,10 +27,19 @@ type SearchSnapshot={query:string;location?:SearchPlace;data?:SearchResponse};
 function HighlightLink({item,label,metric}:{item:StoreHighlight;label:string;metric:string}){
   const {locale}=useI18n();
   const place=[item.district,item.city].filter(Boolean).join(', ');
+  // The photograph comes first, the same one and chosen the same way as in the result
+  // list. A store recommended as a name and a number reads like a statistic; with its own
+  // picture it reads like a place somebody could walk into.
+  const photo=storePhotoURL(item.photo,520);
   return <Link className="store-highlight" href={localePath(locale,`/stores/${item.id}`)}>
-    <span>{label}</span>
-    <strong>{item.name}</strong>
-    <small>{place}{place&&' · '}{metric}</small>
+    {photo
+      ?<Image className="store-highlight-photo" src={photo} width={72} height={72} alt="" unoptimized/>
+      :<span className="store-highlight-photo store-highlight-photo-empty" aria-hidden="true">{item.name.trim().charAt(0)}</span>}
+    <span className="store-highlight-copy">
+      <span>{label}</span>
+      <strong>{item.name}</strong>
+      <small>{place}{place&&' · '}{metric}</small>
+    </span>
     <ArrowRight aria-hidden="true"/>
   </Link>;
 }

@@ -35,10 +35,10 @@ export const feedbackCopy={
   ru:{feedbackTitle:'Расскажите, что вы думаете',feedbackIntro:'Всё, что в Boşa Gezme! не хватает, не работает или, наоборот, нравится. Мы читаем каждое сообщение.',feedbackKind:'Тема',feedbackKindSuggestion:'Предложение',feedbackKindProblem:'Проблема',feedbackKindPraise:'Понравилось',feedbackKindOther:'Другое',feedbackMessage:'Ваше сообщение',feedbackMessageHint:'Что произошло, где и чего вы ожидали — так мы починим быстрее.',feedbackEmail:'Ваш адрес эл. почты (необязательно)',feedbackEmailHint:'Только чтобы мы могли ответить. Сообщение дойдёт и без него.',feedbackSend:'Отправить',feedbackSending:'Отправляем…',feedbackThanks:'Спасибо — ваше сообщение получено.',feedbackAnother:'Написать ещё одно сообщение',feedbackError:'Не удалось отправить сообщение. Попробуйте ещё раз.',feedbackTooShort:'Напишите, пожалуйста, чуть подробнее.',feedbackPrivacy:'То, что вы пишете, приходит только нам и нигде не публикуется.'},
 } as const;
 export const searchHighlightCopy={
-  tr:{monthlyStandouts:'Bu ay öne çıkan mağazalar',mostImproved:'Performansı en çok artan',mostReviewed:'En çok değerlendirilen',ratingIncrease:'puan artış',reviewsThisMonth:'bu ay değerlendirme'},
-  en:{monthlyStandouts:'Stores standing out this month',mostImproved:'Most improved',mostReviewed:'Most reviewed',ratingIncrease:'rating increase',reviewsThisMonth:'reviews this month'},
-  de:{monthlyStandouts:'Geschäfte, die diesen Monat auffallen',mostImproved:'Am stärksten verbessert',mostReviewed:'Am häufigsten bewertet',ratingIncrease:'Punkte besser',reviewsThisMonth:'Bewertungen diesen Monat'},
-  ru:{monthlyStandouts:'Магазины месяца',mostImproved:'Самый заметный рост',mostReviewed:'Больше всего оценок',ratingIncrease:'рост рейтинга',reviewsThisMonth:'оценок за месяц'},
+  tr:{monthlyStandouts:'Öne çıkan mağazalar',mostImproved:'Performansı en çok artan',mostReviewed:'En çok değerlendirilen',ratingIncrease:'puan artış',reviewsThisMonth:'bu ay değerlendirme'},
+  en:{monthlyStandouts:'Standout stores',mostImproved:'Most improved',mostReviewed:'Most reviewed',ratingIncrease:'rating increase',reviewsThisMonth:'reviews this month'},
+  de:{monthlyStandouts:'Herausragende Geschäfte',mostImproved:'Am stärksten verbessert',mostReviewed:'Am häufigsten bewertet',ratingIncrease:'Punkte besser',reviewsThisMonth:'Bewertungen diesen Monat'},
+  ru:{monthlyStandouts:'Заметные магазины',mostImproved:'Самый заметный рост',mostReviewed:'Больше всего оценок',ratingIncrease:'рост рейтинга',reviewsThisMonth:'оценок за месяц'},
 } as const;
 export const reviewPolicyCopy={
   tr:{reviewDistanceLimit:'Bu mağazada değerlendirme yapabilmek için en fazla {distance} uzakta olmalısın.'},
