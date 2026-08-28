@@ -21,6 +21,7 @@ export function AuthDialog({open,onClose,onAuthenticated}:{open:boolean;onClose:
   const [googleClientId,setGoogleClientId]=useState('');
   const [runtimeConfigReady,setRuntimeConfigReady]=useState(false);
   const [googleButtonReady,setGoogleButtonReady]=useState(false);
+  const [googleGaveUp,setGoogleGaveUp]=useState(false);
   const [emailMode,setEmailMode]=useState(false);
   const [sent,setSent]=useState(false);
   const [email,setEmail]=useState('');
@@ -45,7 +46,7 @@ export function AuthDialog({open,onClose,onAuthenticated}:{open:boolean;onClose:
     return()=>{active=false;};
   },[]);
 
-  const resetFlow=useCallback(()=>{setEmailMode(false);setSent(false);setEmail('');setCode('');setError('');setBusy(false);setGoogleButtonReady(false)},[]);
+  const resetFlow=useCallback(()=>{setEmailMode(false);setSent(false);setEmail('');setCode('');setError('');setBusy(false);setGoogleButtonReady(false);setGoogleGaveUp(false)},[]);
   const closeDialog=useCallback(()=>{resetFlow();onClose()},[onClose,resetFlow]);
   const completeAuthentication=useCallback(()=>{window.dispatchEvent(new Event('bosagezme:authenticated'));onAuthenticated?.();closeDialog()},[closeDialog,onAuthenticated]);
   const authenticateWithGoogle=useCallback(async({credential}:GoogleCredentialResponse)=>{
@@ -71,7 +72,22 @@ export function AuthDialog({open,onClose,onAuthenticated}:{open:boolean;onClose:
     if(!googleInitializedRef.current){window.google.accounts.id.initialize({client_id:googleClientId,callback:response=>googleCallbackRef.current(response),use_fedcm_for_prompt:true,use_fedcm_for_button:true});googleInitializedRef.current=true}
     window.google.accounts.id.renderButton(container,{type:'standard',theme:'outline',size:'large',text:'continue_with',shape:'rectangular',logo_alignment:'left',width:String(Math.min(388,container.parentElement?.clientWidth??container.clientWidth))});
     setGoogleButtonReady(true);
+    setGoogleGaveUp(false);
   },[authenticateWithGoogle,emailMode,googleClientId,googleReady,locale,open,runtimeConfigReady]);
+
+  // Waiting has to have an end. Google's script can fail in a way that never reports
+  // itself -- a blocked request, a network that swallows it, an extension that removes it
+  // -- and until now the placeholder said "still coming" for as long as the dialog stayed
+  // open. Somebody watched it spin and reported it as broken, correctly.
+  //
+  // After this it stops claiming to be working and says plainly that Google is not
+  // available, with the email button already underneath. A late arrival still wins: the
+  // render effect clears this the moment the real button exists.
+  useEffect(()=>{
+    if(!open||emailMode||googleButtonReady||googleGaveUp)return;
+    const timer=window.setTimeout(()=>setGoogleGaveUp(true),10_000);
+    return()=>window.clearTimeout(timer);
+  },[emailMode,googleButtonReady,googleGaveUp,open]);
 
   if(!open)return null;
 
@@ -85,8 +101,13 @@ export function AuthDialog({open,onClose,onAuthenticated}:{open:boolean;onClose:
     finally{setBusy(false)}
   }
 
+  // Three states, and only one of them at a time. Showing "preparing" beside "unavailable"
+  // -- which is what a blocked script produced -- tells somebody nothing except that we do
+  // not know either.
+  const googleMissing=googleGaveUp||(runtimeConfigReady&&!googleClientId);
+  const googleWorking=!googleButtonReady&&!googleMissing;
   return <div className="dialog-backdrop" role="presentation" onMouseDown={closeDialog}>
-    <Script id={`google-identity-${locale}`} src={`https://accounts.google.com/gsi/client?hl=${locale}`} strategy="afterInteractive" onLoad={()=>{googleInitializedRef.current=false;setGoogleReady(false);window.setTimeout(()=>setGoogleReady(true),0)}} onError={()=>setError(t('googleUnavailable'))}/>
+    <Script id={`google-identity-${locale}`} src={`https://accounts.google.com/gsi/client?hl=${locale}`} strategy="afterInteractive" onLoad={()=>{googleInitializedRef.current=false;setGoogleReady(false);window.setTimeout(()=>setGoogleReady(true),0)}} onError={()=>setGoogleGaveUp(true)}/>
     <section className="auth-dialog" data-mode={emailMode?'email':'choice'} role="dialog" aria-modal="true" aria-labelledby="auth-title" aria-busy={busy} onMouseDown={event=>event.stopPropagation()}>
       <button className="icon-button dialog-close" onClick={closeDialog} aria-label={t('close')}><X/></button>
       <p className="eyebrow">{t('wordmark')}</p>
@@ -127,11 +148,11 @@ export function AuthDialog({open,onClose,onAuthenticated}:{open:boolean;onClose:
             be holding a node inside it. */}
         <div className="google-button-slot">
           <div ref={googleButtonRef}/>
-          {!googleButtonReady&&<p className="google-button-loading" role="status" aria-busy="true">{t('googleLoading')}</p>}
+          {googleWorking&&<p className="google-button-loading" role="status" aria-busy="true">{t('googleLoading')}</p>}
         </div>
-        {runtimeConfigReady&&!googleClientId&&<p role="alert">{t('googleUnavailable')}</p>}
+        {googleMissing&&<p role="alert">{t('googleUnavailable')}</p>}
         {error&&<p role="alert">{error}</p>}
-        <button className="button secondary" disabled={busy} onClick={()=>{setGoogleButtonReady(false);setEmailMode(true)}}>{t('email')}</button>
+        <button className="button secondary" disabled={busy} onClick={()=>{setGoogleButtonReady(false);setGoogleGaveUp(false);setEmailMode(true)}}>{t('email')}</button>
         <button className="button quiet" disabled={busy} onClick={closeDialog}>{t('later')}</button>
       </>}
     </section>

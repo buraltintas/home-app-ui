@@ -8,6 +8,23 @@ value involved.
 
 ---
 
+## Waiting for Google had no end
+
+- Reported after the previous fix: the placeholder appeared and then stayed, spinning. The
+  placeholder was honest about what it was doing and dishonest about how long it would do
+  it -- Google's script can fail in ways that never report themselves, and the spinner said
+  "still coming" for as long as the dialog stayed open.
+- Measured, with the script blocked and with the script left hanging. Blocked produced both
+  messages at once, "Google hazırlanıyor…" spinning underneath "Google ile giriş şu anda
+  kullanılamıyor", which tells a reader nothing except that we do not know either. Hanging
+  produced the spinner and nothing else, for ever.
+- Waiting now ends after ten seconds and says plainly that Google is unavailable, with the
+  email button already underneath it. Only one of the three states is ever on screen. A
+  late arrival still wins: if the script turns up after the deadline the real button
+  replaces the message.
+
+---
+
 ## A heading that changed by itself
 
 - Reported: the line under the search bar is sometimes "Yakınında şunlar aranmış" and
