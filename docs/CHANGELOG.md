@@ -8,6 +8,26 @@ value involved.
 
 ---
 
+## "New here" moved on its own
+
+- Reported: some stores in the result list carry "Boşa Gezme!'de yeni" and some do not,
+  and neither has a review. The badge was not reading the review count. It was reading
+  whether the store existed in our catalogue at all -- our bookkeeping, and none of a
+  reader's business.
+- That made it move by itself. A store arriving from the provider had no catalogue record,
+  so it showed the badge; searching brought it into the catalogue; the next search showed
+  "0 değerlendirme · 0 favori" instead. Nothing about the store had changed, and the report
+  named this exactly: the same store searched twice should not look different.
+- The badge now depends on the only thing a reader cares about -- whether anybody here has
+  reviewed the store. The community column keeps its place either way, so the two sources
+  stay side by side and comparable, and "İlk deneyimi sen paylaş" sits under the badge
+  where the rating would be. The first review replaces both with the rating and the counts.
+- While in that line: "1 favoriler" is not Turkish. A number never takes the plural, and
+  the navigation label was being reused as a counting unit -- a different word in all four
+  languages.
+
+---
+
 ## Google worked the first time and never again
 
 - Reported: sign-in works once or twice, then the button stops arriving and the dialog sits
