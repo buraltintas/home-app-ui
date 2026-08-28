@@ -13,6 +13,7 @@ import {canonicalFor,localePath,storePath} from '@/lib/site';
 import {breadcrumbJsonLd,storeJsonLd} from '@/lib/structured-data';
 import type {Locale,Store} from '@/lib/types';
 import {storePhotoURL} from '@/lib/store-photo';
+import {storeStatusCopy} from '@/i18n/dictionaries';
 
 type Props={params:Promise<{id:string}>};
 
@@ -31,7 +32,7 @@ const externalNote:Record<Locale,string>={
 
 // Everything Google gives us for a store lives in the external source attribution
 // jsonb. Nothing here is invented: a missing field is simply not rendered.
-type GoogleSource={place_id?:string;photo_name?:string;photo_attributions?:string[];attributions?:string[];rating?:number;rating_count?:number;refreshed_at?:string};
+type GoogleSource={place_id?:string;photo_name?:string;photo_attributions?:string[];attributions?:string[];rating?:number;rating_count?:number;business_status?:string;refreshed_at?:string};
 function googleSource(store:Store):GoogleSource|undefined{
   const source=store.external_sources?.find(entry=>entry.provider==='google');
   if(!source)return undefined;
@@ -45,6 +46,7 @@ function googleSource(store:Store):GoogleSource|undefined{
     attributions:list(attribution.attributions),
     rating:typeof attribution.rating==='number'?attribution.rating:undefined,
     rating_count:typeof attribution.rating_count==='number'?attribution.rating_count:undefined,
+    business_status:typeof attribution.business_status==='string'?attribution.business_status:undefined,
     refreshed_at:source.refreshed_at,
   };
 }
@@ -117,6 +119,7 @@ export default async function Page({params}:Props){
         <Link className="store-correction-link" href={correctionPath}>{contribution.correction}</Link>
         {google&&<aside className="external-panel" aria-label={t.googleData}>
           <p className="eyebrow">{t.googleData}</p>
+          {(google.business_status==='CLOSED_TEMPORARILY'||google.business_status==='CLOSED_PERMANENTLY')&&<p className="store-status-warning">{storeStatusCopy[locale]}</p>}
           {google.rating_count!==undefined&&<p className="external-rating"><Rating value={google.rating??0}/> <span>{google.rating_count} {t.reviews}</span></p>}
           <p className="external-note">{externalNote[locale]}</p>
           {google.attributions?.length?<p className="external-attribution">{google.attributions.join(' · ')}</p>:null}

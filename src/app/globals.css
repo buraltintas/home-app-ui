@@ -52,6 +52,7 @@
 @media(max-width:600px){.mascot-loader{padding:40px 18px 56px}.mascot-loader img{width:132px;height:132px}}
 
 .external-panel{margin-top:36px;padding:20px 22px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);display:flex;flex-direction:column;gap:8px}
+.store-status-warning{width:fit-content;max-width:100%;margin:8px 0;padding:8px 10px;border:1px solid color-mix(in srgb,var(--clay) 38%,var(--line));border-radius:var(--r-sm);background:var(--accent-wash);color:var(--ink);font-size:13px;font-weight:700;line-height:1.45}
 .external-panel>.eyebrow{margin-bottom:2px}
 .external-rating{display:flex;align-items:center;gap:8px;margin:0;font-weight:700}
 .external-rating span{font-weight:600;color:var(--ink-muted);font-size:14px}

@@ -8,6 +8,15 @@ value involved.
 
 ---
 
+## Closed stores carry the provider warning wherever they appear
+
+- Search results and store details now read Google's explicit business status and show a
+  restrained but prominent warning for a temporary or permanent closure. The warning
+  points back to Google Maps before somebody travels instead of presenting an old review
+  date as proof that a quiet store has closed.
+- The signal travels in the same Google block on both surfaces, so a store cannot be
+  flagged in a list and lose the warning when opened.
+
 ## Legal pages keep their reading size and honest link targets
 
 - Long legal documents now state their body and list size explicitly instead of inheriting

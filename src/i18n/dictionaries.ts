@@ -46,6 +46,12 @@ export const reviewPolicyCopy={
   de:{reviewDistanceLimit:'Du bist nicht nah genug an diesem Geschäft. Um deinen Besuch zu bestätigen und eine Bewertung zu schreiben, darfst du höchstens {distance} entfernt sein.'},
   ru:{reviewDistanceLimit:'Вы находитесь недостаточно близко к магазину. Чтобы подтвердить посещение и оставить отзыв, нужно находиться не дальше {distance}.'},
 } as const;
+export const storeStatusCopy={
+  tr:'Google bu mağazayı kapalı olarak işaretliyor. Gitmeden önce Google Haritalar’dan doğrula.',
+  en:'Google marks this store as closed. Check Google Maps before travelling.',
+  de:'Google kennzeichnet dieses Geschäft als geschlossen. Prüfe Google Maps, bevor du losfährst.',
+  ru:'Google отмечает этот магазин как закрытый. Проверьте Google Карты перед поездкой.',
+} as const;
 export type TranslationKey=keyof typeof dictionaries.en|keyof typeof feedStateCopy.en|keyof typeof hardeningCopy.en|keyof typeof googleAuthCopy.en|keyof typeof profileCopy.en|keyof typeof feedbackCopy.en|keyof typeof searchHighlightCopy.en|keyof typeof reviewPolicyCopy.en;
 export const getDictionary=(locale:Locale)=>({...dictionaries[locale],...feedStateCopy[locale],...hardeningCopy[locale],...googleAuthCopy[locale],...profileCopy[locale],...feedbackCopy[locale],...searchHighlightCopy[locale],...reviewPolicyCopy[locale]});
 export const categoryLabels:Record<Locale,Record<string,string>>={
