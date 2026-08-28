@@ -8,6 +8,15 @@ value involved.
 
 ---
 
+## Legal pages keep their reading size and honest link targets
+
+- Long legal documents now state their body and list size explicitly instead of inheriting
+  a smaller surrounding scale on some routes. Privacy, disclosure and the rest of the
+  shared legal-document family therefore keep the same readable body rhythm.
+- A table-of-contents row no longer stretches across the empty width of its grid. Only the
+  visible linked heading is clickable, so pressing blank space beside it does not navigate
+  unexpectedly.
+
 ## Three returned cards needed the last decision, not a new design
 
 - The visit-distance rejection now explains both blocked outcomes—visit verification and
