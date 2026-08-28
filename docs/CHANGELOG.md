@@ -8,6 +8,21 @@ value involved.
 
 ---
 
+## A heading that changed by itself
+
+- Reported: the line under the search bar is sometimes "Yakınında şunlar aranmış" and
+  sometimes "Bu mevsim akla gelenler" -- which is right?
+- Both are. The heading names where the phrases beneath it came from: the reader's own last
+  searches, then what the neighbourhood has been searching, then the season. The three
+  sources are right; the timing was not. Two of them arrive over the network and the
+  seasonal list does not, so the heading was chosen before the other two had answered --
+  the season appeared first and was then swapped out under the reader, with nothing they
+  did to cause it.
+- The strip now waits until both sources have answered, counting a refusal as an answer,
+  and shows a placeholder until then. The heading is chosen once and does not move.
+
+---
+
 ## Closed stores carry the provider warning wherever they appear
 
 - Search results and store details now read Google's explicit business status and show a
