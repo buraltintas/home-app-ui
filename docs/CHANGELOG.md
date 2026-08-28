@@ -8,6 +8,26 @@ value involved.
 
 ---
 
+## Google worked the first time and never again
+
+- Reported: sign-in works once or twice, then the button stops arriving and the dialog sits
+  on "Google hazırlanıyor…" until it gives up. It looked like the provider throttling us.
+  It was not. It was ours.
+- `next/script` keeps a cache of the scripts it has already loaded, keyed by the `id` given
+  to it. On a second mount it finds the id, bails out of loading, and **does not call
+  `onLoad` again** -- which the source documents in as many words. The dialog unmounts when
+  it closes, taking with it the only state that recorded whether the script was ready, so
+  every open after the first waited for a callback that was never going to fire.
+- `onReady` is the callback `next/script` documents for exactly this case and it fires on
+  both paths, so it is now listened for as well. The dialog also starts ready when the
+  script's object is already on the page, so the answer no longer depends on any one
+  framework callback.
+- Measured before and after, four opens in a single page without reloading: before, the
+  first open produced the button and the second, third and fourth produced a spinner that
+  never resolved; after, all four produced the button.
+
+---
+
 ## The footer's empty space was a link
 
 - Reported from a phone, with the blue line drawn in the empty space to the right of "Boşa
