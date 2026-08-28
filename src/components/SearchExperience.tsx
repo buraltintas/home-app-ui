@@ -38,7 +38,8 @@ function HighlightLink({item,label,metric}:{item:StoreHighlight;label:string;met
     <span className="store-highlight-copy">
       <span>{label}</span>
       <strong>{item.name}</strong>
-      <small>{place}{place&&' · '}{metric}</small>
+      {place&&<small className="store-highlight-place">{place}</small>}
+      <small className="store-highlight-metric">{metric}</small>
     </span>
     <ArrowRight aria-hidden="true"/>
   </Link>;

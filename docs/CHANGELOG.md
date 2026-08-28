@@ -8,6 +8,18 @@ value involved.
 
 ---
 
+## Three returned cards needed the last decision, not a new design
+
+- The visit-distance rejection now explains both blocked outcomes—visit verification and
+  review creation—and states the live configured maximum distance. The copy deliberately
+  says **at most**, because saying **at least** would tell people to move farther away from
+  the store while the verifier requires the opposite.
+- Monthly standout stores no longer bury the review count inside the address. The selected
+  quiet treatment gives the monthly count its own clay-weighted line below the place, so it
+  reads as the reason for the recommendation without covering the photograph or crowding
+  the mobile row.
+- The location-explanation heading is a question and now carries its missing question mark.
+
 ## The Google button that was not a button yet
 
 - Reported: "continue with Google" does nothing on the first attempt, and reloading once

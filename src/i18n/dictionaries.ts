@@ -35,16 +35,16 @@ export const feedbackCopy={
   ru:{feedbackTitle:'Расскажите, что вы думаете',feedbackIntro:'Всё, что в Boşa Gezme! не хватает, не работает или, наоборот, нравится. Мы читаем каждое сообщение.',feedbackKind:'Тема',feedbackKindSuggestion:'Предложение',feedbackKindProblem:'Проблема',feedbackKindPraise:'Понравилось',feedbackKindOther:'Другое',feedbackMessage:'Ваше сообщение',feedbackMessageHint:'Что произошло, где и чего вы ожидали — так мы починим быстрее.',feedbackEmail:'Ваш адрес эл. почты (необязательно)',feedbackEmailHint:'Только чтобы мы могли ответить. Сообщение дойдёт и без него.',feedbackSend:'Отправить',feedbackSending:'Отправляем…',feedbackThanks:'Спасибо — ваше сообщение получено.',feedbackAnother:'Написать ещё одно сообщение',feedbackError:'Не удалось отправить сообщение. Попробуйте ещё раз.',feedbackTooShort:'Напишите, пожалуйста, чуть подробнее.',feedbackPrivacy:'То, что вы пишете, приходит только нам и нигде не публикуется.'},
 } as const;
 export const searchHighlightCopy={
-  tr:{monthlyStandouts:'Öne çıkan mağazalar',mostImproved:'Performansı en çok artan',mostReviewed:'En çok değerlendirilen',ratingIncrease:'puan artış',reviewsThisMonth:'bu ay değerlendirme'},
-  en:{monthlyStandouts:'Standout stores',mostImproved:'Most improved',mostReviewed:'Most reviewed',ratingIncrease:'rating increase',reviewsThisMonth:'reviews this month'},
-  de:{monthlyStandouts:'Herausragende Geschäfte',mostImproved:'Am stärksten verbessert',mostReviewed:'Am häufigsten bewertet',ratingIncrease:'Punkte besser',reviewsThisMonth:'Bewertungen diesen Monat'},
-  ru:{monthlyStandouts:'Заметные магазины',mostImproved:'Самый заметный рост',mostReviewed:'Больше всего оценок',ratingIncrease:'рост рейтинга',reviewsThisMonth:'оценок за месяц'},
+  tr:{monthlyStandouts:'Öne çıkan mağazalar',mostImproved:'Performansı en çok artan',mostReviewed:'En çok değerlendirilen',ratingIncrease:'puan artış',reviewsThisMonth:'değerlendirme · bu ay'},
+  en:{monthlyStandouts:'Standout stores',mostImproved:'Most improved',mostReviewed:'Most reviewed',ratingIncrease:'rating increase',reviewsThisMonth:'reviews · this month'},
+  de:{monthlyStandouts:'Herausragende Geschäfte',mostImproved:'Am stärksten verbessert',mostReviewed:'Am häufigsten bewertet',ratingIncrease:'Punkte besser',reviewsThisMonth:'Bewertungen · diesen Monat'},
+  ru:{monthlyStandouts:'Заметные магазины',mostImproved:'Самый заметный рост',mostReviewed:'Больше всего оценок',ratingIncrease:'рост рейтинга',reviewsThisMonth:'оценок · за месяц'},
 } as const;
 export const reviewPolicyCopy={
-  tr:{reviewDistanceLimit:'Bu mağazada değerlendirme yapabilmek için en fazla {distance} uzakta olmalısın.'},
-  en:{reviewDistanceLimit:'You must be within {distance} of this store to review it.'},
-  de:{reviewDistanceLimit:'Für eine Bewertung darfst du höchstens {distance} von diesem Geschäft entfernt sein.'},
-  ru:{reviewDistanceLimit:'Чтобы оставить отзыв, нужно находиться не дальше {distance} от магазина.'},
+  tr:{reviewDistanceLimit:'Bu mağazaya yeterince yakın değilsin. Ziyaretini doğrulamak ve değerlendirme yapabilmek için mağazaya en fazla {distance} mesafede olmalısın.'},
+  en:{reviewDistanceLimit:'You are not close enough to this store. You must be within {distance} to verify your visit and write a review.'},
+  de:{reviewDistanceLimit:'Du bist nicht nah genug an diesem Geschäft. Um deinen Besuch zu bestätigen und eine Bewertung zu schreiben, darfst du höchstens {distance} entfernt sein.'},
+  ru:{reviewDistanceLimit:'Вы находитесь недостаточно близко к магазину. Чтобы подтвердить посещение и оставить отзыв, нужно находиться не дальше {distance}.'},
 } as const;
 export type TranslationKey=keyof typeof dictionaries.en|keyof typeof feedStateCopy.en|keyof typeof hardeningCopy.en|keyof typeof googleAuthCopy.en|keyof typeof profileCopy.en|keyof typeof feedbackCopy.en|keyof typeof searchHighlightCopy.en|keyof typeof reviewPolicyCopy.en;
 export const getDictionary=(locale:Locale)=>({...dictionaries[locale],...feedStateCopy[locale],...hardeningCopy[locale],...googleAuthCopy[locale],...profileCopy[locale],...feedbackCopy[locale],...searchHighlightCopy[locale],...reviewPolicyCopy[locale]});

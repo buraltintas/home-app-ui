@@ -41,7 +41,7 @@ export const about:LegalDoc={
           {p:'Katkı seviyesi, yayımladığınız doğrulanmış değerlendirme sayısına göre topluluğa yaptığınız katkıyı gösterir. İlk değerlendirmede Yeni gezgin, 5 değerlendirmede Kaşif, 15 değerlendirmede Deneyimli, 40 değerlendirmede Rehber ve 100 değerlendirmede Usta Rehber olursunuz.'},
           {p:'Bu seviye para, indirim veya mağaza ayrıcalığı değildir. Profilinizde ve paylaşımlarınızda, diğer insanlara ne kadar deneyim aktardığınızı gösteren bir topluluk işaretidir.'},
         ]},
-        {id:'konum',heading:'Mağaza konumları listelemeyi nasıl etkiliyor',blocks:[
+        {id:'konum',heading:'Mağaza konumları listelemeyi nasıl etkiliyor?',blocks:[
           {p:'Sonuçlar mesafeye göre sıralanır, bu yüzden her arama bir konum gerektirir. Konumunuz, cihaz ayarlarından otomatik olarak alınabilir veya arama çubuğundan kendiniz bir konum girebilirsiniz.'},
           {p:'Konumunuzun tam olarak nasıl işlendiğini, neyin saklanıp neyin saklanmadığını konum gizliliği sayfasında ayrıntılı olarak bulabilirsiniz.'},
         ]},
