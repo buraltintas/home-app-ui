@@ -8,6 +8,24 @@ value involved.
 
 ---
 
+## The footer's empty space was a link
+
+- Reported from a phone, with the blue line drawn in the empty space to the right of "Boşa
+  Gezme! nedir?": pressing there navigates as though the words had been pressed.
+- A footer link is a flex box inside a grid column, so it stretched to the whole column
+  while its words took a third of it. Measured on the live site: the box ends at 372px and
+  the text at 154px, and everything between them was the link. On a phone the column is the
+  width of the screen, so most of a footer row was a target nobody could see.
+- The 44px height is the touch target and stays; the width now fits the words. Verified
+  against the live markup: past the text the point belongs to the list item, not the link,
+  and the height is unchanged.
+- An earlier fix corrected the same defect in the legal pages' table of contents. This one
+  is the footer -- the same mistake in a second place, which is worth saying plainly
+  because the first fix was reported as not working, and it had worked; it was simply not
+  where the reader was pointing.
+
+---
+
 ## Waiting for Google had no end
 
 - Reported after the previous fix: the placeholder appeared and then stayed, spinning. The

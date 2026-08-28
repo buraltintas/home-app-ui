@@ -174,7 +174,12 @@
 .site-footer-inner{max-width:1240px;margin:auto;padding:48px 32px 56px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:36px}
 .site-footer h2{font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--clay);margin:0 0 14px}
 .site-footer ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
-.site-footer a{font-size:15px;min-height:44px;display:flex;align-items:center;transition:color .16s ease}
+/* The 44px height is the touch target and stays. The width was never meant to be a
+   target: a flex anchor inside a grid column stretches to the whole column, so the empty
+   space to the right of "Boşa Gezme! nedir?" navigated as though the words had been
+   pressed. Reported from a phone, where the column is the width of the screen and the
+   dead space is most of it. Fit the box to the words; keep the height. */
+.site-footer a{font-size:15px;min-height:44px;display:inline-flex;width:fit-content;max-width:100%;align-items:center;transition:color .16s ease}
 .site-footer a:hover{color:var(--clay)}
 .site-footer-note{margin:0;color:var(--ink-muted);font-size:14px;line-height:1.55;max-width:340px}.site-footer-social ul{display:flex;flex-wrap:wrap;gap:6px 16px;list-style:none;margin:0;padding:0}.site-footer-slogan{margin:0 0 10px;font-size:17px;font-weight:700;letter-spacing:-.02em;color:var(--ink)}
 /* The mobile navigation is fixed to the bottom of the viewport, so the clearance belongs
