@@ -8,6 +8,21 @@ value involved.
 
 ---
 
+## The "use my location" button grew to the height of the list beside it
+
+- Reported with a screenshot: the button was several times its proper height and the list
+  of matching places hung off the right edge of the panel.
+- Two grid faults in the same panel. The column holding the button stretched to the height
+  of the taller column beside it, and because it lays its own children out in a grid the
+  spare height was handed to the button. And the panel's columns had a 220px minimum
+  rather than a zero minimum, so once the content inside them needed more room than was
+  left the whole grid overflowed its own card instead of shrinking.
+- The column now packs its rows at the top, the columns may shrink to fit, and the panel
+  stacks into one column below 860px rather than 600px -- between those two widths the
+  two columns were technically side by side and practically unusable.
+
+---
+
 ## Pressing back from a store returned to a search from three searches ago
 
 - Reported from the live site: searched "yastık", opened a store, pressed the browser's
