@@ -60,6 +60,15 @@ function growToFit(element:HTMLTextAreaElement|null){
 // Google photos are streamed through the BFF and never optimised, because caching
 // the bytes would breach the Places terms. Stores without a photo get a typographic
 // block rather than a stand-in image.
+// Today's line out of the week the provider publishes. Google writes the week starting on
+// Monday and a JavaScript weekday starts on Sunday, and the day wanted is the store's own,
+// not the reader's -- at 23:00 in Antalya it is already tomorrow in Auckland.
+function todaysHours(hours:{descriptions?:string[];utc_offset_minutes:number}):string|undefined{
+  if(!hours.descriptions?.length)return undefined;
+  const local=new Date(Date.now()+hours.utc_offset_minutes*60000);
+  return hours.descriptions[(local.getUTCDay()+6)%7];
+}
+
 function ResultPhoto({item}:{item:SearchResult}) {
   const {t}=useI18n();
   // An administrator-selected cover is the store's canonical image. Without one, the live
@@ -87,7 +96,12 @@ function Result({item,onSelect,onCall,saved}:{item:SearchResult;onSelect:()=>voi
   // The API guarantees an array, but this read path stays defensive: one malformed or
   // cached store result must never replace the whole result page with a global error.
   const categoryText=(item.categories??[]).map(category=>categoryLabels[locale][category]??category).join(' · ');
-  const card=<article className="search-result"><ResultPhoto item={item}/><div><p className="result-category">{categoryText}{item.premium&&<span className="promoted-flag">{t('promoted')}</span>}</p><h2>{item.name}</h2><p className="result-address">{item.address}</p>{isClosedStatus(item.google?.business_status)&&<p className="store-status-warning">{storeStatusCopy[locale]}</p>}{item.distance_meters!==undefined&&<p className="distance">{(item.distance_meters/1000).toLocaleString(locale,{maximumFractionDigits:1})} km</p>}{/* "Boşa Gezme!'de yeni" used to depend on whether the store was in our catalogue at
+  const card=<article className="search-result"><ResultPhoto item={item}/><div><p className="result-category">{categoryText}{item.premium&&<span className="promoted-flag">{t('promoted')}</span>}</p><h2>{item.name}</h2><p className="result-address">{item.address}</p>{isClosedStatus(item.google?.business_status)&&<p className="store-status-warning">{storeStatusCopy[locale]}</p>}{(()=>{
+      const hours=item.google?.opening_hours;
+      if(!hours||hours.open_now===undefined)return null;
+      const today=todaysHours(hours);
+      return <p className="result-hours"><span className={hours.open_now?'is-open':'is-shut'}>{hours.open_now?t('openNow'):t('closedNow')}</span>{today&&<small>{today}</small>}</p>;
+    })()}{item.distance_meters!==undefined&&<p className="distance">{(item.distance_meters/1000).toLocaleString(locale,{maximumFractionDigits:1})} km</p>}{/* "Boşa Gezme!'de yeni" used to depend on whether the store was in our catalogue at
        all, which is our bookkeeping and none of the reader's business. It made the badge
        move on its own: a store arriving from the provider showed it, and the same store
        searched again showed "0 reviews · 0 favourites" instead -- because the first search

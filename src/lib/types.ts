@@ -17,7 +17,10 @@ export type SearchIntent = {
   price_intent: '' | 'budget' | 'midrange' | 'premium'; attributes: string[];
   sort_preference: '' | 'relevance' | 'distance' | 'rating' | 'popularity'; semantic_terms: string[];
 };
-export type GoogleExternal = { provider: 'google'; place_id: string; rating: number; rating_count: number; photo_name?: string; photo_attributions?: string[]; business_status?: string };
+export type GoogleExternal = { provider: 'google'; place_id: string; rating: number; rating_count: number; photo_name?: string; photo_attributions?: string[]; business_status?: string; opening_hours?: OpeningHours };
+// What the provider publishes about when a store is open. `open_now` is worked out by the
+// server at the moment it answers, so it is never older than the response carrying it.
+export type OpeningHours = { descriptions?: string[]; open_now?: boolean; utc_offset_minutes: number };
 export type StoredPhoto = { source: 'admin' | 'google'; media_id?: string; name?: string; attributions?: string[] };
 export type SearchResult = {
   id: string; search_result_impression_id: string; source: SearchSource; name: string; address: string;

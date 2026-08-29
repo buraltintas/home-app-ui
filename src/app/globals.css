@@ -30,6 +30,11 @@
 .home-question-body ul{margin:0 0 14px;padding-left:22px;display:grid;gap:6px;font-size:18px;line-height:1.6}
 @media(prefers-reduced-motion:reduce){.home-question>summary::after{transition:none}}
 @media(max-width:900px){.home-questions{padding:0 20px 48px}}
+.result-hours{display:flex;align-items:baseline;gap:8px;margin:6px 0 0;flex-wrap:wrap}
+.result-hours span{font-size:13px;font-weight:700}
+.result-hours .is-open{color:var(--success)}
+.result-hours .is-shut{color:var(--ink-muted)}
+.result-hours small{font-size:13px;color:var(--ink-muted)}
 .search-field{display:flex;align-items:flex-start;gap:4px;min-width:0}
 .search-field textarea{flex:1 1 auto;min-width:0}
 .search-clear{flex:none;align-self:center;display:grid;place-items:center;width:44px;height:44px;border-radius:var(--r-pill);color:var(--ink-muted)}

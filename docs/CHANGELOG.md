@@ -8,6 +8,21 @@ value involved.
 
 ---
 
+## Whether the shop is open, in the list
+
+- A result now says Open or Closed, with today's hours beside it, for stores whose hours
+  the provider publishes. It is the question somebody asks about a shop they are deciding
+  whether to travel to.
+- It costs nothing: the hours ride along on the provider request the search was already
+  making and already paying for.
+- Today's line is picked in the store's own time -- the provider writes the week starting
+  on Monday, a JavaScript weekday starts on Sunday, and at 23:00 in Antalya it is already
+  tomorrow in Auckland. Verified on a Saturday: the Saturday line was the one shown.
+- A store that publishes no hours gets no line. Silence is not the same as closed and
+  guessing would be worse than saying nothing.
+
+---
+
 ## Clearing the search box, and the letters that were being shaved
 
 - The placeholder's line-height was 1.35, which leaves nothing under a line, so the tails
