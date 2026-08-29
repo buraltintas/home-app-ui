@@ -1,8 +1,8 @@
 import type {Metadata} from 'next';
-import {FeedPage} from '@/components/FeedPage';
+import {HomeIntro} from '@/components/HomeIntro';
+import {HomeQuestions} from '@/components/HomeQuestions';
 import {JsonLd} from '@/components/JsonLd';
 import {getServerI18n} from '@/i18n/server';
-import {getFeed} from '@/lib/server-api';
 import {canonicalFor,shareImage} from '@/lib/site';
 import {organizationJsonLd,websiteJsonLd} from '@/lib/structured-data';
 
@@ -11,14 +11,18 @@ export async function generateMetadata():Promise<Metadata>{
   return {alternates:canonicalFor(locale,'/'),openGraph:{url:'/',type:'website',images:[shareImage],description:t.siteSnippet},description:t.siteSnippet};
 }
 
-// The feed is read here rather than in an effect, so the homepage arrives with real
-// reviews in the HTML. As a client component fetching on mount, the server response was
-// an empty shell -- nothing for a crawler to read and nothing for a slow connection to
-// show. FeedPage still refetches when the session changes; it just no longer starts empty.
+// The home page no longer opens with other people's reviews. Somebody arriving here has
+// not chosen a store yet, so a stream of reviews of stores they have never heard of asks
+// them to care before they have a reason to. What it opens with instead is the search,
+// and under it the questions people actually ask before trusting a place they have not
+// used -- read from the about page so there is one wording, not two.
 export default async function Page(){
-  const [{t,locale},feed]=await Promise.all([getServerI18n(),getFeed()]);
+  const {t,locale}=await getServerI18n();
   return <>
     <JsonLd data={[organizationJsonLd(t.siteSnippet),websiteJsonLd(t.siteSnippet,locale)]}/>
-    <FeedPage initialPosts={feed.items} initialCursor={feed.cursor}/>
+    <main className="feed-layout"><section className="feed-main">
+      <HomeIntro/>
+      <HomeQuestions locale={locale}/>
+    </section></main>
   </>;
 }

@@ -8,6 +8,24 @@ value involved.
 
 ---
 
+## The home page no longer opens with other people's reviews
+
+- Asked for: take the reviewed stores off the home page, and put expandable headings in
+  their place.
+- Somebody arriving at the home page has not chosen a store yet, so a stream of reviews of
+  stores they have never heard of asks them to care before they have a reason to. What is
+  there instead is the search, and under it the questions people ask before trusting a
+  place they have not used.
+- The questions are read from the about page rather than restated, so there is one wording
+  in four languages and no second copy to fall out of date. Native details/summary: it
+  opens without JavaScript, it is keyboard operable and announced on its own, and it has
+  no animation to suppress for anybody who asked for less motion. Verified at 375 and
+  1280 -- nine questions, 44 px targets, no horizontal overflow.
+- The feed component and the server read behind it are gone rather than left unreferenced.
+  Nothing else used them, and dead code that still looks alive is worse than none.
+
+---
+
 ## A favourite with no review beside it, and a Google column that moved
 
 - Two follow-ups on the result list, one of them a regression I introduced.

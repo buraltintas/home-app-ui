@@ -36,7 +36,6 @@ export async function getUserPosts(id:string):Promise<Post[]>{try{return (await 
 // shell for crawlers and for anyone on a slow connection.
 // The cursor comes back with the first page so the client can continue from where the
 // server stopped. Without it the feed silently ended at the first twenty reviews.
-export async function getFeed(limit=20):Promise<{items:Post[];cursor:string}>{try{const page=await serverApi<{items:Post[];next_cursor?:string}>(`/v1/feed?limit=${limit}`);return {items:page.items??[],cursor:page.next_cursor??''}}catch{return {items:[],cursor:''}}}
 
 // Every published store, for the sitemap. Enumerating the catalogue is a separate
 // backend concern from searching it, so this is the one endpoint that can answer it.
