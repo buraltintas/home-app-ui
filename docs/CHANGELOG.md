@@ -8,6 +8,23 @@ value involved.
 
 ---
 
+## Clearing the search box, and the letters that were being shaved
+
+- The placeholder's line-height was 1.35, which leaves nothing under a line, so the tails
+  of a wrapped second line were cut off by the hidden overflow that lets the field grow.
+  1.5 and a little padding under it.
+- A clear button at the end of the field. On a phone there was no way out of a long wrong
+  query but backspace: holding a letter opens the accent menu rather than repeating it,
+  which is the operating system's decision and not ours to override. The button is the
+  remedy that is actually available.
+- It shares the field's grid cell rather than being a fourth item in the form's grid --
+  the form is three columns wide and two on a phone, so a loose item lands in whichever
+  cell comes next. And `.search-form button` was claiming it too, which had made it 120px
+  wide and black: the submit is the form's own child, the clear button belongs to the
+  field, and the selector now says so.
+
+---
+
 ## The home page no longer opens with other people's reviews
 
 - Asked for: take the reviewed stores off the home page, and put expandable headings in
