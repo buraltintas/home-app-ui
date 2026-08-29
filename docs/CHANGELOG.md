@@ -8,6 +8,34 @@ value involved.
 
 ---
 
+## The loading mascot swapped itself, and sometimes asked to be pressed
+
+- Reported: a different image appears for a moment while the review page reloads.
+- The loader draws a still on the server, because a server has no media query to read, and
+  the browser then replaced it with the video once it decided motion was allowed. That
+  replacement is the picture changing under the reader for no reason they caused.
+- Worse, in the screenshot the video had not started -- an iPhone in low power mode refuses
+  to autoplay -- so Safari left its own play button on the poster. A loading indicator
+  looked like something you were supposed to press.
+- The still is now what is drawn, and the video takes over only once it is actually
+  running. Nothing changes unless there is something better to change to, and a video that
+  never starts is never shown. Measured both ways: playing, the still hands over; blocked,
+  the still stays and no control ever appears.
+
+---
+
+## The sign-in dialog rebuilt its own Google button
+
+- The script's load handler marked the button unready and ready again in the same breath,
+  to force it to be built once the script had landed. It also tore the button down and
+  built it again every time it fired -- a flicker in the one part of that dialog that draws
+  the eye. Clearing the initialised flag is enough on its own.
+- Measured the dialog through a load: the heading, the slot and the dialog itself hold
+  their positions to the pixel, so what remains is the placeholder handing over to the
+  button. Reopening four times in one page still produces the button every time.
+
+---
+
 ## Categories named twice, differently
 
 - The results list translated category slugs from a list held here; the store's own page

@@ -117,7 +117,7 @@ export function AuthDialog({open,onClose,onAuthenticated}:{open:boolean;onClose:
         the only signal we listened for never arrived: no button, and after ten seconds a
         message saying Google was unavailable. Google was fine. onReady is the callback
         next/script documents for exactly this case, and it fires on both paths. */}
-    <Script id={`google-identity-${locale}`} src={`https://accounts.google.com/gsi/client?hl=${locale}`} strategy="afterInteractive" onLoad={()=>{googleInitializedRef.current=false;setGoogleReady(false);window.setTimeout(()=>setGoogleReady(true),0)}} onReady={()=>setGoogleReady(true)} onError={()=>setGoogleGaveUp(true)}/>
+    <Script id={`google-identity-${locale}`} src={`https://accounts.google.com/gsi/client?hl=${locale}`} strategy="afterInteractive" onLoad={()=>{googleInitializedRef.current=false;setGoogleReady(true)}} onReady={()=>setGoogleReady(true)} onError={()=>setGoogleGaveUp(true)}/>
     <section className="auth-dialog" data-mode={emailMode?'email':'choice'} role="dialog" aria-modal="true" aria-labelledby="auth-title" aria-busy={busy} onMouseDown={event=>event.stopPropagation()}>
       <button className="icon-button dialog-close" onClick={closeDialog} aria-label={t('close')}><X/></button>
       <p className="eyebrow">{t('wordmark')}</p>

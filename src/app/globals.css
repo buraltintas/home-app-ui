@@ -35,6 +35,11 @@
 .result-hours .is-open{color:var(--success)}
 .result-hours .is-shut{color:var(--ink-muted)}
 .result-hours small{font-size:13px;color:var(--ink-muted)}
+.mascot-loader-art{position:relative;display:block;width:168px;height:168px}
+.mascot-loader-art>img,.mascot-loader-art>video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.mascot-loader-art>video{opacity:0}
+.mascot-loader-art[data-playing]>video{opacity:1}
+.mascot-loader-art[data-playing]>img{opacity:0}
 .search-field{display:flex;align-items:flex-start;gap:4px;min-width:0}
 .search-field textarea{flex:1 1 auto;min-width:0}
 .search-clear{flex:none;align-self:center;display:grid;place-items:center;width:44px;height:44px;border-radius:var(--r-pill);color:var(--ink-muted)}
