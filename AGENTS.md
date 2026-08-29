@@ -52,6 +52,24 @@ per-store exception, not a fix for the one example in the bug report.
 When a report names one case, fix the class it belongs to, then look for the rest of the
 class — there is always more than the one reported.
 
+## Removing something from a page removes it from the index too
+
+A page is read by people and by crawlers, and the second reader is invisible while you
+work. Taking a block off a page can therefore cost something nobody in the room mentions:
+
+- **Internal links.** A block that linked to store pages was passing the home page's own
+  standing to them. The sitemap still gets them crawled; it does not carry that standing.
+- **Unique text.** Two URLs holding the same words are one page as far as an index is
+  concerned, and which one survives is not our choice. Content shown in two places should
+  live in one and be linked from the other.
+- **Freshness.** Content that changes on its own says the site is alive. A block of fixed
+  copy does not.
+
+So: when a change removes content, links, or headings from a page that is indexed, say so
+in the same breath as delivering it -- on the task, in plain language, with what was lost
+and what would restore it. The person who asked for the change is entitled to weigh that
+before it ships, and they cannot weigh what they are not told.
+
 ## Keep the log
 
 Every change that a person would want explained later goes in `docs/CHANGELOG.md`, newest
