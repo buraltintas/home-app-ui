@@ -54,13 +54,17 @@ function toPosition(fix:GeolocationPosition):Position{
 function acquire({options,deadline,target}:Attempt):Promise<GeolocationPosition>{
   return new Promise((resolve,reject)=>{
     let best:GeolocationPosition|undefined;
+    let last:GeolocationPositionError|undefined;
     let settled=false;
     const stop=()=>{settled=true;window.clearTimeout(timer);navigator.geolocation.clearWatch(watch);};
     const timer=window.setTimeout(()=>{
       if(settled)return;
       stop();
       if(best)resolve(best);
-      else reject({code:3,message:'timeout'} as GeolocationPositionError);
+      // A device that spent the whole budget saying it does not know where it is has not
+      // timed out on us; it has answered. Reporting that as a timeout would send the
+      // visitor advice meant for a slow fix rather than for one that is not coming.
+      else reject(last??({code:3,message:'timeout'} as GeolocationPositionError));
     },deadline);
     const watch=navigator.geolocation.watchPosition(fix=>{
       if(settled)return;
@@ -70,7 +74,15 @@ function acquire({options,deadline,target}:Attempt):Promise<GeolocationPosition>
       if(settled)return;
       // A late error after a usable fix is not a failure; we already have an answer.
       if(best){const found=best;stop();resolve(found);return;}
-      stop();reject(error);
+      // Only a refusal is final. Everything else is the system saying "not yet": macOS
+      // reports kCLErrorLocationUnknown while Core Location is still working the problem,
+      // and Apple's own guidance is to keep the request open rather than give up on it.
+      // We were tearing the watch down on that first error and reporting failure a
+      // fraction of a second into a ten-second budget, so a fix that arrived a moment
+      // later was never seen. The watch now runs to the deadline; this error is kept only
+      // in case nothing ever arrives.
+      if(error.code===1){stop();reject(error);return;}
+      last=error;
     },options);
   });
 }
@@ -368,20 +380,6 @@ export async function requestPosition({allowRemembered=false,allowRecentLive=fal
     reason=failure(error);
     // A refusal would only be refused again, and retrying reads as ignoring the answer.
     if(reason==='denied'||reason==='blocked')return {ok:false,reason};
-  }
-  // "The device has no position" is often "the device had no position a second ago". The
-  // system provider can fail for a moment -- waking, changing network, a scan that found
-  // nothing -- and the same request a breath later succeeds. Asking the visitor to press
-  // the button again to discover that is work we can do for them, once.
-  if(reason==='unavailable'){
-    await new Promise(resolve=>window.setTimeout(resolve,800));
-    try{
-      const position=toPosition(await acquire(DISCOVERY));
-      rememberLive(position);
-      return {ok:true,position};
-    }catch(error){
-      reason=failure(error);
-    }
   }
   return {ok:false,reason};
 }

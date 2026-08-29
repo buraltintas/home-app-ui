@@ -237,8 +237,17 @@ export function SearchExperience() {
     const asked=new URLSearchParams(window.location.search).get('q')?.trim();
     const saved=savedSearchLocation();
     const persisted=saved?{source:saved.source,label:saved.label,city:saved.city,placeID:saved.place_id,address:saved.address,accuracyMeters:saved.accuracy_meters,coordinates:{latitude:saved.latitude,longitude:saved.longitude}} satisfies SearchPlace:undefined;
+    // ...but only while they are still the newest thing here. The address bar is written
+    // once, on the way in from the homepage, and every search made on this page since
+    // then has left it untouched. So coming back from a store page found a query from
+    // three searches ago sitting in the URL, ran it again, and threw away the results the
+    // visitor was actually looking at. Reported from the live site: searched "yastık",
+    // opened a store, pressed back, and landed in "perde".
+    //
+    // The snapshot wins when it answers the same question the address bar is asking,
+    // which also spares a refetch of results we already hold.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    if(asked){setQuery(asked);const initial=snapshot?.location??persisted;if(initial)setLocation(initial);pending.current=asked;}
+    if(asked&&asked!==snapshot?.query){setQuery(asked);const initial=snapshot?.location??persisted;if(initial)setLocation(initial);pending.current=asked;}
     else if(snapshot){setQuery(snapshot.query);const initial=snapshot.location??persisted;if(initial)setLocation(initial);setData(snapshot.data);}
     else if(persisted)setLocation(persisted);
     // Offering the same three examples on every visit teaches people the product only
@@ -393,6 +402,17 @@ export function SearchExperience() {
       pending.current=nextQuery;
       setQuery(nextQuery);setLocationOpen(true);setError(t('locationRequired'));return;
     }
+    // A search on this page is now written into the address bar, so the URL never falls
+    // behind what is on screen: a refresh repeats the search that is showing, a link can
+    // be sent to somebody, and coming back from a store returns to the query that was
+    // open rather than to whichever one happened to arrive from the homepage. Replaced
+    // rather than pushed -- back means "leave the search", not "walk through every
+    // wording I tried".
+    try{
+      const url=new URL(window.location.href);
+      url.searchParams.set('q',nextQuery.trim());
+      window.history.replaceState(window.history.state,'',url);
+    }catch{}
     searchAbort.current?.abort();
     const controller=new AbortController();
     searchAbort.current=controller;

@@ -8,6 +8,23 @@ value involved.
 
 ---
 
+## Pressing back from a store returned to a search from three searches ago
+
+- Reported from the live site: searched "yastık", opened a store, pressed the browser's
+  back button, and landed in the results for "perde".
+- The address bar was written once, on the way in from the homepage, and never again. Every
+  search made on the discovery page since then left `?q=perde` sitting there. Coming back
+  remounted the page, found that query, ran it again, and threw away the results the
+  visitor had been looking at -- along with the reason they pressed back.
+- A search now writes itself into the address bar. The URL never falls behind what is on
+  screen: a refresh repeats the search that is showing, the link can be sent to somebody,
+  and back from a store returns to the query that was open. Replaced rather than pushed,
+  because back should mean "leave the search", not "walk through every wording I tried".
+- The kept snapshot wins when it answers the same question the address bar is asking, so
+  returning to a search does not fetch results we already hold.
+
+---
+
 ## We told somebody their location was switched off while it was switched on
 
 - Reported with a screenshot of macOS System Settings showing Location Services on and the
