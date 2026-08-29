@@ -8,6 +8,22 @@ value involved.
 
 ---
 
+## What a store page tells a search engine about itself
+
+- Search Console reports 904 pages as "discovered, currently not indexed" against 48
+  indexed. That is a crawler deciding a few thousand near-identical pages are not worth
+  its time, and what separates one store page from the next is the facts on it.
+- The machine-readable copy was missing facts the page already showed a reader: the
+  telephone number, the photograph, the store's own website, and the hours it is open. All
+  four are now in the Store record.
+- Opening hours are written as periods against the day they start on, which is how the
+  vocabulary reads a shift that runs past midnight. They appear as searches refresh each
+  store's provider data; nothing is fetched to fill them in.
+- The community rating stays gated on community reviews, as before. The provider's rating
+  is not ours to publish as our own.
+
+---
+
 ## The loading mascot swapped itself, and sometimes asked to be pressed
 
 - Reported: a different image appears for a moment while the review page reloads.

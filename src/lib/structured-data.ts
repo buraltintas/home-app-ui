@@ -1,5 +1,6 @@
 import {absolute,siteUrl,storePath} from './site';
 import type {Post,Store} from './types';
+import {storePhotoURL} from './store-photo';
 
 // Google permits a third-party platform to mark up reviews that its users wrote about
 // other businesses -- the self-serving restriction covers a business publishing reviews
@@ -46,6 +47,23 @@ function reviewJsonLd(post:Post):JsonLd{
   };
 }
 
+// The provider publishes opening hours as periods, and schema.org wants a day name and
+// two clock times. Google's week starts on Sunday; the vocabulary wants the English day
+// name. A period that closes on a later day than it opens ran past midnight, and is
+// written against the day it started, which is how the vocabulary reads it too.
+const SCHEMA_DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const clock=(minutes:number)=>`${String(Math.floor(minutes/60)%24).padStart(2,'0')}:${String(minutes%60).padStart(2,'0')}`;
+
+function openingHoursSpecification(store:Store):JsonLd[]{
+  const google=store.external_sources?.find(source=>source.provider==='google');
+  const raw=(google?.attribution as {opening_hours?:{periods?:{open_day:number;open_minute:number;close_day:number;close_minute:number}[]}}|undefined)?.opening_hours;
+  return (raw?.periods??[]).flatMap(period=>{
+    const day=SCHEMA_DAYS[period.open_day];
+    if(!day)return [];
+    return [{'@type':'OpeningHoursSpecification',dayOfWeek:`https://schema.org/${day}`,opens:clock(period.open_minute),closes:clock(period.close_minute)}];
+  });
+}
+
 export function storeJsonLd(store:Store,posts:Post[]):JsonLd{
   const data:JsonLd={
     '@context':'https://schema.org','@type':'Store',
@@ -60,6 +78,17 @@ export function storeJsonLd(store:Store,posts:Post[]):JsonLd{
     },
     geo:{'@type':'GeoCoordinates',latitude:store.latitude,longitude:store.longitude},
   };
+  // Everything true about this shop that a search engine understands. A store page is one
+  // of a few thousand near-identical pages as far as a crawler is concerned, and what
+  // separates it from the others is the facts on it -- a telephone number, a photograph,
+  // the hours it is open. All of these were already on the page for a reader; only the
+  // machine-readable copy was missing them.
+  if(store.phone)data.telephone=store.phone;
+  if(store.website)data.sameAs=[store.website];
+  const image=storePhotoURL(store.photo);
+  if(image)data.image=[image];
+  const hours=openingHoursSpecification(store);
+  if(hours.length)data.openingHoursSpecification=hours;
   if(store.brand_name)data.brand={'@type':'Brand',name:store.brand_name};
   if(store.localized_description)data.description=store.localized_description;
   if(store.category_labels.length)data.knowsAbout=store.category_labels;
