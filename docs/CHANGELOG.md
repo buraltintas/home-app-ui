@@ -8,6 +8,36 @@ value involved.
 
 ---
 
+## A favourite with no review beside it, and a Google column that moved
+
+- Two follow-ups on the result list, one of them a regression I introduced.
+- A store with favourites but no review showed neither the badge's counterpart nor the
+  favourites. The count was being hidden because the review count gated the whole column,
+  but a favourite is a real thing somebody did and it is the only signal such a store has.
+  It now appears on its own line under the badge. The badge still answers "has anybody
+  reviewed this"; the count answers "has anybody cared".
+- Google's column sat beside the community column on some cards and below it on others.
+  That was mine: the row was a wrapping flex, and making the community column's text
+  longer pushed Google onto a second line for exactly the stores with no review. Measured
+  on a phone with the old rule, the three storeless-of-reviews cards all wrapped and the
+  reviewed one did not -- which is precisely the "some on the right, some underneath" in
+  the report. Two sources, two columns, now a grid that cannot wrap.
+
+---
+
+## Saving a store from the list
+
+- The list is where somebody is still choosing, so the control is an icon at the row's top
+  right: 44x44, outside the card's link because an anchor cannot hold a button, and
+  secondary rather than primary because saving is not what the row is for.
+- Pressed while signed out, it rolls its optimistic state back, opens the contextual
+  sign-in, and completes the save afterwards rather than dropping what was asked for.
+- Which stores are already saved is not carried by the search response, so it is read once
+  from the same endpoint the favourites page uses. A store beyond that page of favourites
+  will show as unsaved until the search results carry the flag themselves.
+
+---
+
 ## The review page opened a hundred pixels down
 
 - Reported: opening a store's review page from low on the store page left the top of the
