@@ -8,6 +8,28 @@ value involved.
 
 ---
 
+## We told somebody their location was switched off while it was switched on
+
+- Reported with a screenshot of macOS System Settings showing Location Services on and the
+  browser enabled -- next to our message telling them to go and turn exactly that on.
+- The message was wrong by construction. A browser reports three things: refused, no fix
+  in time, or no position available. We were treating "no fix in time" as "the device is
+  off", which is a diagnosis the browser gives us no grounds to make. It sent somebody to
+  a settings screen that was already correct, and left the thing that would have worked --
+  pressing the button again, or typing where they are -- unmentioned.
+- Timeout now says what it means: the location did not arrive in time, try again or type
+  your place. The genuinely unavailable case leads with the same two ways out and names
+  the device setting last, as a possibility rather than a verdict. Four locales.
+- Six seconds was also too short. A desktop browser asked for the first time after a wake
+  routinely takes longer, and the panel already offers a place to type instead, so the
+  cost of waiting is a slower failure rather than a worse one. Ten seconds now.
+- An unavailable position is retried once, automatically, after a short pause. The system
+  provider fails for a moment -- waking, changing network, a scan that found nothing -- and
+  the same request a breath later succeeds. Asking the visitor to discover that by pressing
+  the button again is work we can do for them.
+
+---
+
 ## What a store page tells a search engine about itself
 
 - Search Console reports 904 pages as "discovered, currently not indexed" against 48

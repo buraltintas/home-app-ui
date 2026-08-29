@@ -33,7 +33,12 @@ type Attempt={options:PositionOptions;deadline:number;target:number};
 // Good enough to place someone on a street, which is all a search needs.
 // Indoors a satellite fix may never arrive. A wifi or cell reading still places the
 // device in the right neighbourhood, and that beats refusing to answer.
-const DISCOVERY:Attempt={options:{enableHighAccuracy:false,timeout:6000,maximumAge:120000},deadline:6000,target:1500};
+// Six seconds was not long enough. A desktop browser asked for the first time after a
+// wake, or one whose network provider is warming up, routinely takes longer than that and
+// then reports a timeout -- which we were showing as "your device's location is off", an
+// accusation the browser gives us no grounds for. The visitor can always type a place
+// instead, so the cost of waiting a little longer is a slower failure, not a worse one.
+const DISCOVERY:Attempt={options:{enableHighAccuracy:false,timeout:10000,maximumAge:120000},deadline:10000,target:1500};
 // Review verification can safely accept a wider horizontal-accuracy estimate because
 // the backend adds the full estimate to the measured store distance. A 700 m reading
 // therefore reduces, rather than expands, the part of the 2 km boundary available to
@@ -266,14 +271,16 @@ export function locationMessage(reason:LocationFailure){
   // wait for another prompt is stale advice. Some Safari versions cannot expose the
   // permission state, but the browser/site settings path works for both denied states.
   if(reason==='blocked'||reason==='denied')return 'locationBlocked' as const;
-  // A browser timeout is not actionable advice to move around the room. On desktop it
-  // usually means the OS is not supplying the browser with a location at all, so use
-  // the same device-settings guidance as an unavailable provider.
-  if(reason==='timeout')return 'locationDeviceOff' as const;
+  // A timeout says one thing only: no fix arrived in time. It does not say the device is
+  // switched off, and telling somebody to go and change a system setting that is already
+  // correct wastes their time and makes the product look like it is guessing.
+  if(reason==='timeout')return 'locationTimeout' as const;
   if(reason==='inaccurate')return 'verifyAccuracy' as const;
-  // The browser was allowed but the operating system returned nothing, which it does
-  // when location services are switched off for the browser itself. No amount of
-  // retrying inside the page fixes that, so we point at the real setting.
+  // The browser was allowed and the operating system still returned nothing. That does
+  // happen when location services are off for the browser -- but it also happens when the
+  // provider fails for a moment, which looks identical from in here. So the advice leads
+  // with what actually works and mentions the setting second, as a possibility rather
+  // than as a diagnosis we cannot make.
   if(reason==='unavailable')return 'locationDeviceOff' as const;
   return 'locationPermissionNeeded' as const;
 }
@@ -361,6 +368,20 @@ export async function requestPosition({allowRemembered=false,allowRecentLive=fal
     reason=failure(error);
     // A refusal would only be refused again, and retrying reads as ignoring the answer.
     if(reason==='denied'||reason==='blocked')return {ok:false,reason};
+  }
+  // "The device has no position" is often "the device had no position a second ago". The
+  // system provider can fail for a moment -- waking, changing network, a scan that found
+  // nothing -- and the same request a breath later succeeds. Asking the visitor to press
+  // the button again to discover that is work we can do for them, once.
+  if(reason==='unavailable'){
+    await new Promise(resolve=>window.setTimeout(resolve,800));
+    try{
+      const position=toPosition(await acquire(DISCOVERY));
+      rememberLive(position);
+      return {ok:true,position};
+    }catch(error){
+      reason=failure(error);
+    }
   }
   return {ok:false,reason};
 }
