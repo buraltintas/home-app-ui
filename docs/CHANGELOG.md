@@ -8,6 +8,17 @@ value involved.
 
 ---
 
+## Categories named twice, differently
+
+- The results list translated category slugs from a list held here; the store's own page
+  showed names translated in the database. They had drifted -- "bedding" read "Nevresim
+  takimi" in the results and "Yatak" on the store's page.
+- The server now names them, from the same translations the store's page reads. The list
+  here stays only as a fallback for a result that is not in the catalogue and so has no
+  page to disagree with.
+
+---
+
 ## Whether the shop is open, in the list
 
 - A result now says Open or Closed, with today's hours beside it, for stores whose hours

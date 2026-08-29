@@ -95,7 +95,9 @@ function Result({item,onSelect,onCall,saved}:{item:SearchResult;onSelect:()=>voi
   const {t,locale}=useI18n();
   // The API guarantees an array, but this read path stays defensive: one malformed or
   // cached store result must never replace the whole result page with a global error.
-  const categoryText=(item.categories??[]).map(category=>categoryLabels[locale][category]??category).join(' · ');
+  const categoryText=(item.category_labels?.length
+    ?item.category_labels
+    :(item.categories??[]).map(category=>categoryLabels[locale][category]??category)).join(' · ');
   const card=<article className="search-result"><ResultPhoto item={item}/><div><p className="result-category">{categoryText}{item.premium&&<span className="promoted-flag">{t('promoted')}</span>}</p><h2>{item.name}</h2><p className="result-address">{item.address}</p>{isClosedStatus(item.google?.business_status)&&<p className="store-status-warning">{storeStatusCopy[locale]}</p>}{(()=>{
       const hours=item.google?.opening_hours;
       if(!hours||hours.open_now===undefined)return null;

@@ -25,6 +25,8 @@ export type StoredPhoto = { source: 'admin' | 'google'; media_id?: string; name?
 export type SearchResult = {
   id: string; search_result_impression_id: string; source: SearchSource; name: string; address: string;
   city?: string; district?: string; latitude: number; longitude: number; distance_meters?: number; categories: string[];
+  // Named by the server, from the same translations the store's own page reads.
+  category_labels?: string[];
   platform?: PlatformStats & { store_id: string }; google?: GoogleExternal; photo?: StoredPhoto; premium?: boolean;
   // The store's public telephone number, when we hold one. Absent for a result we have
   // never had a number for; the card hides the action rather than offering a dead one.
