@@ -8,6 +8,57 @@ value involved.
 
 ---
 
+## The review page opened a hundred pixels down
+
+- Reported: opening a store's review page from low on the store page left the top of the
+  review page off screen, and you had to scroll up by hand to see it.
+- A reset already existed and ran on mount, and it worked locally, which is why this looked
+  fixed. It was not. The route paints a short loading state first, so a browser arriving
+  from far down the store page clamps the old offset to the bottom of that short page
+  rather than the top; when the content finally arrives and the page grows tall, nothing
+  moves it back. In development the loading state is quick enough to hide the whole thing.
+- The reset now also runs once the page has its real height. Measured on a production build
+  with the same click from the same scroll position: before, the page settled at 103 px and
+  stayed there -- the same number production was showing; after, it settles at 0.
+
+---
+
+## A store's name was set in headline type
+
+- Reported: on the review page the store name is far bigger than it should be, and it
+  crowds the label above it and the address below.
+- Its selector had been grouped with the marketing headings, so a shop called Yataş was
+  drawn at the size of "Gerçek mağazalar. Gitmeden önce." -- 42 px on a phone, with a
+  line-height tighter than the type size and no margins at all, which is why its
+  neighbours sat flush against it. A store's name is data the page is showing, not a
+  headline the page is making, so it no longer takes the hero treatment.
+- Measured on a phone: 42 px to 26 px, and the gaps above and below from 0 px to 10 px
+  and 14 px.
+
+---
+
+## Pages carrying a note read smaller than pages without one
+
+- Reported: the text on the privacy and KVKK pages is smaller than it should be.
+- The pages are identical in structure; what differs is that these two carry note blocks,
+  and a note was set three points below the prose around it. A note is body text that
+  happens to sit on a tint -- the tint is what marks it, so the shrinking only made it
+  harder to read. It now matches the body.
+
+---
+
+## Contribution levels, as a list
+
+- The levels were a single sentence with five thresholds inside it. They are a list, so
+  they are now a list, in all four languages. Thresholds checked against the backend that
+  awards them rather than copied: 1, 5, 15, 40, 100.
+- "Bu seviye para ... değildir" became "puan": nobody suspects a contribution level is
+  money, but plenty would reasonably wonder whether it is a score.
+- Removed a dead translation key for a distance warning that no code has shown since the
+  message began naming the real radius.
+
+---
+
 ## "New here" moved on its own
 
 - Reported: some stores in the result list carry "Boşa Gezme!'de yeni" and some do not,

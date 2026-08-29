@@ -38,8 +38,9 @@ export const about:LegalDoc={
           {p:'Değerlendirmeler yazanların kendi görüşleridir. Boşa Gezme! her değerlendirmeyi onaylamaz ve içeriğinden yazarı sorumludur.'},
         ]},
         {id:'katki',heading:'Katkı seviyesi ne işe yarar?',blocks:[
-          {p:'Katkı seviyesi, yayımladığınız doğrulanmış değerlendirme sayısına göre topluluğa yaptığınız katkıyı gösterir. İlk değerlendirmede Yeni gezgin, 5 değerlendirmede Kaşif, 15 değerlendirmede Deneyimli, 40 değerlendirmede Rehber ve 100 değerlendirmede Usta Rehber olursunuz.'},
-          {p:'Bu seviye para, indirim veya mağaza ayrıcalığı değildir. Profilinizde ve paylaşımlarınızda, diğer insanlara ne kadar deneyim aktardığınızı gösteren bir topluluk işaretidir.'},
+          {p:'Katkı seviyesi, yayımladığınız doğrulanmış değerlendirme sayısına göre topluluğa yaptığınız katkıyı gösterir.'},
+          {ul:['İlk değerlendirmede Yeni gezgin','5 değerlendirmede Kaşif','15 değerlendirmede Deneyimli','40 değerlendirmede Rehber','100 değerlendirmede Usta rehber']},
+          {p:'Bu seviye puan, indirim veya mağaza ayrıcalığı değildir. Profilinizde ve paylaşımlarınızda, diğer insanlara ne kadar deneyim aktardığınızı gösteren bir topluluk işaretidir.'},
         ]},
         {id:'konum',heading:'Mağaza konumları listelemeyi nasıl etkiliyor?',blocks:[
           {p:'Sonuçlar mesafeye göre sıralanır, bu yüzden her arama bir konum gerektirir. Konumunuz, cihaz ayarlarından otomatik olarak alınabilir veya arama çubuğundan kendiniz bir konum girebilirsiniz.'},
@@ -79,7 +80,8 @@ export const about:LegalDoc={
           {p:'Reviews are the opinions of the people who wrote them. Boşa Gezme! does not endorse every review, and their authors are responsible for their content.'},
         ]},
         {id:'katki',heading:'What are contributor levels for?',blocks:[
-          {p:'Your contributor level reflects how many verified reviews you have published. You become a New explorer after the first review, Explorer at 5, Seasoned at 15, Guide at 40, and Master guide at 100.'},
+          {p:'Your contributor level reflects how many verified reviews you have published.'},
+          {ul:['New explorer at your first review','Explorer at 5','Seasoned at 15','Guide at 40','Master guide at 100']},
           {p:'A level is not money, a discount, or a store benefit. It is a community marker on your profile and contributions that shows how much first-hand experience you have shared.'},
         ]},
         {id:'konum',heading:'How do store locations affect listing?',blocks:[
@@ -120,7 +122,8 @@ export const about:LegalDoc={
           {p:'Bewertungen sind die Meinungen ihrer Verfasserinnen und Verfasser. Boşa Gezme! macht sich nicht jede Bewertung zu eigen; für den Inhalt sind die Verfassenden verantwortlich.'},
         ]},
         {id:'katki',heading:'Wozu dienen Beitragsstufen?',blocks:[
-          {p:'Deine Beitragsstufe richtet sich nach der Zahl deiner veröffentlichten, bestätigten Bewertungen. Nach der ersten Bewertung bist du Neu unterwegs, bei 5 Entdecker, bei 15 Erfahren, bei 40 Guide und bei 100 Meister-Guide.'},
+          {p:'Deine Beitragsstufe richtet sich nach der Zahl deiner veröffentlichten, bestätigten Bewertungen.'},
+          {ul:['Neu unterwegs ab der ersten Bewertung','Entdecker ab 5','Erfahren ab 15','Guide ab 40','Meister-Guide ab 100']},
           {p:'Eine Stufe ist weder Geld noch Rabatt oder ein Vorteil bei einem Geschäft. Sie zeigt in deinem Profil und deinen Beiträgen, wie viel eigene Erfahrung du mit der Community geteilt hast.'},
         ]},
         {id:'konum',heading:'Wie beeinflussen Geschäftsstandorte die Reihenfolge?',blocks:[
@@ -161,7 +164,8 @@ export const about:LegalDoc={
           {p:'Отзывы отражают мнение их авторов. Boşa Gezme! не поддерживает каждый отзыв, за содержание отвечают авторы.'},
         ]},
         {id:'katki',heading:'Для чего нужны уровни участника?',blocks:[
-          {p:'Уровень участника зависит от количества опубликованных подтверждённых отзывов. После первого отзыва присваивается уровень Новичок, после 5 — Исследователь, после 15 — Опытный, после 40 — Гид, после 100 — Мастер-гид.'},
+          {p:'Уровень участника зависит от количества опубликованных подтверждённых отзывов.'},
+          {ul:['Новичок — после первого отзыва','Исследователь — после 5','Опытный — после 15','Гид — после 40','Мастер-гид — после 100']},
           {p:'Уровень не является деньгами, скидкой или привилегией магазина. Это знак сообщества в профиле и публикациях, показывающий, каким объёмом личного опыта вы поделились.'},
         ]},
         {id:'konum',heading:'Как местоположение магазинов влияет на порядок выдачи?',blocks:[

@@ -178,6 +178,15 @@ function ReviewWizard({storeId}:{storeId:string}){
     return current.filter(photo=>photo.id!==id);
   });
 
+  // Reset again once the page has its real height. The mount-time reset below is not
+  // enough on its own: this route paints a short loading state first, so a browser
+  // arriving from far down a store page clamps the old offset to the bottom of that short
+  // page instead of the top, and nothing moves it back when the content finally makes the
+  // page tall. Locally the loading state is quick enough to hide this; in production it
+  // left the review flow opening a hundred pixels down, with its own heading cut off.
+  const settled=Boolean(store)&&signedIn!==undefined;
+  useLayoutEffect(()=>{if(settled)window.scrollTo(0,0);},[settled]);
+
   const submit=async()=>{
     if(!verification||rating<1||text.trim().length<3)return;
     setSubmitting(true);setSubmitError('');
