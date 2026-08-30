@@ -31,10 +31,17 @@ const subscribeToMotion=(notify:()=>void)=>{
 // button months after this was understood.
 export function MascotArt({className='mascot-loader-art'}:{className?:string}){
   const reducedMotion=useSyncExternalStore(subscribeToMotion,()=>window.matchMedia(REDUCED).matches,()=>true);
+  // It has to go back, too. Waiting for `playing` covered a video that never starts, but
+  // not one that starts and then stops: a phone entering low power mode mid-loop pauses
+  // it, and a paused video is exactly what the browser draws its own play button on. So a
+  // stop of any kind hands the screen back to the still, which is the one thing here that
+  // can never fail.
   const [playing,setPlaying]=useState(false);
+  const stopped=()=>setPlaying(false);
   return <span className={className} data-playing={playing||undefined}>
     <Image src="/brand/mascot-magnifier.png" width={168} height={168} alt="" priority/>
-    {!reducedMotion&&<video src="/brand/mascot-search.mp4" autoPlay muted loop playsInline aria-hidden="true" onPlaying={()=>setPlaying(true)}/>}
+    {!reducedMotion&&<video src="/brand/mascot-search.mp4" autoPlay muted loop playsInline aria-hidden="true"
+      onPlaying={()=>setPlaying(true)} onPause={stopped} onEnded={stopped} onError={stopped} onStalled={stopped} onSuspend={stopped}/>}
   </span>;
 }
 

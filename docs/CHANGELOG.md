@@ -22,6 +22,20 @@ value involved.
 
 ---
 
+## The play button came back when the video stopped
+
+- The review page was reported fixed and the profile page was not. Waiting for the video
+  to start covered one that never starts; it did not cover one that starts and then stops.
+  A phone entering low power mode part way through pauses the loop, and a paused video is
+  exactly what a browser draws its own play button on.
+- Any stop -- pause, stall, error, end -- now hands the screen back to the still image,
+  which is the one thing here that cannot fail.
+- The video was also sized by a rule meant for a different layout: 320 wide and 16:9,
+  inside a square frame. It hung out of the picture it was replacing. It takes the frame's
+  size now.
+
+---
+
 ## A loading screen you could press play on
 
 - Reported as a different picture flashing up while the review page reloaded. It is the

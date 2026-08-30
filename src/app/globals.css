@@ -85,7 +85,10 @@
 @media(max-width:600px){.intro-stamp{display:none}}
 
 .mascot-loader{display:grid;justify-items:center;gap:14px;padding:56px 20px 72px;text-align:center}
-.mascot-loader video{width:min(320px,74vw);aspect-ratio:16/9;height:auto;border-radius:var(--r-md);object-fit:contain;background:var(--surface);display:block}
+/* Sized by the frame it is stacked in, not on its own. This rule used to set a 320px
+   wide 16:9 box, which fought the square frame around it and left the video hanging out
+   of the picture it was supposed to replace. */
+.mascot-loader-art>video{border-radius:var(--r-md);background:var(--surface)}
 .mascot-loader img{width:168px;height:168px;object-fit:contain;display:block}
 .mascot-loader p{margin:0;font-size:15px;font-weight:600;color:var(--ink-muted)}
 @media(max-width:600px){.mascot-loader{padding:40px 18px 56px}.mascot-loader img{width:132px;height:132px}}
