@@ -52,9 +52,22 @@ function HighlightLink({item,label,metric}:{item:StoreHighlight;label:string;met
 function growToFit(element:HTMLTextAreaElement|null){
   if(!element)return;
   element.style.height='auto';
-  // Fractional line-height rounding can leave the second placeholder line clipped by a
-  // pixel at mobile widths. A tiny buffer keeps both placeholder and typed copy visible.
-  element.style.height=`${element.scrollHeight+2}px`;
+  let measured=element.scrollHeight;
+  // An empty field still has to show the whole of its placeholder. The browser measures
+  // from the value, and the value is empty, so a placeholder that wrapped to a second
+  // line was drawn outside the box -- where the hidden overflow cut the descenders off
+  // the bottom row of letters. Measuring with the placeholder in place is the only way
+  // to ask the browser how tall the text it is about to draw actually is.
+  if(!element.value&&element.placeholder){
+    element.value=element.placeholder;
+    element.style.height='auto';
+    measured=Math.max(measured,element.scrollHeight);
+    element.value='';
+    element.style.height='auto';
+  }
+  // Fractional line-height rounding can leave the last line clipped by a pixel at mobile
+  // widths. A tiny buffer keeps both placeholder and typed copy visible.
+  element.style.height=`${measured+2}px`;
 }
 
 // Google photos are streamed through the BFF and never optimised, because caching
@@ -493,7 +506,13 @@ export function SearchExperience() {
   // for a previous location is never shown beside a new one.
   const [nearby,setNearby]=useState<{key:string;items:string[]}>({key:'',items:[]});
   const point=location?.coordinates;
-  const nearbyKey=point?`${point.latitude},${point.longitude},${locale}`:'';
+  // Rounded to about a kilometre. The live watcher keeps sharpening the device fix, and
+  // every refinement -- five metres of it -- used to change this key, which asked the
+  // question again and blanked the strip while it waited. That is what people saw as
+  // suggestions appearing and disappearing by themselves. Nobody moves neighbourhood by
+  // standing still, so the question is the same question.
+  const coarse=(v:number)=>(Math.round(v*100)/100).toFixed(2);
+  const nearbyKey=point?`${coarse(point.latitude)},${coarse(point.longitude)},${locale}`:'';
   useEffect(()=>{
     if(!nearbyKey)return;
     const [latitude,longitude]=nearbyKey.split(',');
@@ -506,9 +525,13 @@ export function SearchExperience() {
       .catch(()=>{if(active)setNearby({key:nearbyKey,items:[]});});
     return()=>{active=false;};
   },[nearbyKey,locale]);
-  const nearbyPhrases=nearby.key===nearbyKey?nearby.items:[];
-  // Without a location the neighbourhood is never asked, which counts as answered.
-  const nearbyAnswered=!nearbyKey||nearby.key===nearbyKey;
+  // While a new neighbourhood is being asked about, the previous answer stays on screen
+  // rather than collapsing to a loading state. These are suggestions, not results: a list
+  // that is a moment out of date is worth far more than a list that blinks.
+  const nearbyPhrases=nearbyKey?nearby.items:[];
+  // Without a location the neighbourhood is never asked, which counts as answered. With
+  // one, it counts as answered as soon as it has ever answered.
+  const nearbyAnswered=!nearbyKey||nearby.key!=='';
 
   const [categories,setCategories]=useState<{slug:string;name:string;search_count:number}[]>([]);
   // Built inside the effect so it is recomputed with the locale it belongs to, rather than
@@ -543,6 +566,14 @@ export function SearchExperience() {
   const phrasings=location?.city?[...pool.withCity.map(example=>example.replace('{city}',location.city as string)),...pool.anywhere]:[...pool.anywhere];
   const picks=[0,1,2,3].map(step=>phrasings[(rotation+step)%phrasings.length]);
   const [placeholder]=picks;
+  // The placeholder decides the height of an empty field, and it changes: a new one is
+  // drawn each visit, and the width it has to wrap into changes when the window does.
+  useEffect(()=>{
+    const fit=()=>growToFit(field.current);
+    fit();
+    window.addEventListener('resize',fit);
+    return()=>window.removeEventListener('resize',fit);
+  },[placeholder]);
   // Three sources, in order of how much they are worth: what this visitor searched
   // before, what people around them searched, and -- when neither exists yet -- a pool
   // of about fifty phrases for the season we are in. The strip is offset by a number

@@ -8,6 +8,62 @@ value involved.
 
 ---
 
+## Suggestions appeared and disappeared on their own
+
+- Reported with a screen recording: the strip under the search box, and its heading, kept
+  blinking away and coming back with nothing the reader had done.
+- The strip is keyed on where the searcher is, and the device keeps sharpening that. Every
+  refinement -- five metres of it -- counted as a new neighbourhood, asked the question
+  again, and blanked the strip until the answer came back. On a phone holding a fix that
+  is exactly a blink, repeating.
+- The key is now rounded to about a kilometre, because nobody changes neighbourhood by
+  standing still, and while a genuinely new place is being asked about the previous list
+  stays on screen instead of collapsing. These are suggestions, not results: a list that is
+  a moment out of date is worth far more than a list that blinks.
+
+---
+
+## The second line of the search placeholder was cut in half
+
+- The field grows to fit what is typed, and it measures that from the value. An empty
+  field has no value, so a placeholder that wrapped onto a second line was drawn outside
+  the box and the hidden overflow took the bottom off its letters.
+- It now measures with the placeholder in place when the field is empty, and re-measures
+  when the placeholder changes or the window is resized -- both change where the text
+  wraps.
+
+---
+
+## Legal pages made of tables read smaller than the rest
+
+- Reported on the privacy policy and the KVKK disclosure notice. Both are largely tables,
+  and table text was set a point below the body text around it while the column headings
+  were smaller again. Nothing about a table makes it less of the document, so it now reads
+  at the same size. The trust page, built the same way, was fixed by the same change.
+
+---
+
+## "You are too far from this store" was a line of small red text
+
+- It is not a validation message about a field somebody typed; it is the reason the step
+  cannot continue, and the one thing on the screen they need to read. It is now framed and
+  carries a warning mark.
+- The distance in it is still read from the server's configured radius rather than written
+  into the sentence, so the message cannot drift from the rule it describes.
+
+---
+
+## The Google button snapped into place inside the sign-in dialog
+
+- The placeholder shown while Google's script loads and the button that replaces it were
+  siblings in a grid, so they took a row each inside a box only tall enough for one. The
+  visible row sat off-centre until the real button arrived and everything snapped. That
+  snap, directly above "continue with email", is what was reported as a flicker.
+- They are stacked in the same cell now, so one leaves and the other is already where it
+  will stay.
+
+---
+
 ## The "use my location" button grew to the height of the list beside it
 
 - Reported with a screenshot: the button was several times its proper height and the list

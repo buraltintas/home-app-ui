@@ -194,10 +194,12 @@
 .legal-section p{margin:0 0 14px;font-size:18px;line-height:1.65}
 .legal-section ul{margin:0 0 16px;padding-left:22px;display:grid;gap:7px;font-size:18px;line-height:1.6}
 .legal-note{padding:15px 17px;background:var(--accent-wash);border-radius:var(--r-md);color:var(--ink);font-size:18px;line-height:1.6}
+.verify-warning{display:flex;gap:12px;align-items:flex-start;margin-top:18px;padding:16px 18px;border:1px solid var(--error);border-left-width:4px;border-radius:var(--r-md);background:color-mix(in srgb,var(--error) 8%,var(--surface));color:var(--ink);font-size:16px;line-height:1.55}
+.verify-warning>svg{flex:0 0 auto;width:20px;height:20px;margin-top:2px;color:var(--error)}
 .legal-table-wrap{overflow-x:auto;margin:0 0 20px}
-.legal-table-wrap table{border-collapse:collapse;width:100%;min-width:460px;font-size:17px;line-height:1.5}
+.legal-table-wrap table{border-collapse:collapse;width:100%;min-width:460px;font-size:18px;line-height:1.6}
 .legal-table-wrap th,.legal-table-wrap td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
-.legal-table-wrap th{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--clay);border-bottom:1px solid var(--line)}
+.legal-table-wrap th{font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--clay);border-bottom:1px solid var(--line);padding:10px 14px;text-align:left}
 .legal-related{border-top:1px solid var(--line);padding-top:26px}
 .legal-related h2{font-size:12px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:var(--ink-muted);margin:0 0 12px}
 .legal-related ul{list-style:none;margin:0;padding:0;display:grid;gap:9px}
@@ -352,6 +354,13 @@ body>main{flex:1 0 auto}
 .feedback-done{display:grid;gap:18px;justify-items:start;padding:26px;background:var(--accent-wash);border-radius:var(--r-lg)}
 .feedback-done p{margin:0;font-size:19px;font-weight:600}
 .google-button-slot{width:100%;height:48px;margin-top:10px;overflow:hidden;display:grid;place-items:center}
+/* The placeholder and Google's own button are stacked in the same cell rather than laid
+   out as two rows. As siblings in a grid they took a row each, so the box held two rows
+   inside a height that only fits one: the visible row sat off-centre while the script
+   loaded and snapped into place when the real button replaced it. That snap, right above
+   "continue with email", is what people were seeing. Overlaid, there is nothing to
+   re-flow -- one goes, the other is already exactly where it will stay. */
+.google-button-slot>*{grid-area:1/1}
 .google-button-slot>.button{height:48px}
 /* What waits here while Google's script arrives must not look like the button it is
    standing in for. A disabled copy of the real thing was pressed and did nothing, which

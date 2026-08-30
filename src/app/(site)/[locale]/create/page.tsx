@@ -1,6 +1,6 @@
 'use client';
 
-import {Camera,Check,MapPin,Star,Store,X} from 'lucide-react';
+import {Camera,Check,MapPin,Star,Store,TriangleAlert,X} from 'lucide-react';
 import Image from 'next/image';
 import {useRouter,useSearchParams} from 'next/navigation';
 import {ChangeEvent,Suspense,useCallback,useEffect,useLayoutEffect,useRef,useState} from 'react';
@@ -227,7 +227,11 @@ function ReviewWizard({storeId}:{storeId:string}){
       {verification
         ?<p className="review-ok" role="status"><Check aria-hidden="true"/>{t('verifyDone')}</p>
         :<button className="button primary" onClick={()=>void verify()} disabled={verifying||!signedIn}>{verifying?t('verifying'):verifyError?t('locationRetry'):t('verifyNow')}</button>}
-      {verifyError&&<p className="form-error" role="alert">{verifyError}</p>}
+      {/* This used to be a line of red text under the button, which is where an error
+          about a typed field belongs -- not where somebody is told they are standing in
+          the wrong place and the whole step cannot continue. It is the one thing on the
+          screen they need to read, so it is framed and carries the warning mark. */}
+      {verifyError&&<p className="verify-warning" role="alert"><TriangleAlert aria-hidden="true"/><span>{verifyError}</span></p>}
       {verification&&<div className="review-nav"><button className="button primary" onClick={()=>advance(2)}>{t('continue')}</button></div>}
     </section>}
 
