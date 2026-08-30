@@ -393,8 +393,12 @@ body>main{flex:1 0 auto}
 .suggestions-waiting{display:grid;gap:10px}
 .suggestions-waiting>span{display:block;height:44px;border-radius:var(--r-md);background:var(--muted)}
 .suggestions-waiting>span:first-child{height:22px;width:46%;margin-bottom:6px}
-.google-button-loading{width:100%;height:48px;margin:0;display:flex;align-items:center;justify-content:center;gap:10px;border-radius:6px;background:var(--muted);color:var(--ink-muted);font-size:15px;cursor:default;user-select:none}
-.google-button-loading::before{content:"";width:16px;height:16px;border-radius:50%;border:2px solid var(--line-strong);border-top-color:transparent;animation:google-button-spin .8s linear infinite}
+/* A spinner, not a button-shaped placeholder. What stood here looked like a button and
+   was not Google's button, so the moment Google's arrived the two disagreed -- different
+   height, different weight, different ground -- and the swap read as the screen twitching.
+   Nothing here pretends to be the thing that is coming; it only says something is coming. */
+.google-button-loading{width:100%;height:48px;margin:0;display:flex;align-items:center;justify-content:center;cursor:default;user-select:none}
+.google-button-loading::before{content:"";width:20px;height:20px;border-radius:50%;border:2px solid var(--line-strong);border-top-color:transparent;animation:google-button-spin .8s linear infinite}
 @keyframes google-button-spin{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.google-button-loading::before{animation:none}}
 @media(min-width:601px){.auth-dialog[data-mode="choice"]{min-height:604px}}

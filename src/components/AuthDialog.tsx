@@ -158,7 +158,11 @@ export function AuthDialog({open,onClose,onAuthenticated}:{open:boolean;onClose:
             be holding a node inside it. */}
         <div className="google-button-slot">
           <div ref={googleButtonRef}/>
-          {googleWorking&&<p className="google-button-loading" role="status" aria-busy="true">{t('googleLoading')}</p>}
+          {/* The label is read out, not drawn. A visible "Preparing Google" in a button-
+              shaped box is a promise of a button, and the one that arrives is Google's own
+              -- a different size and weight -- so the swap looked like the screen moving.
+              A spinner promises nothing but waiting. */}
+          {googleWorking&&<p className="google-button-loading" role="status" aria-busy="true" aria-label={t('googleLoading')}/>}
         </div>
         {googleMissing&&<p role="alert">{t('googleUnavailable')}</p>}
         {error&&<p role="alert">{error}</p>}

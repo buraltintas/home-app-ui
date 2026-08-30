@@ -8,6 +8,17 @@ value involved.
 
 ---
 
+## A placeholder that promised a button it could not deliver
+
+- While Google's script loads there is no button, so a placeholder stood in its place --
+  button-shaped, with "Preparing Google" written in it. The button that then arrives is
+  Google's own, rendered by their script at their own size and weight, so the two never
+  matched and the swap read as the screen twitching.
+- The placeholder is a spinner now. It promises nothing but waiting, so there is nothing
+  for Google's button to disagree with. The label survives for screen readers.
+
+---
+
 ## The location step kept asking for something already given
 
 - "Konumu doğrula" is an instruction, and it stops being true the moment the location is
