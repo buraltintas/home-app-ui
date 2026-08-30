@@ -11,8 +11,23 @@ export async function serverApi<T>(path:string,init:RequestInit={}):Promise<T>{
   // expired token. Reading the page anonymously is the honest degradation; the browser
   // refreshes moments later and asks for this markup again.
   if(response.status===401&&access)response=await send(undefined);
-  if(!response.ok)throw await response.json();
+  if(!response.ok){
+    // The status has to survive. "The backend said this does not exist" and "the backend
+    // did not answer" are different facts, and a caller that cannot tell them apart ends
+    // up telling somebody their store was removed when the truth is that a request timed
+    // out. The parsed body is kept for callers that read the error code.
+    const body=await response.json().catch(()=>undefined);
+    throw new ApiError(response.status,body);
+  }
   return response.status===204?undefined as T:response.json();
+}
+
+// Carries the HTTP status alongside whatever the backend said.
+export class ApiError extends Error{
+  constructor(readonly status:number,readonly body?:unknown){
+    super(`api ${status}`);
+    this.name='ApiError';
+  }
 }
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 // A store is reachable by slug as well as by id, so the URL can carry the store's name.
@@ -23,13 +38,27 @@ const STORE_REF=/^[a-z0-9]+(?:-[a-z0-9]+)*$/i;
 // used to render a fictional store for any unknown id, including /stores/undefined.
 // A store with no reviews yet comes back with a null recent_posts, so the list is
 // normalised here rather than leaving every caller to guard against it.
-export async function getStore(ref:string):Promise<StoreDetail>{if(!STORE_REF.test(ref)&&!UUID.test(ref))notFound();try{const detail=await serverApi<StoreDetail>(`/v1/stores/${encodeURIComponent(ref)}`);return {...detail,recent_posts:detail.recent_posts??[]}}catch{notFound()}}
+export async function getStore(ref:string):Promise<StoreDetail>{
+  if(!STORE_REF.test(ref)&&!UUID.test(ref))notFound();
+  try{
+    const detail=await serverApi<StoreDetail>(`/v1/stores/${encodeURIComponent(ref)}`);
+    return {...detail,recent_posts:detail.recent_posts??[]};
+  }catch(reason){
+    // Only a 404 means the store is gone. Everything else -- a timeout, a 500, a request
+    // that never got out -- is our failure to read, and saying "this store is no longer in
+    // our list" about a store that is plainly still there is worse than saying nothing.
+    // It also stuck: a not-found answer is cached by the router, so the page kept refusing
+    // until the visitor reloaded, which is exactly what was reported.
+    if(reason instanceof ApiError&&reason.status===404)notFound();
+    throw reason;
+  }
+}
 
 // A review page shows that review. Comments are a separate read so a failure there
 // still leaves the review itself on screen rather than turning the page into a 404.
-export async function getPost(id:string):Promise<Post>{if(!UUID.test(id))notFound();try{return await serverApi<Post>(`/v1/posts/${id}`)}catch{notFound()}}
+export async function getPost(id:string):Promise<Post>{if(!UUID.test(id))notFound();try{return await serverApi<Post>(`/v1/posts/${id}`)}catch(reason){if(reason instanceof ApiError&&reason.status===404)notFound();throw reason}}
 export async function getComments(id:string):Promise<Comment[]>{try{return (await serverApi<{items:Comment[]}>(`/v1/posts/${id}/comments?limit=50`)).items??[]}catch{return []}}
-export async function getProfile(id:string):Promise<PublicProfile>{if(!UUID.test(id))notFound();try{return await serverApi<PublicProfile>(`/v1/users/${id}`)}catch{notFound()}}
+export async function getProfile(id:string):Promise<PublicProfile>{if(!UUID.test(id))notFound();try{return await serverApi<PublicProfile>(`/v1/users/${id}`)}catch(reason){if(reason instanceof ApiError&&reason.status===404)notFound();throw reason}}
 export async function getUserPosts(id:string):Promise<Post[]>{try{return (await serverApi<{items:Post[]}>(`/v1/users/${id}/posts?limit=20`)).items??[]}catch{return []}}
 // The feed is read on the server so the homepage arrives with reviews already in the
 // HTML. It used to be fetched from an effect, which left the server response an empty

@@ -8,6 +8,25 @@ value involved.
 
 ---
 
+## "This store is no longer in our list" was said about stores that were
+
+- Reported as urgent: store pages failed on first open and worked after a refresh, on many
+  stores, with the message that the store had been removed.
+- Every failure to read a store was being turned into a 404. A timeout, a 500, a request
+  that never got out -- all of them came back as "this store is no longer in our list",
+  which is a claim about the store rather than about us, and it was false. And it stuck:
+  the router caches a not-found answer, so the page kept refusing until the visitor
+  reloaded, which is exactly the shape of the report.
+- Only a 404 from the backend now means the store is gone. Anything else is a failure to
+  read and says so, with the one thing that helps -- asking again. The same correction is
+  applied to reviews and profiles, which told the same lie.
+- The store link in a result list is not the cause and the search gate is not the cause;
+  what the gate changed is which searches call the provider, not how a store page is read.
+  What made this visible is a separate question, and the honest answer is that it is not
+  yet known -- but the page no longer converts a passing failure into a permanent verdict.
+
+---
+
 ## Four pages opened part way down
 
 - The scroll-to-top fix went onto the review page and nowhere else, and the same thing was
