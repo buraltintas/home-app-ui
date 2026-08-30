@@ -32,5 +32,8 @@ export function MyReviews({userId,locale}:{userId:string;locale:Locale}){
   if(failed)return <p className="form-error" role="alert">{copy[locale].error}</p>;
   if(!posts)return <div className="profile-review-skeleton" aria-busy="true"><span/><span/><span/></div>;
   if(!posts.length)return <p className="profile-reviews-empty">{copy[locale].empty}</p>;
-  return <div className="profile-review-list">{posts.map(post=><PostCard key={post.id} post={post}/>)}</div>;
+  // Removing it from the list is the honest acknowledgement: the server has already
+  // deleted it, so leaving it on screen would be showing something that no longer exists.
+  return <div className="profile-review-list">{posts.map(post=>
+    <PostCard key={post.id} post={post} owned onDeleted={()=>setPosts(current=>(current??[]).filter(p=>p.id!==post.id))}/>)}</div>;
 }

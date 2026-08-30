@@ -20,7 +20,17 @@
 .home-questions{padding:0 40px 64px}
 .home-questions>h2{font-size:28px;font-weight:600;letter-spacing:-.035em;margin:0 0 8px}
 .home-question{border-bottom:1px solid var(--line)}
-.home-question>summary{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:44px;padding:14px 0;font-size:18px;font-weight:600;cursor:pointer;list-style:none}
+.home-question>summary{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:44px;padding:14px 0;font-size:18px;font-weight:600;cursor:pointer;list-style:none;-webkit-tap-highlight-color:transparent}
+/* A tap used to paint the whole row grey for a moment, which reads as a mis-tap rather
+   than as an answer opening. And the panel snapped: native details has no in-between, so
+   the text was simply there. It now grows and shrinks over a third of a second, which is
+   long enough to follow with your eye and short enough not to be waited on. Browsers
+   without ::details-content keep the instant open, which is what they do today. */
+@media(prefers-reduced-motion:no-preference){
+  :root{interpolate-size:allow-keywords}
+  .home-question::details-content{height:0;overflow:hidden;transition:height .32s ease,content-visibility .32s;transition-behavior:allow-discrete}
+  .home-question[open]::details-content{height:auto}
+}
 .home-question>summary::-webkit-details-marker{display:none}
 .home-question>summary::after{content:'';flex:none;width:10px;height:10px;border-right:2px solid var(--ink-muted);border-bottom:2px solid var(--ink-muted);transform:rotate(45deg) translateY(-3px);transition:transform .18s ease}
 .home-question[open]>summary::after{transform:rotate(225deg) translateY(-3px)}
@@ -47,9 +57,14 @@
 .search-clear:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .search-clear svg{width:18px;height:18px}
 .result-row{position:relative}
-.result-save{position:absolute;top:14px;right:0;display:grid;place-items:center;width:44px;height:44px;border:1px solid var(--line-strong);border-radius:var(--r-md);background:var(--surface);color:var(--ink-muted);transition:color .16s ease,border-color .16s ease}
+.post-written{margin:6px 0 0;font-size:13px;color:var(--ink-muted)}
+.post-delete:hover{color:var(--error)}
+.result-save-row{display:flex;align-items:center;gap:10px;margin-top:10px}
+.result-save-reason{font-size:13px;line-height:1.3;color:var(--ink-muted)}
+.result-save{flex:none;display:grid;place-items:center;width:44px;height:44px;border:1px solid var(--line-strong);border-radius:var(--r-md);background:var(--surface);color:var(--ink-muted);transition:color .16s ease,border-color .16s ease}
 .result-save:hover{color:var(--ink);border-color:var(--ink)}
 .result-save[aria-pressed="true"]{color:var(--clay);border-color:var(--clay)}
+.result-save[aria-pressed="true"] svg{fill:currentColor}
 .result-save:disabled{opacity:.55}
 .result-save svg{width:20px;height:20px}
 .google-only{margin-top:14px}.google-only>strong{font-size:14px}.google-only p,.google-only span{font-size:13px;color:var(--ink-muted);margin:4px 0}.store-hero{height:min(52vw,560px)}.store-hero-photo{position:relative;width:100%;height:100%;margin:0;overflow:hidden}.store-hero-photo figcaption{position:absolute;left:0;right:0;bottom:0;padding:8px 16px;font-size:12px;color:white;background:linear-gradient(transparent,rgba(38,37,33,.68))}.store-hero-empty{display:grid;place-items:center;align-content:center;gap:8px;background:var(--muted);text-align:center}.store-hero-empty>span{font-size:clamp(56px,10vw,120px);line-height:1;color:var(--ink-muted)}.store-hero-empty>small{font-size:13px;color:var(--ink-muted)}.store-overview{max-width:1320px;margin:auto;padding:46px 32px;display:grid;grid-template-columns:minmax(320px,1fr) auto auto auto;gap:50px;align-items:center;border-bottom:1px solid var(--line)}.store-copy h1{font-size:clamp(36px,4vw,58px);line-height:1;margin:12px 0}.store-copy>p:last-child{color:var(--ink-muted)}.store-score{display:flex;flex-direction:column;min-width:90px}.store-score strong{font-size:28px;margin:5px 0}.store-score .rating svg{width:22px;height:22px}.store-actions{display:grid;grid-template-columns:repeat(4,auto);gap:10px}.store-actions button{border:0;background:transparent;min-width:70px;min-height:60px;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;font-weight:700}.store-body{max-width:1180px;margin:72px auto 100px;padding:0 32px;display:grid;grid-template-columns:1fr 1.25fr;gap:100px}.store-description{position:sticky;top:130px;height:max-content}.store-description h2{font-size:38px;line-height:1.15}.store-description>p:not(.eyebrow),.store-description address{font-size:17px;line-height:1.6;color:var(--ink-muted);font-style:normal}.external-note{margin-top:36px;padding:20px;background:var(--muted);display:flex;flex-direction:column;gap:6px}.external-note span{font-size:13px;color:var(--ink-muted)}.store-reviews>.post-card{border:0;padding:24px 0}.public-narrow,.profile-feed{max-width:700px;margin:48px auto}.comments-section{border-top:1px solid var(--line);padding:36px 40px}.comments-section h2{font-size:28px}.comments-section>p:last-child{color:var(--ink-muted)}
@@ -385,11 +400,12 @@ body>main{flex:1 0 auto}
 /* Monthly community proof sits below the suggestion tools as a compact editorial list.
    It is intentionally not another grid of cards: the label explains why each store is
    here, while a rule and arrow keep the interaction consistent with search prompts. */
-.store-highlights{margin-top:48px;padding-top:24px;border-top:1px solid var(--line)}
-.store-highlights>h2{margin:0 0 12px;color:var(--clay);font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.store-highlights{margin-top:48px;padding:26px 28px 8px;border-radius:var(--r-lg);background:var(--muted)}
+.store-highlights>h2{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;margin:0 0 12px;color:var(--clay);font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.store-highlights>h2>small{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:none;color:var(--ink-muted)}
 .store-highlights>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px}
 .store-highlight{position:relative;display:grid;gap:4px;min-height:112px;padding:18px 48px 18px 0;border-bottom:1px solid var(--line);color:inherit}
-.store-highlight>span{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted)}
+.store-highlight>span{justify-self:start;font-family:var(--font-display,inherit);font-size:15px;font-weight:700;letter-spacing:-.01em;text-transform:none;color:var(--ink)}
 .store-highlight>strong{font-size:clamp(20px,2.2vw,28px);line-height:1.08;letter-spacing:-.03em;overflow-wrap:anywhere}
 .store-highlight>small{font-size:13px;line-height:1.45;color:var(--ink-muted)}
 .store-highlight>svg{position:absolute;right:4px;top:50%;width:20px;height:20px;transform:translateY(-50%);transition:transform .16s ease}

@@ -8,6 +8,34 @@ value involved.
 
 ---
 
+## Six screens, changed where they were asked to be changed
+
+- **Save.** The control moved out of the row's top corner, where it covered the categories,
+  to directly under the community figures -- and it says what saving is for. It draws a
+  heart now, because the saved-stores page has always drawn one and a product should not
+  have two symbols for one action. The score columns moved outside the link to make room
+  for it: an anchor cannot hold a button, and none of those figures was ever a step on the
+  way to opening the store.
+- **Opening hours.** "Açık" and "Kapalı" now say which store and when -- "Mağaza şu an
+  açık" -- and the line sits directly above the telephone number, because the two answer
+  the same question in sequence: is it open, and can I ring first.
+- **Standout stores.** "Bu ay" is gone; the period is named once, beside the section
+  heading, as "son 1 ayda". Each store's label leads its row as a heading rather than
+  sitting above it as a caption, and the band has its own ground so it stops merging with
+  the categories above it.
+- **Home page questions.** A tap no longer paints the row grey, which read as a mis-tap
+  rather than as an answer opening. And the panel grows and shrinks over a third of a
+  second instead of snapping: long enough to follow, short enough not to wait on. Browsers
+  without `::details-content` keep today's instant open.
+- **Contribution levels.** "Yeni Gezgin" and "Usta Rehber" take their capitals, and the
+  list of thresholds is a table with named columns, in all four languages.
+- **Your own reviews.** Each carries a delete control where the save control used to be --
+  saving a store you have already reviewed is not an action anybody needs there. The date
+  carries its year, and on your own reviews it sits under the rating rather than beside
+  your own name, which you already know.
+
+---
+
 ## The same category had two names, and only one of them was ours
 
 - Reported again after the server started sending category names: the results list still

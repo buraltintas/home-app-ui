@@ -39,7 +39,7 @@ export const about:LegalDoc={
         ]},
         {id:'katki',heading:'Katkı seviyesi ne işe yarar?',blocks:[
           {p:'Katkı seviyesi, yayımladığınız doğrulanmış değerlendirme sayısına göre topluluğa yaptığınız katkıyı gösterir.'},
-          {ul:['İlk değerlendirmede Yeni gezgin','5 değerlendirmede Kaşif','15 değerlendirmede Deneyimli','40 değerlendirmede Rehber','100 değerlendirmede Usta rehber']},
+          {table:{head:['Değerlendirme adedi','Rozet'],rows:[['İlk değerlendirme','Yeni Gezgin'],['5 değerlendirme','Kaşif'],['15 değerlendirme','Deneyimli'],['40 değerlendirme','Rehber'],['100 değerlendirme','Usta Rehber']]}},
           {p:'Bu seviye puan, indirim veya mağaza ayrıcalığı değildir. Profilinizde ve paylaşımlarınızda, diğer insanlara ne kadar deneyim aktardığınızı gösteren bir topluluk işaretidir.'},
         ]},
         {id:'konum',heading:'Mağaza konumları listelemeyi nasıl etkiliyor?',blocks:[
@@ -81,7 +81,7 @@ export const about:LegalDoc={
         ]},
         {id:'katki',heading:'What are contributor levels for?',blocks:[
           {p:'Your contributor level reflects how many verified reviews you have published.'},
-          {ul:['New explorer at your first review','Explorer at 5','Seasoned at 15','Guide at 40','Master guide at 100']},
+          {table:{head:['Reviews published','Badge'],rows:[['First review','New Explorer'],['5 reviews','Explorer'],['15 reviews','Seasoned'],['40 reviews','Guide'],['100 reviews','Master Guide']]}},
           {p:'A level is not money, a discount, or a store benefit. It is a community marker on your profile and contributions that shows how much first-hand experience you have shared.'},
         ]},
         {id:'konum',heading:'How do store locations affect listing?',blocks:[
@@ -123,7 +123,7 @@ export const about:LegalDoc={
         ]},
         {id:'katki',heading:'Wozu dienen Beitragsstufen?',blocks:[
           {p:'Deine Beitragsstufe richtet sich nach der Zahl deiner veröffentlichten, bestätigten Bewertungen.'},
-          {ul:['Neu unterwegs ab der ersten Bewertung','Entdecker ab 5','Erfahren ab 15','Guide ab 40','Meister-Guide ab 100']},
+          {table:{head:['Veröffentlichte Bewertungen','Abzeichen'],rows:[['Erste Bewertung','Neu unterwegs'],['5 Bewertungen','Entdecker'],['15 Bewertungen','Erfahren'],['40 Bewertungen','Guide'],['100 Bewertungen','Meister-Guide']]}},
           {p:'Eine Stufe ist weder Geld noch Rabatt oder ein Vorteil bei einem Geschäft. Sie zeigt in deinem Profil und deinen Beiträgen, wie viel eigene Erfahrung du mit der Community geteilt hast.'},
         ]},
         {id:'konum',heading:'Wie beeinflussen Geschäftsstandorte die Reihenfolge?',blocks:[
@@ -165,7 +165,7 @@ export const about:LegalDoc={
         ]},
         {id:'katki',heading:'Для чего нужны уровни участника?',blocks:[
           {p:'Уровень участника зависит от количества опубликованных подтверждённых отзывов.'},
-          {ul:['Новичок — после первого отзыва','Исследователь — после 5','Опытный — после 15','Гид — после 40','Мастер-гид — после 100']},
+          {table:{head:['Опубликовано отзывов','Значок'],rows:[['Первый отзыв','Новичок'],['5 отзывов','Исследователь'],['15 отзывов','Опытный'],['40 отзывов','Гид'],['100 отзывов','Мастер-гид']]}},
           {p:'Уровень не является деньгами, скидкой или привилегией магазина. Это знак сообщества в профиле и публикациях, показывающий, каким объёмом личного опыта вы поделились.'},
         ]},
         {id:'konum',heading:'Как местоположение магазинов влияет на порядок выдачи?',blocks:[

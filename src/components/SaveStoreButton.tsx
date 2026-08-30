@@ -1,15 +1,18 @@
 'use client';
 
-import {Bookmark,BookmarkCheck} from 'lucide-react';
+import {Heart} from 'lucide-react';
 import {useState} from 'react';
 import {useI18n} from '@/i18n/I18nProvider';
 import {apiFetch} from '@/lib/api-client';
 import {originSearchHeaders} from '@/lib/search-origin';
 import {AuthDialog} from './AuthDialog';
 
-// The compact form of the save control that the store page already offers. A result row is
-// where somebody is still choosing, so this stays an icon: it must not compete with the
-// store's own name and photograph for attention, and it must not push the row taller.
+// The compact form of the save control that the store page already offers.
+//
+// It sits under the community figures rather than in the corner of the row, where it was
+// covering the categories, and it says what saving is for. A heart, because that is what
+// the saved-stores page has always drawn and one product should not have two symbols for
+// one action.
 export function SaveStoreButton({storeId,initialSaved}:{storeId:string;initialSaved:boolean}){
   const {t}=useI18n();
   const [saved,setSaved]=useState(initialSaved);
@@ -34,10 +37,13 @@ export function SaveStoreButton({storeId,initialSaved}:{storeId:string;initialSa
   };
 
   return <>
-    <button type="button" className="result-save" onClick={()=>void toggle()} disabled={busy}
-      aria-pressed={saved} aria-label={saved?t('saved'):t('save')} title={saved?t('saved'):t('save')}>
-      {saved?<BookmarkCheck aria-hidden="true"/>:<Bookmark aria-hidden="true"/>}
-    </button>
+    <span className="result-save-row">
+      <span className="result-save-reason">{t('saveReason')}</span>
+      <button type="button" className="result-save" onClick={()=>void toggle()} disabled={busy}
+        aria-pressed={saved} aria-label={saved?t('saved'):t('save')} title={saved?t('saved'):t('save')}>
+        <Heart aria-hidden="true"/>
+      </button>
+    </span>
     <AuthDialog open={auth} onClose={()=>{setAuth(false);setPending(false);}} onAuthenticated={()=>{const go=pending;setPending(false);if(go)void toggle();}}/>
   </>;
 }

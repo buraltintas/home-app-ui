@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import {Bookmark,Heart,MessageCircle,Send} from 'lucide-react';
+import {Bookmark,Heart,MessageCircle,Send,Trash2} from 'lucide-react';
 import {useState} from 'react';
 import type {Post} from '@/lib/types';
 import {useI18n} from '@/i18n/I18nProvider';
@@ -13,15 +13,29 @@ import {AuthDialog} from './AuthDialog';
 import {ContributorLevel} from './ContributorLevel';
 import {storePhotoURL} from '@/lib/store-photo';
 
-type PostCardProps={post:Post;showStoreName?:boolean};
+// `owned` is the profile's view of your own reviews. Saving a store you have already
+// reviewed is not an action anybody needs there, and deleting what you wrote is -- so the
+// control in that corner changes rather than being added beside a useless one.
+type PostCardProps={post:Post;showStoreName?:boolean;owned?:boolean;onDeleted?:()=>void};
 
-export function PostCard({post,showStoreName=true}:PostCardProps){
+export function PostCard({post,showStoreName=true,owned=false,onDeleted}:PostCardProps){
   const {t,locale}=useI18n();
   const [auth,setAuth]=useState(false);
   const [liked,setLiked]=useState(post.viewer_has_liked);
   const [saved,setSaved]=useState(post.viewer_has_favorited_store);
   const [busy,setBusy]=useState<'like'|'save'|null>(null);
   const [shared,setShared]=useState(false);
+  const [removing,setRemoving]=useState(false);
+
+  const remove=async()=>{
+    if(removing||!window.confirm(t('confirmDeleteReview')))return;
+    setRemoving(true);
+    try{
+      const response=await apiFetch(`/api/proxy/posts/${post.id}`,{method:'DELETE'});
+      if(!response.ok)throw new Error();
+      onDeleted?.();
+    }catch{setRemoving(false);}
+  };
 
   const mutate=async(kind:'like'|'save')=>{
     const active=kind==='like'?liked:saved;
@@ -53,6 +67,9 @@ export function PostCard({post,showStoreName=true}:PostCardProps){
   // cover as search and detail; that fallback opens the store, where Google credit is shown.
   const media=post.media[0];
   const storePhoto=storePhotoURL(post.store_photo,960);
+  // A date without its year answers "which day" and not "which year", and a review list
+  // that goes back further than twelve months needs both.
+  const written=new Intl.DateTimeFormat(locale,{day:'numeric',month:'short',year:'numeric'}).format(new Date(post.created_at));
   const likes=post.like_count+(liked&&!post.viewer_has_liked?1:!liked&&post.viewer_has_liked?-1:0);
 
   return <article className="post-card">
@@ -60,8 +77,10 @@ export function PostCard({post,showStoreName=true}:PostCardProps){
     <div className="post-heading">
       <header className="post-author">
         <div className="avatar">{post.display_name.slice(0,1).toLocaleUpperCase(locale)}</div>
-        <div><strong>{post.display_name}<ContributorLevel level={post.author_level}/></strong><span>{new Intl.DateTimeFormat(locale,{day:'numeric',month:'short'}).format(new Date(post.created_at))}</span></div>
-        <button className="icon-button" disabled={busy==='save'} aria-label={t('save')} aria-pressed={saved} onClick={()=>void mutate('save')}><Bookmark className={saved?'active-icon':''}/></button>
+        <div><strong>{post.display_name}<ContributorLevel level={post.author_level}/></strong>{!owned&&<span>{written}</span>}</div>
+        {owned
+          ?<button className="icon-button post-delete" disabled={removing} aria-label={t('deleteReview')} title={t('deleteReview')} onClick={()=>void remove()}><Trash2/></button>
+          :<button className="icon-button" disabled={busy==='save'} aria-label={t('save')} aria-pressed={saved} onClick={()=>void mutate('save')}><Bookmark className={saved?'active-icon':''}/></button>}
       </header>
       {showStoreName&&<Link href={localePath(locale,`/stores/${post.store_id}`)} className="post-store"><h2>{post.store_name}</h2>{place&&<p>{place}</p>}</Link>}
     </div>
@@ -74,6 +93,7 @@ export function PostCard({post,showStoreName=true}:PostCardProps){
 
     <div className="post-details">
       <div className="post-meta"><Rating value={post.rating}/><Verified label={t('verified')}/></div>
+      {owned&&<p className="post-written">{written}</p>}
       <p className="post-copy">{post.text}</p>
       <footer className="post-actions">
         <button disabled={busy==='like'} aria-pressed={liked} onClick={()=>void mutate('like')}><Heart className={liked?'active-icon':''}/>{likes}</button>
