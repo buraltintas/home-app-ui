@@ -8,6 +8,21 @@ value involved.
 
 ---
 
+## A loading screen you could press play on
+
+- Reported as a different picture flashing up while the review page reloaded. It is the
+  search overlay's mascot: a bare video with a poster, which is exactly what Safari
+  answers by drawing its own play button when autoplay is refused -- in low power mode, or
+  before the page has been interacted with. A loading indicator that offers a play button
+  is not a loading indicator, and a reload paints the previous screen's last frame while
+  it waits, which is where the flash came from.
+- The profile and favourites loaders were fixed for this months ago and the search overlay
+  was not, because the rule lived in one component instead of one place. The still-then-
+  video behaviour is now a single shared piece both use: the still is drawn, and the video
+  takes over only once it is genuinely running. A video that never starts is never shown.
+
+---
+
 ## Suggestions appeared and disappeared on their own
 
 - Reported with a screen recording: the strip under the search box, and its heading, kept

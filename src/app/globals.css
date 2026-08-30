@@ -254,7 +254,11 @@ body>main{flex:1 0 auto}
    somebody to read a stale list as the new one. */
 .search-overlay{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:24px;background:color-mix(in srgb,var(--canvas) 88%,transparent);backdrop-filter:blur(6px)}
 .search-overlay-card{width:min(420px,100%);background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);box-shadow:10px 10px 0 var(--accent);padding:28px;display:grid;justify-items:center;gap:6px;text-align:center}
-.search-overlay-card video,.search-overlay-card img{width:132px;height:132px;object-fit:contain}
+.search-overlay-art{position:relative;display:block;width:132px;height:132px}
+.search-overlay-card video,.search-overlay-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.search-overlay-card video{opacity:0}
+.search-overlay-art[data-playing]>video{opacity:1}
+.search-overlay-art[data-playing]>img{opacity:0}
 .search-overlay-title{margin:6px 0 14px;font-weight:600;letter-spacing:-.03em;font-size:19px}
 .search-overlay-steps{list-style:none;margin:0;padding:0;display:grid;gap:9px;width:100%;text-align:left}
 .search-overlay-steps li{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink-muted);transition:color .25s ease,opacity .25s ease;opacity:.45}

@@ -1,7 +1,7 @@
 'use client';
-import Image from 'next/image';
 import {useEffect,useState,useSyncExternalStore} from 'react';
 import {useI18n} from '@/i18n/I18nProvider';
+import {MascotArt} from './MascotLoader';
 
 const REDUCED='(prefers-reduced-motion: reduce)';
 const subscribeToMotion=(notify:()=>void)=>{
@@ -34,9 +34,12 @@ export function SearchOverlay(){
 
   return <div className="search-overlay" role="status" aria-live="polite">
     <div className="search-overlay-card">
-      {reducedMotion
-        ?<Image src="/brand/mascot-magnifier.png" width={132} height={132} alt="" priority/>
-        :<video src="/brand/mascot-search.mp4" poster="/brand/mascot-magnifier.png" autoPlay muted loop playsInline aria-hidden="true"/>}
+      {/* A bare video with a poster is what put Safari's own play button on this screen:
+          autoplay is refused in low power mode, and the browser then offers the control
+          it thinks the reader wants. A loading indicator you can press is not a loading
+          indicator. This draws the still and lets the video take over only once it is
+          genuinely running -- the same rule the profile and favourites loaders follow. */}
+      <MascotArt className="search-overlay-art"/>
 
       <p className="search-overlay-title">{t('searchingStores')}</p>
 
