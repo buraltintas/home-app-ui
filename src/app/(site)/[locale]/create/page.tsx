@@ -208,7 +208,10 @@ function ReviewWizard({storeId}:{storeId:string}){
   if(loadError)return <main className="create-page"><div className="empty-state"><h1>{t('storeUnavailable')}</h1><button className="button primary" onClick={()=>router.push(localePath(locale,'/discover'))}>{t('discover')}</button></div></main>;
   if(!store||signedIn===undefined)return <ReviewLoadingState/>;
 
-  const steps=[[t('verifyLocation'),MapPin],[t('addRating'),Star],[t('addPhotos'),Camera],[t('tellExperience'),Check]] as const;
+  // The first step renames itself once it is done. "Konumu doğrula" is an instruction and
+  // it stops being true the moment the location is verified; leaving it there asks for
+  // something already given.
+  const steps=[[verification?t('verifyLocationDone'):t('verifyLocation'),MapPin],[t('addRating'),Star],[t('addPhotos'),Camera],[t('tellExperience'),Check]] as const;
   const textLength=text.trim().length;
   return <main className="create-page">
     <div>
@@ -219,19 +222,20 @@ function ReviewWizard({storeId}:{storeId:string}){
 
     <ol className="review-steps">{steps.map(([label,Icon],index)=>{
       const position=index+1;
-      return <li key={label} className={position===step?'current':position<step?'done':''} aria-current={position===step?'step':undefined}><span><Icon/></span><strong>{label}</strong></li>;
+      const verified=position===1&&Boolean(verification);
+      return <li key={label} className={[position===step?'current':position<step?'done':'',verified?'is-verified':''].filter(Boolean).join(' ')} aria-current={position===step?'step':undefined}><span><Icon/></span><strong>{label}</strong></li>;
     })}</ol>
+
+    {/* Below the whole stepper rather than inside the first step. It is the reason nothing
+        can continue, so it belongs where the eye lands after reading what the steps are --
+        not tucked under a button that has just refused. */}
+    {verifyError&&<p className="verify-warning" role="alert"><TriangleAlert aria-hidden="true"/><span>{verifyError}</span></p>}
 
     {step===1&&<section className="review-step">
       <p>{t('verifyValidity')}</p>
       {verification
         ?<p className="review-ok" role="status"><Check aria-hidden="true"/>{t('verifyDone')}</p>
         :<button className="button primary" onClick={()=>void verify()} disabled={verifying||!signedIn}>{verifying?t('verifying'):verifyError?t('locationRetry'):t('verifyNow')}</button>}
-      {/* This used to be a line of red text under the button, which is where an error
-          about a typed field belongs -- not where somebody is told they are standing in
-          the wrong place and the whole step cannot continue. It is the one thing on the
-          screen they need to read, so it is framed and carries the warning mark. */}
-      {verifyError&&<p className="verify-warning" role="alert"><TriangleAlert aria-hidden="true"/><span>{verifyError}</span></p>}
       {verification&&<div className="review-nav"><button className="button primary" onClick={()=>advance(2)}>{t('continue')}</button></div>}
     </section>}
 

@@ -8,6 +8,16 @@ value involved.
 
 ---
 
+## The location step kept asking for something already given
+
+- "Konumu doğrula" is an instruction, and it stops being true the moment the location is
+  verified. The step renames itself to "Konum doğrulandı" and turns green once it is done.
+- The "you are too far from this store" warning moved out of the first step and under the
+  whole stepper. It is the reason nothing can continue, so it belongs where the eye lands
+  after reading what the steps are, not tucked under a button that has just refused.
+
+---
+
 ## Six screens, changed where they were asked to be changed
 
 - **Save.** The control moved out of the row's top corner, where it covered the categories,
