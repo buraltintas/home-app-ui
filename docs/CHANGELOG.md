@@ -8,6 +8,20 @@ value involved.
 
 ---
 
+## The same category had two names, and only one of them was ours
+
+- Reported again after the server started sending category names: the results list still
+  said "Nevresim takımı" where the store's own page said "Yatak".
+- The server fix was real but only covers stores we hold. A result the catalogue does not
+  have yet still falls back to a list of names kept in the web app -- and that list had
+  drifted from the database it was copied from years ago. Six of the thirteen names
+  disagreed, and three categories added to the database since were missing from it
+  altogether, so those stores showed a raw slug.
+- The fallback is now copied from the database word for word, in all four languages. Two
+  lists of the same thing drift; the only defence is that one of them is a copy.
+
+---
+
 ## A loading screen you could press play on
 
 - Reported as a different picture flashing up while the review page reloaded. It is the

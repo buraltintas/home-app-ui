@@ -55,10 +55,19 @@ export const storeStatusCopy={
 export type TranslationKey=keyof typeof dictionaries.en|keyof typeof feedStateCopy.en|keyof typeof hardeningCopy.en|keyof typeof googleAuthCopy.en|keyof typeof profileCopy.en|keyof typeof feedbackCopy.en|keyof typeof searchHighlightCopy.en|keyof typeof reviewPolicyCopy.en;
 export const getDictionary=(locale:Locale)=>({...dictionaries[locale],...feedStateCopy[locale],...hardeningCopy[locale],...googleAuthCopy[locale],...profileCopy[locale],...feedbackCopy[locale],...searchHighlightCopy[locale],...reviewPolicyCopy[locale]});
 export const categoryLabels:Record<Locale,Record<string,string>>={
-  tr:{furniture:'Mobilya',home_textile:'Ev tekstili',lighting:'Aydınlatma',decoration:'Dekorasyon',kitchenware:'Mutfak eşyaları',bathroom:'Banyo',carpet:'Halı',curtain:'Perde',bedding:'Nevresim takımı',tableware:'Sofra takımı',storage:'Düzenleme ve depolama',home_accessories:'Ev aksesuarları',household:'Ev gereçleri'},
-  en:{furniture:'Furniture',home_textile:'Home textile',lighting:'Lighting',decoration:'Decoration',kitchenware:'Kitchenware',bathroom:'Bathroom',carpet:'Rugs',curtain:'Curtains',bedding:'Bedding',tableware:'Tableware',storage:'Storage & organization',home_accessories:'Home accessories',household:'Household goods'},
-  de:{furniture:'Möbel',home_textile:'Heimtextilien',lighting:'Beleuchtung',decoration:'Dekoration',kitchenware:'Küchenutensilien',bathroom:'Badezimmer',carpet:'Teppiche',curtain:'Gardinen',bedding:'Bettwäsche',tableware:'Geschirr',storage:'Aufbewahrung',home_accessories:'Wohnaccessoires',household:'Haushaltswaren'},
-  ru:{furniture:'Мебель',home_textile:'Домашний текстиль',lighting:'Освещение',decoration:'Декор',kitchenware:'Кухонная утварь',bathroom:'Ванная комната',carpet:'Ковры',curtain:'Шторы',bedding:'Постельное белье',tableware:'Посуда',storage:'Хранение',home_accessories:'Аксессуары для дома',household:'Товары для дома'},
+  // A fallback and nothing more. A store we hold carries its category names from the
+  // database, and those are what its own page shows; this list only has to answer for a
+  // result the catalogue does not have yet.
+  //
+  // So it has to say the same words, and it did not. The database calls bedding "Yatak"
+  // and this called it "Nevresim takımı" -- which is how one store came back under one
+  // name in the results and another on its own page. Two lists of the same thing drift;
+  // the only defence is to copy the authoritative one exactly, including the three
+  // categories that were added to the database and never added here.
+  tr:{bathroom:'Banyo',bedding:'Yatak',carpet:'Halı',curtain:'Perde',decoration:'Dekorasyon',furniture:'Mobilya',garden:'Bahçe',home_accessories:'Ev Aksesuarları',home_textile:'Ev Tekstili',household:'Ev Gereçleri',kitchenware:'Mutfak',lighting:'Aydınlatma',major_appliances:'Beyaz Eşya',small_appliances:'Küçük Ev Aletleri',storage:'Depolama',tableware:'Sofra'},
+  en:{bathroom:'Bathroom',bedding:'Bedding',carpet:'Carpets',curtain:'Curtains',decoration:'Decoration',furniture:'Furniture',garden:'Garden',home_accessories:'Home Accessories',home_textile:'Home Textiles',household:'Household',kitchenware:'Kitchenware',lighting:'Lighting',major_appliances:'Major Appliances',small_appliances:'Small Appliances',storage:'Storage',tableware:'Tableware'},
+  de:{bathroom:'Badezimmer',bedding:'Bettwaren',carpet:'Teppiche',curtain:'Gardinen',decoration:'Dekoration',furniture:'Möbel',garden:'Garten',home_accessories:'Wohnaccessoires',home_textile:'Heimtextilien',household:'Haushalt',kitchenware:'Küchenbedarf',lighting:'Beleuchtung',major_appliances:'Haushaltsgroßgeräte',small_appliances:'Kleingeräte',storage:'Aufbewahrung',tableware:'Geschirr'},
+  ru:{bathroom:'Ванная',bedding:'Постельные принадлежности',carpet:'Ковры',curtain:'Шторы',decoration:'Декор',furniture:'Мебель',garden:'Сад',home_accessories:'Аксессуары для дома',home_textile:'Домашний текстиль',household:'Товары для дома',kitchenware:'Кухонные товары',lighting:'Освещение',major_appliances:'Крупная бытовая техника',small_appliances:'Мелкая бытовая техника',storage:'Хранение',tableware:'Посуда'},
 } as const;
 
 // Ready-made searches shown under the field. They are written the way a person would
