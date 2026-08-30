@@ -7,6 +7,7 @@ import {PostCard} from '@/components/PostCard';
 import {Rating} from '@/components/Rating';
 import {StoreActions} from '@/components/StoreActions';
 import {JsonLd} from '@/components/JsonLd';
+import {ScrollTop} from '@/components/ScrollTop';
 import {getStore} from '@/lib/server-api';
 import {getServerI18n} from '@/i18n/server';
 import {canonicalFor,localePath,storePath} from '@/lib/site';
@@ -81,6 +82,7 @@ export default async function Page({params}:Props){
   const correctionPath=localePath(locale,`/store-correction?store=${encodeURIComponent(store.id)}&name=${encodeURIComponent(store.name)}`);
   const trail=[{name:t.discover??'',path:'/discover'},...(store.city?[{name:store.city,path:'/discover'}]:[]),{name:store.name,path:storePath(store)}].filter(entry=>entry.name);
   return <main className="store-page">
+    <ScrollTop/>
     <JsonLd data={[storeJsonLd(store,recent_posts),breadcrumbJsonLd(trail)]}/>
     <section className="store-hero">
       {/* Roughly one store in twelve has no photograph, and not because we failed to fetch

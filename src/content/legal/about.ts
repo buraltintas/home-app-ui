@@ -42,7 +42,7 @@ export const about:LegalDoc={
           {table:{head:['Değerlendirme adedi','Rozet'],rows:[['İlk değerlendirme','Yeni Gezgin'],['5 değerlendirme','Kaşif'],['15 değerlendirme','Deneyimli'],['40 değerlendirme','Rehber'],['100 değerlendirme','Usta Rehber']]}},
           {p:'Bu seviye puan, indirim veya mağaza ayrıcalığı değildir. Profilinizde ve paylaşımlarınızda, diğer insanlara ne kadar deneyim aktardığınızı gösteren bir topluluk işaretidir.'},
         ]},
-        {id:'konum',heading:'Mağaza konumları listelemeyi nasıl etkiliyor?',blocks:[
+        {id:'konum',heading:'Mağaza konumları, listelemeyi nasıl etkiliyor?',blocks:[
           {p:'Sonuçlar mesafeye göre sıralanır, bu yüzden her arama bir konum gerektirir. Konumunuz, cihaz ayarlarından otomatik olarak alınabilir veya arama çubuğundan kendiniz bir konum girebilirsiniz.'},
           {p:'Konumunuzun tam olarak nasıl işlendiğini, neyin saklanıp neyin saklanmadığını konum gizliliği sayfasında ayrıntılı olarak bulabilirsiniz.'},
         ]},

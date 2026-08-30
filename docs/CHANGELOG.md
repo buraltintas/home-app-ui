@@ -8,6 +8,44 @@ value involved.
 
 ---
 
+## Four pages opened part way down
+
+- The scroll-to-top fix went onto the review page and nowhere else, and the same thing was
+  reported on favourites, the profile and a store page. The cause is shared: a page that
+  paints a loading state first is short while it paints, so the scroll offset carried over
+  from the previous page survives and is restored against the taller content that follows.
+- It is one shared hook now rather than a patch on one page: force the top once, in a
+  layout effect, as soon as the content settles. The store page renders on the server and
+  needed the same nudge on mount.
+
+---
+
+## The play button kept coming back
+
+- Third round on the same symptom, so this stops relying on being told. The events cover
+  the ordinary stops, but a phone that pauses a muted background loop on entering low
+  power mode does not always announce it -- which is why it returned.
+- The element is now asked outright, four times a second, whether it is still running. The
+  still image returns the moment it is not, whether or not anything was announced.
+
+---
+
+## Sub-headings in the legal pages were smaller than the text under them
+
+- Reported again after the tables were put right. Only the privacy policy uses sub-headings
+  -- eight of them -- and they were set a point below the body they introduce, which is the
+  one thing a heading may never be.
+
+---
+
+## The correction form's fourth choice fell to its own line
+
+- Four choices are one question, and a fourth chip wrapping made "Diğer" read as a separate
+  thing rather than the last of four. They share the row evenly now.
+- The thank-you message says what the card asked for.
+
+---
+
 ## A placeholder that promised a button it could not deliver
 
 - While Google's script loads there is no button, so a placeholder stood in its place --

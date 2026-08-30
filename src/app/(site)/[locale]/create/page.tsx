@@ -10,6 +10,7 @@ import { localePath } from '@/lib/site';
 import {apiFetch} from '@/lib/api-client';
 import {canUseDeviceLocationWithoutPrompt,locationMessage,requestVisitPosition} from '@/lib/location';
 import {readOriginSearch} from '@/lib/search-origin';
+import {useScrollTopWhenReady} from '@/lib/scroll-top';
 import type {MediaUpload,StoreDetail,VisitVerification} from '@/lib/types';
 
 const UUID=/^[0-9a-f-]{36}$/i;
@@ -184,8 +185,7 @@ function ReviewWizard({storeId}:{storeId:string}){
   // page instead of the top, and nothing moves it back when the content finally makes the
   // page tall. Locally the loading state is quick enough to hide this; in production it
   // left the review flow opening a hundred pixels down, with its own heading cut off.
-  const settled=Boolean(store)&&signedIn!==undefined;
-  useLayoutEffect(()=>{if(settled)window.scrollTo(0,0);},[settled]);
+  useScrollTopWhenReady(Boolean(store)&&signedIn!==undefined);
 
   const submit=async()=>{
     if(!verification||rating<1||text.trim().length<3)return;

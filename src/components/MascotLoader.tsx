@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import {useState,useSyncExternalStore} from 'react';
+import {useEffect,useRef,useState,useSyncExternalStore} from 'react';
 import {useI18n} from '@/i18n/I18nProvider';
 
 // The media query is an external store, so it is subscribed to rather than copied into
@@ -36,11 +36,24 @@ export function MascotArt({className='mascot-loader-art'}:{className?:string}){
   // it, and a paused video is exactly what the browser draws its own play button on. So a
   // stop of any kind hands the screen back to the still, which is the one thing here that
   // can never fail.
+  // And it is checked, not only listened for. The events cover the ordinary stops, but a
+  // phone that pauses a muted background loop on entering low power mode does not always
+  // announce it -- which is why this kept coming back. Four times a second the element is
+  // asked outright whether it is still running, and the still returns the moment it is not.
   const [playing,setPlaying]=useState(false);
+  const video=useRef<HTMLVideoElement|null>(null);
   const stopped=()=>setPlaying(false);
+  useEffect(()=>{
+    if(reducedMotion)return;
+    const timer=window.setInterval(()=>{
+      const element=video.current;
+      setPlaying(Boolean(element&&!element.paused&&!element.ended&&element.readyState>2));
+    },250);
+    return()=>window.clearInterval(timer);
+  },[reducedMotion]);
   return <span className={className} data-playing={playing||undefined}>
     <Image src="/brand/mascot-magnifier.png" width={168} height={168} alt="" priority/>
-    {!reducedMotion&&<video src="/brand/mascot-search.mp4" autoPlay muted loop playsInline aria-hidden="true"
+    {!reducedMotion&&<video ref={video} src="/brand/mascot-search.mp4" autoPlay muted loop playsInline aria-hidden="true"
       onPlaying={()=>setPlaying(true)} onPause={stopped} onEnded={stopped} onError={stopped} onStalled={stopped} onSuspend={stopped}/>}
   </span>;
 }

@@ -208,7 +208,10 @@
 .legal-toc a:hover{text-decoration-color:var(--clay)}
 .legal-section{margin:0 0 44px;scroll-margin-top:96px}
 .legal-section h2{font-size:28px;font-weight:600;letter-spacing:-.035em;margin:0 0 16px;padding-top:16px;border-top:1px solid var(--line);line-height:1.15}
-.legal-section h3{font-size:17px;margin:26px 0 8px}
+/* A sub-heading was set a point below the text it introduces, which is the one thing a
+   heading may never be. Only the privacy policy uses them -- eight of them -- which is
+   why that page kept reading small after the tables were put right. */
+.legal-section h3{font-size:19px;font-weight:700;letter-spacing:-.015em;margin:28px 0 10px}
 .legal-section p{margin:0 0 14px;font-size:18px;line-height:1.65}
 .legal-section ul{margin:0 0 16px;padding-left:22px;display:grid;gap:7px;font-size:18px;line-height:1.6}
 .legal-note{padding:15px 17px;background:var(--accent-wash);border-radius:var(--r-md);color:var(--ink);font-size:18px;line-height:1.6}
@@ -364,6 +367,12 @@ body>main{flex:1 0 auto}
 .feedback-intro{color:var(--ink-muted);line-height:1.6;max-width:56ch;margin:16px 0 34px}
 .feedback-form{display:grid;gap:26px}
 .feedback-kinds{border:0;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px}
+/* The correction form's four choices are one question, and a fourth chip dropping to its
+   own line made "Diğer" read as a separate thing rather than the last of four. They share
+   the row evenly and shrink together instead of wrapping. */
+.store-correction-form .feedback-kinds{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+.store-correction-form .feedback-kind{justify-content:center;padding:0 10px;text-align:center}
+.store-correction-form .feedback-kind span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .feedback-kinds legend{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-muted);padding:0;margin-bottom:10px}
 .feedback-kind{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border:1px solid var(--line-strong);border-radius:var(--r-pill);cursor:pointer;font-size:15px;font-weight:500;transition:background-color .16s ease,border-color .16s ease,color .16s ease}
 .feedback-kind input{position:absolute;opacity:0;width:1px;height:1px}
