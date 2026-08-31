@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import {getServerI18n} from '@/i18n/server';
 import {HomeSearchBar} from './HomeSearchBar';
 
@@ -9,9 +8,5 @@ export async function HomeIntro(){
   const {t}=await getServerI18n();
   return <header className="feed-intro">
     <div className="intro-copy"><h1>{t.feedTitle}</h1><p>{t.feedIntro}</p><HomeSearchBar/></div>
-    <div className="intro-stamp" aria-hidden="true">
-      <span className="intro-stamp-image"><Image src="/brand/mascot-magnifier.png" width={92} height={92} alt=""/></span>
-      <span>{t.discover}</span>
-    </div>
   </header>;
 }

@@ -10,8 +10,9 @@ value involved.
 
 ## Home now explains the visit loop before asking for trust
 
-- The decorative discovery mascot is now omitted on phones, removing an awkward orphaned
-  stamp and letting the search action flow directly into the visit-loop image.
+- The decorative discovery mascot was removed from the home masthead at every breakpoint;
+  its asset remains available for a future state where it can carry meaning rather than
+  compete with search and store photography.
 - Home questions and profile panels now reveal their full height smoothly from top to
   bottom and collapse back upward through a browser-independent grid transition. Their
   controls expose expanded state to assistive technology and retain a reduced-motion path.
