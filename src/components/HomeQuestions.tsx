@@ -7,8 +7,8 @@ import type {Locale} from '@/lib/types';
 // than restated here: one wording, four languages, and no second copy to fall out of date.
 //
 // Native details/summary rather than a scripted accordion. It opens without JavaScript,
-// it is keyboard operable and announced correctly on its own, and it has no animation to
-// suppress for anybody who asked for less motion.
+// remains keyboard operable and correctly announced, and its CSS reveal has an explicit
+// reduced-motion path.
 function renderBlock(block:Block,index:number){
   if('p' in block)return <p key={index}>{block.p}</p>;
   if('ul' in block)return <ul key={index}>{block.ul.map((item,i)=><li key={i}>{item}</li>)}</ul>;

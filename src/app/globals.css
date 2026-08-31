@@ -22,16 +22,17 @@
 .home-question-primary>summary{min-height:64px;padding-top:0}
 .home-question{border-bottom:1px solid var(--line)}
 .home-question>summary{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:44px;padding:14px 0;font-size:18px;font-weight:600;cursor:pointer;list-style:none;-webkit-tap-highlight-color:transparent}
-/* A tap used to paint the whole row grey for a moment, which reads as a mis-tap rather
-   than as an answer opening. The answer now enters at a pace the eye can follow without
-   animating layout dimensions. Browsers without ::details-content keep the instant open. */
+/* The answer reveals in the same direction as the disclosure: down when opening and back
+   up when closing. Modern browsers interpolate the intrinsic block size; older browsers
+   keep the native instant details behaviour instead of depending on JavaScript. */
 @media(prefers-reduced-motion:no-preference){
-  .home-question::details-content{opacity:0;transform:translateY(-4px);transition:opacity .46s ease,transform .46s ease,content-visibility .46s;transition-behavior:allow-discrete}
-  .home-question[open]::details-content{opacity:1;transform:none}
-  @starting-style{.home-question[open]::details-content{opacity:0;transform:translateY(-4px)}}
+  .home-question{interpolate-size:allow-keywords}
+  .home-question::details-content{block-size:0;overflow:hidden;opacity:0;transition:block-size .22s cubic-bezier(.16,1,.3,1),opacity .16s ease-out,content-visibility .22s allow-discrete}
+  .home-question[open]::details-content{block-size:auto;opacity:1}
+  @starting-style{.home-question[open]::details-content{block-size:0;opacity:0}}
 }
 .home-question>summary::-webkit-details-marker{display:none}
-.home-question>summary::after{content:'';flex:none;width:10px;height:10px;border-right:2px solid var(--ink-muted);border-bottom:2px solid var(--ink-muted);transform:rotate(45deg) translateY(-3px);transition:transform .24s ease}
+.home-question>summary::after{content:'';flex:none;width:10px;height:10px;border-right:2px solid var(--ink-muted);border-bottom:2px solid var(--ink-muted);transform:rotate(45deg) translateY(-3px);transition:transform .22s cubic-bezier(.16,1,.3,1)}
 .home-question[open]>summary::after{transform:rotate(225deg) translateY(-3px)}
 .home-question>summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .home-question-body{padding:0 0 18px;max-width:68ch}
@@ -343,9 +344,15 @@ body>main{flex:1 0 auto}
    on the label, is where the eye is already looking. */
 .profile-panel>summary:focus-visible{outline:3px solid var(--accent);outline-offset:-4px}
 @media(pointer:coarse){.profile-panel>summary:focus-visible{outline:none}}
-.profile-panel>summary::after{content:"";position:absolute;right:8px;top:26px;width:10px;height:10px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);transform:rotate(45deg);transition:transform .18s ease}
+.profile-panel>summary::after{content:"";position:absolute;right:8px;top:26px;width:10px;height:10px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);transform:rotate(45deg);transition:transform .22s cubic-bezier(.16,1,.3,1)}
 .profile-panel[open]>summary::after{transform:rotate(-135deg)}
 .profile-panel-body{padding:2px 0 30px}
+@media(prefers-reduced-motion:no-preference){
+  .profile-panel{interpolate-size:allow-keywords}
+  .profile-panel::details-content{block-size:0;overflow:hidden;opacity:0;transition:block-size .22s cubic-bezier(.16,1,.3,1),opacity .16s ease-out,content-visibility .22s allow-discrete}
+  .profile-panel[open]::details-content{block-size:auto;opacity:1}
+  @starting-style{.profile-panel[open]::details-content{block-size:0;opacity:0}}
+}
 .profile-panel .past-searches{margin:0;max-width:none}
 .profile-review-list{border:1px solid var(--line);border-bottom:0}
 .profile-review-list .post-card{padding:28px 32px}
