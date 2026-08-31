@@ -1,5 +1,6 @@
 import type {Metadata} from 'next';
 import {HomeIntro} from '@/components/HomeIntro';
+import {HomeDiscoveryBanner} from '@/components/HomeDiscoveryBanner';
 import {HomeQuestions} from '@/components/HomeQuestions';
 import {JsonLd} from '@/components/JsonLd';
 import {getServerI18n} from '@/i18n/server';
@@ -22,6 +23,7 @@ export default async function Page(){
     <JsonLd data={[organizationJsonLd(t.siteSnippet),websiteJsonLd(t.siteSnippet,locale)]}/>
     <main className="feed-layout"><section className="feed-main">
       <HomeIntro/>
+      <HomeDiscoveryBanner/>
       <HomeQuestions locale={locale}/>
     </section></main>
   </>;

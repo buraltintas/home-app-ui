@@ -8,6 +8,17 @@ value involved.
 
 ---
 
+## Home now explains the visit loop before asking for trust
+
+- A wide editorial banner beneath the search field turns the product loop into three
+  concrete steps: discover, visit and review. Its copy is localized in all four shipped
+  languages, remains HTML over a decorative image, and reflows into a readable mobile
+  sequence rather than shrinking a desktop composition.
+- The “What is Boşa Gezme!?” row now opens like the other home-page questions and reads
+  the canonical summary from the About document, removing another duplicate content source.
+
+---
+
 ## Catalogue stores now look the same everywhere
 
 - Administrators can mark or unmark a catalogue store independently from paid promotion

@@ -18,7 +18,8 @@
 .new-here{font-size:14px;color:var(--clay)}
 /* Home page questions */
 .home-questions{padding:0 40px 64px}
-.home-questions>h2{font-size:28px;font-weight:600;letter-spacing:-.035em;margin:0 0 8px}
+.home-question-primary h2{margin:0;font-size:28px;font-weight:600;letter-spacing:-.035em}
+.home-question-primary>summary{min-height:64px;padding-top:0}
 .home-question{border-bottom:1px solid var(--line)}
 .home-question>summary{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:44px;padding:14px 0;font-size:18px;font-weight:600;cursor:pointer;list-style:none;-webkit-tap-highlight-color:transparent}
 /* A tap used to paint the whole row grey for a moment, which reads as a mis-tap rather

@@ -19,7 +19,10 @@ function renderBlock(block:Block,index:number){
 export function HomeQuestions({locale}:{locale:Locale}){
   const content=about.content[locale];
   return <section className="home-questions" aria-labelledby="home-questions-title">
-    <h2 id="home-questions-title">{content.title}</h2>
+    <details className="home-question home-question-primary">
+      <summary><h2 id="home-questions-title">{content.title}</h2></summary>
+      <div className="home-question-body"><p>{content.summary}</p></div>
+    </details>
     {content.sections.map(section=>
       <details key={section.id} className="home-question">
         <summary><span>{section.heading}</span></summary>
