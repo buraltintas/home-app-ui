@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, LocateFixed, MapPin, Search, X, Phone} from 'lucide-react';
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
-import type { Coordinates, LocationResult, Me, MonthlyStoreHighlights, SearchHistory, SearchResponse, SearchResult, StoreHighlight } from '@/lib/types';
+import type { Coordinates, LocationResult, Me, SearchHistory, SearchResponse, SearchResult } from '@/lib/types';
 import { SaveStoreButton } from './SaveStoreButton';
 import { useI18n } from '@/i18n/I18nProvider';
 import { localePath ,slogan} from '@/lib/site';
@@ -24,27 +24,6 @@ import {CategoryIcon} from './CategoryIcon';
 
 type SearchPlace={source?:'device'|'manual';label:string;city?:string;placeID?:string;address?:string;accuracyMeters?:number;coordinates:Coordinates};
 type SearchSnapshot={query:string;location?:SearchPlace;data?:SearchResponse};
-
-function HighlightLink({item,label,metric}:{item:StoreHighlight;label:string;metric:string}){
-  const {locale}=useI18n();
-  const place=[item.district,item.city].filter(Boolean).join(', ');
-  // The photograph comes first, the same one and chosen the same way as in the result
-  // list. A store recommended as a name and a number reads like a statistic; with its own
-  // picture it reads like a place somebody could walk into.
-  const photo=storePhotoURL(item.photo,520);
-  return <Link className="store-highlight" href={localePath(locale,`/stores/${item.id}`)}>
-    {photo
-      ?<Image className="store-highlight-photo" src={photo} width={72} height={72} alt="" unoptimized/>
-      :<span className="store-highlight-photo store-highlight-photo-empty" aria-hidden="true">{item.name.trim().charAt(0)}</span>}
-    <span className="store-highlight-copy">
-      <span>{label}</span>
-      <strong>{item.name}</strong>
-      {place&&<small className="store-highlight-place">{place}</small>}
-      <small className="store-highlight-metric">{metric}</small>
-    </span>
-    <ArrowRight aria-hidden="true"/>
-  </Link>;
-}
 
 // The field carries a whole sentence, so it has to wrap instead of scrolling a long
 // placeholder out of sight on a phone. Enter still means search; a search query has
@@ -547,17 +526,6 @@ export function SearchExperience() {
     return()=>{active=false;};
   },[locale,t]);
 
-  const [highlights,setHighlights]=useState<MonthlyStoreHighlights>({});
-  useEffect(()=>{
-    let active=true;
-    apiFetch('/api/proxy/search/highlights',{headers:{'X-Locale':locale}})
-      .then(async response=>response.ok?await response.json() as MonthlyStoreHighlights:{})
-      // Highlights are an enhancement to the search prompts. If the API is older or
-      // unavailable, the core search remains complete and no empty heading is shown.
-      .then(items=>{if(active)setHighlights(items);})
-      .catch(()=>{if(active)setHighlights({});});
-    return()=>{active=false;};
-  },[locale]);
   // City-shaped examples are only offered once a city has actually been chosen, so the
   // product never guesses out loud where someone lives.
   const pool=searchExamples[locale];
@@ -588,6 +556,5 @@ export function SearchExperience() {
     :{title:t('seasonalSuggestions'),phrases:seasonalPool(locale)};
   const stripPhrases=Array.from(new Set(strip.phrases));
   const prompts=stripPhrases.length<=6?stripPhrases:[0,1,2,3,4,5].map(step=>stripPhrases[(rotation+step)%stripPhrases.length]);
-  const showHighlights=Boolean(highlights.rating_gainer||highlights.most_reviewed);
-  return <main className="search-page"><header className="search-hero"><p className="search-slogan" lang="tr">{slogan}</p><div className="search-title"><h1>{t('searchTitle')}</h1><span aria-hidden="true">↗</span></div>{!location&&<p className="location-lead">{t('locationRequired')}</p>}{location&&<div className="location-control"><MapPin aria-hidden="true"/><span>{location.label}</span><button onClick={()=>setLocationOpen(true)} disabled={loading}>{t('change')}</button><button className="location-clear" aria-label={t('clearLocation')} onClick={()=>{setLocation(undefined);setData(undefined);}} disabled={loading}><X/></button></div>}{sheetOpen&&<section className="location-sheet" aria-label={t('chooseLocation')}>{error&&<LocationAlert message={error} reason={errorReason} onRetry={()=>void locateMe()} busy={autoLocating}/>}{location&&<div><h2>{t('locationTitle')}</h2><p>{t('locationBenefit')}</p></div>}<div className="location-actions">{autoLocating&&<p className="location-working" aria-live="polite"><span className="location-pulse" aria-hidden="true"/>{t('locatingYou')}</p>}<button className="button primary" onClick={()=>void locateMe()} disabled={loading||autoLocating} aria-busy={autoLocating}><LocateFixed/>{t('useCurrentLocation')}</button><label><span>{t('chooseLocation')}</span><input value={manual} onChange={event=>setManual(event.target.value)} placeholder={t('locationHint')} disabled={loading}/></label>{location&&<button className="button quiet" onClick={()=>setLocationOpen(false)}>{t('later')}</button>}</div>{manual.trim().length>=2&&<div className="location-results" aria-live="polite">{lookingUp?<p>{t('searchingLocations')}</p>:candidates.length===0?<p>{t('noLocations')}</p>:candidates.map(candidate=><button key={candidate.place_id} onClick={()=>void choose(candidate)} disabled={loading}><strong>{candidate.name}</strong><span>{candidate.address}</span><small>{candidate.attributions.join(' · ')}</small></button>)}</div>}</section>}{location&&<form className="search-form" onSubmit={submit} aria-busy={loading}><Search aria-hidden="true"/><div className="search-field"><textarea ref={field} rows={1} value={query} onChange={event=>setQuery(event.target.value)} onKeyDown={event=>{if(event.key==='Enter'){event.preventDefault();void runSearch();}}} placeholder={placeholder} aria-label={t('searchHint')} disabled={loading}/>{query&&!loading&&<button type="button" className="search-clear" onClick={()=>{setQuery('');field.current?.focus();}} aria-label={t('clearSearch')}><X aria-hidden="true"/></button>}</div><button type="submit" disabled={loading}>{loading?t('loading'):t('searchAction')}</button></form>}{!data&&!locationOpen&&!loading&&<><div className="search-suggestions"><div>{suggestionsAnswered?<><h2>{strip.title}</h2>{prompts.map(phrase=><button key={phrase} onClick={()=>fill(phrase)}>{phrase} <ArrowRight/></button>)}</>:<div className="suggestions-waiting" aria-busy="true" aria-label={t('loading')}><span/><span/><span/><span/></div>}</div><div><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>fill(category.name)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}{category.search_count>0&&<small title={t('searchCount')}>{category.search_count.toLocaleString(locale)} {t('searchCountShort')}</small>}</span></button>)}</div></div></div>{showHighlights&&<section className="store-highlights" aria-labelledby="store-highlights-title"><h2 id="store-highlights-title">{t('monthlyStandouts')}<small>{t('lastMonth')}</small></h2><div>{highlights.rating_gainer&&<HighlightLink item={highlights.rating_gainer} label={t('mostImproved')} metric={`+${(highlights.rating_gainer.rating_increase??0).toLocaleString(locale,{maximumFractionDigits:2})} ${t('ratingIncrease')}`}/>} {highlights.most_reviewed&&<HighlightLink item={highlights.most_reviewed} label={t('mostReviewed')} metric={`${highlights.most_reviewed.recent_review_count.toLocaleString(locale)} ${t('reviewsThisMonth')}`}/>}</div></section>}</>}</header>{loading&&<SearchOverlay/>}{!loading&&data?.guidance&&<section className="guidance-card"><h2>{data.guidance.message}</h2><div>{data.guidance.examples.map(example=><button key={example} onClick={()=>fill(example)}>{example}<ArrowRight/></button>)}</div></section>}{!loading&&data&&!data.guidance&&<section className="results-layout"><div className="result-list"><p className="result-count">{data.results.length} {t('results')}</p>{data.results.length===0?<div className="zero-state"><h2>{t('zeroTitle')}</h2><p>{t('zeroBody')}</p></div>:data.results.map(item=><Result item={item} key={item.search_result_impression_id} onSelect={()=>select(item)} onCall={()=>call(item)} saved={savedStores.has(item.id??'')}/>)}</div></section>}</main>;
+  return <main className="search-page"><header className="search-hero"><p className="search-slogan" lang="tr">{slogan}</p><div className="search-title"><h1>{t('searchTitle')}</h1><span aria-hidden="true">↗</span></div>{!location&&<p className="location-lead">{t('locationRequired')}</p>}{location&&<div className="location-control"><MapPin aria-hidden="true"/><span>{location.label}</span><button onClick={()=>setLocationOpen(true)} disabled={loading}>{t('change')}</button><button className="location-clear" aria-label={t('clearLocation')} onClick={()=>{setLocation(undefined);setData(undefined);}} disabled={loading}><X/></button></div>}{sheetOpen&&<section className="location-sheet" aria-label={t('chooseLocation')}>{error&&<LocationAlert message={error} reason={errorReason} onRetry={()=>void locateMe()} busy={autoLocating}/>}{location&&<div><h2>{t('locationTitle')}</h2><p>{t('locationBenefit')}</p></div>}<div className="location-actions">{autoLocating&&<p className="location-working" aria-live="polite"><span className="location-pulse" aria-hidden="true"/>{t('locatingYou')}</p>}<button className="button primary" onClick={()=>void locateMe()} disabled={loading||autoLocating} aria-busy={autoLocating}><LocateFixed/>{t('useCurrentLocation')}</button><label><span>{t('chooseLocation')}</span><input value={manual} onChange={event=>setManual(event.target.value)} placeholder={t('locationHint')} disabled={loading}/></label>{location&&<button className="button quiet" onClick={()=>setLocationOpen(false)}>{t('later')}</button>}</div>{manual.trim().length>=2&&<div className="location-results" aria-live="polite">{lookingUp?<p>{t('searchingLocations')}</p>:candidates.length===0?<p>{t('noLocations')}</p>:candidates.map(candidate=><button key={candidate.place_id} onClick={()=>void choose(candidate)} disabled={loading}><strong>{candidate.name}</strong><span>{candidate.address}</span><small>{candidate.attributions.join(' · ')}</small></button>)}</div>}</section>}{location&&<form className="search-form" onSubmit={submit} aria-busy={loading}><Search aria-hidden="true"/><div className="search-field"><textarea ref={field} rows={1} value={query} onChange={event=>setQuery(event.target.value)} onKeyDown={event=>{if(event.key==='Enter'){event.preventDefault();void runSearch();}}} placeholder={placeholder} aria-label={t('searchHint')} disabled={loading}/>{query&&!loading&&<button type="button" className="search-clear" onClick={()=>{setQuery('');field.current?.focus();}} aria-label={t('clearSearch')}><X aria-hidden="true"/></button>}</div><button type="submit" disabled={loading}>{loading?t('loading'):t('searchAction')}</button></form>}{!data&&!locationOpen&&!loading&&<div className="search-suggestions"><div>{suggestionsAnswered?<><h2>{strip.title}</h2>{prompts.map(phrase=><button key={phrase} onClick={()=>fill(phrase)}>{phrase} <ArrowRight/></button>)}</>:<div className="suggestions-waiting" aria-busy="true" aria-label={t('loading')}><span/><span/><span/><span/></div>}</div><div><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>fill(category.name)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}{category.search_count>0&&<small title={t('searchCount')}>{category.search_count.toLocaleString(locale)} {t('searchCountShort')}</small>}</span></button>)}</div></div></div>}</header>{loading&&<SearchOverlay/>}{!loading&&data?.guidance&&<section className="guidance-card"><h2>{data.guidance.message}</h2><div>{data.guidance.examples.map(example=><button key={example} onClick={()=>fill(example)}>{example}<ArrowRight/></button>)}</div></section>}{!loading&&data&&!data.guidance&&<section className="results-layout"><div className="result-list"><p className="result-count">{data.results.length} {t('results')}</p>{data.results.length===0?<div className="zero-state"><h2>{t('zeroTitle')}</h2><p>{t('zeroBody')}</p></div>:data.results.map(item=><Result item={item} key={item.search_result_impression_id} onSelect={()=>select(item)} onCall={()=>call(item)} saved={savedStores.has(item.id??'')}/>)}</div></section>}</main>;
 }

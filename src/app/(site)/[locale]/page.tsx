@@ -1,6 +1,7 @@
 import type {Metadata} from 'next';
 import {HomeIntro} from '@/components/HomeIntro';
 import {HomeDiscoveryBanner} from '@/components/HomeDiscoveryBanner';
+import {HomeDiscoverySignals} from '@/components/HomeDiscoverySignals';
 import {HomeQuestions} from '@/components/HomeQuestions';
 import {JsonLd} from '@/components/JsonLd';
 import {getServerI18n} from '@/i18n/server';
@@ -24,6 +25,7 @@ export default async function Page(){
     <main className="feed-layout"><section className="feed-main">
       <HomeIntro/>
       <HomeDiscoveryBanner/>
+      <HomeDiscoverySignals/>
       <HomeQuestions locale={locale}/>
     </section></main>
   </>;

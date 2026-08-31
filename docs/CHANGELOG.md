@@ -16,6 +16,9 @@ value involved.
   sequence rather than shrinking a desktop composition.
 - The “What is Boşa Gezme!?” row now opens like the other home-page questions and reads
   the canonical summary from the About document, removing another duplicate content source.
+- Monthly standout stores moved from Discover to Home, where they now sit beside live
+  rolling-30-day city and category rankings. Empty signals disappear instead of being
+  filled with editorial guesses, and the search screen is focused on the active search.
 
 ---
 
