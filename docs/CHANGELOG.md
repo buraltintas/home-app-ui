@@ -10,6 +10,9 @@ value involved.
 
 ## Home now explains the visit loop before asking for trust
 
+- The home masthead no longer consumes the first viewport like a campaign hero. Its
+  display size now follows the product type scale and the opening spacing is tighter, so
+  search remains the first action while the headline still leads.
 - A wide editorial banner beneath the search field turns the product loop into three
   concrete steps: discover, visit and review. Its copy is localized in all four shipped
   languages, remains HTML over a decorative image, and reflows into a readable mobile
