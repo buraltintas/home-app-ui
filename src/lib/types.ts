@@ -46,6 +46,7 @@ export type VisitVerification = { id: string; store_id: string; distance_meters:
 export type MediaUpload = { id: string; upload: { storage_key: string; upload_url: string; headers: Record<string, string>; expires_at: string } };
 export type TokenPair = { access_token:string;refresh_token:string;token_type:'Bearer';access_expires_at:string;refresh_expires_at:string;user_id:string };
 export type Me = { id:string;display_name:string;avatar_url:string;bio:string;bio_language?:Locale;city:string;follower_count:number;following_count:number;post_count:number;favorite_count:number;level:number;email:string;discovery_location?:DiscoveryLocation };
+export type FeedbackMessage = { id:string;kind:'suggestion'|'problem'|'praise'|'other';message:string;status:'new'|'read'|'handled';created_at:string;reply?:string;replied_at?:string };
 export type PublicProfile = { id:string;display_name:string;avatar_url:string;bio:string;bio_language?:Locale;city:string;follower_count:number;following_count:number;post_count:number;level:number };
 // The API names the written text `body` when reading and `text` when writing.
 export type Comment = { id:string;user_id:string;body:string;content_language?:Locale;display_name:string;avatar_url:string;created_at:string };

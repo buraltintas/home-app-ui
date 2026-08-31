@@ -5,6 +5,7 @@ import {AdminPager} from '../AdminPager';
 import {AdminSearch} from '../AdminSearch';
 import {getFeedback} from '@/lib/admin-api';
 import {adminDateTime} from '@/lib/admin-time';
+import {AdminFeedbackReply} from './AdminFeedbackReply';
 
 export const dynamic='force-dynamic';
 const when=adminDateTime;
@@ -28,7 +29,9 @@ export default async function Page({searchParams}:{searchParams:Promise<{q?:stri
           {result.data.rows.map(row=><tr key={row.id}>
             <td>{when(row.created_at)}</td>
             <td>{KINDS[row.kind]??row.kind}</td>
-            <td className="admin-feedback-message">{row.message}</td>
+            <td className="admin-feedback-message"><p>{row.message}</p>{row.user_id
+              ?<AdminFeedbackReply id={row.id} initialReply={row.reply}/>
+              :<small>Uygulama içi yanıt yalnızca giriş yaparak gönderilen mesajlarda kullanılabilir.</small>}</td>
             <td>{row.author||row.contact_email||<em>anonim</em>}</td>
             <td>{row.locale.toUpperCase()}</td>
             <td>{STATUS[row.status]??row.status}</td>

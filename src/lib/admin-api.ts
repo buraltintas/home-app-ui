@@ -21,7 +21,7 @@ export type StoreRow={id:string;name:string;slug:string;city:string;is_premium:b
 export type CategoryOption={slug:string;name:string};
 export type ReviewRow={id:string;store_id:string;store_name:string;user_id:string;author:string;rating:number;text:string;created_at:string;deleted:boolean};
 export type SearchRow={id:string;query:string;user_id?:string;query_language:string;scope:string;result_count:number;click_count:number;duration_ms?:number;fallback_state?:string;created_at:string};
-export type FeedbackRow={id:string;kind:string;message:string;contact_email?:string;author?:string;locale:string;status:string;created_at:string;handled_at?:string};
+export type FeedbackRow={id:string;user_id?:string;kind:string;message:string;contact_email?:string;author?:string;locale:string;status:string;created_at:string;handled_at?:string;reply?:string;replied_at?:string};
 export type AuditRow={id:string;actor_email:string;action:string;target_type:string;target_id:string;metadata:Record<string,unknown>;created_at:string};
 
 const qs=(params:Record<string,string|number|undefined>)=>{

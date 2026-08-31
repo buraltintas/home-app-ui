@@ -7,6 +7,7 @@ import {ContributorLevel} from '@/components/ContributorLevel';
 import {MascotLoader} from '@/components/MascotLoader';
 import {useScrollTopWhenReady} from '@/lib/scroll-top';
 import {MyReviews} from '@/components/MyReviews';
+import {ProfileMessages} from '@/components/ProfileMessages';
 import {PastSearches} from '@/components/PastSearches';
 import {ProfileEditor} from '@/components/ProfileEditor';
 import {useI18n} from '@/i18n/I18nProvider';
@@ -21,6 +22,7 @@ const accountCopy:Record<Locale,{body:string;danger:string;title:string;confirm:
 };
 const deleteBody:Record<Locale,string>={tr:'Yorumlarınız, arama geçmişiniz, profil bilgileriniz ve sosyal bağlantılarınız kaldırılır. Daha sonra aynı e-postayla giriş yapabilirsiniz ancak silinen veriler geri gelmez.',en:'Your reviews, search history, profile information, and social connections will be removed. You can sign in later with the same email, but deleted data cannot be restored.',de:'Deine Bewertungen, dein Suchverlauf, deine Profilangaben und deine sozialen Verbindungen werden entfernt. Du kannst dich später mit derselben E-Mail-Adresse anmelden, gelöschte Daten werden jedoch nicht wiederhergestellt.',ru:'Ваши отзывы, история поиска, данные профиля и социальные связи будут удалены. Позже вы сможете войти с тем же адресом электронной почты, но удалённые данные нельзя восстановить.'};
 const reviewCopy:Record<Locale,{title:string;hint:string}>={tr:{title:'Değerlendirmelerim',hint:'Daha önce paylaştığın mağaza deneyimleri'},en:{title:'My reviews',hint:'Store experiences you shared before'},de:{title:'Meine Bewertungen',hint:'Deine bisherigen Erfahrungen mit Geschäften'},ru:{title:'Мои отзывы',hint:'Ваши опубликованные впечатления о магазинах'}};
+const messageCopy:Record<Locale,{title:string;hint:string}>={tr:{title:'Mesajlarım',hint:'Bize gönderdiklerin ve yanıtlarımız'},en:{title:'My messages',hint:'What you sent us and our replies'},de:{title:'Meine Nachrichten',hint:'Deine Nachrichten und unsere Antworten'},ru:{title:'Мои сообщения',hint:'Ваши сообщения и наши ответы'}};
 const profileEditorHint:Record<Locale,string>={tr:'Görünen adın ve profil bilgilerin',en:'Your display name and profile details',de:'Dein Anzeigename und deine Profilangaben',ru:'Ваше отображаемое имя и данные профиля'};
 
 // One panel of the profile. Everything below the identity card is collapsed by default:
@@ -72,6 +74,9 @@ export default function Page(){
     </Panel>
     <Panel title={reviewCopy[locale].title} hint={reviewCopy[locale].hint}>
       <MyReviews userId={me.id} locale={locale}/>
+    </Panel>
+    <Panel title={messageCopy[locale].title} hint={messageCopy[locale].hint}>
+      <ProfileMessages locale={locale}/>
     </Panel>
     <Panel title={t('pastSearches')} hint={t('pastSearchesHint')}>
       <PastSearches heading={false}/>

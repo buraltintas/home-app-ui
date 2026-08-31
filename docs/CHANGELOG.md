@@ -8,6 +8,16 @@ value involved.
 
 ---
 
+## “We read every message” now has a visible answer
+
+- A signed-in person's product feedback now stays available under **My messages** in the
+  private profile, showing both pending messages and the team's reply. Anonymous feedback
+  is deliberately not claimed later by matching an email address.
+- The operator feedback queue can answer account-owned feedback without leaving the admin
+  surface. Sending the answer closes that queue item; the original message remains intact.
+
+---
+
 ## Search work survived leaving Discover, and six small requests stopped drifting apart
 
 - The Discover link deliberately erased the current query and results, so returning from
