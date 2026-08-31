@@ -13,7 +13,7 @@ import type { LocationFailure } from '@/lib/location';
 import { LOCATION_LOST_EVENT, deviceLocationAllowed, forgetDeviceLocation, watchLocationConsent, canUseDeviceLocationWithoutPrompt, clearSearchLocation, LOCATION_UPDATE_EVENT, locationMessage, rememberedPosition, requestPosition, savedSearchLocation, saveSearchLocation } from '@/lib/location';
 import { seasonalPool } from '@/i18n/search-seasons';
 import { rememberOriginSearch } from '@/lib/search-origin';
-import { RESET_EVENT, SNAPSHOT_KEY } from '@/lib/search-session';
+import { SNAPSHOT_KEY } from '@/lib/search-session';
 import { categoryLabels, searchExamples, storeStatusCopy } from '@/i18n/dictionaries';
 import { Rating } from './Rating';
 import { SearchOverlay } from './SearchOverlay';
@@ -127,11 +127,11 @@ function Result({item,onSelect,onCall,saved}:{item:SearchResult;onSelect:()=>voi
   // be part of the link.
   const scores=(() => {
       const reviewed=(item.platform?.review_count??0)>0;
-      return <div className="dual-score"><div><span>{t('communityRating')}</span>{reviewed&&item.platform
+      return <><div className="dual-score"><div><span>{t('communityRating')}</span>{reviewed&&item.platform
         ?<><strong><Rating value={item.platform.average_rating}/></strong><small>{item.platform.review_count} {t('reviews')} · {item.platform.favorite_count} {t('favoriteCount')}</small></>
         :<><strong className="new-here">{t('newHere')}</strong><small>{t('firstReview')}</small>{(item.platform?.favorite_count??0)>0&&<small>{item.platform?.favorite_count} {t('favoriteCount')}</small>}</>}
-      {item.id&&<SaveStoreButton storeId={item.id} initialSaved={saved}/>}
-      </div>{item.google&&<div><span>{t('googleRating')}</span><strong><Rating value={item.google.rating}/></strong><small>{item.google.rating_count} {t('reviews')}</small></div>}</div>;
+      </div>{item.google&&<div><span>{t('googleRating')}</span><strong><Rating value={item.google.rating}/></strong><small>{item.google.rating_count} {t('reviews')}</small></div>}</div>
+      {item.id&&<SaveStoreButton storeId={item.id} initialSaved={saved}/>}</>;
     })();
   // The call sits outside the link rather than inside it: an anchor cannot contain
   // another anchor, and more to the point, tapping a phone number should place a call,
@@ -317,17 +317,6 @@ export function SearchExperience() {
       else sessionStorage.removeItem(SNAPSHOT_KEY);
     }catch{}
   },[restored,query,location,data]);
-
-  // Reaching this page from the navigation is a request to start over, while coming
-  // back from a store detail is not. The header clears the snapshot and announces the
-  // reset, which also covers pressing the link while already standing on this page.
-  // The chosen location survives, because asking for it again on every visit is the
-  // one thing that makes the whole search useless.
-  useEffect(()=>{
-    const reset=()=>{setQuery('');setData(undefined);setError('');setLocationOpen(false);setCandidates([]);setLookingUp(false);setManual('');setRotation(Math.floor(Math.random()*997));};
-    window.addEventListener(RESET_EVENT,reset);
-    return()=>window.removeEventListener(RESET_EVENT,reset);
-  },[]);
 
   // The field grows with whatever ends up in it, including text put there by tapping
   // a suggestion rather than typing.

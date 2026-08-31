@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import {FaFacebookF,FaInstagram,FaLinkedinIn,FaRedditAlien,FaThreads,FaTiktok,FaXTwitter} from 'react-icons/fa6';
 import {groupLabels,legalHubLabel,legalLinks,type LegalGroup} from '@/lib/legal-links';
 import {localePath,slogan} from '@/lib/site';
 import type {Locale} from '@/lib/types';
@@ -15,14 +16,14 @@ const note:Record<Locale,string>={
 
 // The accounts as they were opened. Only the ones with a public profile URL we are sure
 // of are linked -- a footer link that lands on the wrong handle is worse than no link.
-const social:{label:string;href:string}[]=[
-  {label:'Instagram',href:'https://www.instagram.com/bosagezme'},
-  {label:'X',href:'https://x.com/Bosagezme'},
-  {label:'TikTok',href:'https://www.tiktok.com/@bosagezme'},
-  {label:'Threads',href:'https://www.threads.net/@bosagezme'},
-  {label:'Facebook',href:'https://www.facebook.com/Bosagezme'},
-  {label:'LinkedIn',href:'https://www.linkedin.com/in/bo%C5%9Fa-gezme-91a8b142a'},
-  {label:'Reddit',href:'https://www.reddit.com/user/Bosagezme'},
+const social=[
+  {label:'Instagram',href:'https://www.instagram.com/bosagezme',Icon:FaInstagram},
+  {label:'X',href:'https://x.com/Bosagezme',Icon:FaXTwitter},
+  {label:'TikTok',href:'https://www.tiktok.com/@bosagezme',Icon:FaTiktok},
+  {label:'Threads',href:'https://www.threads.net/@bosagezme',Icon:FaThreads},
+  {label:'Facebook',href:'https://www.facebook.com/Bosagezme',Icon:FaFacebookF},
+  {label:'LinkedIn',href:'https://www.linkedin.com/in/bo%C5%9Fa-gezme-91a8b142a',Icon:FaLinkedinIn},
+  {label:'Reddit',href:'https://www.reddit.com/user/Bosagezme',Icon:FaRedditAlien},
 ];
 
 const followLabel:Record<Locale,string>={tr:'Bizi takip edin',en:'Follow us',de:'Folge uns',ru:'Мы в соцсетях'};
@@ -45,7 +46,7 @@ export function SiteFooter({locale}:{locale:Locale}){
       })}
       <nav aria-label={followLabel[locale]} className="site-footer-social">
         <h2>{followLabel[locale]}</h2>
-        <ul>{social.map(account=><li key={account.label}><a href={account.href} target="_blank" rel="me noopener noreferrer">{account.label}</a></li>)}</ul>
+        <ul>{social.map(({label,href,Icon})=><li key={label}><a href={href} target="_blank" rel="me noopener noreferrer" aria-label={label} title={label}><Icon aria-hidden="true"/></a></li>)}</ul>
       </nav>
       <p className="site-footer-slogan" lang="tr">{slogan}</p>
       <p className="site-footer-note">{note[locale]}</p>

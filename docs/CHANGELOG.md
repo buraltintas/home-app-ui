@@ -8,6 +8,22 @@ value involved.
 
 ---
 
+## Search work survived leaving Discover, and six small requests stopped drifting apart
+
+- The Discover link deliberately erased the current query and results, so returning from
+  Home, Favourites or Profile looked like a lost search. Navigation no longer destroys the
+  tab's existing search snapshot; starting another search remains an explicit action in
+  the search field.
+- A result's save action is now a labelled, full-width decision beneath the centred
+  Boşa Gezme!/Google scores. It says that the store is being saved for a later review,
+  stays on one line, and no longer relies on a heart whose meaning had to be guessed.
+- The Favourites page now describes stores saved for reviewing, gives the page label and
+  heading their intended hierarchy, and aligns rating stars with their text.
+- Home-page answers open and close at a calmer pace. Footer social destinations are now
+  recognisable platform marks with accessible names instead of a row of competing words.
+
+---
+
 ## "This store is no longer in our list" was said about stores that were
 
 - Reported as urgent: store pages failed on first open and worked after a refresh, on many
