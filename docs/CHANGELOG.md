@@ -8,6 +8,16 @@ value involved.
 
 ---
 
+## Catalogue stores now look the same everywhere
+
+- Administrators can mark or unmark a catalogue store independently from paid promotion
+  and manual categories, with both states visible in the store table.
+- Search results give catalogue stores a restrained warm band and a translated editorial
+  label above their categories. Store detail repeats the same label immediately below the
+  hero image, so the marker does not disappear between list and detail.
+
+---
+
 ## “We read every message” now has a visible answer
 
 - A signed-in person's product feedback now stays available under **My messages** in the

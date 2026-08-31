@@ -111,7 +111,7 @@ function Result({item,onSelect,onCall,saved}:{item:SearchResult;onSelect:()=>voi
   const categoryText=(item.category_labels?.length
     ?item.category_labels
     :(item.categories??[]).map(category=>categoryLabels[locale][category]??category)).join(' · ');
-  const card=<article className="search-result"><ResultPhoto item={item}/><div><p className="result-category">{categoryText}{item.premium&&<span className="promoted-flag">{t('promoted')}</span>}</p><h2>{item.name}</h2><p className="result-address">{item.address}</p>{isClosedStatus(item.google?.business_status)&&<p className="store-status-warning">{storeStatusCopy[locale]}</p>}{item.distance_meters!==undefined&&<p className="distance">{(item.distance_meters/1000).toLocaleString(locale,{maximumFractionDigits:1})} km</p>}{/* "Boşa Gezme!'de yeni" used to depend on whether the store was in our catalogue at
+  const card=<article className="search-result"><ResultPhoto item={item}/><div>{item.catalog_store&&<span className="catalog-store-label">{t('catalogStore')}</span>}<p className="result-category">{categoryText}{item.premium&&<span className="promoted-flag">{t('promoted')}</span>}</p><h2>{item.name}</h2><p className="result-address">{item.address}</p>{isClosedStatus(item.google?.business_status)&&<p className="store-status-warning">{storeStatusCopy[locale]}</p>}{item.distance_meters!==undefined&&<p className="distance">{(item.distance_meters/1000).toLocaleString(locale,{maximumFractionDigits:1})} km</p>}{/* "Boşa Gezme!'de yeni" used to depend on whether the store was in our catalogue at
        all, which is our bookkeeping and none of the reader's business. It made the badge
        move on its own: a store arriving from the provider showed it, and the same store
        searched again showed "0 reviews · 0 favourites" instead -- because the first search
@@ -136,7 +136,7 @@ function Result({item,onSelect,onCall,saved}:{item:SearchResult;onSelect:()=>voi
   // The call sits outside the link rather than inside it: an anchor cannot contain
   // another anchor, and more to the point, tapping a phone number should place a call,
   // not open a store page on the way there.
-  return <div className="result-row">
+  return <div className="result-row" data-catalog-store={item.catalog_store||undefined}>
     {item.id?<Link href={localePath(locale,`/stores/${item.id}`)} onClick={onSelect}>{card}</Link>:card}
     {scores}
     {/* Directly above the telephone number, because the two answer the same question in

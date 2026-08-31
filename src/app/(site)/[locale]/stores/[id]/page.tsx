@@ -95,6 +95,7 @@ export default async function Page({params}:Props){
         :<div className="store-hero-photo store-hero-empty"><span className="store-hero-initial" aria-hidden="true">{store.name.trim().charAt(0)}</span><p>{t.noPhotoYet}</p><Link className="button secondary" href={localePath(locale,`/create?store=${store.id}`)}>{t.addFirstPhoto}</Link></div>}
     </section>
     <section className="store-overview">
+      {store.is_catalog_store&&<p className="store-catalog-label">{t.catalogStore}</p>}
       <div className="store-copy">
         <p className="eyebrow">{store.category_labels.join(' · ')}</p>
         <h1>{store.name}</h1>

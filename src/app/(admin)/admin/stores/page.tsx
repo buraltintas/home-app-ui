@@ -25,12 +25,14 @@ export default async function Page({searchParams}:{searchParams:Promise<{q?:stri
     <h1>Mağazalar</h1>
     <p className="admin-lead">
       Öne çıkarılan mağazalar arama sonuçlarında kendi şehrinde en üstte görünür ve kullanıcıya
-      &ldquo;Öne çıkarılmış&rdquo; etiketiyle gösterilir. Her değişiklik işlem kayıtlarına yazılır.
+      &ldquo;Öne çıkarılmış&rdquo; etiketiyle gösterilir. Katalog işareti sıralamayı değiştirmez;
+      editoryal mağazaları arama ve detay ekranında ayırt eder. Kategoriler ayrıca düzenlenebilir.
+      Her değişiklik işlem kayıtlarına yazılır.
     </p>
     <div className="admin-toolbar"><AdminSearch placeholder="Mağaza adı veya şehir"/><ExportLinks table="stores" q={q}/></div>
     <div className="admin-table-wrap">
       <table className="admin-table">
-        <thead><tr><th>Mağaza</th><th>Kapak</th><th>Şehir</th><th>Yorum</th><th>Puan</th><th>Durum</th><th>Kategoriler</th><th>Eklendi</th><th></th></tr></thead>
+        <thead><tr><th>Mağaza</th><th>Kapak</th><th>Şehir</th><th>Yorum</th><th>Puan</th><th>Öne çıkarma</th><th>Katalog</th><th>Kategoriler</th><th>Eklendi</th><th></th></tr></thead>
         <tbody>
           {result.data.rows.map(store=><tr key={store.id}>
             <td>{store.name}</td>
@@ -39,6 +41,7 @@ export default async function Page({searchParams}:{searchParams:Promise<{q?:stri
             <td>{store.review_count}</td>
             <td>{store.review_count?store.average_rating.toFixed(1):'—'}</td>
             <td><span className="admin-flag" data-on={store.is_premium}>{store.is_premium?'ÖNE ÇIKARILMIŞ':'NORMAL'}</span></td>
+            <td><span className="admin-flag" data-on={store.is_catalog_store}>{store.is_catalog_store?'KATALOG':'STANDART'}</span></td>
             <td><div className="admin-cats">
               {store.categories.length
                 ?store.categories.map(slug=><span key={slug}>{label(slug)}</span>)
@@ -49,10 +52,13 @@ export default async function Page({searchParams}:{searchParams:Promise<{q?:stri
               <AdminAction path={`stores/${store.id}/premium`} body={{is_premium:!store.is_premium}}
                 label={store.is_premium?'Normale al':'Öne çıkar'}/>
               {' '}
+              <AdminAction path={`stores/${store.id}/catalog`} body={{is_catalog_store:!store.is_catalog_store}}
+                label={store.is_catalog_store?'Katalogdan çıkar':'Kataloğa ekle'}/>
+              {' '}
               <CategoryEditor storeId={store.id} selected={store.categories} options={options}/>
             </td>
           </tr>)}
-          {result.data.rows.length===0&&<tr><td colSpan={9} className="admin-empty">Sonuç yok.</td></tr>}
+          {result.data.rows.length===0&&<tr><td colSpan={10} className="admin-empty">Sonuç yok.</td></tr>}
         </tbody>
       </table>
     </div>
