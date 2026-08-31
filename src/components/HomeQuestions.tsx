@@ -1,4 +1,5 @@
 import {about} from '@/content/legal/about';
+import {Disclosure} from '@/components/Disclosure';
 import type {Block} from '@/content/legal/types';
 import type {Locale} from '@/lib/types';
 
@@ -6,9 +7,6 @@ import type {Locale} from '@/lib/types';
 // written, checked and translated on the about page, so they are read from there rather
 // than restated here: one wording, four languages, and no second copy to fall out of date.
 //
-// Native details/summary rather than a scripted accordion. It opens without JavaScript,
-// remains keyboard operable and correctly announced, and its CSS reveal has an explicit
-// reduced-motion path.
 function renderBlock(block:Block,index:number){
   if('p' in block)return <p key={index}>{block.p}</p>;
   if('ul' in block)return <ul key={index}>{block.ul.map((item,i)=><li key={i}>{item}</li>)}</ul>;
@@ -19,14 +17,12 @@ function renderBlock(block:Block,index:number){
 export function HomeQuestions({locale}:{locale:Locale}){
   const content=about.content[locale];
   return <section className="home-questions" aria-labelledby="home-questions-title">
-    <details className="home-question home-question-primary">
-      <summary><h2 id="home-questions-title">{content.title}</h2></summary>
+    <Disclosure className="home-question home-question-primary" headingId="home-questions-title" summary={content.title}>
       <div className="home-question-body"><p>{content.summary}</p></div>
-    </details>
+    </Disclosure>
     {content.sections.map(section=>
-      <details key={section.id} className="home-question">
-        <summary><span>{section.heading}</span></summary>
+      <Disclosure key={section.id} className="home-question" summary={section.heading}>
         <div className="home-question-body">{section.blocks.map(renderBlock)}</div>
-      </details>)}
+      </Disclosure>)}
   </section>;
 }

@@ -17,28 +17,24 @@
    score, so it does not borrow the weight of the number beside it in the Google column. */
 .new-here{font-size:14px;color:var(--clay)}
 /* Home page questions */
+.disclosure-heading{margin:0}
+.disclosure-summary-copy{min-width:0}
+.disclosure-reveal{display:grid;grid-template-rows:0fr;opacity:0;visibility:hidden;transition:grid-template-rows .22s cubic-bezier(.16,1,.3,1),opacity .16s ease-out,visibility 0s linear .22s}
+.disclosure-reveal-inner{min-block-size:0;overflow:hidden;transform:translateY(-6px);transition:transform .22s cubic-bezier(.16,1,.3,1)}
+.disclosure.is-open>.disclosure-reveal{grid-template-rows:1fr;opacity:1;visibility:visible;transition-delay:0s}
+.disclosure.is-open>.disclosure-reveal>.disclosure-reveal-inner{transform:none}
+@media(prefers-reduced-motion:reduce){.disclosure-reveal,.disclosure-reveal-inner,.disclosure-caret{transition:none!important}}
 .home-questions{padding:0 40px 64px}
 .home-question-primary h2{margin:0;font-size:28px;font-weight:600;letter-spacing:-.035em}
-.home-question-primary>summary{min-height:64px;padding-top:0}
+.home-question-primary>.disclosure-heading>.disclosure-summary{min-height:64px;padding-top:0;font-size:28px;letter-spacing:-.035em}
 .home-question{border-bottom:1px solid var(--line)}
-.home-question>summary{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:44px;padding:14px 0;font-size:18px;font-weight:600;cursor:pointer;list-style:none;-webkit-tap-highlight-color:transparent}
-/* The answer reveals in the same direction as the disclosure: down when opening and back
-   up when closing. Modern browsers interpolate the intrinsic block size; older browsers
-   keep the native instant details behaviour instead of depending on JavaScript. */
-@media(prefers-reduced-motion:no-preference){
-  .home-question{interpolate-size:allow-keywords}
-  .home-question::details-content{block-size:0;overflow:hidden;opacity:0;transition:block-size .22s cubic-bezier(.16,1,.3,1),opacity .16s ease-out,content-visibility .22s allow-discrete}
-  .home-question[open]::details-content{block-size:auto;opacity:1}
-  @starting-style{.home-question[open]::details-content{block-size:0;opacity:0}}
-}
-.home-question>summary::-webkit-details-marker{display:none}
-.home-question>summary::after{content:'';flex:none;width:10px;height:10px;border-right:2px solid var(--ink-muted);border-bottom:2px solid var(--ink-muted);transform:rotate(45deg) translateY(-3px);transition:transform .22s cubic-bezier(.16,1,.3,1)}
-.home-question[open]>summary::after{transform:rotate(225deg) translateY(-3px)}
-.home-question>summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.home-question>.disclosure-summary,.home-question>.disclosure-heading>.disclosure-summary{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:44px;padding:14px 0;border:0;background:transparent;color:inherit;text-align:left;font-size:18px;font-weight:600;-webkit-tap-highlight-color:transparent}
+.home-question .disclosure-summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.home-question .disclosure-caret{flex:none;width:10px;height:10px;border-right:2px solid var(--ink-muted);border-bottom:2px solid var(--ink-muted);transform:rotate(45deg) translateY(-3px);transition:transform .22s cubic-bezier(.16,1,.3,1)}
+.home-question.is-open .disclosure-caret{transform:rotate(225deg) translateY(-3px)}
 .home-question-body{padding:0 0 18px;max-width:68ch}
 .home-question-body p{margin:0 0 12px;font-size:18px;line-height:1.65}
 .home-question-body ul{margin:0 0 14px;padding-left:22px;display:grid;gap:6px;font-size:18px;line-height:1.6}
-@media(prefers-reduced-motion:reduce){.home-question>summary::after{transition:none}}
 @media(max-width:900px){.home-questions{padding:0 20px 48px}}
 .result-hours{display:flex;align-items:baseline;gap:8px;margin:6px 0 0;flex-wrap:wrap}
 .result-hours span{font-size:13px;font-weight:700}
@@ -334,25 +330,19 @@ body>main{flex:1 0 auto}
 /* Panels are rules, not cards: one line between tasks and nothing wrapping them. */
 .profile-panel{border-bottom:1px solid var(--line)}
 .profile-panel:first-of-type{border-top:1px solid var(--line)}
-.profile-panel>summary{list-style:none;cursor:pointer;display:flex;flex-direction:column;gap:3px;padding:20px 40px 20px 0;min-height:44px;position:relative}
-.profile-panel>summary::-webkit-details-marker{display:none}
-.profile-panel>summary:hover>span{color:var(--clay)}
-.profile-panel>summary>span{font-size:17px;font-weight:750;letter-spacing:-.02em;transition:color .16s ease}
-.profile-panel>summary>small{color:var(--ink-muted);font-size:13px;line-height:1.45;max-width:52ch}
+.profile-panel>.disclosure-summary{width:100%;border:0;background:transparent;color:inherit;text-align:left;display:flex;align-items:center;gap:16px;padding:20px 8px 20px 0;min-height:44px}
+.profile-panel .disclosure-summary-copy{display:flex;flex-direction:column;gap:3px;min-width:0;margin-right:auto}
+.profile-panel .disclosure-summary:hover .disclosure-summary-copy>span{color:var(--clay)}
+.profile-panel .disclosure-summary-copy>span{font-size:17px;font-weight:750;letter-spacing:-.02em;transition:color .16s ease}
+.profile-panel .disclosure-summary-copy>small{color:var(--ink-muted);font-size:13px;line-height:1.45;max-width:52ch}
 /* The page-wide focus ring is deliberately loud, which is right on a button and wrong on a
    full-width row: it drew a halo around the whole width of the screen. Inside the summary,
    on the label, is where the eye is already looking. */
-.profile-panel>summary:focus-visible{outline:3px solid var(--accent);outline-offset:-4px}
-@media(pointer:coarse){.profile-panel>summary:focus-visible{outline:none}}
-.profile-panel>summary::after{content:"";position:absolute;right:8px;top:26px;width:10px;height:10px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);transform:rotate(45deg);transition:transform .22s cubic-bezier(.16,1,.3,1)}
-.profile-panel[open]>summary::after{transform:rotate(-135deg)}
+.profile-panel>.disclosure-summary:focus-visible{outline:3px solid var(--accent);outline-offset:-4px}
+@media(pointer:coarse){.profile-panel>.disclosure-summary:focus-visible{outline:none}}
+.profile-panel .disclosure-caret{flex:none;width:10px;height:10px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);transform:rotate(45deg);transition:transform .22s cubic-bezier(.16,1,.3,1)}
+.profile-panel.is-open .disclosure-caret{transform:rotate(-135deg)}
 .profile-panel-body{padding:2px 0 30px}
-@media(prefers-reduced-motion:no-preference){
-  .profile-panel{interpolate-size:allow-keywords}
-  .profile-panel::details-content{block-size:0;overflow:hidden;opacity:0;transition:block-size .22s cubic-bezier(.16,1,.3,1),opacity .16s ease-out,content-visibility .22s allow-discrete}
-  .profile-panel[open]::details-content{block-size:auto;opacity:1}
-  @starting-style{.profile-panel[open]::details-content{block-size:0;opacity:0}}
-}
 .profile-panel .past-searches{margin:0;max-width:none}
 .profile-review-list{border:1px solid var(--line);border-bottom:0}
 .profile-review-list .post-card{padding:28px 32px}
@@ -370,7 +360,7 @@ body>main{flex:1 0 auto}
 .profile-form small{color:var(--ink-muted);font-size:12px}
 .profile-form-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:4px}
 .profile-form-actions p{color:var(--success);font-size:14px;font-weight:700;margin:0}
-@media(prefers-reduced-motion:reduce){.profile-panel>summary::after,.profile-panel>summary>span{transition:none}}
+@media(prefers-reduced-motion:reduce){.profile-panel .disclosure-caret,.profile-panel .disclosure-summary-copy>span{transition:none}}
 @media(max-width:600px){
   .profile-page{padding:28px 18px 120px}
   .profile-page h1{margin-bottom:24px}

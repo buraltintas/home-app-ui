@@ -11,8 +11,8 @@ value involved.
 ## Home now explains the visit loop before asking for trust
 
 - Home questions and profile panels now reveal their full height smoothly from top to
-  bottom and collapse back upward, while retaining native disclosure semantics and an
-  instant reduced-motion path.
+  bottom and collapse back upward through a browser-independent grid transition. Their
+  controls expose expanded state to assistive technology and retain a reduced-motion path.
 - The home masthead no longer consumes the first viewport like a campaign hero. Its
   display size now follows the product type scale and the opening spacing is tighter, so
   search remains the first action while the headline still leads.

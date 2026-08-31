@@ -4,6 +4,7 @@ import {useEffect,useState} from 'react';
 import {AuthDialog} from '@/components/AuthDialog';
 import {SignOutButton} from '@/components/SignOutButton';
 import {ContributorLevel} from '@/components/ContributorLevel';
+import {Disclosure} from '@/components/Disclosure';
 import {MascotLoader} from '@/components/MascotLoader';
 import {useScrollTopWhenReady} from '@/lib/scroll-top';
 import {MyReviews} from '@/components/MyReviews';
@@ -30,10 +31,9 @@ const profileEditorHint:Record<Locale,string>={tr:'Görünen adın ve profil bil
 // deletion -- with nothing saying which was which, so the one thing somebody came to do
 // was buried among the others.
 function Panel({title,hint,children}:{title:string;hint:string;children:React.ReactNode}){
-  return <details className="profile-panel">
-    <summary><span>{title}</span><small>{hint}</small></summary>
+  return <Disclosure className="profile-panel" summary={<><span>{title}</span><small>{hint}</small></>}>
     <div className="profile-panel-body">{children}</div>
-  </details>;
+  </Disclosure>;
 }
 
 export default function Page(){
