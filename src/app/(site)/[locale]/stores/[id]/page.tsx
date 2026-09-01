@@ -116,7 +116,7 @@ export default async function Page({params}:Props){
     </section>
     <section className="store-body">
       <div className="store-description">
-        <p className="eyebrow">{t.about}</p>
+        <p className="eyebrow store-section-title">{t.about}</p>
         {store.localized_description&&<p>{store.localized_description}</p>}
         <address>{[store.address,[store.district,store.city].filter(Boolean).join('/')].filter(Boolean).join(', ')}</address>
         <Link className="store-correction-link" href={correctionPath}>{contribution.correction}</Link>
@@ -140,7 +140,7 @@ export default async function Page({params}:Props){
         </aside>}
       </div>
       <div className="store-reviews">
-        <p className="eyebrow">{t.community}</p>
+        <p className="eyebrow store-section-title">{t.community}</p>
         {recent_posts.length?recent_posts.map(post=><PostCard post={post} showStoreName={false} showStoreFallbackPhoto={false} key={post.id}/>):<div className="empty-state"><h2>{t.noCommunity}</h2><p>{t.noReviewsBody}</p></div>}
       </div>
     </section>

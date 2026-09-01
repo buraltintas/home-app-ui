@@ -123,7 +123,10 @@ svg{stroke-width:2}
 .store-highlight{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:14px}.store-highlight-photo{width:72px;height:72px;border-radius:var(--r-md);object-fit:cover;flex:none}.store-highlight-photo-empty{display:grid;place-items:center;background:var(--muted);color:var(--ink-muted);font-size:28px;font-weight:700}.store-highlight-copy{display:flex;flex-direction:column;gap:3px;min-width:0}.store-highlight-copy strong{overflow:hidden;text-overflow:ellipsis}.store-highlight-metric{margin-top:3px;color:var(--clay);font-size:14px;font-weight:700}
 .result-row{border-bottom:1px solid var(--line)}.result-row .search-result{border-bottom:0}.result-row{display:flex;flex-direction:column;align-items:flex-start}.result-row>a:first-child{align-self:stretch}.result-google{display:inline-flex;align-items:center;gap:8px;min-height:44px;margin:0 0 24px 258px;padding:0 16px;border-radius:var(--r-pill);font-size:14px;color:var(--ink-muted);transition:color .16s ease,background-color .16s ease}.result-google:hover{color:var(--ink);background:var(--muted)}.result-google svg{width:16px;height:16px}
 .result-row[data-catalog-store="true"]{margin-inline:-20px;padding-inline:20px;background:var(--accent-wash)}
-.catalog-store-label,.store-catalog-label{display:block;width:fit-content;margin:0 0 8px;color:var(--accent-ink);font-size:11px;font-weight:800;letter-spacing:.1em;line-height:1.35;text-transform:uppercase}
+/* A band, not a caption. At 11px and hugging its own text it read as one more small
+   label among several; the whole point of it is that this store is here on purpose. It
+   spans its column now and is closed top and bottom by a rule, so the eye stops on it. */
+.catalog-store-label,.store-catalog-label{display:block;width:100%;margin:0 0 10px;padding:7px 0;border-top:2px solid var(--accent-ink);border-bottom:2px solid var(--accent-ink);color:var(--accent-ink);font-size:14px;font-weight:800;letter-spacing:.1em;line-height:1.35;text-transform:uppercase}
 .store-catalog-label{grid-column:1/-1;margin-bottom:-30px}
 @media(max-width:900px){.store-catalog-label{margin-bottom:0}}
 .result-call{display:inline-flex;align-items:center;gap:10px;min-height:44px;margin:0 0 24px 258px;padding:0 18px;border:1px solid var(--line-strong);border-radius:var(--r-pill);background:var(--surface);font-size:15px;transition:background-color .16s ease,border-color .16s ease}.result-call:hover{background:var(--accent-wash);border-color:var(--accent)}.result-call svg{width:17px;height:17px;color:var(--accent-ink)}.result-call span{font-weight:600}.result-call strong{font-weight:400;color:var(--ink-muted)}
@@ -239,3 +242,14 @@ svg{stroke-width:2}
 .contribution-progress>span:last-child{display:grid;gap:2px}
 .contribution-progress strong{font-size:14px}.contribution-progress small{color:var(--ink-muted);font-size:11px}
 @media(max-width:720px){.store-overview,.store-body{max-width:100vw}.store-contribution{width:100%;max-width:100vw;padding:20px 18px 0;overflow:hidden}.review-invitation{width:100%;max-width:calc(100vw - 36px);padding:22px 20px;grid-template-columns:minmax(0,1fr);gap:20px}.review-invitation h2{font-size:24px}.review-invitation p{overflow-wrap:anywhere}.review-invitation-actions{width:100%;max-width:100%}}
+
+
+/* The two headings that open the store page -- what the shop is, and what people found
+   there -- were set at the same 11px as every incidental label on the site. They are not
+   labels; they name the two halves of the page. Two steps up, and only these two. */
+.store-section-title{font-size:15px}
+
+/* The review action on a saved store. Same control as the store page's, sized for a list
+   row rather than a page: it sits under the row it belongs to and spans it, so on a phone
+   it is one clear tap rather than something to aim at. */
+.favorite-review-action{min-height:44px;margin-top:10px;border-radius:var(--r-md);font-size:15px}

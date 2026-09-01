@@ -8,6 +8,29 @@ value involved.
 
 ---
 
+## Five small revisions across the site
+
+- **Favourites.** The signed-out screen said saved stores "will appear here", which
+  describes a page rather than telling somebody what to do; it now says to sign in. The
+  signed-in empty state is one short sentence instead of an instruction about a heart icon
+  nobody has seen yet. And each saved store carries the review action, the same control and
+  the same wording the store page uses -- outside the row's link, because an anchor cannot
+  hold another anchor and starting a review is not a step on the way to opening a page.
+- **"Yorum" became "değerlendirme"** in the one place it had been missed: the line shown
+  where a store has no community rating yet.
+- **The store page's two section headings** -- what the shop is, and what people found
+  there -- were set at the same 11px as every incidental label on the site. They name the
+  two halves of the page, so they are two steps larger, and only those two.
+- **The catalogue-store mark** is a band now rather than a caption: it spans its column and
+  is closed top and bottom by a rule. At 11px, hugging its own text, it read as one more
+  small label, and the whole point of it is that the store is there on purpose.
+- **Pinterest and Snapchat** joined the footer. The Pinterest link supplied was a personal
+  invite carrying an invite code and the sender's id -- following it would have invited
+  every visitor on somebody's behalf -- so the public profile it resolves to is what is
+  linked.
+
+---
+
 ## Seven returned product revisions were implemented from their latest feedback
 
 - Home's city signal now uses the requested “most searches made” wording, and its search

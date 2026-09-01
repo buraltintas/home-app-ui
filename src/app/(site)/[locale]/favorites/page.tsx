@@ -11,8 +11,11 @@ import {Rating} from '@/components/Rating';
 import {useI18n} from '@/i18n/I18nProvider';
 import { localePath } from '@/lib/site';
 import {apiFetch} from '@/lib/api-client';
-import type {Store} from '@/lib/types';
+import type {Locale,Store} from '@/lib/types';
 import {storePhotoURL} from '@/lib/store-photo';
+
+// The same wording the store page uses for the same action; one product, one name for it.
+const reviewAction:Record<Locale,string>={tr:'Değerlendirme yap',en:'Write a review',de:'Bewertung abgeben',ru:'Оставить оценку'};
 
 export default function Page(){
   const {t,locale}=useI18n();
@@ -59,12 +62,18 @@ export default function Page(){
     <p className="eyebrow">{t('favorites')}</p>
     <h1>{t('favoritesTitle')}</h1>
     {error&&<p className="form-error" role="alert">{error}</p>}
-    <ul className="favorites-list">{stores.map(store=>{const photo=storePhotoURL(store.photo,320);return <li key={store.id}><Link href={localePath(locale,`/stores/${store.id}`)}>
-      {photo?<Image className="favorite-store-photo" src={photo} width={160} height={120} alt="" unoptimized/>:<div className="favorite-store-photo is-empty" aria-hidden="true">{store.name.trim().charAt(0)}</div>}
-      <div><strong>{store.name}</strong><span>{[store.district,store.city].filter(Boolean).join(', ')}</span>
-      {store.platform.review_count?<small><Rating value={store.platform.average_rating}/> · {store.platform.review_count} {t('reviews')}</small>:<small>{t('noCommunity')}</small>}</div>
-      <ArrowRight aria-hidden="true"/>
-    </Link></li>})}</ul>
+    {/* The review action sits outside the link, not inside it: an anchor cannot hold
+        another anchor, and starting a review is not a step on the way to opening the
+        store's page. It is the same control, and the same wording, the store page uses. */}
+    <ul className="favorites-list">{stores.map(store=>{const photo=storePhotoURL(store.photo,320);return <li key={store.id}>
+      <Link href={localePath(locale,`/stores/${store.id}`)}>
+        {photo?<Image className="favorite-store-photo" src={photo} width={160} height={120} alt="" unoptimized/>:<div className="favorite-store-photo is-empty" aria-hidden="true">{store.name.trim().charAt(0)}</div>}
+        <div><strong>{store.name}</strong><span>{[store.district,store.city].filter(Boolean).join(', ')}</span>
+        {store.platform.review_count?<small><Rating value={store.platform.average_rating}/> · {store.platform.review_count} {t('reviews')}</small>:<small>{t('noCommunity')}</small>}</div>
+        <ArrowRight aria-hidden="true"/>
+      </Link>
+      <Link className="button store-contribution-action favorite-review-action" href={localePath(locale,`/create?store=${store.id}`)}>{reviewAction[locale]}</Link>
+    </li>})}</ul>
   </main>;
 
   return <main className="empty-page favorites-empty"><Heart/><p className="eyebrow">{t('favorites')}</p><h1>{t('favoritesTitle')}</h1><p>{signedIn?t('favoritesSignedInEmpty'):t('favoritesEmpty')}</p>{error&&<p className="form-error" role="alert">{error}</p>}{!checking&&!signedIn&&<button className="button primary" onClick={()=>setOpen(true)}>{t('signIn')}</button>}<AuthDialog open={open} onClose={()=>setOpen(false)} onAuthenticated={()=>setSignedIn(true)}/></main>;

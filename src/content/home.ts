@@ -8,7 +8,7 @@ type HomeBannerCopy={
 export const homeBannerCopy:Record<Locale,HomeBannerCopy>={
   tr:{title:'Alışverişinize bizimle başlayın!',steps:[
     {title:'Keşfedin.',body:'Gelişmiş arama optimizasyonu'},
-    {title:'Gidin.',body:'Doğrulanmış gerçek ziyaret'},
+    {title:'Gidin.',body:'Doğrulanmış gerçek ziyaretler'},
     {title:'Değerlendirin.',body:'Sonuç odaklı kriterler'},
   ]},
   en:{title:'Start your shopping trip with us!',steps:[

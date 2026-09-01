@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import {FaFacebookF,FaInstagram,FaLinkedinIn,FaRedditAlien,FaThreads,FaTiktok,FaXTwitter} from 'react-icons/fa6';
+import {FaFacebookF,FaInstagram,FaLinkedinIn,FaPinterestP,FaRedditAlien,FaSnapchat,FaThreads,FaTiktok,FaXTwitter} from 'react-icons/fa6';
 import {groupLabels,legalHubLabel,legalLinks,type LegalGroup} from '@/lib/legal-links';
 import {localePath,slogan} from '@/lib/site';
 import type {Locale} from '@/lib/types';
@@ -24,6 +24,11 @@ const social=[
   {label:'Facebook',href:'https://www.facebook.com/Bosagezme',Icon:FaFacebookF},
   {label:'LinkedIn',href:'https://www.linkedin.com/in/bo%C5%9Fa-gezme-91a8b142a',Icon:FaLinkedinIn},
   {label:'Reddit',href:'https://www.reddit.com/user/Bosagezme',Icon:FaRedditAlien},
+  // The link supplied for Pinterest was a personal invite (pin.it/…, carrying an invite
+  // code and the sender's id). Following it would have invited every visitor on somebody's
+  // behalf, so it is the public profile the invite resolves to that is linked here.
+  {label:'Pinterest',href:'https://www.pinterest.com/bosagezme/',Icon:FaPinterestP},
+  {label:'Snapchat',href:'https://www.snapchat.com/explore/Bo%C5%9Fagezme',Icon:FaSnapchat},
 ];
 
 const followLabel:Record<Locale,string>={tr:'Bizi takip edin',en:'Follow us',de:'Folge uns',ru:'Мы в соцсетях'};
