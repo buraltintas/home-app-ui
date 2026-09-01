@@ -8,6 +8,13 @@ value involved.
 
 ---
 
+## The last "yorum" on the review flow
+
+- The button that publishes a review said "Yorumu paylaş". Everything else on this journey
+  has said "değerlendirme" for weeks; this was the last place the old word survived.
+
+---
+
 ## Two of the fourteen footer pages were never part of the legal system
 
 - The report kept coming back after each rescale, and the reason is that the rescales only
