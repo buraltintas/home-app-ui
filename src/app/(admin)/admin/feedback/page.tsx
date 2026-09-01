@@ -26,10 +26,10 @@ export default async function Page({searchParams}:{searchParams:Promise<{q?:stri
       <table className="admin-table">
         <thead><tr><th>Tarih</th><th>Konu</th><th>Mesaj</th><th>Gönderen</th><th>Dil</th><th>Durum</th><th></th></tr></thead>
         <tbody>
-          {result.data.rows.map(row=><tr key={row.id}>
+          {result.data.rows.map(row=>{const [title,...body]=row.message.split('\n');return <tr key={row.id}>
             <td>{when(row.created_at)}</td>
             <td>{KINDS[row.kind]??row.kind}</td>
-            <td className="admin-feedback-message"><p>{row.message}</p>{row.user_id
+            <td className="admin-feedback-message"><p>{body.length?<><strong>{title}</strong>{body.join('\n')}</>:row.message}</p>{row.user_id
               ?<AdminFeedbackReply id={row.id} initialReply={row.reply}/>
               :<small>Uygulama içi yanıt yalnızca giriş yaparak gönderilen mesajlarda kullanılabilir.</small>}</td>
             <td>{row.author||row.contact_email||<em>anonim</em>}</td>
@@ -38,7 +38,7 @@ export default async function Page({searchParams}:{searchParams:Promise<{q?:stri
             <td>{row.status==='handled'
               ?<AdminAction path={`feedback/${row.id}/status`} method="POST" body={{status:'new'}} label="Geri aç"/>
               :<AdminAction path={`feedback/${row.id}/status`} method="POST" body={{status:'handled'}} label="Kapat"/>}</td>
-          </tr>)}
+          </tr>})}
           {result.data.rows.length===0&&<tr><td colSpan={7} className="admin-empty">Henüz mesaj yok.</td></tr>}
         </tbody>
       </table>

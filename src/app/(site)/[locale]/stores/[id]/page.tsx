@@ -141,7 +141,7 @@ export default async function Page({params}:Props){
       </div>
       <div className="store-reviews">
         <p className="eyebrow">{t.community}</p>
-        {recent_posts.length?recent_posts.map(post=><PostCard post={post} showStoreName={false} key={post.id}/>):<div className="empty-state"><h2>{t.noCommunity}</h2><p>{t.noReviewsBody}</p></div>}
+        {recent_posts.length?recent_posts.map(post=><PostCard post={post} showStoreName={false} showStoreFallbackPhoto={false} key={post.id}/>):<div className="empty-state"><h2>{t.noCommunity}</h2><p>{t.noReviewsBody}</p></div>}
       </div>
     </section>
   </main>;

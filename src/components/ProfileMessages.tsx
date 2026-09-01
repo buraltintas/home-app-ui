@@ -26,9 +26,9 @@ export function ProfileMessages({locale}:{locale:Locale}){
   if(error)return <p className="form-error" role="alert">{error}</p>;
   if(items===null)return <div className="profile-list-skeleton" aria-label={text.sent}/>;
   if(items.length===0)return <p className="profile-empty">{text.empty}</p>;
-  return <div className="profile-messages">{items.map(item=><article key={item.id} className="profile-message">
+  return <div className="profile-messages">{items.map(item=>{const [title,...body]=item.message.split('\n');return <article key={item.id} className="profile-message">
     <header><strong>{text.sent}</strong><time dateTime={item.created_at}>{new Intl.DateTimeFormat(locale,{dateStyle:'medium'}).format(new Date(item.created_at))}</time></header>
-    <p>{item.message}</p>
-    {item.reply?<div className="profile-message-reply"><strong>{text.reply}</strong><p>{item.reply}</p>{item.replied_at&&<time dateTime={item.replied_at}>{new Intl.DateTimeFormat(locale,{dateStyle:'medium'}).format(new Date(item.replied_at))}</time>}</div>:<small>{text.pending}</small>}
-  </article>)}</div>;
+    <p>{body.length?<><strong className="profile-message-kind">{title}</strong>{body.join('\n')}</>:item.message}</p>
+    {item.reply?<div className="profile-message-reply"><strong>{text.reply}</strong><p>{item.reply}</p>{item.replied_at&&<time dateTime={item.replied_at}>{new Intl.DateTimeFormat(locale,{dateStyle:'medium'}).format(new Date(item.replied_at))}</time>}</div>:<small className="profile-message-status">{text.pending}</small>}
+  </article>})}</div>;
 }

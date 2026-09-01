@@ -171,7 +171,7 @@
 .favorites-list svg{width:20px;height:20px;color:var(--clay)}
 @media(max-width:600px){.favorites-list a{grid-template-columns:88px 1fr auto;gap:12px}.favorite-store-photo{width:88px;height:88px}}
 
-.profile-messages{display:grid;gap:14px}.profile-message{padding:18px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface)}.profile-message header{display:flex;align-items:center;justify-content:space-between;gap:18px}.profile-message header strong,.profile-message-reply>strong{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--clay)}.profile-message time,.profile-message>small{font-size:13px;color:var(--ink-muted)}.profile-message>p{margin:10px 0 14px;white-space:pre-wrap}.profile-message-reply{margin-top:14px;padding:15px 16px;border-radius:var(--r-sm);background:var(--accent-wash)}.profile-message-reply p{margin:7px 0;white-space:pre-wrap}.profile-empty{color:var(--ink-muted)}
+.profile-messages{display:grid;gap:14px}.profile-message{padding:18px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface)}.profile-message header{display:flex;align-items:center;justify-content:space-between;gap:18px}.profile-message header strong,.profile-message-reply>strong{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--clay)}.profile-message time,.profile-message>small{font-size:13px;color:var(--ink-muted)}.profile-message>p{margin:10px 0 14px;white-space:pre-wrap}.profile-message-kind{display:block;margin-bottom:6px;font-size:17px;line-height:1.3;letter-spacing:-.02em;color:var(--ink)}.profile-message-status{display:inline-flex!important;width:fit-content;padding:5px 9px;border:1px solid var(--line-strong);border-radius:var(--r-pill);font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)!important}.profile-message-reply{margin-top:14px;padding:15px 16px;border-radius:var(--r-sm);background:var(--accent-wash)}.profile-message-reply p{margin:7px 0;white-space:pre-wrap}.profile-empty{color:var(--ink-muted)}
 
 .past-searches{margin:56px 0 0;text-align:left;width:100%;max-width:640px}
 .past-searches-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px}
@@ -358,6 +358,8 @@ body>main{flex:1 0 auto}
 .profile-panel .past-searches{margin:0;max-width:none}
 .profile-review-list{border:1px solid var(--line);border-bottom:0}
 .profile-review-list .post-card{padding:28px 32px}
+.profile-review-list .post-card.is-owned{display:block}.profile-review-list .post-card.is-owned .post-heading{display:block;margin:0 0 18px}.profile-review-list .post-card.is-owned .post-photo,.profile-review-list .post-card.is-owned .post-details{width:100%}.profile-review-list .post-card.is-owned .post-details{min-height:0}.profile-review-list .post-card.is-owned .post-actions{justify-content:flex-start}.profile-review-list .post-card.is-owned .post-actions .post-delete{margin-left:auto}
+.store-reviews .post-card.is-photo-free .post-details{grid-column:2/4;grid-row:2}.store-reviews .post-card.is-photo-free .post-copy{margin-top:22px}
 .profile-reviews-empty{margin:0;color:var(--ink-muted)}
 .profile-review-skeleton{display:grid;gap:12px;max-width:520px}
 .profile-review-skeleton span{height:14px;background:var(--muted);border-radius:4px}

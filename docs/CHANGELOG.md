@@ -8,6 +8,20 @@ value involved.
 
 ---
 
+## Seven returned product revisions were implemented from their latest feedback
+
+- Home's city signal now uses the requested “most searches made” wording, and its search
+  field has the same wrapping, Enter-key and clear behaviour as Discover.
+- Store-correction messages name the store in the reader's language and no longer expose
+  an internal store identifier. Their correction title and pending-reply state now have a
+  distinct visual hierarchy in both the operator queue and the private profile.
+- A person's review history removes repeated identity, comment and top-corner controls;
+  the delete action sits beside Share, and the rating/date panel matches the review image
+  width. The redundant Profile eyebrow was removed.
+- Store pages show only media contributed with a review inside that review. A store-cover
+  fallback is still used in the feed, but is no longer repeated on every review of the
+  store whose page is already open.
+
 ## Test feedback now changes the real interaction, not only its copy
 
 - Clearing Discover's search field and pressing Search now cancels any in-flight request,

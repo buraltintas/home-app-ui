@@ -5,7 +5,7 @@ type Props={className:'favorites-page'|'profile-page';eyebrow:string;title:strin
 // stays visually stable while authentication is resolved.
 export function AccountPageSkeleton({className,eyebrow,title}:Props){
   return <main className={`${className} account-page-loading`} aria-busy="true" aria-label={title}>
-    <p className="eyebrow">{eyebrow}</p>
+    {eyebrow&&<p className="eyebrow">{eyebrow}</p>}
     <h1>{title}</h1>
     <div className="account-loading-card" aria-hidden="true">
       <span className="account-loading-avatar"/>

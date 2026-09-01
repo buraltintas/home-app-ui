@@ -48,17 +48,16 @@ export default function Page(){
   const remove=async()=>{if(!window.confirm(`${copy.title}\n\n${deleteBody[locale]}`))return;setDeleting(true);try{const response=await apiFetch('/api/proxy/me',{method:'DELETE'});if(!response.ok)throw new Error();await fetch('/api/auth/logout',{method:'POST'});setSignedIn(false);setMe(null);}catch{window.alert(copy.failed);}finally{setDeleting(false);}};
 
   useScrollTopWhenReady(!checking);
-  if(checking)return <AccountPageSkeleton className="profile-page" eyebrow={t('profile')} title={t('profileTitle')}/>;
+  if(checking)return <AccountPageSkeleton className="profile-page" eyebrow="" title={t('profileTitle')}/>;
 
   if(!signedIn||!me)return <main className="profile-page profile-page-out">
-    <p className="eyebrow">{t('profile')}</p><h1>{t('profileTitle')}</h1>
+    <h1>{t('profileTitle')}</h1>
     <p>{copy.body}</p>
     <button className="button primary" onClick={()=>setOpen(true)}>{t('signIn')}</button>
     <AuthDialog open={open} onClose={()=>setOpen(false)}/>
   </main>;
 
   return <main className="profile-page">
-    <p className="eyebrow">{t('profile')}</p>
     <h1>{t('profileTitle')}</h1>
     <section className="profile-summary">
       <div className="profile-avatar">{(me.display_name||me.email).slice(0,1).toLocaleUpperCase(locale)}</div>
