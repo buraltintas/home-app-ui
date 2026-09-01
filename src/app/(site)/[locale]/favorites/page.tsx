@@ -66,7 +66,7 @@ export default function Page(){
         another anchor, and starting a review is not a step on the way to opening the
         store's page. It is the same control, and the same wording, the store page uses. */}
     <ul className="favorites-list">{stores.map(store=>{const photo=storePhotoURL(store.photo,320);return <li key={store.id}>
-      <Link href={localePath(locale,`/stores/${store.id}`)}>
+      <Link href={localePath(locale,`/stores/${store.id}`)} prefetch={false}>
         {photo?<Image className="favorite-store-photo" src={photo} width={160} height={120} alt="" unoptimized/>:<div className="favorite-store-photo is-empty" aria-hidden="true">{store.name.trim().charAt(0)}</div>}
         <div><strong>{store.name}</strong><span>{[store.district,store.city].filter(Boolean).join(', ')}</span>
         {store.platform.review_count?<small><Rating value={store.platform.average_rating}/> · {store.platform.review_count} {t('reviews')}</small>:<small>{t('noCommunity')}</small>}</div>

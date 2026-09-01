@@ -13,7 +13,7 @@ import type { LocationFailure } from '@/lib/location';
 import { LOCATION_LOST_EVENT, deviceLocationAllowed, forgetDeviceLocation, watchLocationConsent, canUseDeviceLocationWithoutPrompt, clearSearchLocation, LOCATION_UPDATE_EVENT, locationMessage, rememberedPosition, requestPosition, savedSearchLocation, saveSearchLocation } from '@/lib/location';
 import { seasonalPool } from '@/i18n/search-seasons';
 import { rememberOriginSearch } from '@/lib/search-origin';
-import { SNAPSHOT_KEY } from '@/lib/search-session';
+import { clearSearchSnapshot, readSearchSnapshot, writeSearchSnapshot } from '@/lib/search-session';
 import { categoryLabels, searchExamples, storeStatusCopy } from '@/i18n/dictionaries';
 import { Rating } from './Rating';
 import { SearchOverlay } from './SearchOverlay';
@@ -116,7 +116,11 @@ function Result({item,onSelect,onCall,saved}:{item:SearchResult;onSelect:()=>voi
   // another anchor, and more to the point, tapping a phone number should place a call,
   // not open a store page on the way there.
   return <div className="result-row" data-catalog-store={item.catalog_store||undefined}>
-    {item.id?<Link href={localePath(locale,`/stores/${item.id}`)} onClick={onSelect}>{card}</Link>:card}
+    {/* Not prefetched. A results page carries up to thirty of these, and prefetching them
+        means thirty server renders and thirty backend reads for a page from which somebody
+        will open one store, or none. That burst is what emptied the rate limit and made
+        the stores in the list answer "not found" when they were plainly there. */}
+    {item.id?<Link href={localePath(locale,`/stores/${item.id}`)} prefetch={false} onClick={onSelect}>{card}</Link>:card}
     {scores}
     {/* Directly above the telephone number, because the two answer the same question in
         sequence: is it open, and can I ring first. Inside the card it sat among the
@@ -230,8 +234,7 @@ export function SearchExperience() {
   // what the rule below forbids, and it is the one case where the effect is the correct
   // tool, so it is silenced here and nowhere else.
   useEffect(()=>{
-    let snapshot:SearchSnapshot|undefined;
-    try{const raw=sessionStorage.getItem(SNAPSHOT_KEY);if(raw)snapshot=JSON.parse(raw) as SearchSnapshot;}catch{}
+    const snapshot=readSearchSnapshot<SearchSnapshot>();
     // Someone who typed on the homepage arrives with their words in the address bar. Those
     // win over whatever the last visit left behind -- they were written a second ago, and
     // the results from before are about something else.
@@ -292,8 +295,8 @@ export function SearchExperience() {
   useEffect(()=>{
     if(!restored)return;
     try{
-      if(data)sessionStorage.setItem(SNAPSHOT_KEY,JSON.stringify({query,location,data} satisfies SearchSnapshot));
-      else sessionStorage.removeItem(SNAPSHOT_KEY);
+      if(data)writeSearchSnapshot<SearchSnapshot>({query,location,data});
+      else clearSearchSnapshot();
     }catch{}
   },[restored,query,location,data]);
 
@@ -394,7 +397,7 @@ export function SearchExperience() {
       pending.current='';
       setQuery('');setData(undefined);setLoading(false);setError('');setErrorReason('');
       try{
-        sessionStorage.removeItem(SNAPSHOT_KEY);
+        clearSearchSnapshot();
         const url=new URL(window.location.href);
         url.searchParams.delete('q');
         window.history.replaceState(window.history.state,'',url);

@@ -8,6 +8,30 @@ value involved.
 
 ---
 
+## A results page was reading thirty store pages nobody had asked for
+
+- Every store link in a list was prefetched, so opening a results page quietly rendered up
+  to thirty store pages on the server and read each of them from the backend -- for a page
+  from which somebody opens one store, or none. That burst is what emptied the rate limit
+  and made those same stores answer "not found".
+- Lists do not prefetch now. The wait after a tap is therefore visible, so the store route
+  has a loading state: the same shapes in the same places, so the real page fills them in
+  rather than jumping into view.
+
+---
+
+## The search results survived on a desktop and vanished on a phone
+
+- Reported as coming back from a store page on a phone and finding the search as though it
+  had never happened, while the same journey on a desktop kept it.
+- The results were held in session storage, which a phone under memory pressure throws away
+  along with the discarded background tab. A desktop tab is rarely discarded, which is why
+  only one of the two was affected.
+- They are held in local storage now, which survives that, and stamped with the time they
+  were written so a search from yesterday is not what somebody is returned to. An hour.
+
+---
+
 ## The last "yorum" on the review flow
 
 - The button that publishes a review said "Yorumu paylaş". Everything else on this journey
