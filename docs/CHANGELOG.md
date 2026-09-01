@@ -8,6 +8,26 @@ value involved.
 
 ---
 
+## The legal pages did not fit a phone, and it was one table doing it
+
+- Measured at 375px: the document was 496px wide on the privacy policy and 688px on the
+  cookie policy. Not a stray long word -- every paragraph, every heading and the page title
+  were all sitting off the right edge together, because the page itself was wider than the
+  screen.
+- `body>main` is a flex item, and a flex item defaults to `min-width:auto` -- it refuses to
+  be narrower than its widest child. One table with `min-width:460px` therefore set the
+  width of the whole page, and the cookie table, whose own content will not compress below
+  652px, set it wider still. The scroll container around the tables could never engage,
+  because nothing ever asked the table to be narrower than the page.
+- `min-width:0;width:100%` on `body>main` pins every page to the viewport and lets the
+  tables scroll inside their own container, which is what they were wrapped for. This is a
+  layout rule, not a legal-page rule: any page that ever holds something wide was exposed
+  the same way.
+- Separately, the legal type scale was set for a 900px column and was still 20px on a
+  phone, about five words to a line. One step down across the family below 600px.
+
+---
+
 ## The legal index set its headings a third smaller than the documents it links to
 
 - Measured on the live pages rather than in the stylesheet this time: every one of the
