@@ -383,7 +383,25 @@ export function SearchExperience() {
   // next province. The location sheet opens instead of running an unusable query, and
   // the query is kept so the visitor returns to it once a place is chosen.
   const runSearch=async(nextQuery=query,nextLocation=location)=>{
-    if(nextQuery.trim().length<2)return;
+    const normalizedQuery=nextQuery.trim();
+    // Submitting an emptied field means “leave these results”, not “ignore the click”.
+    // Previously the length guard returned before changing any state, so the old shops
+    // remained on screen even though the query describing them was gone.
+    if(!normalizedQuery){
+      searchAbort.current?.abort();
+      searchAbort.current=null;
+      searchSequence.current++;
+      pending.current='';
+      setQuery('');setData(undefined);setLoading(false);setError('');setErrorReason('');
+      try{
+        sessionStorage.removeItem(SNAPSHOT_KEY);
+        const url=new URL(window.location.href);
+        url.searchParams.delete('q');
+        window.history.replaceState(window.history.state,'',url);
+      }catch{}
+      return;
+    }
+    if(normalizedQuery.length<2)return;
     if(!nextLocation){
       // Keep the search waiting while an already-authorised device fix arrives. The
       // location effect below resumes it automatically, so permission is not exposed
@@ -400,7 +418,7 @@ export function SearchExperience() {
     // wording I tried".
     try{
       const url=new URL(window.location.href);
-      url.searchParams.set('q',nextQuery.trim());
+      url.searchParams.set('q',normalizedQuery);
       window.history.replaceState(window.history.state,'',url);
     }catch{}
     searchAbort.current?.abort();
@@ -412,7 +430,7 @@ export function SearchExperience() {
     // a correction the visitor typed immediately afterwards.
     setLoading(true);setError('');setData(undefined);
     try{
-      const response=await apiFetch('/api/proxy/search',{method:'POST',signal:controller.signal,headers:{'Content-Type':'application/json','X-Locale':locale},body:JSON.stringify({query:nextQuery.trim(),...(nextLocation?.coordinates??{})})});
+      const response=await apiFetch('/api/proxy/search',{method:'POST',signal:controller.signal,headers:{'Content-Type':'application/json','X-Locale':locale},body:JSON.stringify({query:normalizedQuery,...(nextLocation?.coordinates??{})})});
       if(!response.ok)throw await response.json();
       const responseData=await response.json() as SearchResponse;
       if(sequence===searchSequence.current)setData(responseData);

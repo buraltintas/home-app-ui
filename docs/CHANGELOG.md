@@ -8,6 +8,24 @@ value involved.
 
 ---
 
+## Test feedback now changes the real interaction, not only its copy
+
+- Clearing Discover's search field and pressing Search now cancels any in-flight request,
+  removes the query and saved result snapshot, and returns the page to its initial state.
+- Search-result ratings and the save-for-review action now use the full content column as
+  their centring axis and sit closer to the store summary instead of drifting left in an
+  intrinsic-width box.
+- Privacy and legal reading pages use a materially larger body, subheading and table scale
+  with a wider measure, addressing the rejected small-text revision as a shared legal-page
+  rule rather than another page-specific exception.
+- Favourites and Profile use content-shaped neutral session skeletons. They no longer flash
+  unrelated mascot artwork while authentication is being checked.
+- Store and review routes suppress delayed browser scroll restoration for the first settled
+  frames, preventing cached navigation from reopening below the top of the page.
+- Home's contribution-level answer now renders the canonical table already present in the
+  About content. The five distinct level illustrations remain a separate asset task rather
+  than being imitated with one repeated image.
+
 ## Home now explains the visit loop before asking for trust
 
 - The discovery banner is shorter on desktop and mobile, and its photograph is anchored

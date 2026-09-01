@@ -15,6 +15,23 @@ import {useLayoutEffect} from 'react';
 // than as a visible jump.
 export function useScrollTopWhenReady(ready:boolean){
   useLayoutEffect(()=>{
-    if(ready)window.scrollTo(0,0);
+    if(!ready)return;
+    const previous=history.scrollRestoration;
+    history.scrollRestoration='manual';
+    const top=()=>window.scrollTo(0,0);
+    top();
+    // Framework navigation and bfcache restoration can both apply their saved offset
+    // after the first layout effect. Cover those two browser-owned moments, then stop;
+    // a real scroll by the visitor must never be pulled back to the top.
+    let secondFrame=0;
+    const firstFrame=requestAnimationFrame(()=>{top();secondFrame=requestAnimationFrame(top);});
+    const restore=()=>top();
+    window.addEventListener('pageshow',restore,{once:true});
+    const timer=window.setTimeout(()=>{history.scrollRestoration=previous;},120);
+    return()=>{
+      cancelAnimationFrame(firstFrame);cancelAnimationFrame(secondFrame);
+      clearTimeout(timer);window.removeEventListener('pageshow',restore);
+      history.scrollRestoration=previous;
+    };
   },[ready]);
 }

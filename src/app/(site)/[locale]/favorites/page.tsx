@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import {useCallback,useEffect,useState} from 'react';
 import {AuthDialog} from '@/components/AuthDialog';
-import {MascotLoader} from '@/components/MascotLoader';
+import {AccountPageSkeleton} from '@/components/AccountPageSkeleton';
 import {useScrollTopWhenReady} from '@/lib/scroll-top';
 import {Rating} from '@/components/Rating';
 import {useI18n} from '@/i18n/I18nProvider';
@@ -53,7 +53,7 @@ export default function Page(){
   // signed-out screen first and then swap to the list, so a signed-in visitor was briefly
   // told they had no favourites.
   useScrollTopWhenReady(!checking);
-  if(checking)return <main className="favorites-page"><p className="eyebrow">{t('favorites')}</p><h1>{t('favoritesTitle')}</h1><MascotLoader/></main>;
+  if(checking)return <AccountPageSkeleton className="favorites-page" eyebrow={t('favorites')} title={t('favoritesTitle')}/>;
 
   if(signedIn&&stores.length)return <main className="favorites-page">
     <p className="eyebrow">{t('favorites')}</p>

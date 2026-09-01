@@ -9,7 +9,12 @@ import type {Locale} from '@/lib/types';
 //
 function renderBlock(block:Block,index:number){
   if('p' in block)return <p key={index}>{block.p}</p>;
+  if('h3' in block)return <h3 key={index}>{block.h3}</h3>;
   if('ul' in block)return <ul key={index}>{block.ul.map((item,i)=><li key={i}>{item}</li>)}</ul>;
+  if('table' in block)return <div className="home-question-table" key={index}><table>
+    <thead><tr>{block.table.head.map((cell,i)=><th key={i} scope="col">{cell}</th>)}</tr></thead>
+    <tbody>{block.table.rows.map((row,rowIndex)=><tr key={rowIndex}>{row.map((cell,cellIndex)=><td key={cellIndex}>{cell}</td>)}</tr>)}</tbody>
+  </table></div>;
   if('note' in block)return <p key={index} className="legal-note">{block.note}</p>;
   return null;
 }
