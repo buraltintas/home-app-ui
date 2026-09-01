@@ -7,24 +7,24 @@ type HomeBannerCopy={
 
 export const homeBannerCopy:Record<Locale,HomeBannerCopy>={
   tr:{title:'Alışverişinize bizimle başlayın!',steps:[
-    {title:'Keşfedin.',body:'Gelişmiş arama optimizasyonu ile'},
+    {title:'Keşfedin.',body:'Gelişmiş arama optimizasyonu'},
     {title:'Gidin.',body:'Doğrulanmış gerçek ziyaret'},
-    {title:'Değerlendirin.',body:'Gerçek kriterler ile'},
+    {title:'Değerlendirin.',body:'Sonuç odaklı kriterler'},
   ]},
   en:{title:'Start your shopping trip with us!',steps:[
-    {title:'Discover.',body:'With advanced search optimisation'},
+    {title:'Discover.',body:'Advanced search optimisation'},
     {title:'Visit.',body:'A real, verified visit'},
-    {title:'Review.',body:'Using criteria that matter'},
+    {title:'Review.',body:'Outcome-focused criteria'},
   ]},
   de:{title:'Starte deinen Einkauf mit uns!',steps:[
-    {title:'Entdecken.',body:'Mit optimierter, intelligenter Suche'},
+    {title:'Entdecken.',body:'Optimierte, intelligente Suche'},
     {title:'Hingehen.',body:'Ein echter, bestätigter Besuch'},
-    {title:'Bewerten.',body:'Nach Kriterien, die wirklich zählen'},
+    {title:'Bewerten.',body:'Ergebnisorientierte Kriterien'},
   ]},
   ru:{title:'Начните покупки вместе с нами!',steps:[
-    {title:'Найдите.',body:'С помощью улучшенного поиска'},
+    {title:'Найдите.',body:'Улучшенный поиск'},
     {title:'Посетите.',body:'Настоящий подтверждённый визит'},
-    {title:'Оцените.',body:'По критериям, которые действительно важны'},
+    {title:'Оцените.',body:'Критерии, ориентированные на результат'},
   ]},
 };
 

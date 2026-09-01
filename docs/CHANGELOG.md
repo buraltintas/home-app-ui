@@ -10,6 +10,10 @@ value involved.
 
 ## Home now explains the visit loop before asking for trust
 
+- The discovery banner is shorter on desktop and mobile, and its photograph is anchored
+  at the top so the requested crop comes from the bottom. The two revised product lines
+  now describe advanced search optimisation and outcome-focused criteria without the
+  filler wording, with equivalent changes in every shipped locale.
 - The decorative discovery mascot was removed from the home masthead at every breakpoint;
   its asset remains available for a future state where it can carry meaning rather than
   compete with search and store photography.
