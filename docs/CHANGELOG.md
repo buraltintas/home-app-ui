@@ -8,6 +8,19 @@ value involved.
 
 ---
 
+## Two of the fourteen footer pages were never part of the legal system
+
+- The report kept coming back after each rescale, and the reason is that the rescales only
+  reached twelve of the fourteen pages the footer links to. The legal index and the
+  feedback form are built outside the shared legal renderer, so every time the documents
+  were raised these two quietly stayed where they were: descriptions at the site default
+  against 20px documents, a narrower measure, a smaller heading, smaller field labels.
+- They are on the same scale and the same measure now. The complaint was never that a page
+  was too small on its own -- it was that pages sitting next to each other in the same
+  footer did not match, which is exactly what this was.
+
+---
+
 ## Five small revisions across the site
 
 - **Favourites.** The signed-out screen said saved stores "will appear here", which
