@@ -8,6 +8,27 @@ value involved.
 
 ---
 
+## The legal index set its headings a third smaller than the documents it links to
+
+- Measured on the live pages rather than in the stylesheet this time: every one of the
+  twelve documents renders its section headings at 32px, and the index that links to them
+  rendered its entries at 23px. Two pages one click apart, in the same footer, in two
+  different sizes. That is the difference that kept being reported after each rescale.
+- The index uses the documents' heading treatment now.
+
+---
+
+## The review action sat outside the row it belonged to
+
+- The border that separates one saved store from the next was on the link, not on the row,
+  so the action added beside the link fell below that line and read as belonging to neither
+  store. The border belongs to the row now, and the action sits in the text column directly
+  under the rating -- inside the row, where it was asked to be.
+- It is the store page's control unchanged: same frame, colour, type and height. Only its
+  width differs, because a row is not a page.
+
+---
+
 ## Two small revisions: the banner's other languages, and where a location error sits
 
 - The banner's second step is plural in all four languages now, not only Turkish.

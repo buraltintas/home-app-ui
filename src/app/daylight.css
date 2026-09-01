@@ -249,10 +249,10 @@ svg{stroke-width:2}
    labels; they name the two halves of the page. Two steps up, and only these two. */
 .store-section-title{font-size:15px}
 
-/* The review action on a saved store. Same control as the store page's, sized for a list
-   row rather than a page: it sits under the row it belongs to and spans it, so on a phone
-   it is one clear tap rather than something to aim at. */
-.favorite-review-action{min-height:44px;margin-top:10px;border-radius:var(--r-md);font-size:15px}
+/* The same control as the store page's, unchanged: same frame, same colour, same type,
+   same height. Only its width is different, because a row is not a page -- it sits in the
+   text column, directly under the rating it belongs to, rather than spanning everything. */
+.favorite-review-action{grid-column:2/3;justify-self:start;padding:0 26px}
 
 /* The retry button is centred in the frame rather than left against the text. It is the
    one thing to press in that box, and a control that fills nothing and starts at the left
