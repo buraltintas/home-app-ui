@@ -13,17 +13,17 @@ export const homeBannerCopy:Record<Locale,HomeBannerCopy>={
   ]},
   en:{title:'Start your shopping trip with us!',steps:[
     {title:'Discover.',body:'Advanced search optimisation'},
-    {title:'Visit.',body:'A real, verified visit'},
+    {title:'Visit.',body:'Real, verified visits'},
     {title:'Review.',body:'Outcome-focused criteria'},
   ]},
   de:{title:'Starte deinen Einkauf mit uns!',steps:[
     {title:'Entdecken.',body:'Optimierte, intelligente Suche'},
-    {title:'Hingehen.',body:'Ein echter, bestätigter Besuch'},
+    {title:'Hingehen.',body:'Echte, bestätigte Besuche'},
     {title:'Bewerten.',body:'Ergebnisorientierte Kriterien'},
   ]},
   ru:{title:'Начните покупки вместе с нами!',steps:[
     {title:'Найдите.',body:'Улучшенный поиск'},
-    {title:'Посетите.',body:'Настоящий подтверждённый визит'},
+    {title:'Посетите.',body:'Настоящие подтверждённые визиты'},
     {title:'Оцените.',body:'Критерии, ориентированные на результат'},
   ]},
 };

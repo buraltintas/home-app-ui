@@ -253,3 +253,10 @@ svg{stroke-width:2}
    row rather than a page: it sits under the row it belongs to and spans it, so on a phone
    it is one clear tap rather than something to aim at. */
 .favorite-review-action{min-height:44px;margin-top:10px;border-radius:var(--r-md);font-size:15px}
+
+/* The retry button is centred in the frame rather than left against the text. It is the
+   one thing to press in that box, and a control that fills nothing and starts at the left
+   edge reads as a footnote to the sentence above it. */
+.location-alert>div{display:grid;justify-items:center;text-align:center}
+.location-alert p{text-align:center}
+.location-alert .button{justify-self:center}

@@ -8,6 +8,17 @@ value involved.
 
 ---
 
+## Two small revisions: the banner's other languages, and where a location error sits
+
+- The banner's second step is plural in all four languages now, not only Turkish.
+- The location error moved from the top of the panel to directly under the box it is about.
+  At the top it read as a warning about the whole screen; under the box it is plainly an
+  answer to what was just typed or pressed. Its retry button is centred in the frame: it is
+  the one thing to press there, and a control starting at the left edge read as a footnote
+  to the sentence above it.
+
+---
+
 ## A results page was reading thirty store pages nobody had asked for
 
 - Every store link in a list was prefetched, so opening a results page quietly rendered up
