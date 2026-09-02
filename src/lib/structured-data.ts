@@ -43,7 +43,9 @@ function reviewJsonLd(post:Post):JsonLd{
     author:{'@type':'Person',name:post.display_name},
     datePublished:post.created_at,
     reviewRating:{'@type':'Rating',ratingValue:post.rating,bestRating:BEST_RATING,worstRating:1},
-    reviewBody:post.text,
+    // Omitted rather than sent empty when a review carries no words. An empty reviewBody
+    // reads as a malformed review, not as a review without one.
+    ...(post.text.trim()?{reviewBody:post.text}:{}),
   };
 }
 
@@ -114,7 +116,9 @@ export function reviewPageJsonLd(post:Post):JsonLd{
     author:{'@type':'Person',name:post.display_name},
     datePublished:post.created_at,
     reviewRating:{'@type':'Rating',ratingValue:post.rating,bestRating:BEST_RATING,worstRating:1},
-    reviewBody:post.text,
+    // Omitted rather than sent empty when a review carries no words. An empty reviewBody
+    // reads as a malformed review, not as a review without one.
+    ...(post.text.trim()?{reviewBody:post.text}:{}),
     itemReviewed:{
       '@type':'Store',name:post.store_name,
       url:absolute(`/stores/${post.store_id}`),

@@ -257,3 +257,9 @@ svg{stroke-width:2}
 .favorite-review-action:hover{background:color-mix(in srgb,var(--clay) 88%,var(--ink))}
 
 
+
+/* The fifth thing you can do about a store, sitting with the other four rather than in the
+   panel below them. It takes the whole row because the four above it are icon-sized and a
+   button of that width beside them would read as a fifth icon that failed to fit. */
+.store-review-action{grid-column:1/-1;display:flex;align-items:center;justify-content:center;min-height:52px;background:var(--clay);color:var(--surface);text-decoration:none}
+.store-review-action:hover{background:color-mix(in srgb,var(--clay) 88%,var(--ink))}

@@ -104,12 +104,16 @@ export default async function Page({params}:Props){
       <div className="store-score"><span>{t.communityRating}</span><strong>{store.platform.review_count?<Rating value={store.platform.average_rating}/>:'—'}</strong><small>{store.platform.review_count} {t.profileRatings.toLocaleLowerCase(locale)}</small></div>
       <div className="store-score"><span>{t.savedBy}</span><strong>{store.platform.favorite_count}</strong><small>{t.people}</small></div>
       <StoreActions storeId={store.id} name={store.name} latitude={store.latitude} longitude={store.longitude} initialFavorited={store.viewer_has_favorited} phone={store.phone}/>
+      {/* Directly under save, directions, call and share, because it belongs with them: they
+          are the four things you can do about this store and reviewing it is the fifth. It
+          used to live only in the panel below, where it read as an advertisement for
+          contributing rather than an action available here. */}
+      <Link className="button store-contribution-action store-review-action" href={localePath(locale,`/create?store=${store.id}`)}>{contribution.action}</Link>
     </section>
     <section className="store-contribution" aria-label={contribution.title}>
       <aside className="review-invitation">
         <div className="review-invitation-copy"><h2>{contribution.title}</h2><p>{contribution.body}</p></div>
         <div className="review-invitation-actions">
-          <Link className="button store-contribution-action" href={localePath(locale,`/create?store=${store.id}`)}>{contribution.action}</Link>
           <Link className="contribution-progress" href={localePath(locale,'/about#katki')}><span aria-hidden="true">↗</span><span><strong>{contribution.progress}</strong><small>{contribution.levels}</small></span></Link>
         </div>
       </aside>

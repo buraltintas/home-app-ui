@@ -71,9 +71,8 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
   const place=[post.store_district,post.store_city].filter(Boolean).join(', ');
   // Authored review media remains primary. Without it, the card uses the exact same store
   // cover as search and detail; that fallback opens the store, where Google credit is shown.
-  const media=post.media[0];
   const storePhoto=storePhotoURL(post.store_photo,960);
-  const hasPhoto=Boolean(media||(!onStorePage&&storePhoto));
+  const hasPhoto=Boolean(!onStorePage&&storePhoto);
   // A date without its year answers "which day" and not "which year", and a review list
   // that goes back further than twelve months needs both.
   const written=new Intl.DateTimeFormat(locale,{day:'numeric',month:'short',year:'numeric'}).format(new Date(post.created_at));
@@ -90,16 +89,16 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
       {!onStorePage&&<Link href={localePath(locale,`/stores/${post.store_id}`)} className="post-store"><h2>{post.store_name}</h2>{place&&<p>{place}</p>}</Link>}
     </div>
 
-    {media
-      ?<Link href={localePath(locale,`/reviews/${post.id}`)} className="post-photo"><Image src={`/api/media/${media.id}`} fill sizes="(max-width: 760px) 100vw, 760px" alt={post.store_name} priority/></Link>
-      :storePhoto&&!onStorePage
-        ?<Link href={localePath(locale,`/stores/${post.store_id}`)} className="post-photo"><Image src={storePhoto} fill sizes="(max-width: 760px) 100vw, 760px" alt={post.store_name} unoptimized/></Link>
-        :!onStorePage?<Link href={localePath(locale,`/reviews/${post.id}`)} className="post-photo is-empty"><span aria-hidden="true">{post.store_name.slice(0,2).toLocaleUpperCase(locale)}</span><small>{t('noPhoto')}</small></Link>:null}
+    {storePhoto&&!onStorePage
+      ?<Link href={localePath(locale,`/stores/${post.store_id}`)} className="post-photo"><Image src={storePhoto} fill sizes="(max-width: 760px) 100vw, 760px" alt={post.store_name} unoptimized/></Link>
+      :!onStorePage?<Link href={localePath(locale,`/reviews/${post.id}`)} className="post-photo is-empty"><span aria-hidden="true">{post.store_name.slice(0,2).toLocaleUpperCase(locale)}</span><small>{t('noPhoto')}</small></Link>:null}
 
     <div className="post-details">
       <div className="post-meta"><Rating value={post.rating}/><Verified label={t('verified')}/></div>
-      {(owned||onStorePage)&&<p className="post-written">{written}</p>}
-      {!onStorePage&&!owned&&<p className="post-copy">{post.text}</p>}
+      <p className="post-written">{written}</p>
+      {/* A review is eight scores now. The written text and the photographs people uploaded
+          are still in the database, untouched -- they are simply no longer shown. One line
+          brings them back if that decision changes. */}
       <footer className="post-actions">
         <button disabled={busy==='like'} aria-pressed={liked} onClick={()=>void mutate('like')}><Heart className={liked?'active-icon':''}/>{likes}</button>
         {!owned&&!onStorePage&&<Link href={localePath(locale,`/reviews/${post.id}`)} className="post-action-link"><MessageCircle/>{post.comment_count}</Link>}

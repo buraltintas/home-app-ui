@@ -8,6 +8,35 @@ value involved.
 
 ---
 
+## The review screen is two steps and eight scores
+
+- Verify the visit, then score eight things: product availability, value, layout, staff
+  attention, staff knowledge, checkout speed, returns, cleanliness. All eight are required.
+- The photograph step and the "tell us about it" step are gone, and so is the separate
+  overall rating -- the store's rating is now the average of the eight, worked out on the
+  server. Two places computing the same average is two places that can disagree.
+- Reviewing a store now sits with the store's other actions -- save, directions, call, share
+  -- rather than only in the panel underneath them. It is the fifth thing you can do about a
+  store; the panel below keeps the contribution progress.
+- **Nothing was deleted.** Every published review keeps its text and its photographs in the
+  database; the web stops showing them. One line brings them back.
+
+### What this costs in search, said plainly
+
+- `/reviews/<id>` pages were carrying one thing no other page had: the words somebody wrote
+  about that shop. They no longer show it, so those pages are now near-identical to each
+  other -- store name, a score, a date. Expect them to be treated as thin and to compete
+  with one another rather than each standing on its own.
+- The page description is rebuilt from what is still true and still varies -- the store, the
+  place, the score, the author -- but that is thinner than a sentence a person wrote.
+- `reviewBody` is omitted from the structured data rather than sent empty, because an empty
+  one reads as a malformed review rather than a review without words.
+- **What would restore it:** publishing the eight scores on the review page. They are unique
+  per review, they are text, and they are the thing the review now actually is. That is a
+  separate piece of work and it is not in this change.
+
+---
+
 ## Your own reviews are a list, so an entry became a row
 
 - The profile's past reviews stacked a full-width photo on top of a full-width frame. The

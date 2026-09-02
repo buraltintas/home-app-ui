@@ -1,9 +1,8 @@
 'use client';
 
-import {Camera,Check,MapPin,Star,Store,TriangleAlert,X} from 'lucide-react';
-import Image from 'next/image';
+import {Check,MapPin,Star,Store,TriangleAlert} from 'lucide-react';
 import {useRouter,useSearchParams} from 'next/navigation';
-import {ChangeEvent,Suspense,useCallback,useEffect,useLayoutEffect,useRef,useState} from 'react';
+import {Suspense,useCallback,useEffect,useLayoutEffect,useRef,useState} from 'react';
 import {AuthDialog} from '@/components/AuthDialog';
 import {useI18n} from '@/i18n/I18nProvider';
 import { localePath } from '@/lib/site';
@@ -11,15 +10,30 @@ import {apiFetch} from '@/lib/api-client';
 import {canUseDeviceLocationWithoutPrompt,locationMessage,requestVisitPosition} from '@/lib/location';
 import {readOriginSearch} from '@/lib/search-origin';
 import {useScrollTopWhenReady} from '@/lib/scroll-top';
-import type {MediaUpload,StoreDetail,VisitVerification} from '@/lib/types';
+import type {StoreDetail,VisitVerification} from '@/lib/types';
 
 const UUID=/^[0-9a-f-]{36}$/i;
-type Draft={id:string;url:string};
+
+// The review, in the order it is asked. The keys are the server's field names, so the form
+// state and the request body are the same eight things named the same way -- there is no
+// mapping table in between to fall out of step.
+const criterionLabels={
+  availability:'criterionAvailability',
+  value:'criterionValue',
+  layout:'criterionLayout',
+  staff_care:'criterionStaffCare',
+  staff_knowledge:'criterionStaffKnowledge',
+  checkout:'criterionCheckout',
+  returns:'criterionReturns',
+  cleanliness:'criterionCleanliness',
+} as const;
+type CriterionKey=keyof typeof criterionLabels;
+const criterionKeys=Object.keys(criterionLabels) as CriterionKey[];
 
 function ReviewLoadingState(){
   return <main className="create-page create-page-loading" aria-busy="true" aria-label="Loading">
     <div className="review-loading-copy"><span/><span/><span/></div>
-    <div className="review-loading-steps"><span/><span/><span/><span/></div>
+    <div className="review-loading-steps"><span/><span/></div>
   </main>;
 }
 
@@ -38,22 +52,18 @@ function ReviewWizard({storeId}:{storeId:string}){
   const [verifying,setVerifying]=useState(false);
   const [verifyError,setVerifyError]=useState('');
   const [reviewRadiusMeters,setReviewRadiusMeters]=useState(2000);
-  const [rating,setRating]=useState(0);
-  const [photos,setPhotos]=useState<Draft[]>([]);
-  const [uploading,setUploading]=useState(false);
-  const [uploadError,setUploadError]=useState('');
-  const [text,setText]=useState('');
+  const [criteria,setCriteria]=useState<Partial<Record<CriterionKey,number>>>({});
   const [submitting,setSubmitting]=useState(false);
   const [submitError,setSubmitError]=useState('');
   const autoVerificationAttempted=useRef(false);
 
-  // The four steps are history entries, not component state. On a phone the back button
+  // The two steps are history entries, not component state. On a phone the back button
   // -- and the edge swipe that means the same thing -- is how people undo, and a wizard
   // that keeps its position in state cannot answer that: back leaves the flow altogether
   // and takes the half-written review with it. The step therefore lives in the URL, and
   // every forward move pushes an entry, so the browser's own back walks the wizard
   // backwards one step at a time.
-  const requestedStep=Math.min(Math.max(Math.trunc(Number(searchParams.get('step')))||1,1),4);
+  const requestedStep=Math.min(Math.max(Math.trunc(Number(searchParams.get('step')))||1,1),2);
   // Evidence of the visit is what unlocks the rest of the flow, so a step claimed by the
   // URL is only honoured once that evidence exists.
   const step=verification?requestedStep:1;
@@ -151,34 +161,6 @@ function ReviewWizard({storeId}:{storeId:string}){
     return()=>{active=false;};
   },[signedIn,verification,verify]);
 
-  const addPhoto=async(event:ChangeEvent<HTMLInputElement>)=>{
-    const file=event.target.files?.[0];
-    event.target.value='';
-    if(!file||photos.length>=10)return;
-    setUploading(true);setUploadError('');
-    try{
-      const created=await apiFetch('/api/proxy/media/uploads',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mime_type:file.type,size_bytes:file.size})});
-      if(!created.ok)throw new Error();
-      const {id,upload}=await created.json() as MediaUpload;
-      // The upload URL is a pre-signed object-storage target handed to us by the API
-      // for exactly this purpose; it is not the backend origin.
-      const stored=await fetch(upload.upload_url,{method:'PUT',headers:upload.headers,body:file});
-      if(!stored.ok)throw new Error();
-      const bitmap=await createImageBitmap(file);
-      const completed=await apiFetch(`/api/proxy/media/${id}/complete`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({width:bitmap.width,height:bitmap.height})});
-      bitmap.close();
-      if(!completed.ok)throw new Error();
-      setPhotos(current=>[...current,{id,url:URL.createObjectURL(file)}]);
-    }catch{setUploadError(t('uploadError'));}
-    finally{setUploading(false);}
-  };
-
-  const removePhoto=(id:string)=>setPhotos(current=>{
-    const target=current.find(photo=>photo.id===id);
-    if(target)URL.revokeObjectURL(target.url);
-    return current.filter(photo=>photo.id!==id);
-  });
-
   // Reset again once the page has its real height. The mount-time reset below is not
   // enough on its own: this route paints a short loading state first, so a browser
   // arriving from far down a store page clamps the old offset to the bottom of that short
@@ -187,14 +169,18 @@ function ReviewWizard({storeId}:{storeId:string}){
   // left the review flow opening a hundred pixels down, with its own heading cut off.
   useScrollTopWhenReady(Boolean(store)&&signedIn!==undefined);
 
+  const scored=criterionKeys.every(key=>(criteria[key]??0)>=1);
+
   const submit=async()=>{
-    if(!verification||rating<1||text.trim().length<3)return;
+    if(!verification||!scored)return;
     setSubmitting(true);setSubmitError('');
     const origin=readOriginSearch();
     try{
+      // The eight go up; the overall rating is not sent, because the server derives it from
+      // them. Two places computing the same average is two places that can disagree.
       const response=await apiFetch('/api/proxy/posts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-        store_id:storeId,rating,text:text.trim(),visit_verification_id:verification.id,
-        media_ids:photos.map(photo=>photo.id),content_language:locale,
+        store_id:storeId,visit_verification_id:verification.id,content_language:locale,
+        criteria:Object.fromEntries(criterionKeys.map(key=>[key,criteria[key]])),
         ...(origin?{origin_search_id:origin.search_id,origin_search_result_id:origin.search_result_id}:{}),
       })});
       if(response.status===401){setSignedIn(false);setAuth(true);return;}
@@ -211,8 +197,7 @@ function ReviewWizard({storeId}:{storeId:string}){
   // The first step renames itself once it is done. "Konumu doğrula" is an instruction and
   // it stops being true the moment the location is verified; leaving it there asks for
   // something already given.
-  const steps=[[verification?t('verifyLocationDone'):t('verifyLocation'),MapPin],[t('addRating'),Star],[t('addPhotos'),Camera],[t('tellExperience'),Check]] as const;
-  const textLength=text.trim().length;
+  const steps=[[verification?t('verifyLocationDone'):t('verifyLocation'),MapPin],[t('criteriaTitle'),Star]] as const;
   return <main className="create-page">
     <div>
       <p className="eyebrow">{t('reviewFor')}</p>
@@ -240,28 +225,20 @@ function ReviewWizard({storeId}:{storeId:string}){
     </section>}
 
     {step===2&&<section className="review-step">
-      <fieldset className="rating-picker"><legend>{t('ratingLabel')}</legend>{[1,2,3,4,5].map(value=>
-        <label key={value}><input type="radio" name="rating" value={value} checked={rating===value} onChange={()=>setRating(value)}/><Star aria-hidden="true" className={value<=rating?'is-on':undefined}/><span>{value}</span></label>)}
-      </fieldset>
-      <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>advance(3)} disabled={rating<1}>{t('continue')}</button></div>
-    </section>}
-
-    {step===3&&<section className="review-step">
-      <p>{t('addPhotosOptional')}</p>
-      <div className="photo-drafts">{photos.map(photo=>
-        <figure key={photo.id}><Image src={photo.url} width={120} height={120} alt="" unoptimized/><button className="icon-button" onClick={()=>removePhoto(photo.id)} aria-label={t('removePhoto')}><X/></button></figure>)}
+      <p>{t('criteriaIntro')}</p>
+      {/* Eight fieldsets rather than one, because each line is its own question and a
+          screen reader has to be able to say which one it is reading. The overall rating is
+          not among them: it is the average of these, worked out by the server. */}
+      <div className="criteria-list">{criterionKeys.map(key=>
+        <fieldset key={key} className="rating-picker criterion">
+          <legend>{t(criterionLabels[key])}</legend>
+          {[1,2,3,4,5].map(value=>
+            <label key={value}><input type="radio" name={key} value={value} checked={criteria[key]===value} onChange={()=>setCriteria(current=>({...current,[key]:value}))}/><Star aria-hidden="true" className={value<=(criteria[key]??0)?'is-on':undefined}/><span>{value}</span></label>)}
+        </fieldset>)}
       </div>
-      <label className="button secondary photo-input"><Camera aria-hidden="true"/>{t('addPhotos')}<input type="file" accept="image/jpeg,image/png,image/webp" onChange={event=>void addPhoto(event)} disabled={uploading||photos.length>=10}/></label>
-      {uploadError&&<p className="form-error" role="alert">{uploadError}</p>}
-      <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>advance(4)} disabled={uploading}>{t('continue')}</button></div>
-    </section>}
-
-    {step===4&&<section className="review-step">
-      <label className="review-text"><span>{t('reviewTextLabel')}</span><textarea value={text} onChange={event=>setText(event.target.value.slice(0,5000))} rows={6} placeholder={t('reviewTextHint')} maxLength={5000}/></label>
-      <small>{textLength}/5000</small>
-      {textLength>0&&textLength<3&&<p className="form-error" role="alert">{t('reviewTooShort')}</p>}
+      {!scored&&<p className="criteria-hint">{t('criteriaIncomplete')}</p>}
       {submitError&&<p className="form-error" role="alert">{submitError}</p>}
-      <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>void submit()} disabled={submitting||textLength<3||rating<1||!verification}>{submitting?t('loading'):t('submitReview')}</button></div>
+      <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>void submit()} disabled={submitting||!scored||!verification}>{submitting?t('loading'):t('submitReview')}</button></div>
     </section>}
 
     <AuthDialog open={auth} onClose={()=>setAuth(false)} onAuthenticated={()=>{setSignedIn(true);setAuth(false);}}/>

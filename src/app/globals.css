@@ -534,3 +534,17 @@ body>main{flex:1 0 auto;min-width:0;width:100%}
   .store-page-loading [class^="store-loading-"]{animation:store-loading-pulse 1.4s ease-in-out infinite}
   @keyframes store-loading-pulse{0%,100%{opacity:1}50%{opacity:.55}}
 }
+
+/* Eight questions, each a row: the name on the left, five stars on the right, all on one
+   reading line so the eye runs down the answers rather than hunting for them. On a phone
+   the label takes its own line, because a name and five targets do not both fit across
+   375px without shrinking the targets below the size a thumb can hit. */
+.criteria-list{display:grid;gap:2px;margin:0 0 22px;border-top:1px solid var(--line)}
+.criteria-list .criterion{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:16px;margin:0;padding:14px 0;border:0;border-bottom:1px solid var(--line)}
+.criteria-list .criterion legend{float:left;width:100%;padding:0;font-size:16px;font-weight:600;color:var(--ink)}
+.criteria-list .criterion label{display:inline-grid;place-items:center}
+.criteria-hint{margin:0 0 18px;color:var(--ink-muted);font-size:14px}
+@media(max-width:600px){
+  .criteria-list .criterion{grid-template-columns:minmax(0,1fr);gap:8px;padding:16px 0}
+  .criteria-list .criterion legend{font-size:15px}
+}
