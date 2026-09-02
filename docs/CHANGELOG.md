@@ -8,6 +8,20 @@ value involved.
 
 ---
 
+## Tapping the location field zoomed the whole search page
+
+- Safari on iOS zooms the page when the field it is focusing computes below 16px, and there
+  is no way to decline that other than not being below 16px. The location field was 13px --
+  it inherited the size of its own label -- so tapping it threw the search page into a zoom
+  the visitor then had to pinch back out of.
+- A floor under every field on mobile rather than a size for that one field: the next form
+  somebody adds is covered without anybody remembering this. Fields that deliberately run
+  larger keep their size.
+- Copy on the home page: the feed title, and the discovery section's heading and intro, in
+  four locales.
+
+---
+
 ## The search page: nine revisions, and one real bug among them
 
 - **Granting the location permission mid-session now works without a reload.** The page was

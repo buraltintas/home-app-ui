@@ -571,3 +571,13 @@ body>main{flex:1 0 auto;min-width:0;width:100%}
   background:var(--surface);color:var(--ink);font-size:14px;font-weight:600;text-decoration:none;
   transition:border-color .16s ease,background-color .16s ease}
 .location-control>button:not(.nearby-button):not(.location-clear):hover{border-color:var(--ink);background:var(--muted)}
+
+/* Safari on iOS zooms the whole page when a field it is focusing computes below 16px, and
+   there is no way to decline that other than not being below 16px. The location field was
+   13px -- it inherited the size of its own label -- so tapping it threw the search page into
+   a zoom the visitor then had to pinch back out of.
+   A floor rather than a fixed size: fields that deliberately run larger keep their size. */
+@media(max-width:600px){
+  input,select,textarea{font-size:16px}
+  .home-search textarea{font-size:17px}
+}
