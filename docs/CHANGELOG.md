@@ -8,6 +8,20 @@ value involved.
 
 ---
 
+## Your own reviews are a list, so an entry became a row
+
+- The profile's past reviews stacked a full-width photo on top of a full-width frame. The
+  photo's lower edge sat directly on the frame's upper edge, which is the "shadow along the
+  top of the box" that was reported -- there is no shadow in the stylesheet, only two edges
+  meeting. Side by side there is no such edge.
+- The store's picture is a thumbnail at the size the favourites page uses, the score and the
+  date sit in a frame beside it, and share and delete are icons: a row of actions spelled
+  out in words reads as a sentence rather than a row.
+- The review's own text is gone from these entries. You wrote it; the list is for finding it
+  again, not for reading it back to you.
+
+---
+
 ## Returned review round: the store page's card, the row's save action, two tables
 
 - **The store page's review card is its own card now.** On a store's own page the store is

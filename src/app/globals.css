@@ -393,7 +393,25 @@ body>main{flex:1 0 auto;min-width:0;width:100%}
 .profile-panel .past-searches{margin:0;max-width:none}
 .profile-review-list{border:1px solid var(--line);border-bottom:0}
 .profile-review-list .post-card{padding:28px 32px}
-.profile-review-list .post-card.is-owned{display:block}.profile-review-list .post-card.is-owned .post-heading{display:block;margin:0 0 18px}.profile-review-list .post-card.is-owned .post-photo,.profile-review-list .post-card.is-owned .post-details{width:100%}.profile-review-list .post-card.is-owned .post-details{min-height:0}.profile-review-list .post-card.is-owned .post-actions{justify-content:flex-start}.profile-review-list .post-card.is-owned .post-actions .post-delete{margin-left:auto}
+/* Your own reviews are a list, so an entry is a row: the store's picture at thumbnail size
+   on the left -- the size the favourites page uses -- and the score, the date and the two
+   actions in a frame beside it. Stacked, the photo's lower edge sat directly on the frame's
+   upper edge and read as a shadow along the top of it; side by side there is no such edge
+   to mistake. */
+.profile-review-list .post-card.is-owned{display:grid;grid-template-columns:160px minmax(0,1fr);column-gap:20px;align-items:start;padding:24px 32px}
+.profile-review-list .post-card.is-owned .post-number{display:none}
+.profile-review-list .post-card.is-owned .post-heading{grid-column:1/-1;grid-row:1;display:block;margin:0 0 16px}
+.profile-review-list .post-card.is-owned .post-store h2{font-size:22px}
+.profile-review-list .post-card.is-owned .post-photo{grid-column:1;grid-row:2;width:160px;height:120px;aspect-ratio:auto;border-radius:var(--r-md);clip-path:none}
+.profile-review-list .post-card.is-owned .post-photo:hover{clip-path:none}
+.profile-review-list .post-card.is-owned .post-details{grid-column:2;grid-row:2;width:auto;min-height:0;box-shadow:none;padding:18px 20px}
+.profile-review-list .post-card.is-owned.is-photo-free .post-details{grid-column:1/-1}
+.profile-review-list .post-card.is-owned .post-actions{justify-content:flex-start}
+.profile-review-list .post-card.is-owned .post-actions .post-delete{margin-left:auto}
+@media(max-width:600px){
+  .profile-review-list .post-card.is-owned{grid-template-columns:96px minmax(0,1fr);column-gap:14px;padding:20px 18px}
+  .profile-review-list .post-card.is-owned .post-photo{width:96px;height:96px}
+}
 .store-reviews .post-card.is-photo-free .post-details{grid-column:2/4;grid-row:2}.store-reviews .post-card.is-photo-free .post-copy{margin-top:22px}
 .profile-reviews-empty{margin:0;color:var(--ink-muted)}
 .profile-review-skeleton{display:grid;gap:12px;max-width:520px}

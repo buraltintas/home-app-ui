@@ -99,12 +99,15 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
     <div className="post-details">
       <div className="post-meta"><Rating value={post.rating}/><Verified label={t('verified')}/></div>
       {(owned||onStorePage)&&<p className="post-written">{written}</p>}
-      {!onStorePage&&<p className="post-copy">{post.text}</p>}
+      {!onStorePage&&!owned&&<p className="post-copy">{post.text}</p>}
       <footer className="post-actions">
         <button disabled={busy==='like'} aria-pressed={liked} onClick={()=>void mutate('like')}><Heart className={liked?'active-icon':''}/>{likes}</button>
         {!owned&&!onStorePage&&<Link href={localePath(locale,`/reviews/${post.id}`)} className="post-action-link"><MessageCircle/>{post.comment_count}</Link>}
-        <button onClick={()=>void share()}><Send/>{shared?t('copied'):t('share')}</button>
-        {owned&&<button className="post-delete" disabled={removing} aria-label={t('deleteReview')} title={t('deleteReview')} onClick={()=>void remove()}><Trash2/>{t('deleteReview')}</button>}
+        {/* On your own reviews these two are icons. The row is a list entry, not a page,
+            and a spelled-out "Delete review" beside a spelled-out "Share" turns a row of
+            actions into a sentence. The names are still there for screen readers. */}
+        <button aria-label={owned?(shared?t('copied'):t('share')):undefined} title={owned?t('share'):undefined} onClick={()=>void share()}><Send/>{owned?null:shared?t('copied'):t('share')}</button>
+        {owned&&<button className="post-delete" disabled={removing} aria-label={t('deleteReview')} title={t('deleteReview')} onClick={()=>void remove()}><Trash2/></button>}
       </footer>
     </div>
     <AuthDialog open={auth} onClose={()=>setAuth(false)}/>
