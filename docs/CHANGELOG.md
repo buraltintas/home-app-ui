@@ -8,6 +8,23 @@ value involved.
 
 ---
 
+## One axis for a search result, instead of a centre that kept being wrong
+
+- The save action and the two scores were centred, and twice that centring was reported as
+  uneven. Measured this time rather than reasoned about: those blocks sit outside the card's
+  grid, so "centred" meant centred in a box that began at the text column and ran on to the
+  row's right edge -- past the text, over the 28px gap and the chevron beyond it. The content
+  landed 24px right of the text column's own centre.
+- Aligning to the text column removes the question rather than retuning the answer: the
+  title, the address, the scores, the save action and the Google link now all begin at the
+  same place, and there is nothing left to be off-centre against. Verified: all five start
+  at the same pixel.
+- Social links are five to a row in a fixed grid rather than a flex row that wrapped wherever
+  it ran out, so the two rows line up under each other in the order asked for.
+- Copy: the home search placeholder and the discovery intro, in four locales.
+
+---
+
 ## Tapping the location field zoomed the whole search page
 
 - Safari on iOS zooms the page when the field it is focusing computes below 16px, and there

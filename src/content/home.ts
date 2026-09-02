@@ -31,8 +31,8 @@ export const homeBannerCopy:Record<Locale,HomeBannerCopy>={
 type HomeSignalsCopy={title:string;intro:string;cities:string;categories:string;searches:string};
 
 export const homeSignalsCopy:Record<Locale,HomeSignalsCopy>={
-  tr:{title:'Neler keşfediliyor?',intro:'Son 30 gündeki aramalar ve topluluk değerlendirmeleri.',cities:'En çok arama yapılan şehirler',categories:'En çok aranan kategoriler',searches:'arama'},
-  en:{title:'What is being discovered?',intro:'Searches and community reviews from the last 30 days.',cities:'Most searched cities',categories:'Most searched categories',searches:'searches'},
-  de:{title:'Was wird entdeckt?',intro:'Suchen und Community-Bewertungen der letzten 30 Tage.',cities:'Meistgesuchte Städte',categories:'Meistgesuchte Kategorien',searches:'Suchen'},
-  ru:{title:'Что ищут?',intro:'Поиски и отзывы сообщества за последние 30 дней.',cities:'Популярные города',categories:'Популярные категории',searches:'поисков'},
+  tr:{title:'Neler keşfediliyor?',intro:'Son 30 gündeki aramalar ve topluluk değerlendirmelerini incele.',cities:'En çok arama yapılan şehirler',categories:'En çok aranan kategoriler',searches:'arama'},
+  en:{title:'What is being discovered?',intro:'Look through the searches and community reviews from the last 30 days.',cities:'Most searched cities',categories:'Most searched categories',searches:'searches'},
+  de:{title:'Was wird entdeckt?',intro:'Sieh dir die Suchen und Community-Bewertungen der letzten 30 Tage an.',cities:'Meistgesuchte Städte',categories:'Meistgesuchte Kategorien',searches:'Suchen'},
+  ru:{title:'Что ищут?',intro:'Посмотрите поиски и отзывы сообщества за последние 30 дней.',cities:'Популярные города',categories:'Популярные категории',searches:'поисков'},
 };

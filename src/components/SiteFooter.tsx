@@ -16,19 +16,22 @@ const note:Record<Locale,string>={
 
 // The accounts as they were opened. Only the ones with a public profile URL we are sure
 // of are linked -- a footer link that lands on the wrong handle is worse than no link.
+// Two rows of five, and the first row is the order that was asked for. The second holds
+// what is left; nine accounts do not divide into two equal rows and inventing a tenth to
+// make them would be a worse answer than a short second row.
 const social=[
   {label:'Instagram',href:'https://www.instagram.com/bosagezme',Icon:FaInstagram},
   {label:'X',href:'https://x.com/Bosagezme',Icon:FaXTwitter},
-  {label:'TikTok',href:'https://www.tiktok.com/@bosagezme',Icon:FaTiktok},
-  {label:'Threads',href:'https://www.threads.net/@bosagezme',Icon:FaThreads},
   {label:'Facebook',href:'https://www.facebook.com/Bosagezme',Icon:FaFacebookF},
-  {label:'Reddit',href:'https://www.reddit.com/user/Bosagezme',Icon:FaRedditAlien},
   // The link supplied for Pinterest was a personal invite (pin.it/…, carrying an invite
   // code and the sender's id). Following it would have invited every visitor on somebody's
   // behalf, so it is the public profile the invite resolves to that is linked here.
   {label:'Pinterest',href:'https://www.pinterest.com/bosagezme/',Icon:FaPinterestP},
-  {label:'Snapchat',href:'https://www.snapchat.com/explore/Bo%C5%9Fagezme',Icon:FaSnapchat},
   {label:'LinkedIn',href:'https://www.linkedin.com/in/bo%C5%9Fa-gezme-91a8b142a',Icon:FaLinkedinIn},
+  {label:'TikTok',href:'https://www.tiktok.com/@bosagezme',Icon:FaTiktok},
+  {label:'Threads',href:'https://www.threads.net/@bosagezme',Icon:FaThreads},
+  {label:'Reddit',href:'https://www.reddit.com/user/Bosagezme',Icon:FaRedditAlien},
+  {label:'Snapchat',href:'https://www.snapchat.com/explore/Bo%C5%9Fagezme',Icon:FaSnapchat},
 ];
 
 const followLabel:Record<Locale,string>={tr:'Bizi takip edin',en:'Follow us',de:'Folge uns',ru:'Мы в соцсетях'};
