@@ -1,6 +1,6 @@
 'use client';
 
-import {LocateFixed,TriangleAlert} from 'lucide-react';
+import {TriangleAlert} from 'lucide-react';
 import {useI18n} from '@/i18n/I18nProvider';
 import type {LocationFailure} from '@/lib/location';
 
@@ -18,12 +18,10 @@ function AddressBarHint({label}:{label:string}){
   </svg>;
 }
 
-// The location error used to sit at the bottom of the panel, under the button that had
-// just appeared to do nothing. People pressed "use my location", saw no change, and never
-// read the sentence explaining why. It leads the panel now, and carries the way out.
-export function LocationAlert({message,reason,onRetry,busy}:{
-  message:string;reason:LocationFailure|'';onRetry:()=>void;busy:boolean;
-}){
+// The alert sits directly under the box it is about, and says only what went wrong. It
+// carried its own retry button for a while; the control that failed is one line above it,
+// so the second one was a second way to press the same thing.
+export function LocationAlert({message,reason}:{message:string;reason:LocationFailure|''}){
   const {t}=useI18n();
   // The drawing only helps in the one case it describes. Offered when the browser has
   // simply not asked yet, it sends somebody hunting for a lock that will do nothing.
@@ -33,9 +31,6 @@ export function LocationAlert({message,reason,onRetry,busy}:{
     <div>
       <p>{message}</p>
       {showHint&&<AddressBarHint label={t('locationLockHint')}/>}
-      <button type="button" className="button secondary" onClick={onRetry} disabled={busy}>
-        <LocateFixed aria-hidden="true"/>{busy?t('locatingYou'):t('locationRetry')}
-      </button>
     </div>
   </div>;
 }

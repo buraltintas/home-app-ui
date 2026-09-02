@@ -16,9 +16,15 @@ import {storePhotoURL} from '@/lib/store-photo';
 // `owned` is the profile's view of your own reviews. Saving a store you have already
 // reviewed is not an action anybody needs there, and deleting what you wrote is -- so the
 // control in that corner changes rather than being added beside a useless one.
-type PostCardProps={post:Post;showStoreName?:boolean;showStoreFallbackPhoto?:boolean;owned?:boolean;onDeleted?:()=>void};
+// Where the card is standing. On a store's own page the store is the page, so the card
+// drops everything that repeats it -- the store's name, the store's photo -- and everything
+// that sends the reader somewhere else: saving the review, opening its comments, the
+// written text. What is left is the judgement: who, what they scored it, when.
+type PostSurface='feed'|'store';
+type PostCardProps={post:Post;surface?:PostSurface;owned?:boolean;onDeleted?:()=>void};
 
-export function PostCard({post,showStoreName=true,showStoreFallbackPhoto=true,owned=false,onDeleted}:PostCardProps){
+export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardProps){
+  const onStorePage=surface==='store';
   const {t,locale}=useI18n();
   const [auth,setAuth]=useState(false);
   const [liked,setLiked]=useState(post.viewer_has_liked);
@@ -67,7 +73,7 @@ export function PostCard({post,showStoreName=true,showStoreFallbackPhoto=true,ow
   // cover as search and detail; that fallback opens the store, where Google credit is shown.
   const media=post.media[0];
   const storePhoto=storePhotoURL(post.store_photo,960);
-  const hasPhoto=Boolean(media||(showStoreFallbackPhoto&&storePhoto));
+  const hasPhoto=Boolean(media||(!onStorePage&&storePhoto));
   // A date without its year answers "which day" and not "which year", and a review list
   // that goes back further than twelve months needs both.
   const written=new Intl.DateTimeFormat(locale,{day:'numeric',month:'short',year:'numeric'}).format(new Date(post.created_at));
@@ -78,25 +84,25 @@ export function PostCard({post,showStoreName=true,showStoreFallbackPhoto=true,ow
     <div className="post-heading">
       {!owned&&<header className="post-author">
         <div className="avatar">{post.display_name.slice(0,1).toLocaleUpperCase(locale)}</div>
-        <div><strong>{post.display_name}<ContributorLevel level={post.author_level}/></strong><span>{written}</span></div>
-        <button className="icon-button" disabled={busy==='save'} aria-label={t('save')} aria-pressed={saved} onClick={()=>void mutate('save')}><Bookmark className={saved?'active-icon':''}/></button>
+        <div><strong>{post.display_name}<ContributorLevel level={post.author_level}/></strong>{!onStorePage&&<span>{written}</span>}</div>
+        {!onStorePage&&<button className="icon-button" disabled={busy==='save'} aria-label={t('save')} aria-pressed={saved} onClick={()=>void mutate('save')}><Bookmark className={saved?'active-icon':''}/></button>}
       </header>}
-      {showStoreName&&<Link href={localePath(locale,`/stores/${post.store_id}`)} className="post-store"><h2>{post.store_name}</h2>{place&&<p>{place}</p>}</Link>}
+      {!onStorePage&&<Link href={localePath(locale,`/stores/${post.store_id}`)} className="post-store"><h2>{post.store_name}</h2>{place&&<p>{place}</p>}</Link>}
     </div>
 
     {media
       ?<Link href={localePath(locale,`/reviews/${post.id}`)} className="post-photo"><Image src={`/api/media/${media.id}`} fill sizes="(max-width: 760px) 100vw, 760px" alt={post.store_name} priority/></Link>
-      :storePhoto&&showStoreFallbackPhoto
+      :storePhoto&&!onStorePage
         ?<Link href={localePath(locale,`/stores/${post.store_id}`)} className="post-photo"><Image src={storePhoto} fill sizes="(max-width: 760px) 100vw, 760px" alt={post.store_name} unoptimized/></Link>
-        :showStoreFallbackPhoto?<Link href={localePath(locale,`/reviews/${post.id}`)} className="post-photo is-empty"><span aria-hidden="true">{post.store_name.slice(0,2).toLocaleUpperCase(locale)}</span><small>{t('noPhoto')}</small></Link>:null}
+        :!onStorePage?<Link href={localePath(locale,`/reviews/${post.id}`)} className="post-photo is-empty"><span aria-hidden="true">{post.store_name.slice(0,2).toLocaleUpperCase(locale)}</span><small>{t('noPhoto')}</small></Link>:null}
 
     <div className="post-details">
       <div className="post-meta"><Rating value={post.rating}/><Verified label={t('verified')}/></div>
-      {owned&&<p className="post-written">{written}</p>}
-      <p className="post-copy">{post.text}</p>
+      {(owned||onStorePage)&&<p className="post-written">{written}</p>}
+      {!onStorePage&&<p className="post-copy">{post.text}</p>}
       <footer className="post-actions">
         <button disabled={busy==='like'} aria-pressed={liked} onClick={()=>void mutate('like')}><Heart className={liked?'active-icon':''}/>{likes}</button>
-        {!owned&&<Link href={localePath(locale,`/reviews/${post.id}`)} className="post-action-link"><MessageCircle/>{post.comment_count}</Link>}
+        {!owned&&!onStorePage&&<Link href={localePath(locale,`/reviews/${post.id}`)} className="post-action-link"><MessageCircle/>{post.comment_count}</Link>}
         <button onClick={()=>void share()}><Send/>{shared?t('copied'):t('share')}</button>
         {owned&&<button className="post-delete" disabled={removing} aria-label={t('deleteReview')} title={t('deleteReview')} onClick={()=>void remove()}><Trash2/>{t('deleteReview')}</button>}
       </footer>

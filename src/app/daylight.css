@@ -195,10 +195,9 @@ svg{stroke-width:2}
    of the page where the person who pressed it will never scroll. */
 .location-alert{grid-column:1/-1;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start;margin:0 0 20px;padding:16px 18px;background:color-mix(in srgb,var(--error) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--error) 34%,var(--line));border-radius:var(--r-md)}
 .location-alert>svg{color:var(--error);margin-top:2px}
-.location-alert p{margin:0 0 12px;font-size:16px;line-height:1.5;color:var(--ink)}
-.location-alert .button{min-height:44px}
+.location-alert p{margin:0;font-size:16px;line-height:1.5;color:var(--ink)}
 .location-hint-art{display:block;width:100%;max-width:240px;height:auto;margin:0 0 14px}
-@media(max-width:600px){.location-alert{padding:14px;gap:10px}.location-alert .button{width:100%;justify-content:center}}
+@media(max-width:600px){.location-alert{padding:14px;gap:10px}}
 .location-error{margin:0;padding:12px 14px;background:color-mix(in srgb,var(--error) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--error) 34%,var(--line));border-radius:var(--r-sm);color:var(--ink);font-size:15px;line-height:1.45}
 /* Two letters in the bar, its own menu underneath. It sits before the destinations because
    it changes what they say, not where they go. */
@@ -249,14 +248,12 @@ svg{stroke-width:2}
    labels; they name the two halves of the page. Two steps up, and only these two. */
 .store-section-title{font-size:15px}
 
-/* The same control as the store page's, unchanged: same frame, same colour, same type,
-   same height. Only its width is different, because a row is not a page -- it sits in the
-   text column, directly under the rating it belongs to, rather than spanning everything. */
-.favorite-review-action{grid-column:2/3;justify-self:start;padding:0 26px}
+/* The same control as the store page's: the fill and the lettering are the store page's
+   own, taken from the same tokens, not a lookalike. The store page reaches them through
+   .review-invitation, which is why wearing only the shared class left this one plain.
+   Only the width differs, because a row is not a page -- it sits in the text column,
+   directly under the rating, and stays on one line. */
+.favorite-review-action{grid-column:2/3;justify-self:start;display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 26px;background:var(--clay);color:var(--surface);text-decoration:none;white-space:nowrap}
+.favorite-review-action:hover{background:color-mix(in srgb,var(--clay) 88%,var(--ink))}
 
-/* The retry button is centred in the frame rather than left against the text. It is the
-   one thing to press in that box, and a control that fills nothing and starts at the left
-   edge reads as a footnote to the sentence above it. */
-.location-alert>div{display:grid;justify-items:center;text-align:center}
-.location-alert p{text-align:center}
-.location-alert .button{justify-self:center}
+

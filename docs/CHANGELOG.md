@@ -8,6 +8,30 @@ value involved.
 
 ---
 
+## Returned review round: the store page's card, the row's save action, two tables
+
+- **The store page's review card is its own card now.** On a store's own page the store is
+  the page, so the card no longer repeats it or sends the reader away from it: no store
+  name, no store photo, no save control, no link to the review's comments, no written text.
+  What is left is the judgement -- who wrote it, what they scored, and when, with the date
+  moved under the rating where it is read. One `surface` prop replaced the two booleans that
+  were accumulating for the same purpose.
+- **The save row under a search result was 24px left of the column it belongs to.** The
+  offset was written as 234px; the photo column plus the gap is 230 + 28. The Google link
+  beside it already used the real number. Space on the left and space on the right are the
+  same now because they are measured from the same thing.
+- **The favourites action wore the shared class but not the store page's colours**, which
+  live under `.review-invitation`. It takes the fill and the lettering from the same tokens
+  the store page does, and stays on one line.
+- **The home page and the about page showed the same five contributor levels in two sizes.**
+  They share one set of table rules now instead of two that drift.
+- **The location alert lost its retry button.** The control that failed sits one line above
+  it; a second button was a second way to press the same thing. The text is back on the
+  left, where the rest of the panel reads from.
+- LinkedIn moved to the right of Snapchat in the footer.
+
+---
+
 ## The legal pages did not fit a phone, and it was one table doing it
 
 - Measured at 375px: the document was 496px wide on the privacy policy and 688px on the

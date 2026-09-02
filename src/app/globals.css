@@ -223,9 +223,12 @@
 .verify-warning{display:flex;gap:12px;align-items:flex-start;margin-top:18px;padding:16px 18px;border:1px solid var(--error);border-radius:var(--r-md);background:color-mix(in srgb,var(--error) 8%,var(--surface));color:var(--ink);font-size:16px;line-height:1.55}
 .verify-warning>svg{flex:0 0 auto;width:20px;height:20px;margin-top:2px;color:var(--error)}
 .legal-table-wrap{overflow-x:auto;margin:0 0 20px}
-.legal-table-wrap table{border-collapse:collapse;width:100%;min-width:min(100%,460px);font-size:20px;line-height:1.6}
-.legal-table-wrap th,.legal-table-wrap td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
-.legal-table-wrap th{font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--clay);border-bottom:1px solid var(--line);padding:10px 14px;text-align:left}
+/* The home page asks the same question the about page answers, and showed the same five
+   levels in a table of its own -- set a third smaller, so the two read as different
+   documents. They share one set of rules now rather than two that drift apart. */
+.legal-table-wrap table,.home-question-table table{border-collapse:collapse;width:100%;min-width:min(100%,460px);font-size:20px;line-height:1.6}
+.legal-table-wrap th,.legal-table-wrap td,.home-question-table th,.home-question-table td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+.legal-table-wrap th,.home-question-table th{font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--clay);border-bottom:1px solid var(--line);padding:10px 14px;text-align:left}
 .legal-related{border-top:1px solid var(--line);padding-top:26px}
 .legal-related h2{font-size:12px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:var(--ink-muted);margin:0 0 12px}
 .legal-related ul{list-style:none;margin:0;padding:0;display:grid;gap:9px}
@@ -239,7 +242,7 @@
   .legal-section{margin-bottom:36px}
   .legal-section h2{font-size:26px}
   .legal-section h3{font-size:20px;margin-top:26px}
-  .legal-section p,.legal-section ul,.legal-note,.legal-index p,.legal-table-wrap table{font-size:17px}
+  .legal-section p,.legal-section ul,.legal-note,.legal-index p,.legal-table-wrap table,.home-question-table table{font-size:17px}
   .legal-index strong{font-size:22px}
   .feedback-intro{font-size:18px}
 }
@@ -272,10 +275,15 @@
 
 /* Search rows ask for a decision, so the two sources and the save action share one
    centred reading axis. Long German and Russian labels remain on one line without
-   shrinking the 44px action target. */
-.dual-score{justify-content:center;text-align:center;width:calc(100% - 234px);margin:4px 0 0 234px}
+   shrinking the 44px action target.
+
+   The offset is the photo column plus the gap -- 230 + 28 -- and nothing else. It was 234,
+   which is not a measurement of anything; it put both blocks 24px to the left of the text
+   column they belong under, so the space on their left and the space on their right were
+   not the same. The Google link beside them was already using the real number. */
+.dual-score{justify-content:center;text-align:center;width:calc(100% - 258px);margin:4px 0 0 258px}
 .dual-score>div{align-items:center}
-.result-save-row{justify-content:center;white-space:nowrap;width:calc(100% - 234px);margin:2px 0 0 234px}
+.result-save-row{justify-content:center;white-space:nowrap;width:calc(100% - 258px);margin:2px 0 0 258px}
 .result-save-reason{white-space:nowrap}
 .result-save{width:auto;min-width:44px;height:auto;min-height:44px;padding:0 14px;color:var(--ink);font-size:13px;font-weight:700;white-space:nowrap;transition:color .16s ease,border-color .16s ease,background-color .16s ease}
 .result-save[aria-pressed="true"]{color:var(--surface);border-color:var(--clay);background:var(--clay)}
@@ -294,9 +302,6 @@
 @keyframes account-loading{to{background-position:-220% 0}}
 .home-question-body h3{margin:20px 0 10px;font-size:20px}
 .home-question-table{overflow-x:auto;margin:8px 0 18px}
-.home-question-table table{width:100%;min-width:560px;border-collapse:collapse;font-size:16px;line-height:1.5}
-.home-question-table th,.home-question-table td{text-align:left;vertical-align:top;padding:12px;border-bottom:1px solid var(--line)}
-.home-question-table th{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--clay)}
 @media(max-width:600px){.dual-score,.result-save-row{width:100%;margin-left:0}.account-loading-card{padding:18px;grid-template-columns:52px 1fr}.account-loading-avatar{width:52px;height:52px}}
 @media(prefers-reduced-motion:reduce){.account-loading-avatar,.account-loading-line{animation:none}}
 .legal-section a,.legal-summary a{color:var(--clay);text-decoration:underline;text-underline-offset:2px}
@@ -312,7 +317,10 @@ body{min-height:100dvh;display:flex;flex-direction:column}
 body>main{flex:1 0 auto;min-width:0;width:100%}
 .site-footer{margin-top:auto}
 
-.contributor-level{display:inline-block;margin-left:7px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:var(--r-sm);background:var(--muted);color:var(--ink-muted);vertical-align:middle}
+/* The badge is small caps beside a name set much larger, and "middle" aligns it to the
+   middle of the whole line box rather than to the name -- which reads as riding high above
+   the letters it belongs to. It sits on the name's own centre now. */
+.contributor-level{display:inline-block;margin-left:7px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:var(--r-sm);background:var(--muted);color:var(--ink-muted);vertical-align:baseline;position:relative;top:1px}
 .contributor-level[data-level="4"],.contributor-level[data-level="5"]{background:var(--accent-wash);color:var(--ink)}
 /* Paid placement has to be identifiable at a glance, not inferred from position. */
 /* Sits beside the category label and borrows its scale, so it reads as one line of
