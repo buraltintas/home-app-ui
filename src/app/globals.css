@@ -548,3 +548,26 @@ body>main{flex:1 0 auto;min-width:0;width:100%}
   .criteria-list .criterion{grid-template-columns:minmax(0,1fr);gap:8px;padding:16px 0}
   .criteria-list .criterion legend{font-size:15px}
 }
+
+/* The same single cross the two search boxes carry, on the location box. It sits inside the
+   field rather than beside it, so clearing a typed district is the same gesture in all
+   three places rather than three different ones. */
+.location-field{position:relative;display:block}
+.location-field input{width:100%;padding-right:48px}
+.location-clear-text{position:absolute;top:50%;right:2px;transform:translateY(-50%);width:44px;height:44px;display:grid;place-items:center;border:0;background:transparent;border-radius:var(--r-pill);color:var(--ink-muted);cursor:pointer}
+.location-clear-text:hover{background:var(--muted);color:var(--ink)}
+.location-clear-text svg{width:18px;height:18px}
+
+/* The same confirmation the review flow shows, given the height the button it replaces had
+   so the panel does not jump when the device answers. */
+.location-verified{display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px}
+.location-verified svg{width:18px;height:18px}
+
+/* "Değiştir" was underlined text sitting between a place name and a cross, which reads as
+   a third piece of the sentence rather than as something to press. It is a control now,
+   with an edge and a target of its own. */
+.location-control>button:not(.nearby-button):not(.location-clear){
+  min-height:40px;padding:0 16px;border:1px solid var(--line-strong);border-radius:var(--r-pill);
+  background:var(--surface);color:var(--ink);font-size:14px;font-weight:600;text-decoration:none;
+  transition:border-color .16s ease,background-color .16s ease}
+.location-control>button:not(.nearby-button):not(.location-clear):hover{border-color:var(--ink);background:var(--muted)}

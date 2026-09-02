@@ -176,6 +176,34 @@ export function watchLocationConsent(onForgotten:()=>void):()=>void{
   return()=>{cancelled=true;status?.removeEventListener('change',check);};
 }
 
+// The other half of watchLocationConsent. Somebody who goes into browser settings and
+// turns location back on has said yes; nothing was asking, so nothing heard them, and the
+// button they pressed next looked broken. This notices the grant and lets the page act on
+// it without a reload.
+//
+// Only the transition matters. A page that opens with permission already granted is
+// handled elsewhere, and firing here as well would take a fix nobody asked for.
+export function watchLocationGranted(onGranted:()=>void):()=>void{
+  if(typeof navigator==='undefined'||!navigator.permissions?.query)return()=>undefined;
+  let status:PermissionStatus|undefined;
+  let previous:PermissionState|undefined;
+  const check=()=>{
+    if(!status)return;
+    const state=status.state;
+    const was=previous;
+    previous=state;
+    if(state==='granted'&&was!==undefined&&was!=='granted')onGranted();
+  };
+  let cancelled=false;
+  void navigator.permissions.query({name:'geolocation'}).then(result=>{
+    if(cancelled)return;
+    status=result;
+    previous=result.state;
+    result.addEventListener('change',check);
+  }).catch(()=>undefined);
+  return()=>{cancelled=true;status?.removeEventListener('change',check);};
+}
+
 export function clearSearchLocation(){
   try{window.localStorage.removeItem(SEARCH_LOCATION);}catch{}
 }

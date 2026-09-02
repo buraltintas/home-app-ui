@@ -8,6 +8,42 @@ value involved.
 
 ---
 
+## The search page: nine revisions, and one real bug among them
+
+- **Granting the location permission mid-session now works without a reload.** The page was
+  listening for consent being taken away and for nothing else, so somebody who went into
+  browser settings, turned location back on and pressed "use my location" got nothing: the
+  page still held the refusal it was given on load. The grant is acted on where it happens.
+- **The panel no longer replaces the suggestions underneath it.** Opening "change location"
+  threw away the recent searches and the categories the visitor was about to pick from, and
+  put them back only once the location was settled. It opens above them now.
+- **Once the device has answered, the button that asked it stops being a button** and
+  becomes the same confirmation the review flow shows, so "the location is settled" looks
+  the same in both places.
+- "Değiştir" was underlined text between a place name and a cross, which reads as a third
+  piece of the sentence. It is a control now, with an edge and a target of its own.
+- The location field carries the same single cross the two search boxes carry, so clearing a
+  typed district is one gesture rather than three different ones.
+- **The page ground is the canvas again.** Honey is an area colour and it was covering the
+  whole top of the screen -- title, panel, suggestions and categories all sat on it, which is
+  what read as "the page is yellow". It keeps its job as an accent.
+- **A category is a word, not a card.** Each row was a bordered box holding a bordered icon
+  tile holding an icon -- three surfaces to say "Halı" -- and eight of them in a grid read as
+  a control panel. The rows carry no surface of their own now: a fine rule between them, the
+  name in the type that matters, the count as quiet meta. They finally match the list of
+  recent searches beside them instead of arguing with it.
+- Copy: the page title, the location prompt, and the profile sign-in line, in four locales.
+
+### What this costs in search
+
+- The "BOŞA GEZME, BİZE SOR." line above the title is gone from `/discover`. It was unique
+  text on an indexed page, though the same words remain in the footer of every page, so what
+  is lost is one prominent placement rather than the phrase itself.
+- The "Yakınındaki yerleri keşfet" heading is gone from the location panel. It only appeared
+  once a location was already chosen, so it was never in the first render a crawler sees.
+
+---
+
 ## The review screen is two steps and eight scores
 
 - Verify the visit, then score eight things: product availability, value, layout, staff
