@@ -10,7 +10,7 @@ import { useI18n } from '@/i18n/I18nProvider';
 import { localePath } from '@/lib/site';
 import { apiFetch } from '@/lib/api-client';
 import type { LocationFailure } from '@/lib/location';
-import { LOCATION_LOST_EVENT, deviceLocationAllowed, forgetDeviceLocation, watchLocationConsent, watchLocationGranted, canUseDeviceLocationWithoutPrompt, clearSearchLocation, LOCATION_UPDATE_EVENT, locationMessage, rememberedPosition, requestPosition, savedSearchLocation, saveSearchLocation } from '@/lib/location';
+import { LOCATION_LOST_EVENT, deviceLocationAllowed, forgetDeviceLocation, locationPermission, watchLocationConsent, watchLocationGranted, canUseDeviceLocationWithoutPrompt, clearSearchLocation, LOCATION_UPDATE_EVENT, locationMessage, rememberedPosition, requestPosition, savedSearchLocation, saveSearchLocation } from '@/lib/location';
 import { seasonalPool } from '@/i18n/search-seasons';
 import { rememberOriginSearch } from '@/lib/search-origin';
 import { clearSearchSnapshot, readSearchSnapshot, writeSearchSnapshot } from '@/lib/search-session';
@@ -318,7 +318,10 @@ export function SearchExperience() {
       // it is only ever a hint -- the point searched is resolved from the place picked.
       const near=location?.coordinates??rememberedPosition();
       const bias=near?`&latitude=${near.latitude}&longitude=${near.longitude}`:'';
-      try{const response=await apiFetch(`/api/proxy/locations/search?q=${encodeURIComponent(manual.trim())}&limit=5${bias}`,{signal:controller.signal,headers:{'X-Locale':locale}});if(!response.ok)throw new Error();const result=await response.json() as {items:LocationResult[]};setCandidates(result.items);setLookingUp(false);}catch(err){if((err as Error).name!=='AbortError')setCandidates([]);}
+      try{const response=await apiFetch(`/api/proxy/locations/search?q=${encodeURIComponent(manual.trim())}&limit=5${bias}`,{signal:controller.signal,headers:{'X-Locale':locale}});if(!response.ok)throw new Error();const result=await response.json() as {items:LocationResult[]};setCandidates(result.items);}catch(err){if((err as Error).name!=='AbortError')setCandidates([]);}finally{
+        // In a finally so an aborted request cannot leave the panel saying "searching"
+        // forever. It used to return early on abort and skip this line.
+        setLookingUp(false);}
     },350);
     return()=>{window.clearTimeout(timer);controller.abort();};
   },[sheetOpen,manual,locale,location]);
@@ -470,9 +473,19 @@ export function SearchExperience() {
     setAutoLocating(false);
     // A refused or missing fix is not a failed search. The location sheet stays open so
     // the visitor can pick a place by name and keep going.
-    if(!outcome.ok){setError(t(locationMessage(outcome.reason)));setErrorReason(outcome.reason);return;}
+    if(!outcome.ok){
+      // A refusal from the device while the browser itself says the permission is granted
+      // is not a refusal we can do anything about: the page was loaded under the old
+      // decision and the browser will not revisit it until the document is reloaded. Saying
+      // "allow location" there is wrong advice -- it is already allowed.
+      const stated=await locationPermission();
+      if(stated==='granted'&&outcome.reason!=='timeout'){setError(t('locationNeedsReload'));setErrorReason('');return;}
+      setError(t(locationMessage(outcome.reason)));setErrorReason(outcome.reason);return;}
     const selected:SearchPlace={source:'device',label:t('currentLocation'),accuracyMeters:outcome.position.accuracy_meters,coordinates:{latitude:outcome.position.latitude,longitude:outcome.position.longitude}};
-    selectLocation(selected);setLocationOpen(false);setError('');setErrorReason('');
+    // The panel stays open. It used to close the instant the device answered, which meant
+    // the confirmation that replaces the button was never on screen long enough to be seen
+    // -- reported as "the confirmation was not done". The person closes it themselves.
+    selectLocation(selected);setError('');setErrorReason('');
   };
   // Kept in an effect rather than assigned while rendering: the watcher outlives every
   // render and needs whichever locateMe belongs to the latest one.
@@ -595,7 +608,12 @@ export function SearchExperience() {
         :<button className="button primary" onClick={()=>void locateMe()} disabled={loading||autoLocating} aria-busy={autoLocating}><LocateFixed/>{t('useCurrentLocation')}</button>}<label><span>{t('chooseLocation')}</span><span className="location-field"><input value={manual} onChange={event=>setManual(event.target.value)} placeholder={t('locationHint')} disabled={loading}/>{manual&&<button type="button" className="location-clear-text" onClick={()=>{setManual('');}} aria-label={t('clearSearch')}><X aria-hidden="true"/></button>}</span></label>{/* Directly under the box it is about. At the top of the panel it read as a warning
       about the whole screen; here it is plainly an answer to what was just typed or
       pressed. */}
-      {error&&<LocationAlert message={error} reason={errorReason}/>}{location&&<button className="button quiet" onClick={()=>setLocationOpen(false)}>{t('later')}</button>}</div>{manual.trim().length>=2&&<div className="location-results" aria-live="polite">{lookingUp?<p>{t('searchingLocations')}</p>:candidates.length===0?<p>{t('noLocations')}</p>:candidates.map(candidate=><button key={candidate.place_id} onClick={()=>void choose(candidate)} disabled={loading}><strong>{candidate.name}</strong><span>{candidate.address}</span><small>{candidate.attributions.join(' · ')}</small></button>)}</div>}</section>}{location&&<form className="search-form" onSubmit={submit} aria-busy={loading}><Search aria-hidden="true"/><div className="search-field"><textarea ref={field} rows={1} value={query} onChange={event=>setQuery(event.target.value)} onKeyDown={event=>{if(event.key==='Enter'){event.preventDefault();void runSearch();}}} placeholder={placeholder} aria-label={t('searchHint')} disabled={loading}/>{query&&!loading&&<button type="button" className="search-clear" onClick={()=>{setQuery('');field.current?.focus();}} aria-label={t('clearSearch')}><X aria-hidden="true"/></button>}</div><button type="submit" disabled={loading}>{loading?t('loading'):t('searchAction')}</button></form>}{/* The panel opens above these, it does not replace them. Hiding them while somebody
+      {error&&<LocationAlert message={error} reason={errorReason}/>}{location&&<button className="button quiet" onClick={()=>setLocationOpen(false)}>{location.source==='device'?t('close'):t('later')}</button>}</div>{/* The list is not thrown away to say "searching". Every keystroke starts another
+            lookup, and replacing the results with a status line each time is the flicker
+            that was reported: list, searching, list, searching. The previous answers stay
+            on screen while the next ones are fetched, and the status line appears only when
+            there is genuinely nothing to show yet. */}
+      {manual.trim().length>=2&&<div className="location-results" aria-live="polite">{lookingUp&&candidates.length===0?<p>{t('searchingLocations')}</p>:!lookingUp&&candidates.length===0?<p>{t('noLocations')}</p>:candidates.map(candidate=><button key={candidate.place_id} onClick={()=>void choose(candidate)} disabled={loading}><strong>{candidate.name}</strong><span>{candidate.address}</span><small>{candidate.attributions.join(' · ')}</small></button>)}</div>}</section>}{location&&<form className="search-form" onSubmit={submit} aria-busy={loading}><Search aria-hidden="true"/><div className="search-field"><textarea ref={field} rows={1} value={query} onChange={event=>setQuery(event.target.value)} onKeyDown={event=>{if(event.key==='Enter'){event.preventDefault();void runSearch();}}} placeholder={placeholder} aria-label={t('searchHint')} disabled={loading}/>{query&&!loading&&<button type="button" className="search-clear" onClick={()=>{setQuery('');field.current?.focus();}} aria-label={t('clearSearch')}><X aria-hidden="true"/></button>}</div><button type="submit" disabled={loading}>{loading?t('loading'):t('searchAction')}</button></form>}{/* The panel opens above these, it does not replace them. Hiding them while somebody
         changes their location threw away the recent searches and the categories they were
         about to pick from, and put them back only once the location was settled. */}
     {!data&&!loading&&<div className="search-suggestions"><div>{suggestionsAnswered?<><h2>{strip.title}</h2>{prompts.map(phrase=><button key={phrase} onClick={()=>fill(phrase)}>{phrase} <ArrowRight/></button>)}</>:<div className="suggestions-waiting" aria-busy="true" aria-label={t('loading')}><span/><span/><span/><span/></div>}</div><div><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>fill(category.name)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}{category.search_count>0&&<small title={t('searchCount')}>{category.search_count.toLocaleString(locale)} {t('searchCountShort')}</small>}</span></button>)}</div></div></div>}</header>{loading&&<SearchOverlay/>}{!loading&&data?.guidance&&<section className="guidance-card"><h2>{data.guidance.message}</h2><div>{data.guidance.examples.map(example=><button key={example} onClick={()=>fill(example)}>{example}<ArrowRight/></button>)}</div></section>}{!loading&&data&&!data.guidance&&<section className="results-layout"><div className="result-list"><p className="result-count">{data.results.length} {t('results')}</p>{data.results.length===0?<div className="zero-state"><h2>{t('zeroTitle')}</h2><p>{t('zeroBody')}</p></div>:data.results.map(item=><Result item={item} key={item.search_result_impression_id} onSelect={()=>select(item)} onCall={()=>call(item)} saved={savedStores.has(item.id??'')}/>)}</div></section>}</main>;

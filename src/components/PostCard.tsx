@@ -32,15 +32,21 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
   const [busy,setBusy]=useState<'like'|'save'|null>(null);
   const [shared,setShared]=useState(false);
   const [removing,setRemoving]=useState(false);
+  const [removeFailed,setRemoveFailed]=useState(false);
 
   const remove=async()=>{
     if(removing||!window.confirm(t('confirmDeleteReview')))return;
-    setRemoving(true);
+    setRemoving(true);setRemoveFailed(false);
     try{
       const response=await apiFetch(`/api/proxy/posts/${post.id}`,{method:'DELETE'});
       if(!response.ok)throw new Error();
       onDeleted?.();
-    }catch{setRemoving(false);}
+    }catch{
+      // A failure used to reset the button and say nothing, which from the outside is
+      // indistinguishable from a button that does nothing at all -- and that is how it was
+      // reported. Whatever went wrong, the person now sees that something did.
+      setRemoveFailed(true);setRemoving(false);
+    }
   };
 
   const mutate=async(kind:'like'|'save')=>{
@@ -108,6 +114,7 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
         <button aria-label={owned?(shared?t('copied'):t('share')):undefined} title={owned?t('share'):undefined} onClick={()=>void share()}><Send/>{owned?null:shared?t('copied'):t('share')}</button>
         {owned&&<button className="post-delete" disabled={removing} aria-label={t('deleteReview')} title={t('deleteReview')} onClick={()=>void remove()}><Trash2/></button>}
       </footer>
+      {removeFailed&&<p className="form-error" role="alert">{t('deleteReviewFailed')}</p>}
     </div>
     <AuthDialog open={auth} onClose={()=>setAuth(false)}/>
   </article>;

@@ -8,6 +8,36 @@ value involved.
 
 ---
 
+## Five returned cards, and three of them were the same kind of mistake
+
+- **"Değerlendirme yap" is described once now.** It was written in three places -- the store
+  page's panel, the store page's action row, the favourites row -- and three descriptions of
+  one control drift apart. They had: the favourites copy inherited a smaller type size from
+  its row, which is why it kept coming back as "not the same button". Everything that makes
+  it look like itself lives in one rule; each home adds only where it sits.
+- **The search row is centred again, over the text column and only the text column.** The
+  offset was right; the width was not. There is another 28px gap and a 20px chevron to the
+  right of the text, so a box that ran to the row's edge put the content 24px off. The
+  chevron is pinned to 20px so the arithmetic cannot drift with an icon default.
+- **The "shadow" on the profile review frame is a 6px top border.** It belongs to the feed
+  card, where the frame is a full-width panel under a photograph; in a list row it is a
+  heavy dark rule with nothing to weigh. Reported twice as a shadow, because that is what it
+  looks like. The row takes the ordinary 1px edge, and the frame is wider now.
+- **Deleting a review said nothing when it failed.** The catch reset the button and stopped,
+  which from the outside is indistinguishable from a button that does nothing -- and that is
+  how it was reported. A failure is now visible.
+- **The location panel no longer closes the instant the device answers**, so the
+  confirmation that replaces the button is on screen long enough to be seen.
+- **A refusal while the browser says the permission is granted** is now named for what it
+  is: the page was loaded under the old decision and only a reload revisits it. Telling
+  somebody to allow location there is wrong advice -- it is already allowed.
+- The location list no longer replaces itself with "searching" on every keystroke; the
+  previous answers stay while the next ones are fetched. The status line is inset to the
+  same edge as the results, and a long place name wraps in its own slot instead of pushing
+  "Değiştir" and the cross onto another line.
+
+---
+
 ## One axis for a search result, instead of a centre that kept being wrong
 
 - The save action and the two scores were centred, and twice that centring was reported as

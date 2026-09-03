@@ -245,8 +245,6 @@ svg{stroke-width:2}
 .review-invitation h2{margin:0;font-size:28px;line-height:1.15;letter-spacing:-.025em}
 .review-invitation p{max-width:720px;margin:10px 0 0;color:var(--ink-muted);font-size:16px;line-height:1.55}
 .review-invitation-actions{display:grid;gap:10px}
-.review-invitation .store-contribution-action{display:flex;align-items:center;justify-content:center;min-height:52px;background:var(--clay);color:var(--surface);text-decoration:none}
-.review-invitation .store-contribution-action:hover{background:color-mix(in srgb,var(--clay) 88%,var(--ink))}
 .contribution-progress{min-height:58px;padding:9px 12px;border:1px solid color-mix(in srgb,var(--clay) 28%,var(--line));border-radius:var(--r-sm);display:grid;grid-template-columns:34px 1fr;align-items:center;gap:9px;color:var(--ink);text-decoration:none;background:color-mix(in srgb,var(--surface) 72%,transparent)}
 .contribution-progress>span:first-child{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--surface);font-size:20px}
 .contribution-progress>span:last-child{display:grid;gap:2px}
@@ -264,13 +262,30 @@ svg{stroke-width:2}
    .review-invitation, which is why wearing only the shared class left this one plain.
    Only the width differs, because a row is not a page -- it sits in the text column,
    directly under the rating, and stays on one line. */
-.favorite-review-action{grid-column:2/3;justify-self:start;display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 26px;background:var(--clay);color:var(--surface);text-decoration:none;white-space:nowrap}
-.favorite-review-action:hover{background:color-mix(in srgb,var(--clay) 88%,var(--ink))}
 
 
 
 /* The fifth thing you can do about a store, sitting with the other four rather than in the
    panel below them. It takes the whole row because the four above it are icon-sized and a
    button of that width beside them would read as a fifth icon that failed to fit. */
-.store-review-action{grid-column:1/-1;display:flex;align-items:center;justify-content:center;min-height:52px;background:var(--clay);color:var(--surface);text-decoration:none}
-.store-review-action:hover{background:color-mix(in srgb,var(--clay) 88%,var(--ink))}
+
+/* "Değerlendirme yap" is one control with one appearance, wherever it stands. It was
+   described in three places -- the store page's panel, the store page's action row, the
+   favourites row -- and three descriptions of the same thing drift apart. They did: the
+   favourites one inherited a smaller size from its row, which is why it kept coming back
+   as "not the same button". Everything that makes it look like itself is written once,
+   here; the places it appears add only where they put it. */
+.store-contribution-action{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:52px;padding:0 20px;border-radius:var(--r-md);
+  background:var(--clay);color:var(--surface);
+  font-size:18px;font-weight:700;line-height:1.2;letter-spacing:-.005em;
+  text-decoration:none;white-space:nowrap;
+  transition:background-color .16s ease;
+}
+.store-contribution-action:hover{background:color-mix(in srgb,var(--clay) 88%,var(--ink))}
+
+/* Placement only, in each of the three homes. */
+.review-invitation .store-contribution-action{display:flex}
+.store-review-action{grid-column:1/-1;display:flex}
+.favorite-review-action{grid-column:2/3;justify-self:start}

@@ -79,7 +79,15 @@
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 @media(max-width:900px){body{padding-bottom:calc(84px + env(safe-area-inset-bottom))}.site-header{backdrop-filter:none}.nav-wrap{height:62px}.site-header nav{position:fixed;z-index:24;left:50%;right:auto;bottom:calc(10px + env(safe-area-inset-bottom));width:min(420px,calc(100% - 32px));height:64px;transform:translateX(-50%);display:grid;grid-template-columns:repeat(4,1fr);align-items:center;gap:0;margin:0;padding:0 6px;background:rgba(255,254,251,.56);border:1px solid rgba(255,255,255,.8);border-radius:24px;box-shadow:0 14px 36px rgba(38,37,33,.15),inset 0 1px 0 rgba(255,255,255,.82);backdrop-filter:blur(24px) saturate(165%);-webkit-backdrop-filter:blur(24px) saturate(165%)}.site-header nav::before{content:"";position:absolute;top:1px;left:22px;right:22px;height:1px;border-radius:1px;background:rgba(255,255,255,.9);pointer-events:none}.site-header nav a{position:relative;min-width:44px;min-height:56px;justify-content:center}.site-header nav a[aria-current=page]::after{content:"";position:absolute;bottom:9px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:var(--r-pill);background:var(--clay)}.site-header nav span{display:none}.site-header nav svg{display:block;width:24px;height:24px}.site-header nav a:nth-child(1) svg{color:var(--clay)}.site-header nav a:nth-child(2) svg{color:#a66f2e}.site-header nav a:nth-child(3) svg{color:#b64f65}.site-header nav a:nth-child(4) svg{color:#536c72}.feed-layout{padding-bottom:28px}}
 
-.location-control{display:flex;align-items:center;gap:10px;margin-top:22px;color:var(--ink-muted)}.location-control>span{font-weight:700;color:var(--ink)}.location-control>button:not(.nearby-button){border:0;background:transparent;text-decoration:underline;min-height:44px}.location-control>button:last-child{display:grid;place-items:center;width:44px;text-decoration:none}.location-sheet{margin-top:24px;padding:28px;background:var(--muted);display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:32px;border-radius:16px}.location-sheet h2{font-size:28px;margin:0 0 8px}.location-sheet p{color:var(--ink-muted);line-height:1.5}.location-actions{display:grid;gap:12px;align-content:start}.location-actions .primary{display:flex;align-items:center;justify-content:center;gap:8px}.location-actions label{display:grid;gap:7px;font-size:13px;font-weight:700}.location-actions input{width:100%;min-height:50px;padding:0 14px;border:1px solid var(--line);background:var(--surface);border-radius:6px}.location-results{grid-column:2;display:grid;background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden}.location-results>button{border:0;border-bottom:1px solid var(--line);background:transparent;text-align:left;padding:13px;display:flex;flex-direction:column;gap:3px}.location-results>button:last-child{border-bottom:0}.location-results span,.location-results small{color:var(--ink-muted)}.guidance-card{max-width:920px;margin:0 auto 80px;padding:32px;background:var(--muted)}.guidance-card h2{font-size:30px}.guidance-card div{display:grid;gap:10px}.guidance-card button{display:flex;justify-content:space-between;align-items:center;border:0;border-bottom:1px solid var(--line);background:transparent;min-height:48px;text-align:left}.zero-state{padding:48px 0}.zero-state h2{font-size:30px}.zero-state p,.form-error{color:var(--ink-muted)}.form-error{color:var(--error);margin-top:18px}
+/* Fixed slots rather than a wrapping row. A long place name -- "Karşıyaka iskele meydanı"
+   -- used to push "Değiştir" and the cross onto the next line and leave them wherever they
+   landed. The name is the only part allowed to grow, and it wraps inside its own slot; the
+   two controls stay where they are, whatever is typed. */
+.location-control{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:10px;margin-top:22px;color:var(--ink-muted)}
+.location-control>span{min-width:0;font-weight:700;color:var(--ink);overflow-wrap:anywhere}.location-control>button:not(.nearby-button){border:0;background:transparent;text-decoration:underline;min-height:44px}.location-control>button:last-child{display:grid;place-items:center;width:44px;text-decoration:none}.location-sheet{margin-top:24px;padding:28px;background:var(--muted);display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:32px;border-radius:16px}.location-sheet h2{font-size:28px;margin:0 0 8px}.location-sheet p{color:var(--ink-muted);line-height:1.5}.location-actions{display:grid;gap:12px;align-content:start}.location-actions .primary{display:flex;align-items:center;justify-content:center;gap:8px}.location-actions label{display:grid;gap:7px;font-size:13px;font-weight:700}.location-actions input{width:100%;min-height:50px;padding:0 14px;border:1px solid var(--line);background:var(--surface);border-radius:6px}.location-results{grid-column:2;display:grid;background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden}.location-results>button{border:0;border-bottom:1px solid var(--line);background:transparent;text-align:left;padding:13px;display:flex;flex-direction:column;gap:3px}/* The status lines sit on the same left edge as the results underneath them. "Aranıyor…"
+   was flush against the box's border while every result below it was inset by 13px. */
+.location-results>p{margin:0;padding:13px;color:var(--ink-muted)}
+.location-results>button:last-child{border-bottom:0}.location-results span,.location-results small{color:var(--ink-muted)}.guidance-card{max-width:920px;margin:0 auto 80px;padding:32px;background:var(--muted)}.guidance-card h2{font-size:30px}.guidance-card div{display:grid;gap:10px}.guidance-card button{display:flex;justify-content:space-between;align-items:center;border:0;border-bottom:1px solid var(--line);background:transparent;min-height:48px;text-align:left}.zero-state{padding:48px 0}.zero-state h2{font-size:30px}.zero-state p,.form-error{color:var(--ink-muted)}.form-error{color:var(--error);margin-top:18px}
 @media(max-width:860px){.location-sheet{grid-template-columns:minmax(0,1fr);padding:20px}.location-results{grid-column:1}.guidance-card{margin:0 18px 100px;padding:22px}.location-control{flex-wrap:wrap}}
 .danger-zone{width:min(620px,100%);margin-top:38px;padding:24px;border:1px solid color-mix(in srgb,var(--error) 45%,var(--line));border-radius:12px;text-align:left}.danger-zone h2{font-size:26px;margin:0}.danger-zone p{color:var(--ink-muted);line-height:1.55}.danger-button{color:var(--error);border-color:color-mix(in srgb,var(--error) 50%,var(--line))}
 .profile-summary{width:min(620px,100%);margin-top:12px;padding:24px;border:1px solid var(--line);border-radius:12px;text-align:left;display:flex;align-items:center;gap:18px;flex-wrap:wrap}.profile-summary-identity{display:flex;flex-direction:column;gap:2px}.profile-summary-identity span{color:var(--ink-muted);font-size:14px}.profile-summary dl{display:flex;gap:24px;margin:0 0 0 auto}.profile-summary dl div{display:flex;flex-direction:column-reverse;align-items:center}.profile-summary dt{font-size:11px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.6px}.profile-summary dd{font-size:20px;font-weight:700;margin:0}
@@ -276,21 +284,21 @@
 .site-footer-social a:hover{border-color:var(--clay);background:var(--accent-wash)}
 .site-footer-social svg{width:19px;height:19px;fill:currentColor;stroke-width:0}
 
-/* One axis for the whole row. The title, the address, the two scores, the save action and
-   the Google link all begin at the same place: 258px in, which is the photo column plus the
-   gap and nothing else.
+/* Centred over the text column, and only the text column.
 
-   Centring is what kept getting this wrong, twice. These blocks sit outside the card's grid,
-   so "centred" meant centred in a box that began at the text column but ran on to the row's
-   right edge -- past the text, over the 28px gap and the chevron beyond it. Measured, the
-   content landed 24px right of the text column's own centre, which is exactly the unequal
-   left and right that was reported. Aligning to the text column removes the question rather
-   than retuning the answer: there is nothing left to be off-centre against.
+   These blocks sit outside the card's grid, so they have to reconstruct its geometry by
+   hand, and that is what was wrong twice. The left edge is the photo column plus the gap:
+   230 + 28. The right edge is not the row's right edge -- there is another 28px gap and a
+   20px chevron out there -- so the box has to give that back too. Centring in a box that
+   ran to the row's edge put the content 24px right of where it looked like it should be,
+   which is the unequal left and right that was reported.
 
-   Long German and Russian labels still stay on one line without shrinking the 44px target. */
-.dual-score{justify-content:flex-start;text-align:left;width:calc(100% - 258px);margin:4px 0 0 258px}
-.dual-score>div{align-items:flex-start}
-.result-save-row{justify-content:flex-start;white-space:nowrap;width:calc(100% - 258px);margin:2px 0 0 258px}
+   The chevron is pinned to 20px below so this arithmetic cannot drift with an icon default.
+   Long German and Russian labels stay on one line without shrinking the 44px target. */
+.search-result>svg{flex:none;width:20px;height:20px}
+.dual-score{justify-content:center;text-align:center;width:calc(100% - 258px - 48px);margin:4px 0 0 258px}
+.dual-score>div{align-items:center}
+.result-save-row{justify-content:center;white-space:nowrap;width:calc(100% - 258px - 48px);margin:2px 0 0 258px}
 .result-save-reason{white-space:nowrap}
 .result-save{width:auto;min-width:44px;height:auto;min-height:44px;padding:0 14px;color:var(--ink);font-size:13px;font-weight:700;white-space:nowrap;transition:color .16s ease,border-color .16s ease,background-color .16s ease}
 .result-save[aria-pressed="true"]{color:var(--surface);border-color:var(--clay);background:var(--clay)}
@@ -401,23 +409,30 @@ body>main{flex:1 0 auto;min-width:0;width:100%}
 .profile-review-list{border:1px solid var(--line);border-bottom:0}
 .profile-review-list .post-card{padding:28px 32px}
 /* Your own reviews are a list, so an entry is a row: the store's picture at thumbnail size
-   on the left -- the size the favourites page uses -- and the score, the date and the two
-   actions in a frame beside it. Stacked, the photo's lower edge sat directly on the frame's
-   upper edge and read as a shadow along the top of it; side by side there is no such edge
-   to mistake. */
-.profile-review-list .post-card.is-owned{display:grid;grid-template-columns:160px minmax(0,1fr);column-gap:20px;align-items:start;padding:24px 32px}
+   on the left and the score, the date and the two actions in a frame beside it.
+   The "shadow along the top of the frame" was reported twice and it is not a shadow: on a
+   phone the feed's review frame carries a deliberate 6px top border, a thick dark rule
+   across the top of the box. It belongs to the feed card, where the frame is a full-width
+   panel under a photograph; in a list row it is a heavy line with nothing to weigh. The row
+   takes the ordinary 1px edge on all four sides. */
+.profile-review-list .post-card.is-owned{display:grid;grid-template-columns:120px minmax(0,1fr);column-gap:18px;align-items:start;padding:24px 28px}
+.profile-review-list .post-card.is-owned .post-details{border-top-width:1px}
+/* Beside the score, not banished to the far edge. space-between is right in the feed, where
+   the frame is as wide as the page; in a list row it threw the badge across a gap. */
+.profile-review-list .post-card.is-owned .post-meta{justify-content:flex-start;gap:14px}
 .profile-review-list .post-card.is-owned .post-number{display:none}
 .profile-review-list .post-card.is-owned .post-heading{grid-column:1/-1;grid-row:1;display:block;margin:0 0 16px}
 .profile-review-list .post-card.is-owned .post-store h2{font-size:22px}
-.profile-review-list .post-card.is-owned .post-photo{grid-column:1;grid-row:2;width:160px;height:120px;aspect-ratio:auto;border-radius:var(--r-md);clip-path:none}
+.profile-review-list .post-card.is-owned .post-photo{grid-column:1;grid-row:2;width:120px;height:120px;aspect-ratio:auto;border-radius:var(--r-md);clip-path:none}
 .profile-review-list .post-card.is-owned .post-photo:hover{clip-path:none}
 .profile-review-list .post-card.is-owned .post-details{grid-column:2;grid-row:2;width:auto;min-height:0;box-shadow:none;padding:18px 20px}
 .profile-review-list .post-card.is-owned.is-photo-free .post-details{grid-column:1/-1}
 .profile-review-list .post-card.is-owned .post-actions{justify-content:flex-start}
 .profile-review-list .post-card.is-owned .post-actions .post-delete{margin-left:auto}
 @media(max-width:600px){
-  .profile-review-list .post-card.is-owned{grid-template-columns:96px minmax(0,1fr);column-gap:14px;padding:20px 18px}
-  .profile-review-list .post-card.is-owned .post-photo{width:96px;height:96px}
+  .profile-review-list .post-card.is-owned{grid-template-columns:84px minmax(0,1fr);column-gap:14px;padding:20px 16px}
+  .profile-review-list .post-card.is-owned .post-photo{width:84px;height:84px}
+  .profile-review-list .post-card.is-owned .post-details{margin:0;padding:14px 16px}
 }
 .store-reviews .post-card.is-photo-free .post-details{grid-column:2/4;grid-row:2}.store-reviews .post-card.is-photo-free .post-copy{margin-top:22px}
 .profile-reviews-empty{margin:0;color:var(--ink-muted)}
