@@ -8,6 +8,35 @@ value involved.
 
 ---
 
+## Search, profiles and contribution actions now keep their context
+
+- Two reviewable logo directions now live under `design/logo-concepts`: the requested
+  editorial wordmark with a pin-shaped final exclamation, and a compact BG monogram for
+  small product surfaces. They are proposal assets only; the approved production mascot
+  and application icons remain unchanged until a direction is selected.
+- Discovery keeps categories visible while location changes, turns recent searches into an
+  explicit “My recent searches” disclosure whose row rules sit between the entries, and
+  shows its suggested searches from the query field itself. Once
+  device location succeeds the control remains as a green confirmation instead of asking
+  for the same permission again; a later location failure is no longer mislabelled as a
+  stale-permission reload problem.
+- Profile sections now have stable, linkable routes. The profile root is a concise index,
+  search history was removed from it, and authenticated pages use a neutral progress mark
+  while session state is being checked instead of flashing a false signed-out profile.
+- Review criteria are five inline stars without duplicate numbers. Selecting a score fills
+  every preceding star, while the native radio controls retain full keyboard and screen
+  reader semantics.
+- The store page has a persistent save dock and a floating back control. The save state is
+  shared with its existing store action because both controls are rendered by the same
+  component rather than maintained independently.
+- Home and discovery show the requested delayed brand note; favourites show its review
+  reminder, and a completed review schedules the badge note on the destination store. Each
+  appears after three seconds and disappears on the first scroll.
+- Favourites no longer apply the row-link layout to the separate review action, and the
+  search result save frame is tighter without shrinking its label.
+
+---
+
 ## Five returned cards, and three of them were the same kind of mistake
 
 - **"Değerlendirme yap" is described once now.** It was written in three places -- the store

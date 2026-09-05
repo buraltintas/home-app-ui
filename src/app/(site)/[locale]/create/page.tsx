@@ -185,6 +185,7 @@ function ReviewWizard({storeId}:{storeId:string}){
       })});
       if(response.status===401){setSignedIn(false);setAuth(true);return;}
       if(!response.ok)throw new Error();
+      sessionStorage.setItem('bosagezme:review-nudge','1');
       router.push(localePath(locale,`/stores/${storeId}`));
       router.refresh();
     }catch{setSubmitError(t('reviewError'));}
@@ -232,8 +233,8 @@ function ReviewWizard({storeId}:{storeId:string}){
       <div className="criteria-list">{criterionKeys.map(key=>
         <fieldset key={key} className="rating-picker criterion">
           <legend>{t(criterionLabels[key])}</legend>
-          {[1,2,3,4,5].map(value=>
-            <label key={value}><input type="radio" name={key} value={value} checked={criteria[key]===value} onChange={()=>setCriteria(current=>({...current,[key]:value}))}/><Star aria-hidden="true" className={value<=(criteria[key]??0)?'is-on':undefined}/><span>{value}</span></label>)}
+          <div className="criterion-stars">{[1,2,3,4,5].map(value=>
+            <label key={value}><input type="radio" name={key} value={value} aria-label={`${value} / 5`} checked={criteria[key]===value} onChange={()=>setCriteria(current=>({...current,[key]:value}))}/><Star aria-hidden="true" className={value<=(criteria[key]??0)?'is-on':undefined}/></label>)}</div>
         </fieldset>)}
       </div>
       {!scored&&<p className="criteria-hint">{t('criteriaIncomplete')}</p>}

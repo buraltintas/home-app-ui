@@ -3,6 +3,7 @@ import {HomeIntro} from '@/components/HomeIntro';
 import {HomeDiscoveryBanner} from '@/components/HomeDiscoveryBanner';
 import {HomeDiscoverySignals} from '@/components/HomeDiscoverySignals';
 import {HomeQuestions} from '@/components/HomeQuestions';
+import {TimedNudge} from '@/components/TimedNudge';
 import {JsonLd} from '@/components/JsonLd';
 import {getServerI18n} from '@/i18n/server';
 import {canonicalFor,shareImage} from '@/lib/site';
@@ -28,5 +29,6 @@ export default async function Page(){
       <HomeDiscoverySignals/>
       <HomeQuestions locale={locale}/>
     </section></main>
+    <TimedNudge kind="discovery"/>
   </>;
 }

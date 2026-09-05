@@ -7,10 +7,6 @@ export function AccountPageSkeleton({className,eyebrow,title}:Props){
   return <main className={`${className} account-page-loading`} aria-busy="true" aria-label={title}>
     {eyebrow&&<p className="eyebrow">{eyebrow}</p>}
     <h1>{title}</h1>
-    <div className="account-loading-card" aria-hidden="true">
-      <span className="account-loading-avatar"/>
-      <span className="account-loading-line is-wide"/>
-      <span className="account-loading-line"/>
-    </div>
+    <div className="account-loading-progress" aria-hidden="true"/>
   </main>;
 }

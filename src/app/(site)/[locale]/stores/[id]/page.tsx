@@ -15,6 +15,8 @@ import {breadcrumbJsonLd,storeJsonLd} from '@/lib/structured-data';
 import type {Locale,Store} from '@/lib/types';
 import {storePhotoURL} from '@/lib/store-photo';
 import {storeStatusCopy} from '@/i18n/dictionaries';
+import {TimedNudge} from '@/components/TimedNudge';
+import {PageBackButton} from '@/components/PageBackButton';
 
 type Props={params:Promise<{id:string}>};
 
@@ -83,6 +85,7 @@ export default async function Page({params}:Props){
   const trail=[{name:t.discover??'',path:'/discover'},...(store.city?[{name:store.city,path:'/discover'}]:[]),{name:store.name,path:storePath(store)}].filter(entry=>entry.name);
   return <main className="store-page">
     <ScrollTop/>
+    <PageBackButton/>
     <JsonLd data={[storeJsonLd(store,recent_posts),breadcrumbJsonLd(trail)]}/>
     <section className="store-hero">
       {/* Roughly one store in twelve has no photograph, and not because we failed to fetch
@@ -148,5 +151,6 @@ export default async function Page({params}:Props){
         {recent_posts.length?recent_posts.map(post=><PostCard post={post} surface="store" key={post.id}/>):<div className="empty-state"><h2>{t.noCommunity}</h2><p>{t.noReviewsBody}</p></div>}
       </div>
     </section>
+    <TimedNudge kind="review" requireReviewFlag/>
   </main>;
 }

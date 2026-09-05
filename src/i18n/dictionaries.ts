@@ -58,8 +58,14 @@ export const storeStatusCopy={
   de:'Google kennzeichnet dieses Geschäft als geschlossen. Prüfe Google Maps, bevor du losfährst.',
   ru:'Google отмечает этот магазин как закрытый. Проверьте Google Карты перед поездкой.',
 } as const;
-export type TranslationKey=keyof typeof dictionaries.en|keyof typeof favoriteActionCopy.en|keyof typeof feedStateCopy.en|keyof typeof hardeningCopy.en|keyof typeof googleAuthCopy.en|keyof typeof profileCopy.en|keyof typeof feedbackCopy.en|keyof typeof searchHighlightCopy.en|keyof typeof reviewPolicyCopy.en;
-export const getDictionary=(locale:Locale):Record<TranslationKey,string>=>Object.assign({},dictionaries[locale],favoriteActionCopy[locale],feedStateCopy[locale],hardeningCopy[locale],googleAuthCopy[locale],profileCopy[locale],feedbackCopy[locale],searchHighlightCopy[locale],reviewPolicyCopy[locale]) as Record<TranslationKey,string>;
+const discoveryControls={
+  tr:{showRecentSearches:'Son aramalarım',currentLocationActive:'Mevcut konum kullanılıyor',changeLocation:'Konumu değiştir'},
+  en:{showRecentSearches:'My recent searches',currentLocationActive:'Using current location',changeLocation:'Change location'},
+  de:{showRecentSearches:'Meine letzten Suchen',currentLocationActive:'Aktueller Standort wird verwendet',changeLocation:'Standort ändern'},
+  ru:{showRecentSearches:'Мои недавние поиски',currentLocationActive:'Используется текущее местоположение',changeLocation:'Изменить местоположение'},
+};
+export type TranslationKey=keyof typeof discoveryControls.en|keyof typeof dictionaries.en|keyof typeof favoriteActionCopy.en|keyof typeof feedStateCopy.en|keyof typeof hardeningCopy.en|keyof typeof googleAuthCopy.en|keyof typeof profileCopy.en|keyof typeof feedbackCopy.en|keyof typeof searchHighlightCopy.en|keyof typeof reviewPolicyCopy.en;
+export const getDictionary=(locale:Locale):Record<TranslationKey,string>=>Object.assign({},dictionaries[locale],favoriteActionCopy[locale],feedStateCopy[locale],hardeningCopy[locale],googleAuthCopy[locale],profileCopy[locale],feedbackCopy[locale],searchHighlightCopy[locale],reviewPolicyCopy[locale],discoveryControls[locale]) as Record<TranslationKey,string>;
 export const categoryLabels:Record<Locale,Record<string,string>>={
   // A fallback and nothing more. A store we hold carries its category names from the
   // database, and those are what its own page shows; this list only has to answer for a

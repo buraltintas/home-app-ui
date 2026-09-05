@@ -63,6 +63,12 @@ export function StoreActions({storeId,name,latitude,longitude,initialFavorited,p
     {phone&&<a href={`tel:${phone.replace(/[^\d+]/g,'')}`} onClick={call}><Phone/>{t('callStore')}</a>}
     <button onClick={()=>void share()}><Share2/>{t('share')}</button>
   </div>
+  <aside className="store-save-dock" aria-label={t('saveReason')}>
+    <span>{t('saveReason')}</span>
+    <button type="button" className="button primary" onClick={()=>void toggleFavorite()} disabled={busy} aria-pressed={favorited}>
+      {favorited?t('saved'):t('saveStore')}
+    </button>
+  </aside>
   {status&&<p className="action-status" role="status">{status}</p>}
   <AuthDialog open={auth} onClose={()=>{setAuth(false);setPending(false);}} onAuthenticated={resume}/></>;
 }

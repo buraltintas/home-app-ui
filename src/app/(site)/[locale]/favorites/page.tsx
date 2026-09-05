@@ -13,6 +13,7 @@ import { localePath } from '@/lib/site';
 import {apiFetch} from '@/lib/api-client';
 import type {Locale,Store} from '@/lib/types';
 import {storePhotoURL} from '@/lib/store-photo';
+import {TimedNudge} from '@/components/TimedNudge';
 
 // The same wording the store page uses for the same action; one product, one name for it.
 const reviewAction:Record<Locale,string>={tr:'Değerlendirme yap',en:'Write a review',de:'Bewertung abgeben',ru:'Оставить оценку'};
@@ -73,7 +74,7 @@ export default function Page(){
         <ArrowRight aria-hidden="true"/>
       </Link>
       <Link className="button store-contribution-action favorite-review-action" href={localePath(locale,`/create?store=${store.id}`)}>{reviewAction[locale]}</Link>
-    </li>})}</ul>
+    </li>})}</ul><TimedNudge kind="favorites"/>
   </main>;
 
   return <main className="empty-page favorites-empty"><Heart/><p className="eyebrow">{t('favorites')}</p><h1>{t('favoritesTitle')}</h1><p>{signedIn?t('favoritesSignedInEmpty'):t('favoritesEmpty')}</p>{error&&<p className="form-error" role="alert">{error}</p>}{!checking&&!signedIn&&<button className="button primary" onClick={()=>setOpen(true)}>{t('signIn')}</button>}<AuthDialog open={open} onClose={()=>setOpen(false)} onAuthenticated={()=>setSignedIn(true)}/></main>;
