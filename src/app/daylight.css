@@ -180,6 +180,58 @@ svg{stroke-width:2}
 .feed-rule{margin:0 18px}.post-card{display:block;padding:34px 0}.post-heading{margin:0 18px 18px}.post-author{padding-right:0}.post-store{margin-top:20px}.post-store h2{font-size:24px;line-height:1.12}.post-photo{width:100%;aspect-ratio:4/3;clip-path:none}.post-details{margin:0 18px;padding:20px;border-top-width:6px}.post-copy{font-size:15px}.post-actions{gap:6px}.feed-state{margin:0 18px;padding:32px 24px;grid-template-columns:1fr}.feed-more{padding:28px 18px 40px}.feed-more button{width:100%;min-width:0}.feed-end{padding:32px 18px 60px}.feed-state>img{grid-row:auto}.feed-skeleton{aspect-ratio:4/1}.search-hero{padding:20px 18px 26px}.search-slogan{margin-bottom:10px;font-size:12px}.brand-tagline{font-size:11px}.search-title span{font-size:70px}.search-form{grid-template-columns:auto 1fr;margin-top:28px}.search-form>button{grid-column:1/-1}.search-suggestions{grid-template-columns:1fr;gap:24px}.location-sheet{grid-template-columns:1fr;padding:20px}.location-results{grid-column:1}.result-list{padding:0 18px 100px}.search-result{grid-template-columns:110px 1fr;gap:14px}.result-call{margin:0 0 12px;width:100%;justify-content:center}.result-google{margin:0 0 18px;width:100%;justify-content:center}.search-result>img{width:110px;height:145px}.search-result>svg{display:none}.search-result h2{font-size:19px}.store-hero-grid{height:76vw;grid-template-columns:1fr}.store-side-image{display:none}.store-overview{padding:30px 18px;gap:24px}.store-body{display:block;margin:44px auto 90px;padding:0 18px}.public-profile{grid-template-columns:1fr}.auth-dialog{box-shadow:none;border-top-width:8px}.dialog-backdrop{padding:0}.auth-dialog{align-self:end}.empty-page{padding-bottom:110px}.create-page{margin:40px auto 110px;padding:0 18px}}
 @media(prefers-reduced-motion:reduce){.feed-intro,.search-hero{animation:none}.post-photo,.post-photo img,.brand-mark{transition:none}}
 
+/* Returned navigation destinations use one visual language. Search and Profile were
+   assigned one-off destination colours, which made them look disabled beside Home and
+   Favorites rather than like equal peers. */
+@media(max-width:900px){
+  .site-header nav a:nth-child(1) svg,
+  .site-header nav a:nth-child(2) svg,
+  .site-header nav a:nth-child(3) svg,
+  .site-header nav a:nth-child(4) svg{color:var(--ink)}
+  .site-header nav .nav-avatar{background:var(--ink);color:var(--surface)}
+}
+
+/* Out-of-domain search is a compact recoverable error. Categories are useful exits;
+   speculative query suggestions are not repeated under an input we just rejected. */
+.guidance-card{background:var(--surface);border:1px solid color-mix(in srgb,var(--error) 34%,var(--line));border-radius:var(--r-md);padding:20px 22px}
+.guidance-card>p{margin:0 0 22px;font-size:16px;line-height:1.5}
+.guidance-card h2{margin:0 0 12px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted)}
+.guidance-card .category-links{gap:4px 20px}
+.guidance-card .category-links button{padding:9px 0;background:transparent;border-radius:0}
+
+/* A store's overall community score leads; the eight constituent means stay compact
+   enough to compare without turning the consumer page into an analytics dashboard. */
+.store-rating-breakdown{grid-column:1/-1;padding:28px 0 8px;border-top:1px solid var(--line)}
+.store-rating-breakdown header{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:32px;align-items:end;margin-bottom:22px}
+.store-rating-breakdown h2{margin:0 0 4px;font-size:24px;line-height:1.2}
+.store-rating-breakdown header p{margin:0;color:var(--ink-muted);font-size:15px}
+.store-rating-overall{min-width:180px;display:grid;grid-template-columns:1fr auto;gap:0 18px;align-items:baseline}
+.store-rating-overall span{font-size:13px;color:var(--ink-muted)}
+.store-rating-overall strong{grid-row:1/3;grid-column:2;font-size:38px;line-height:1;color:var(--clay);font-variant-numeric:tabular-nums}
+.store-rating-overall small{font-size:12px;color:var(--ink-muted)}
+.store-rating-breakdown dl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.store-rating-breakdown dl div{display:flex;justify-content:space-between;align-items:center;gap:12px;min-width:0;padding:14px 16px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.store-rating-breakdown dl div:nth-child(4n){border-right:0}
+.store-rating-breakdown dl div:nth-last-child(-n+4){border-bottom:0}
+.store-rating-breakdown dt{font-size:13px;line-height:1.35;color:var(--ink-muted)}
+.store-rating-breakdown dd{display:flex;align-items:baseline;margin:0;font-size:18px;font-weight:750;font-variant-numeric:tabular-nums;white-space:nowrap}
+.store-rating-breakdown dd span{font-size:11px;color:var(--ink-muted);font-weight:500}
+.store-review-rail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(320px,78%);gap:24px;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x proximity;scrollbar-color:var(--line-strong) transparent;padding:0 0 18px}
+.store-review-rail>.post-card{scroll-snap-align:start;min-width:0;border:1px solid var(--line);border-radius:var(--r-md);padding:22px}
+@media(max-width:700px){
+  .store-rating-breakdown header{grid-template-columns:1fr;gap:18px}
+  .store-rating-overall{width:100%}
+  .store-rating-breakdown dl{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .store-rating-breakdown dl div:nth-child(4n){border-right:1px solid var(--line)}
+  .store-rating-breakdown dl div:nth-child(2n){border-right:0}
+  .store-rating-breakdown dl div:nth-last-child(-n+4){border-bottom:1px solid var(--line)}
+  .store-rating-breakdown dl div:nth-last-child(-n+2){border-bottom:0}
+  .store-review-rail{grid-auto-columns:minmax(280px,88%);margin-inline:-18px;padding-inline:18px}
+  .store-review-rail>.post-card{padding:18px}
+  .guidance-card{padding:18px}
+  .guidance-card .category-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
 /* The hero is a tinted band with ordinary ink on it, so nothing inside needs a special
    colour: the light-on-dark repairs the cobalt slab required are gone with it. */
 .search-hero .search-form{background:var(--surface);border:1px solid var(--line)}

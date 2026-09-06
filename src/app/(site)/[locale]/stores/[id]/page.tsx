@@ -32,6 +32,12 @@ const externalNote:Record<Locale,string>={
   de:'Google-Daten sind unabhängig von den Community-Bewertungen auf Boşa Gezme! und werden deshalb separat angezeigt.',
   ru:'Данные Google не зависят от оценок сообщества Boşa Gezme!, поэтому показываются отдельно.',
 };
+const scoreCopy:Record<Locale,{title:string;intro:string;overall:string;basedOn:(count:number)=>string;empty:string}>={
+  tr:{title:'Değerlendirme puanları',intro:'Topluluğun sekiz mağaza deneyimi ölçütündeki ortalaması.',overall:'Boşa Gezme! puanı',basedOn:count=>`${count} değerlendirmeye göre`,empty:'Henüz ölçüt puanı yok'},
+  en:{title:'Review scores',intro:'The community average across eight in-store experience criteria.',overall:'Boşa Gezme! score',basedOn:count=>`Based on ${count} reviews`,empty:'No criteria scores yet'},
+  de:{title:'Bewertungspunkte',intro:'Der Community-Durchschnitt aus acht Kriterien zum Einkaufserlebnis.',overall:'Boşa Gezme!-Punktzahl',basedOn:count=>`Aus ${count} Bewertungen`,empty:'Noch keine Kriterienbewertungen'},
+  ru:{title:'Оценки магазина',intro:'Средняя оценка сообщества по восьми критериям посещения магазина.',overall:'Оценка Boşa Gezme!',basedOn:count=>`На основе ${count} отзывов`,empty:'Оценок по критериям пока нет'},
+};
 
 // Everything Google gives us for a store lives in the external source attribution
 // jsonb. Nothing here is invented: a missing field is simply not rendered.
@@ -81,6 +87,15 @@ export default async function Page({params}:Props){
   const photo=storePhotoURL(store.photo,1200);
   const photoCredit=store.photo?.attributions?.length?`${t.photoBy}: ${store.photo.attributions.join(' · ')}`:t.photoByGoogle;
   const contribution=contributionCopy[locale];
+  const scores=scoreCopy[locale];
+  const criteria=store.criteria_averages;
+  const criteriaRows=[
+    [t.criterionAvailability,criteria?.availability],[t.criterionValue,criteria?.value],
+    [t.criterionLayout,criteria?.layout],[t.criterionStaffCare,criteria?.staff_care],
+    [t.criterionStaffKnowledge,criteria?.staff_knowledge],[t.criterionCheckout,criteria?.checkout],
+    [t.criterionReturns,criteria?.returns],[t.criterionCleanliness,criteria?.cleanliness],
+  ] as const;
+  const formatScore=(value:number|undefined)=>value===undefined?'—':value.toLocaleString(locale,{minimumFractionDigits:1,maximumFractionDigits:1});
   const correctionPath=localePath(locale,`/store-correction?store=${encodeURIComponent(store.id)}&name=${encodeURIComponent(store.name)}`);
   const trail=[{name:t.discover??'',path:'/discover'},...(store.city?[{name:store.city,path:'/discover'}]:[]),{name:store.name,path:storePath(store)}].filter(entry=>entry.name);
   return <main className="store-page">
@@ -107,6 +122,10 @@ export default async function Page({params}:Props){
       <div className="store-score"><span>{t.communityRating}</span><strong>{store.platform.review_count?<Rating value={store.platform.average_rating}/>:'—'}</strong><small>{store.platform.review_count} {t.profileRatings.toLocaleLowerCase(locale)}</small></div>
       <div className="store-score"><span>{t.savedBy}</span><strong>{store.platform.favorite_count}</strong><small>{t.people}</small></div>
       <StoreActions storeId={store.id} name={store.name} latitude={store.latitude} longitude={store.longitude} initialFavorited={store.viewer_has_favorited} phone={store.phone}/>
+      <section className="store-rating-breakdown" aria-labelledby="store-rating-title">
+        <header><div><h2 id="store-rating-title">{scores.title}</h2><p>{scores.intro}</p></div><div className="store-rating-overall"><span>{scores.overall}</span><strong>{store.platform.review_count?formatScore(store.platform.average_rating):'—'}</strong><small>{store.platform.review_count?scores.basedOn(store.platform.review_count):scores.empty}</small></div></header>
+        <dl>{criteriaRows.map(([label,value])=><div key={label}><dt>{label}</dt><dd>{formatScore(value)}{value!==undefined&&<span aria-hidden="true">/5</span>}</dd></div>)}</dl>
+      </section>
       {/* Directly under save, directions, call and share, because it belongs with them: they
           are the four things you can do about this store and reviewing it is the fifth. It
           used to live only in the panel below, where it read as an advertisement for
@@ -148,7 +167,7 @@ export default async function Page({params}:Props){
       </div>
       <div className="store-reviews">
         <p className="eyebrow store-section-title">{t.community}</p>
-        {recent_posts.length?recent_posts.map(post=><PostCard post={post} surface="store" key={post.id}/>):<div className="empty-state"><h2>{t.noCommunity}</h2><p>{t.noReviewsBody}</p></div>}
+        {recent_posts.length?<div className="store-review-rail">{recent_posts.map(post=><PostCard post={post} surface="store" key={post.id}/>)}</div>:<div className="empty-state"><h2>{t.noCommunity}</h2><p>{t.noReviewsBody}</p></div>}
       </div>
     </section>
     <TimedNudge kind="review" requireReviewFlag/>

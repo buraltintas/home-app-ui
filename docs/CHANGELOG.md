@@ -8,6 +8,17 @@ value involved.
 
 ---
 
+## Store scores and search recovery now explain the next useful action
+
+- Store detail leads the review action with the Boşa Gezme! score and all eight community
+  criterion averages. Missing criterion evidence is shown as missing rather than as a
+  fabricated zero, and community reviews form a keyboard-scrollable horizontal rail.
+- A rejected out-of-domain search is now a compact framed message with the canonical home
+  and living categories directly beneath it. Query suggestions are no longer repeated
+  after the product has said that it cannot serve the request.
+- The four mobile navigation destinations now share one icon colour and active treatment;
+  Search and Profile no longer look like a different class of action.
+
 ## Discovery shortcuts and mobile favourites stay within their intended bounds
 
 - Location failures now appear as a compact dismissible notification panel instead of an

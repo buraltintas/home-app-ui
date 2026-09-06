@@ -4,6 +4,7 @@ export type Coordinates = { latitude: number; longitude: number };
 
 export type MediaAsset = { id: string; url: string; mime_type: 'image/jpeg' | 'image/png' | 'image/webp'; width: number; height: number };
 export type PlatformStats = { average_rating: number; rating_count?: number; review_count: number; favorite_count: number; post_count: number };
+export type CriteriaAverages = { review_count:number;availability:number;value:number;layout:number;staff_care:number;staff_knowledge:number;checkout:number;returns:number;cleanliness:number };
 export type Post = {
   id: string; user_id: string; store_id: string; text: string; content_language?: Locale; rating: number;
   visit_verified: true; distance_meters: number; store_distance_meters?: number; created_at: string;
@@ -38,7 +39,7 @@ export type StoreHighlight = { id:string;name:string;city:string;district?:strin
 export type MonthlyStoreHighlights = { rating_gainer?:StoreHighlight;most_reviewed?:StoreHighlight };
 export type LocationResult = { provider: 'google'; place_id: string; name: string; address: string; latitude: number; longitude: number; types: string[]; attributions: string[] };
 export type DiscoveryLocation = { source: 'device' | 'manual'; label: string; address: string; place_id?: string; latitude: number; longitude: number; accuracy_meters?: number; updated_at: string };
-export type Store = { id:string;name:string;slug:string;is_premium?:boolean;is_catalog_store:boolean;brand_name?:string;address:string;city:string;district:string;phone?:string;website?:string;latitude:number;longitude:number;distance_meters?:number;categories:string[];category_labels:string[];localized_description?:string;platform:PlatformStats;viewer_has_favorited:boolean;viewer_has_reviewed:boolean;photo?:StoredPhoto;external_sources?:{provider:'google';external_id:string;attribution:Record<string,unknown>;refreshed_at?:string}[] };
+export type Store = { id:string;name:string;slug:string;is_premium?:boolean;is_catalog_store:boolean;brand_name?:string;address:string;city:string;district:string;phone?:string;website?:string;latitude:number;longitude:number;distance_meters?:number;categories:string[];category_labels:string[];localized_description?:string;platform:PlatformStats;criteria_averages?:CriteriaAverages;viewer_has_favorited:boolean;viewer_has_reviewed:boolean;photo?:StoredPhoto;external_sources?:{provider:'google';external_id:string;attribution:Record<string,unknown>;refreshed_at?:string}[] };
 export type StoreDetail = { store: Store; recent_posts: Post[] };
 export type SearchHistoryResult = { store_id: string; name: string; address: string; city: string; district: string; rank: number; distance_meters?: number; source: SearchSource };
 export type SearchHistory = { id: string; raw_query: string; intent: SearchIntent; created_at: string; result_count: number; results: SearchHistoryResult[] };
