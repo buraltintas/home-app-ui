@@ -1,6 +1,6 @@
 'use client';
 
-import {TriangleAlert} from 'lucide-react';
+import {TriangleAlert,X} from 'lucide-react';
 import {useI18n} from '@/i18n/I18nProvider';
 import type {LocationFailure} from '@/lib/location';
 
@@ -21,7 +21,7 @@ function AddressBarHint({label}:{label:string}){
 // The alert sits directly under the box it is about, and says only what went wrong. It
 // carried its own retry button for a while; the control that failed is one line above it,
 // so the second one was a second way to press the same thing.
-export function LocationAlert({message,reason}:{message:string;reason:LocationFailure|''}){
+export function LocationAlert({message,reason,onDismiss}:{message:string;reason:LocationFailure|'';onDismiss:()=>void}){
   const {t}=useI18n();
   // The drawing only helps in the one case it describes. Offered when the browser has
   // simply not asked yet, it sends somebody hunting for a lock that will do nothing.
@@ -32,5 +32,6 @@ export function LocationAlert({message,reason}:{message:string;reason:LocationFa
       <p>{message}</p>
       {showHint&&<AddressBarHint label={t('locationLockHint')}/>}
     </div>
+    <button type="button" className="location-alert-close" onClick={onDismiss} aria-label={t('close')}><X aria-hidden="true"/></button>
   </div>;
 }

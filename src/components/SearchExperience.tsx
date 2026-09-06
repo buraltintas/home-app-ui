@@ -610,7 +610,7 @@ export function SearchExperience() {
         :<button className="button primary" onClick={()=>void locateMe()} disabled={loading||autoLocating} aria-busy={autoLocating}><LocateFixed/>{t('useCurrentLocation')}</button>}<label><span>{t('chooseLocation')}</span><span className="location-field"><input value={manual} onChange={event=>setManual(event.target.value)} placeholder={t('locationHint')} disabled={loading}/>{manual&&<button type="button" className="location-clear-text" onClick={()=>{setManual('');}} aria-label={t('clearSearch')}><X aria-hidden="true"/></button>}</span></label>{/* Directly under the box it is about. At the top of the panel it read as a warning
       about the whole screen; here it is plainly an answer to what was just typed or
       pressed. */}
-      {error&&<LocationAlert message={error} reason={errorReason}/>}{location&&<button className="button quiet" onClick={()=>setLocationOpen(false)}>{location.source==='device'?t('close'):t('later')}</button>}</div>{/* The list is not thrown away to say "searching". Every keystroke starts another
+      {error&&<LocationAlert message={error} reason={errorReason} onDismiss={()=>{setError('');setErrorReason('');}}/>}{location&&<button className="button quiet" onClick={()=>setLocationOpen(false)}>{location.source==='device'?t('close'):t('later')}</button>}</div>{/* The list is not thrown away to say "searching". Every keystroke starts another
             lookup, and replacing the results with a status line each time is the flicker
             that was reported: list, searching, list, searching. The previous answers stay
             on screen while the next ones are fetched, and the status line appears only when

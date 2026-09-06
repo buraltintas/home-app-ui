@@ -10,6 +10,10 @@ value involved.
 
 ## Discovery shortcuts and mobile favourites stay within their intended bounds
 
+- Location failures now appear as a compact dismissible notification panel instead of an
+  inline paragraph that can be missed in the page flow. It stays at the lower edge on a
+  phone and in the lower corner on a wider screen, with keyboard focus and an accessible
+  close label.
 - Sofra and Dekorasyon remain searchable and manageable taxonomy categories, but no
   longer appear in the Ev ve Yaşam discovery shortcut list. Mutfak and every store
   assignment are unchanged.
