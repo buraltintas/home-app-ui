@@ -27,6 +27,10 @@ import {TimedNudge} from './TimedNudge';
 type SearchPlace={source?:'device'|'manual';label:string;city?:string;placeID?:string;address?:string;accuracyMeters?:number;coordinates:Coordinates};
 type SearchSnapshot={query:string;location?:SearchPlace;data?:SearchResponse};
 
+// These remain valid search and admin categories. Product has only removed them from the
+// discovery shortcuts, so hiding them here must not erase their stores or taxonomy rows.
+const hiddenDiscoveryCategorySlugs=new Set(['tableware','decoration']);
+
 // The field carries a whole sentence, so it has to wrap instead of scrolling a long
 // placeholder out of sight on a phone. Enter still means search; a search query has
 // no use for line breaks.
@@ -564,8 +568,8 @@ export function SearchExperience() {
       // The section never goes empty: if the catalogue cannot be reached -- an outage, or a
       // web release that lands before the API one -- it falls back to the four it used to
       // carry, without counts, because a count we did not fetch is not a count.
-      .then(items=>{if(active)setCategories(items.length?items:fallbackCategories.map(category=>({...category,search_count:0})));})
-      .catch(()=>{if(active)setCategories(fallbackCategories.map(category=>({...category,search_count:0})));});
+      .then(items=>{if(active)setCategories((items.length?items:fallbackCategories.map(category=>({...category,search_count:0}))).filter(category=>!hiddenDiscoveryCategorySlugs.has(category.slug)));})
+      .catch(()=>{if(active)setCategories(fallbackCategories.map(category=>({...category,search_count:0})).filter(category=>!hiddenDiscoveryCategorySlugs.has(category.slug)));});
     return()=>{active=false;};
   },[locale,t]);
 

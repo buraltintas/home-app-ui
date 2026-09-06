@@ -8,6 +8,14 @@ value involved.
 
 ---
 
+## Discovery shortcuts and mobile favourites stay within their intended bounds
+
+- Sofra and Dekorasyon remain searchable and manageable taxonomy categories, but no
+  longer appear in the Ev ve Yaşam discovery shortcut list. Mutfak and every store
+  assignment are unchanged.
+- Long store names can now shrink and wrap inside mobile favourite cards instead of
+  forcing the entire page wider than the viewport and clipping the photograph and copy.
+
 ## Search, profiles and contribution actions now keep their context
 
 - Two reviewable logo directions now live under `design/logo-concepts`: the requested
