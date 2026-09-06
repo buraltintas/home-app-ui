@@ -15,6 +15,8 @@ value involved.
   assignment are unchanged.
 - Long store names can now shrink and wrap inside mobile favourite cards instead of
   forcing the entire page wider than the viewport and clipping the photograph and copy.
+  Every fixed-size photograph is anchored to the same top edge when a wrapped name makes
+  one card taller than another, so touch and hover frames no longer shift its position.
 
 ## Search, profiles and contribution actions now keep their context
 
