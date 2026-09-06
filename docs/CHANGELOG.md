@@ -18,6 +18,10 @@ value involved.
   after the product has said that it cannot serve the request.
 - The four mobile navigation destinations now share one icon colour and active treatment;
   Search and Profile no longer look like a different class of action.
+- Profiles now read their next contribution threshold from the API, show the exact reviews
+  remaining, carry the requested next-reward marker, and offer native link sharing plus an
+  email invitation. Sign out lives with the other account actions instead of in the public
+  identity summary.
 
 ## Discovery shortcuts and mobile favourites stay within their intended bounds
 

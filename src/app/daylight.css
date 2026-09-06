@@ -232,6 +232,28 @@ svg{stroke-width:2}
   .guidance-card .category-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 
+/* Contribution progress belongs to the identity summary, while invitations are a peer
+   action below it. Neither needs another nested card around it. */
+.profile-progression{grid-column:1/-1;display:grid;grid-template-columns:auto minmax(0,1fr);gap:5px 14px;align-items:center;padding-top:18px;border-top:1px solid var(--line)}
+.profile-progression .contributor-level{margin:0;top:0;justify-self:start}
+.profile-progression p{margin:0;font-size:15px;line-height:1.45;font-weight:650}
+.profile-reward{grid-column:2;display:flex;align-items:center;gap:7px;color:var(--ink-muted);font-size:13px}
+.profile-reward svg{width:16px;height:16px;color:var(--clay)}
+.profile-invite{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 24px;align-items:center;margin:28px 0 24px;padding:24px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.profile-invite h2{margin:0 0 3px;font-size:21px;line-height:1.2}
+.profile-invite p{margin:0;color:var(--ink-muted);font-size:14px}
+.profile-invite-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.profile-invite-actions .button{min-height:44px;padding-inline:14px;font-size:13px}
+.profile-invite-actions svg{width:17px;height:17px}
+.profile-invite-status{grid-column:1/-1;color:var(--ink-muted)!important;text-align:right}
+.account-signout{margin-bottom:28px}
+@media(max-width:600px){
+  .profile-invite{grid-template-columns:1fr;align-items:start}
+  .profile-invite-actions{justify-content:stretch}
+  .profile-invite-actions .button{width:100%}
+  .profile-reward{grid-column:1/-1}
+}
+
 /* The hero is a tinted band with ordinary ink on it, so nothing inside needs a special
    colour: the light-on-dark repairs the cobalt slab required are gone with it. */
 .search-hero .search-form{background:var(--surface);border:1px solid var(--line)}

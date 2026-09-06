@@ -1,6 +1,7 @@
 'use client';
 
 import {useEffect,useState} from 'react';
+import {Gift} from 'lucide-react';
 import {AuthDialog} from '@/components/AuthDialog';
 import {SignOutButton} from '@/components/SignOutButton';
 import {ContributorLevel} from '@/components/ContributorLevel';
@@ -11,6 +12,7 @@ import {useScrollTopWhenReady} from '@/lib/scroll-top';
 import {MyReviews} from '@/components/MyReviews';
 import {ProfileMessages} from '@/components/ProfileMessages';
 import {ProfileEditor} from '@/components/ProfileEditor';
+import {ProfileInvite} from '@/components/ProfileInvite';
 import {useI18n} from '@/i18n/I18nProvider';
 import {apiFetch} from '@/lib/api-client';
 import type {Locale,Me} from '@/lib/types';
@@ -25,6 +27,12 @@ const deleteBody:Record<Locale,string>={tr:'Yorumlarınız, arama geçmişiniz, 
 const reviewCopy:Record<Locale,{title:string;hint:string}>={tr:{title:'Değerlendirmelerim',hint:'Daha önce paylaştığın mağaza deneyimleri'},en:{title:'My reviews',hint:'Store experiences you shared before'},de:{title:'Meine Bewertungen',hint:'Deine bisherigen Erfahrungen mit Geschäften'},ru:{title:'Мои отзывы',hint:'Ваши опубликованные впечатления о магазинах'}};
 const messageCopy:Record<Locale,{title:string;hint:string}>={tr:{title:'Mesajlarım',hint:'Bize gönderdiklerin ve yanıtlarımız'},en:{title:'My messages',hint:'What you sent us and our replies'},de:{title:'Meine Nachrichten',hint:'Deine Nachrichten und unsere Antworten'},ru:{title:'Мои сообщения',hint:'Ваши сообщения и наши ответы'}};
 const profileEditorHint:Record<Locale,string>={tr:'Görünen adın ve profil bilgilerin',en:'Your display name and profile details',de:'Dein Anzeigename und deine Profilangaben',ru:'Ваше отображаемое имя и данные профиля'};
+const progressionCopy:Record<Locale,{next:(level:number,count:number)=>string;reward:string;top:string}>={
+  tr:{next:(level,count)=>`${level}. seviyeye geçmene ${count} değerlendirme kaldı.`,reward:'Bir sonraki seviye ödülün',top:'En yüksek katkı seviyesindesin.'},
+  en:{next:(level,count)=>`${count} reviews until level ${level}.`,reward:'Your next level reward',top:'You reached the highest contribution level.'},
+  de:{next:(level,count)=>`Noch ${count} Bewertungen bis Stufe ${level}.`,reward:'Deine Belohnung für die nächste Stufe',top:'Du hast die höchste Beitragsstufe erreicht.'},
+  ru:{next:(level,count)=>`До уровня ${level} осталось отзывов: ${count}.`,reward:'Награда за следующий уровень',top:'Вы достигли высшего уровня участника.'},
+};
 
 export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages'|'account'}){
   const {t,locale}=useI18n();const copy=accountCopy[locale];const [open,setOpen]=useState(false);const [signedIn,setSignedIn]=useState(false);const [checking,setChecking]=useState(true);const [deleting,setDeleting]=useState(false);const [me,setMe]=useState<Me|null>(null);
@@ -47,17 +55,20 @@ export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages
     <AuthDialog open={open} onClose={()=>setOpen(false)}/>
   </main>;
 
+  const progression=progressionCopy[locale];
+
   return <main className="profile-page">
     <h1>{t('profileTitle')}</h1>
     <section className="profile-summary">
       <div className="profile-avatar">{(me.display_name||me.email).slice(0,1).toLocaleUpperCase(locale)}</div>
-      <div className="profile-summary-identity"><strong>{me.display_name||me.email}<ContributorLevel level={me.level}/></strong><span>{me.email}</span></div>
+      <div className="profile-summary-identity"><strong>{me.display_name||me.email}</strong><span>{me.email}</span></div>
       <dl>
         <div><dd>{me.post_count}</dd><dt>{t('profileRatings')}</dt></div>
         <div><dd>{me.favorite_count}</dd><dt>{t('savedStores')}</dt></div>
       </dl>
-      <SignOutButton className="button secondary profile-signout"/>
+      {(me.next_level!==undefined||me.level>=5)&&<div className="profile-progression"><ContributorLevel level={me.level}/><p>{me.next_level!==undefined?progression.next(me.next_level,me.reviews_to_next_level??0):progression.top}</p>{me.next_level!==undefined&&<span className="profile-reward"><Gift aria-hidden="true"/>{progression.reward}</span>}</div>}
     </section>
+    {!section&&<ProfileInvite locale={locale}/>}
     {!section?<nav className="profile-sections">
       {[
         ['edit',t('editProfile'),profileEditorHint[locale]],
@@ -71,7 +82,7 @@ export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages
       {section==='edit'&&<ProfileEditor me={me} onSaved={setMe}/>}
       {section==='reviews'&&<MyReviews userId={me.id} locale={locale}/>}
       {section==='messages'&&<ProfileMessages locale={locale}/>}
-      {section==='account'&&<div className="danger-zone"><h3>{copy.danger}</h3><p>{deleteBody[locale]}</p><button className="button secondary danger-button" disabled={deleting} onClick={()=>void remove()}>{copy.confirm}</button></div>}
+      {section==='account'&&<><SignOutButton className="button secondary account-signout"/><div className="danger-zone"><h3>{copy.danger}</h3><p>{deleteBody[locale]}</p><button className="button secondary danger-button" disabled={deleting} onClick={()=>void remove()}>{copy.confirm}</button></div></>}
     </section>}
     <AuthDialog open={open} onClose={()=>setOpen(false)}/>
   </main>;
