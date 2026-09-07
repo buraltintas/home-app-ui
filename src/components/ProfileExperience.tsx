@@ -8,6 +8,8 @@ import {ContributorLevel} from '@/components/ContributorLevel';
 import Link from 'next/link';
 import {localePath} from '@/lib/site';
 import {AccountPageSkeleton} from '@/components/AccountPageSkeleton';
+import {PageBackButton} from '@/components/PageBackButton';
+import {TimedNudge} from '@/components/TimedNudge';
 import {useScrollTopWhenReady} from '@/lib/scroll-top';
 import {MyReviews} from '@/components/MyReviews';
 import {ProfileMessages} from '@/components/ProfileMessages';
@@ -77,13 +79,14 @@ export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages
         ['account',t('accountSection'),t('accountHint')],
       ].map(([path,title,hint])=><Link key={path} href={localePath(locale,`/profile/${path}`)}><strong>{title}</strong><span>{hint}</span></Link>)}
     </nav>:<section className="profile-section-content">
-      <Link className="button quiet" href={localePath(locale,'/profile')}>{t('back')}</Link>
+      <PageBackButton/>
       <h2>{section==='edit'?t('editProfile'):section==='reviews'?reviewCopy[locale].title:section==='messages'?messageCopy[locale].title:t('accountSection')}</h2>
       {section==='edit'&&<ProfileEditor me={me} onSaved={setMe}/>}
       {section==='reviews'&&<MyReviews userId={me.id} locale={locale}/>}
       {section==='messages'&&<ProfileMessages locale={locale}/>}
       {section==='account'&&<><SignOutButton className="button secondary account-signout"/><div className="danger-zone"><h3>{copy.danger}</h3><p>{deleteBody[locale]}</p><button className="button secondary danger-button" disabled={deleting} onClick={()=>void remove()}>{copy.confirm}</button></div></>}
     </section>}
+    {!section&&<TimedNudge kind="profile"/>}
     <AuthDialog open={open} onClose={()=>setOpen(false)}/>
   </main>;
 }
