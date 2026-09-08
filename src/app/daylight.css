@@ -156,10 +156,12 @@ svg{stroke-width:2}
 .store-save-dock .button.is-saved{background:var(--success);color:var(--surface)}
 .store-save-status{position:fixed;z-index:23;left:50%;bottom:108px;transform:translateX(-50%);margin:0;padding:9px 14px;border:1px solid var(--line);border-radius:var(--r-pill);background:var(--surface);color:var(--ink);box-shadow:var(--lift);font-weight:650}
 .page-back-button{position:fixed;z-index:21;top:86px;left:max(18px,calc((100vw - 1480px)/2));width:46px;height:46px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:color-mix(in srgb,var(--surface) 92%,transparent);color:var(--ink);box-shadow:0 8px 24px rgba(22,20,15,.09);backdrop-filter:blur(16px);cursor:pointer}.page-back-button:hover{background:var(--muted)}.page-back-button svg{width:20px;height:20px}
-.timed-nudge{position:fixed;z-index:23;left:50%;bottom:22px;transform:translateX(-50%);width:min(430px,calc(100% - 32px));min-height:74px;padding:12px 20px 12px 12px;display:flex;align-items:center;gap:14px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--lift);font-size:15px;font-weight:650;line-height:1.35;animation:nudge-in .24s cubic-bezier(.2,.8,.2,1) both;pointer-events:none}
+.timed-nudge{position:fixed;z-index:23;left:50%;bottom:22px;transform:translateX(-50%);width:min(360px,calc(100% - 32px));min-height:74px;padding:12px 20px 12px 12px;display:flex;align-items:center;gap:14px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--lift);font-size:15px;font-weight:650;line-height:1.35;animation:nudge-in .22s cubic-bezier(.16,1,.3,1) both;pointer-events:none}
 .timed-nudge-icon{width:48px;height:48px;flex:none;display:grid;place-items:center;border-radius:50%;background:var(--accent-wash);color:var(--clay);animation:nudge-icon-shake .32s ease-in-out .26s both}.timed-nudge-icon img{width:42px;height:42px;object-fit:contain}.timed-nudge-icon svg{width:24px;height:24px}
+.timed-nudge[data-state=leaving]{animation:nudge-out .2s ease-in both}
 .store-page .timed-nudge{bottom:112px}
 @keyframes nudge-in{from{opacity:0;transform:translate(-50%,18px)}to{opacity:1;transform:translate(-50%,0)}}
+@keyframes nudge-out{from{opacity:1;transform:translate(-50%,0)}to{opacity:0;transform:translate(-50%,18px)}}
 @keyframes nudge-icon-shake{0%,100%{transform:rotate(0)}30%{transform:rotate(-7deg)}65%{transform:rotate(7deg)}}
 @media(prefers-reduced-motion:reduce){.timed-nudge,.timed-nudge-icon{animation:none}}
 .external-note,.guidance-card{background:var(--accent-wash);color:var(--ink)}
@@ -308,12 +310,12 @@ svg{stroke-width:2}
 @media(max-width:600px){.search-hero .location-control{margin-top:16px}}
 /* The reason a location attempt failed sits with the control that failed, not at the foot
    of the page where the person who pressed it will never scroll. */
-.location-alert{position:fixed;right:24px;bottom:24px;z-index:70;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:start;width:min(440px,calc(100vw - 48px));padding:18px;background:color-mix(in srgb,var(--error) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--error) 34%,var(--line));border-radius:var(--r-md);box-shadow:0 20px 50px color-mix(in srgb,var(--ink) 18%,transparent)}
+.location-alert{position:static;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:start;width:100%;padding:16px;background:color-mix(in srgb,var(--error) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--error) 34%,var(--line));border-radius:var(--r-md);box-shadow:none}
 .location-alert>svg{color:var(--error);margin-top:2px}
 .location-alert p{margin:0;font-size:16px;line-height:1.5;color:var(--ink)}
 .location-alert-close{display:grid;place-items:center;width:32px;height:32px;margin:-7px -7px 0 0;padding:0;border:0;border-radius:50%;background:transparent;color:var(--ink);cursor:pointer}.location-alert-close:hover{background:var(--muted)}.location-alert-close:focus-visible{outline:3px solid var(--accent);outline-offset:2px}.location-alert-close svg{width:18px;height:18px}
 .location-hint-art{display:block;width:100%;max-width:240px;height:auto;margin:0 0 14px}
-@media(max-width:600px){.location-alert{right:16px;bottom:16px;width:calc(100vw - 32px);padding:16px;gap:10px}}
+@media(max-width:600px){.location-alert{padding:14px;gap:10px}}
 .location-error{margin:0;padding:12px 14px;background:color-mix(in srgb,var(--error) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--error) 34%,var(--line));border-radius:var(--r-sm);color:var(--ink);font-size:15px;line-height:1.45}
 /* Two letters in the bar, its own menu underneath. It sits before the destinations because
    it changes what they say, not where they go. */
@@ -416,6 +418,14 @@ svg{stroke-width:2}
 .search-query-suggestions button{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;min-height:44px;padding:10px 12px;text-align:left;border:0;background:transparent;border-radius:var(--r-sm)}
 .search-query-suggestions button:hover,.search-query-suggestions button:focus-visible{background:var(--muted)}
 .search-suggestions .recent-search-disclosure>.disclosure-summary{padding:0;align-items:center;font-weight:600}
+.recent-searches>header{display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:2px solid var(--ink)}
+.recent-searches>header h2{margin:0;font-size:16px;letter-spacing:.02em;color:var(--ink)}
+.recent-searches>header button,.recent-search-delete,.recent-search-more{min-height:44px;border:0;background:transparent;color:var(--clay);font-weight:700;cursor:pointer}
+.recent-searches ul{list-style:none;margin:0;padding:0}
+.recent-searches li{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;border-bottom:1px solid var(--line)}
+.recent-search-query{min-height:48px;padding:0;text-align:left;font-size:16px;color:var(--ink)}
+.recent-search-delete{padding-inline:8px;font-size:13px}
+.recent-search-more{padding:8px 0}
 
 /* Keep each question's five radio targets in a single row. */
 .criterion-stars{display:flex;gap:0;flex-wrap:nowrap}

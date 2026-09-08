@@ -1,6 +1,6 @@
 'use client';
 
-import {Bookmark,Check,Map,Phone,Share2} from 'lucide-react';
+import {Bookmark,Check,Map,Phone,Send} from 'lucide-react';
 import {useEffect,useRef,useState} from 'react';
 import {useI18n} from '@/i18n/I18nProvider';
 import {apiFetch} from '@/lib/api-client';
@@ -17,12 +17,14 @@ export function StoreActions({storeId,name,latitude,longitude,initialFavorited,p
   const [busy,setBusy]=useState(false);
   const [status,setStatus]=useState('');
   const statusTimer=useRef<number|undefined>(undefined);
+  const dockTimer=useRef<number|undefined>(undefined);
+  const [dockVisible,setDockVisible]=useState(!initialFavorited);
   const [auth,setAuth]=useState(false);
   // What the user was trying to do when the sign-in dialog opened, so the intent is
   // resumed afterwards instead of silently dropped.
   const [pending,setPending]=useState(false);
 
-  useEffect(()=>()=>{if(statusTimer.current!==undefined)window.clearTimeout(statusTimer.current);},[]);
+  useEffect(()=>()=>{if(statusTimer.current!==undefined)window.clearTimeout(statusTimer.current);if(dockTimer.current!==undefined)window.clearTimeout(dockTimer.current);},[]);
   const announce=(message:string)=>{
     setStatus(message);
     if(statusTimer.current!==undefined)window.clearTimeout(statusTimer.current);
@@ -37,7 +39,8 @@ export function StoreActions({storeId,name,latitude,longitude,initialFavorited,p
       if(response.status===401){setFavorited(!next);setPending(true);setAuth(true);return;}
       // An optimistic flip is not success. Only a 2xx keeps it.
       if(!response.ok)throw new Error();
-      if(next)announce(savedMessage[locale]);
+      if(next){announce(savedMessage[locale]);dockTimer.current=window.setTimeout(()=>setDockVisible(false),2000);}
+      else setDockVisible(true);
     }catch{setFavorited(!next);announce(t('saveError'));}
     finally{setBusy(false);}
   };
@@ -70,14 +73,14 @@ export function StoreActions({storeId,name,latitude,longitude,initialFavorited,p
     <button onClick={()=>void toggleFavorite()} disabled={busy} aria-pressed={favorited}>{favorited?<Check/>:<Bookmark/>}{t('save')}</button>
     <button onClick={directions}><Map/>{t('directions')}</button>
     {phone&&<a href={`tel:${phone.replace(/[^\d+]/g,'')}`} onClick={call}><Phone/>{t('callStore')}</a>}
-    <button onClick={()=>void share()}><Share2/>{t('share')}</button>
+    <button onClick={()=>void share()}><Send/>{t('share')}</button>
   </div>
   {status&&<p className="action-status store-save-status" role="status">{status}</p>}
-  <aside className="store-save-dock" aria-label={t('saveReason')}>
+  {dockVisible&&<aside className="store-save-dock" aria-label={t('saveReason')}>
     <span>{t('saveReason')}</span>
     <button type="button" className={`button primary${favorited?' is-saved':''}`} onClick={()=>void toggleFavorite()} disabled={busy} aria-pressed={favorited}>
       {t('saveStore')}
     </button>
-  </aside>
+  </aside>}
   <AuthDialog open={auth} onClose={()=>{setAuth(false);setPending(false);}} onAuthenticated={resume}/></>;
 }

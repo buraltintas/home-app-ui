@@ -3,8 +3,7 @@
 import Link from 'next/link';
 import { ArrowRight, Check, LocateFixed, MapPin, Search, X } from 'lucide-react';
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
-import type { Coordinates, LocationResult, Me, SearchHistory, SearchResponse, SearchResult } from '@/lib/types';
-import { Disclosure } from './Disclosure';
+import type { Coordinates, Locale, LocationResult, Me, SearchHistory, SearchResponse, SearchResult } from '@/lib/types';
 import { SaveStoreButton } from './SaveStoreButton';
 import { useI18n } from '@/i18n/I18nProvider';
 import { localePath } from '@/lib/site';
@@ -24,6 +23,9 @@ import {TimedNudge} from './TimedNudge';
 
 type SearchPlace={source?:'device'|'manual';label:string;city?:string;placeID?:string;address?:string;accuracyMeters?:number;coordinates:Coordinates};
 type SearchSnapshot={query:string;location?:SearchPlace;data?:SearchResponse};
+const historyCopy:Record<Locale,{more:string}>={
+  tr:{more:'Daha fazla göster'},en:{more:'Show more'},de:{more:'Mehr anzeigen'},ru:{more:'Показать ещё'},
+};
 
 // These remain valid search and admin categories. Product has only removed them from the
 // discovery shortcuts, so hiding them here must not erase their stores or taxonomy rows.
@@ -138,6 +140,8 @@ export function SearchExperience() {
   // A query carried in from the homepage, waiting for the page to settle before it runs.
   const pending=useRef<string>('');
   const [history,setHistory]=useState<SearchHistory[]>([]);
+  const [historyExpanded,setHistoryExpanded]=useState(false);
+  const [historyBusy,setHistoryBusy]=useState(false);
   const [historyAnswered,setHistoryAnswered]=useState(false);
   const [rotation,setRotation]=useState(0);
   const field=useRef<HTMLTextAreaElement>(null);
@@ -246,7 +250,7 @@ export function SearchExperience() {
   // Anonymous visitors answer 401 here, which is the normal case and not an error.
   useEffect(()=>{
     let active=true;
-    apiFetch('/api/proxy/me/searches?limit=3')
+    apiFetch('/api/proxy/me/searches?limit=10')
       .then(async response=>response.ok?(await response.json() as {items:SearchHistory[]}).items:[])
       .then(items=>{if(active){setHistory(items);setHistoryAnswered(true);}})
       // A refusal is an answer too. What matters here is that the question has been
@@ -254,6 +258,19 @@ export function SearchExperience() {
       .catch(()=>{if(active)setHistoryAnswered(true);});
     return()=>{active=false;};
   },[]);
+
+  const removeHistory=async(id:string)=>{
+    if(historyBusy)return;
+    setHistoryBusy(true);
+    try{const response=await apiFetch(`/api/proxy/me/searches/${id}`,{method:'DELETE'});if(response.ok)setHistory(items=>items.filter(item=>item.id!==id));}
+    finally{setHistoryBusy(false);}
+  };
+  const clearHistory=async()=>{
+    if(historyBusy)return;
+    setHistoryBusy(true);
+    try{const response=await apiFetch('/api/proxy/me/searches',{method:'DELETE'});if(response.ok){setHistory([]);setHistoryExpanded(false);}}
+    finally{setHistoryBusy(false);}
+  };
 
   useEffect(()=>{
     if(!restored)return;
@@ -569,7 +586,7 @@ export function SearchExperience() {
       {manual.trim().length>=2&&<div className="location-results" aria-live="polite">{lookingUp&&candidates.length===0?<p>{t('searchingLocations')}</p>:!lookingUp&&candidates.length===0?<p>{t('noLocations')}</p>:candidates.map(candidate=><button key={candidate.place_id} onClick={()=>void choose(candidate)} disabled={loading}><strong>{candidate.name}</strong><span>{candidate.address}</span><small>{candidate.attributions.join(' · ')}</small></button>)}</div>}</section>}{location&&<form className="search-form" onBlur={event=>{if(!event.currentTarget.contains(event.relatedTarget as Node|null))setSuggestionsOpen(false);}} onSubmit={event=>{setSuggestionsOpen(false);submit(event);}} aria-busy={loading}><Search aria-hidden="true"/><div className="search-field"><textarea ref={field} onFocus={()=>setSuggestionsOpen(true)} rows={1} value={query} onChange={event=>setQuery(event.target.value)} onKeyDown={event=>{if(event.key==='Enter'){event.preventDefault();void runSearch();}}} placeholder={placeholder} aria-label={t('searchHint')} disabled={loading}/>{query&&!loading&&<button type="button" className="search-clear" onClick={()=>{setQuery('');field.current?.focus();}} aria-label={t('clearSearch')}><X aria-hidden="true"/></button>}</div><button type="submit" disabled={loading}>{loading?t('loading'):t('searchAction')}</button>{suggestionsOpen&&<div className="search-query-suggestions"><div className="search-query-suggestions-list">{prompts.map(phrase=><button type="button" key={phrase} onClick={()=>{setSuggestionsOpen(false);fill(phrase);}}>{phrase}<ArrowRight aria-hidden="true"/></button>)}</div>{prompts.length>4&&<span className="search-query-more" aria-hidden="true">⌄</span>}</div>}</form>}{/* The panel opens above these, it does not replace them. Hiding them while somebody
         changes their location threw away the recent searches and the categories they were
         about to pick from, and put them back only once the location was settled. */}
-    {!data&&!loading&&<div className="search-suggestions"><div>{suggestionsAnswered&&<Disclosure className="recent-search-disclosure home-question" summary={t('showRecentSearches')}>{history.length?history.map(entry=><button key={entry.id} onClick={()=>fill(entry.raw_query)}>{entry.raw_query}<ArrowRight aria-hidden="true"/></button>):<p>{t('pastSearchesEmpty')}</p>}</Disclosure>}</div><div><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>fill(category.name)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}{category.search_count>0&&<small title={t('searchCount')}>{category.search_count.toLocaleString(locale)} {t('searchCountShort')}</small>}</span></button>)}</div></div></div>}</header>
+    {!data&&!loading&&<div className="search-suggestions"><div>{suggestionsAnswered&&<section className="recent-searches"><header><h2>{t('showRecentSearches')}</h2>{history.length>0&&<button type="button" onClick={()=>void clearHistory()} disabled={historyBusy}>{t('clearSearches')}</button>}</header>{history.length?<><ul>{history.slice(0,historyExpanded?10:3).map(entry=><li key={entry.id}><button type="button" className="recent-search-query" onClick={()=>fill(entry.raw_query)}>{entry.raw_query}</button><button type="button" className="recent-search-delete" onClick={()=>void removeHistory(entry.id)} disabled={historyBusy}>{t('deleteSearch')}</button></li>)}</ul>{history.length>3&&!historyExpanded&&<button type="button" className="recent-search-more" onClick={()=>setHistoryExpanded(true)}>{historyCopy[locale].more}</button>}</>:<p>{t('pastSearchesEmpty')}</p>}</section>}</div><div><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>fill(category.name)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}{category.search_count>0&&<small title={t('searchCount')}>{category.search_count.toLocaleString(locale)} {t('searchCountShort')}</small>}</span></button>)}</div></div></div>}</header>
     {loading&&<SearchOverlay/>}
     {!loading&&data?.guidance&&<section className="guidance-card" role="alert"><p>{data.guidance.message}</p><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>fill(category.name)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}</span></button>)}</div></section>}
     {!loading&&data&&!data.guidance&&<section className="results-layout"><div className="result-list"><p className="result-count">{data.results.length} {t('results')}</p>{data.results.length===0?<div className="zero-state"><h2>{t('zeroTitle')}</h2><p>{t('zeroBody')}</p></div>:data.results.map(item=><Result item={item} key={item.search_result_impression_id} onSelect={()=>select(item)} saved={savedStores.has(item.id??'')}/>)}</div></section>}

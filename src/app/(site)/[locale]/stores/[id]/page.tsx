@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import {permanentRedirect} from 'next/navigation';
 import {PostCard} from '@/components/PostCard';
-import {Rating} from '@/components/Rating';
+import {Rating,RatingStars} from '@/components/Rating';
 import {StoreActions} from '@/components/StoreActions';
 import {JsonLd} from '@/components/JsonLd';
 import {ScrollTop} from '@/components/ScrollTop';
@@ -124,7 +124,7 @@ export default async function Page({params}:Props){
       <StoreActions storeId={store.id} name={store.name} latitude={store.latitude} longitude={store.longitude} initialFavorited={store.viewer_has_favorited} phone={store.phone}/>
       <section className="store-rating-breakdown" aria-labelledby="store-rating-title">
         <header><div><h2 id="store-rating-title">{scores.title}</h2><p>{scores.intro}</p></div><div className="store-rating-overall"><span>{scores.overall}</span><strong>{store.platform.review_count?formatScore(store.platform.average_rating):'—'}</strong><small>{store.platform.review_count?scores.basedOn(store.platform.review_count):scores.empty}</small></div></header>
-        <dl>{criteriaRows.map(([label,value])=><div key={label}><dt>{label}</dt><dd>{value!==undefined?<Rating value={value}/>:'—'}</dd></div>)}</dl>
+        <dl>{criteriaRows.map(([label,value])=><div key={label}><dt>{label}</dt><dd>{value!==undefined?<RatingStars value={value}/>:'—'}</dd></div>)}</dl>
       </section>
       {/* Directly under save, directions, call and share, because it belongs with them: they
           are the four things you can do about this store and reviewing it is the fifth. It
