@@ -414,7 +414,8 @@ svg{stroke-width:2}
 .search-form{position:relative}
 .search-query-suggestions{position:absolute;z-index:10;left:0;right:0;top:calc(100% + 8px);background:var(--surface);box-shadow:var(--lift);border-radius:var(--r-md);padding:8px 8px 24px}
 .search-query-suggestions-list{max-height:176px;overflow-y:auto;overscroll-behavior:contain}
-.search-query-more{position:absolute;left:50%;bottom:3px;transform:translateX(-50%);color:var(--ink-muted);font-size:18px;line-height:1}
+.search-query-more{position:absolute;left:50%;bottom:1px;transform:translateX(-50%);display:grid!important;place-items:center!important;width:44px!important;min-height:34px!important;padding:0!important;color:var(--ink);font-size:30px!important;line-height:1}
+.search-query-close{display:none}
 .search-query-suggestions button{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;min-height:44px;padding:10px 12px;text-align:left;border:0;background:transparent;border-radius:var(--r-sm)}
 .search-query-suggestions button:hover,.search-query-suggestions button:focus-visible{background:var(--muted)}
 .search-suggestions .recent-search-disclosure>.disclosure-summary{padding:0;align-items:center;font-weight:600}
@@ -426,6 +427,15 @@ svg{stroke-width:2}
 .recent-search-query{min-height:48px;padding:0;text-align:left;font-size:16px;color:var(--ink)}
 .recent-search-delete{padding-inline:8px;font-size:13px}
 .recent-search-more{padding:8px 0}
+@media(max-width:720px){
+  .search-form.is-query-open{position:fixed;z-index:80;inset:0;margin:0;padding:calc(18px + env(safe-area-inset-top)) 18px 24px;display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto 1fr;align-content:start;gap:10px;background:var(--canvas);border:0}
+  .search-form.is-query-open .search-query-close{display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;background:transparent;color:var(--ink)}
+  .search-form.is-query-open>svg{grid-column:1;margin:14px 0 0}
+  .search-form.is-query-open .search-field{grid-column:2}
+  .search-form.is-query-open>button[type=submit]{grid-column:1/-1}
+  .search-form.is-query-open .search-query-suggestions{position:relative;grid-column:1/-1;top:auto;left:auto;right:auto;box-shadow:none;border-top:1px solid var(--line);border-radius:0;padding:8px 0 44px;background:transparent}
+  .search-form.is-query-open .search-query-suggestions-list{max-height:calc(100vh - 250px)}
+}
 
 /* Keep each question's five radio targets in a single row. */
 .criterion-stars{display:flex;gap:0;flex-wrap:nowrap}
