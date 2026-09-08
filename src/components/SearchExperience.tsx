@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Check, LocateFixed, MapPin, Search, X } from 'lucide-react';
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
@@ -20,7 +19,6 @@ import { Rating } from './Rating';
 import { SearchOverlay } from './SearchOverlay';
 import { LocationAlert } from './LocationAlert';
 import {mapsLink} from '@/lib/maps';
-import {storePhotoURL} from '@/lib/store-photo';
 import {CategoryIcon} from './CategoryIcon';
 import {TimedNudge} from './TimedNudge';
 
@@ -55,24 +53,6 @@ function growToFit(element:HTMLTextAreaElement|null){
   element.style.height=`${measured+2}px`;
 }
 
-// Google photos are streamed through the BFF and never optimised, because caching
-// the bytes would breach the Places terms. Stores without a photo get a typographic
-// block rather than a stand-in image.
-function ResultPhoto({item}:{item:SearchResult}) {
-  const {t}=useI18n();
-  // An administrator-selected cover is the store's canonical image. Without one, the live
-  // Google result is freshest; a stored Google reference covers internal/promoted results.
-  const adminCover=item.photo?.source==='admin'?storePhotoURL(item.photo,520):undefined;
-  const liveGoogle=item.google?.photo_name;
-  const storedGoogle=item.photo?.source==='google'?storePhotoURL(item.photo,520):undefined;
-  const src=adminCover??(liveGoogle?`/api/places/photo?name=${encodeURIComponent(liveGoogle)}&w=520`:undefined)??storedGoogle;
-  if(!src)return <div className="result-photo result-photo-empty"><span aria-hidden="true">{item.name.trim().charAt(0)}</span><small>{t('noPhoto')}</small></div>;
-  // Search uses a compact thumbnail that opens the full store page. The full-size hero
-  // carries the provider's author attribution; repeating a personal name under every
-  // result makes the list harder to scan and can be omitted for linked thumbnails.
-  return <div className="result-photo"><Image src={src} width={260} height={195} alt="" unoptimized/></div>;
-}
-
 // A result normally carries a store id and links to its detail page. One without an id
 // cannot be opened, so it stays plain content instead of linking to /stores/undefined.
 const isClosedStatus=(status?:string)=>status==='CLOSED_TEMPORARILY'||status==='CLOSED_PERMANENTLY';
@@ -84,7 +64,7 @@ function Result({item,onSelect,saved}:{item:SearchResult;onSelect:()=>void;saved
   const categoryText=(item.category_labels?.length
     ?item.category_labels
     :(item.categories??[]).map(category=>categoryLabels[locale][category]??category)).join(' · ');
-  const card=<article className="search-result"><ResultPhoto item={item}/><div>{item.catalog_store&&<span className="catalog-store-label">{t('catalogStore')}</span>}<p className="result-category">{categoryText}{item.premium&&<span className="promoted-flag">{t('promoted')}</span>}</p><h2>{item.name}</h2><p className="result-address">{item.address}</p>{isClosedStatus(item.google?.business_status)&&<p className="store-status-warning">{storeStatusCopy[locale]}</p>}{item.distance_meters!==undefined&&<p className="distance">{(item.distance_meters/1000).toLocaleString(locale,{maximumFractionDigits:1})} km</p>}{/* "Boşa Gezme!'de yeni" used to depend on whether the store was in our catalogue at
+  const card=<article className="search-result"><div>{item.catalog_store&&<span className="catalog-store-label">{t('catalogStore')}</span>}<p className="result-category">{categoryText}{item.premium&&<span className="promoted-flag">{t('promoted')}</span>}</p><h2>{item.name}</h2><p className="result-address">{item.address}</p>{isClosedStatus(item.google?.business_status)&&<p className="store-status-warning">{storeStatusCopy[locale]}</p>}{item.distance_meters!==undefined&&<p className="distance">{(item.distance_meters/1000).toLocaleString(locale,{maximumFractionDigits:1})} km</p>}{/* "Boşa Gezme!'de yeni" used to depend on whether the store was in our catalogue at
        all, which is our bookkeeping and none of the reader's business. It made the badge
        move on its own: a store arriving from the provider showed it, and the same store
        searched again showed "0 reviews · 0 favourites" instead -- because the first search

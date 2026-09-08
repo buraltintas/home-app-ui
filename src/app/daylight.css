@@ -194,6 +194,15 @@ svg{stroke-width:2}
   .site-header nav .nav-avatar{background:var(--ink);color:var(--surface)}
 }
 
+/* Search is intentionally text-first. Removing result thumbnails prevents a result page
+   from issuing one Google Photo request per store and gives names, distance and community
+   evidence the full reading width. */
+.search-result{grid-template-columns:minmax(0,1fr) auto}
+.dual-score{width:calc(100% - 48px);margin-left:0}
+.result-save-row{width:calc(100% - 48px);margin-left:0}
+.result-google,.result-call{margin-left:0}
+@media(max-width:600px){.search-result{grid-template-columns:minmax(0,1fr) auto}}
+
 /* Out-of-domain search is a compact recoverable error. Categories are useful exits;
    speculative query suggestions are not repeated under an input we just rejected. */
 .guidance-card{background:var(--surface);border:1px solid color-mix(in srgb,var(--error) 34%,var(--line));border-radius:var(--r-md);padding:20px 22px}
