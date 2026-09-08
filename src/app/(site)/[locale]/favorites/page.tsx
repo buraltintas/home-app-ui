@@ -17,6 +17,12 @@ import {TimedNudge} from '@/components/TimedNudge';
 
 // The same wording the store page uses for the same action; one product, one name for it.
 const reviewAction:Record<Locale,string>={tr:'Değerlendirme yap',en:'Write a review',de:'Bewertung abgeben',ru:'Оставить оценку'};
+const favoriteSummary:Record<Locale,{saved:string;pending:string}>={
+  tr:{saved:'Kaydedilen mağaza',pending:'Kaydedilmeyi bekleyen mağaza'},
+  en:{saved:'Saved stores',pending:'Saved, not yet reviewed'},
+  de:{saved:'Gespeicherte Geschäfte',pending:'Geschäfte, die auf deine Bewertung warten'},
+  ru:{saved:'Сохранённые магазины',pending:'Магазины, ожидающие вашей оценки'},
+};
 
 export default function Page(){
   const {t,locale}=useI18n();
@@ -62,6 +68,10 @@ export default function Page(){
   if(signedIn&&stores.length)return <main className="favorites-page">
     <p className="eyebrow">{t('favorites')}</p>
     <h1>{t('favoritesTitle')}</h1>
+    <dl className="favorites-summary" aria-label={t('favoritesTitle')}>
+      <div><dt>{favoriteSummary[locale].saved}</dt><dd>{stores.length}</dd></div>
+      <div><dt>{favoriteSummary[locale].pending}</dt><dd>{stores.filter(store=>!store.viewer_has_reviewed).length}</dd></div>
+    </dl>
     {error&&<p className="form-error" role="alert">{error}</p>}
     {/* The review action sits outside the link, not inside it: an anchor cannot hold
         another anchor, and starting a review is not a step on the way to opening the

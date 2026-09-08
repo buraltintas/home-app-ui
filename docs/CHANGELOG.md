@@ -8,6 +8,16 @@ value involved.
 
 ---
 
+## Search feedback, favourites, and footer documents now match the current journey
+
+- Search feedback keeps the mascot at one stable, prominent size, removes the four
+  competing progress captions, and describes the actual visible outcome: stores are being
+  ordered.
+- Favourites now state both the total saved-store count and how many saved stores the
+  viewer has not reviewed yet, using data already returned with each store.
+- Every footer document now exposes the shared back control and falls back to the legal
+  index when the page was opened without usable browser history.
+
 ## Search results remain scannable without paid list photos
 
 - Re-grouped each photo-free search result into one list row with a dedicated store-identity

@@ -1,6 +1,7 @@
 import type {Block,LegalDoc} from '@/content/legal/types';
 import {legalDocumentsArePublishable} from '@/lib/legal-facts';
 import type {Locale} from '@/lib/types';
+import {PageBackButton} from '@/components/PageBackButton';
 
 const pendingNotice:Record<Locale,{title:string;body:string}>={
   tr:{title:'Bu belge hukuki incelemeyi bekliyor',body:'Bu metin ürünün gerçekte nasıl çalıştığını anlatır, ancak veri sorumlusunun kimliği ve iletişim bilgileri henüz tamamlanmadığı için yürürlükte değildir. Tamamlanana kadar bağlayıcı bir belge olarak değerlendirilmemelidir.'},
@@ -55,6 +56,7 @@ export function LegalDocument({doc,locale}:{doc:LegalDoc;locale:Locale}){
   const copy=meta[locale];
   const pending=doc.requiresEntity&&!legalDocumentsArePublishable;
   return <main className="legal-page">
+    <PageBackButton fallback="/legal"/>
     <article>
       <header className="legal-header">
         <h1>{content.title}</h1>
