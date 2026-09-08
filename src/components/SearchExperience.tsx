@@ -64,7 +64,7 @@ function Result({item,onSelect,saved}:{item:SearchResult;onSelect:()=>void;saved
   const categoryText=(item.category_labels?.length
     ?item.category_labels
     :(item.categories??[]).map(category=>categoryLabels[locale][category]??category)).join(' · ');
-  const card=<article className="search-result"><div>{item.catalog_store&&<span className="catalog-store-label">{t('catalogStore')}</span>}<p className="result-category">{categoryText}{item.premium&&<span className="promoted-flag">{t('promoted')}</span>}</p><h2>{item.name}</h2><p className="result-address">{item.address}</p>{isClosedStatus(item.google?.business_status)&&<p className="store-status-warning">{storeStatusCopy[locale]}</p>}{item.distance_meters!==undefined&&<p className="distance">{(item.distance_meters/1000).toLocaleString(locale,{maximumFractionDigits:1})} km</p>}{/* "Boşa Gezme!'de yeni" used to depend on whether the store was in our catalogue at
+  const card=<div className="search-result"><div className="result-identity">{item.catalog_store&&<span className="catalog-store-label">{t('catalogStore')}</span>}<p className="result-category">{categoryText}{item.premium&&<span className="promoted-flag">{t('promoted')}</span>}</p><h2>{item.name}</h2><p className="result-address">{item.address}</p>{isClosedStatus(item.google?.business_status)&&<p className="store-status-warning">{storeStatusCopy[locale]}</p>}{item.distance_meters!==undefined&&<p className="distance">{(item.distance_meters/1000).toLocaleString(locale,{maximumFractionDigits:1})} km</p>}{/* "Boşa Gezme!'de yeni" used to depend on whether the store was in our catalogue at
        all, which is our bookkeeping and none of the reader's business. It made the badge
        move on its own: a store arriving from the provider showed it, and the same store
        searched again showed "0 reviews · 0 favourites" instead -- because the first search
@@ -72,7 +72,7 @@ function Result({item,onSelect,saved}:{item:SearchResult;onSelect:()=>void;saved
        It now depends on the only thing a reader cares about: whether anybody here has
        reviewed it. The community column keeps its place either way, so the two sources
        stay side by side and comparable, and the badge stops moving. */}
-    </div><ArrowRight aria-hidden="true"/></article>;
+    </div><ArrowRight aria-hidden="true"/></div>;
   // The two score columns sit outside the link, not inside it. An anchor cannot hold a
   // button, and the save control belongs directly under the community figures -- which is
   // where it was asked for, and where it stops covering the categories at the top of the
@@ -86,17 +86,19 @@ function Result({item,onSelect,saved}:{item:SearchResult;onSelect:()=>void;saved
       </div></div>
       {item.id&&<SaveStoreButton storeId={item.id} initialSaved={saved}/>}</>;
     })();
-  return <div className="result-row" data-catalog-store={item.catalog_store||undefined}>
+  return <article className="result-row" data-catalog-store={item.catalog_store||undefined}>
     {/* Not prefetched. A results page carries up to thirty of these, and prefetching them
         means thirty server renders and thirty backend reads for a page from which somebody
         will open one store, or none. That burst is what emptied the rate limit and made
         the stores in the list answer "not found" when they were plainly there. */}
     {item.id?<Link href={localePath(locale,`/stores/${item.id}`)} prefetch={false} onClick={onSelect}>{card}</Link>:card}
-    {scores}
-    {/* Provider identity is a cheap list field and keeps Maps available without pulling
-        rating, contact or hours into a page where most stores are never opened. */}
-    {item.google?.place_id&&<a className="result-google" href={mapsLink(item.latitude,item.longitude,item.google.place_id)} target="_blank" rel="noopener noreferrer"><MapPin aria-hidden="true"/>{t('seeOnGoogleMaps')}</a>}
-  </div>;
+    <div className="result-support">
+      {scores}
+      {/* Provider identity is a cheap list field and keeps Maps available without pulling
+          rating, contact or hours into a page where most stores are never opened. */}
+      {item.google?.place_id&&<a className="result-google" href={mapsLink(item.latitude,item.longitude,item.google.place_id)} target="_blank" rel="noopener noreferrer"><MapPin aria-hidden="true"/>{t('seeOnGoogleMaps')}</a>}
+    </div>
+  </article>;
 }
 
 export function SearchExperience() {

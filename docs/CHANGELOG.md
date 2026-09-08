@@ -8,10 +8,19 @@ value involved.
 
 ---
 
+## Search results remain scannable without paid list photos
+
+- Re-grouped each photo-free search result into one list row with a dedicated store-identity
+  area and a separated community/action area.
+- Kept the desktop treatment as a restrained list with an internal hairline instead of
+  replacing results with a stack of decorative cards.
+- Compacted mobile result actions, limited long category summaries to two lines, and made
+  store transitions easier to identify without adding another paid Places field.
+
 ## Search cards now match the low-cost Places response
 
 - Search results show Boşa Gezme! community evidence together with the inexpensive Google
-  identity, photograph, business-status, and Maps-link fields. Google rating counts,
+  identity, business-status, and Maps-link fields. Photographs, Google rating counts,
   opening hours, and phone numbers no longer reserve space or imply that list requests
   fetched store-detail data.
 - The web search DTO now mirrors the backend's lazy-detail contract. Rich Google fields are
