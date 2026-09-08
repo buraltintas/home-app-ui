@@ -8,6 +8,17 @@ value involved.
 
 ---
 
+## Store reviews stay inside the page and read as community content
+
+- Store-detail reviews no longer reuse the feed card as a bordered card inside another
+  bordered card. Author, score, verified-visit state, date, and actions now form one flat,
+  consistently sized review surface.
+- The horizontal review rail is constrained to its real content column, exposes the next
+  card without widening the desktop page, and snaps one readable card at a time on phones.
+- On store pages the back control now belongs to the top of the page instead of following
+  the reader over reviews, while the mobile save dock wraps its supporting copy without
+  colliding with the primary action.
+
 ## Store scores and search recovery now explain the next useful action
 
 - Store detail leads the review action with the Boşa Gezme! score and all eight community

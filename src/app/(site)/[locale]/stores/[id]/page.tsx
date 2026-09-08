@@ -165,9 +165,9 @@ export default async function Page({params}:Props){
           {store.website&&<a className="external-link" href={store.website} target="_blank" rel="noopener noreferrer">{t.storeWebsite}</a>}
         </aside>}
       </div>
-      <div className="store-reviews">
-        <p className="eyebrow store-section-title">{t.community}</p>
-        {recent_posts.length?<div className="store-review-rail">{recent_posts.map(post=><PostCard post={post} surface="store" key={post.id}/>)}</div>:<div className="empty-state"><h2>{t.noCommunity}</h2><p>{t.noReviewsBody}</p></div>}
+      <div className="store-reviews" aria-labelledby="store-reviews-title">
+        <h2 className="store-section-title" id="store-reviews-title">{t.community}</h2>
+        {recent_posts.length?<div className="store-review-rail">{recent_posts.map(post=><PostCard post={post} surface="store" key={post.id}/>)}</div>:<div className="empty-state"><h3>{t.noCommunity}</h3><p>{t.noReviewsBody}</p></div>}
       </div>
     </section>
     <TimedNudge kind="review" requireReviewFlag/>

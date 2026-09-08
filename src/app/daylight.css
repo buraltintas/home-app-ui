@@ -220,8 +220,21 @@ svg{stroke-width:2}
 .store-rating-breakdown dd{display:flex;align-items:center;margin:0;font-size:18px;font-weight:750;font-variant-numeric:tabular-nums;white-space:nowrap}
 .store-rating-breakdown dd .rating svg{width:17px;height:17px}
 .store-rating-breakdown dd span{font-size:11px;color:var(--ink-muted);font-weight:500}
-.store-review-rail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(320px,78%);gap:24px;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x proximity;scrollbar-color:var(--line-strong) transparent;padding:0 0 18px}
-.store-review-rail>.post-card{scroll-snap-align:start;min-width:0;border:1px solid var(--line);border-radius:var(--r-md);padding:22px}
+.store-reviews{min-width:0}
+.store-reviews .store-section-title{margin:0 0 24px;font-size:28px;line-height:1.15;letter-spacing:-.025em}
+.store-review-rail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(286px,340px);gap:16px;max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scroll-padding-inline:2px;scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent;padding:2px 2px 18px}
+.store-review-rail>.post-card{scroll-snap-align:start;display:flex;flex-direction:column;min-width:0;min-height:270px;padding:22px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface)}
+.store-review-rail .post-number{display:none}
+.store-review-rail .post-heading{display:block;margin:0;padding:0 0 18px;border-bottom:1px solid var(--line)}
+.store-review-rail .post-author{min-width:0;margin:0;padding:0}
+.store-review-rail .post-author>div:nth-child(2){min-width:0}
+.store-review-rail .post-author strong{display:flex;align-items:center;flex-wrap:wrap;gap:7px;min-width:0;font-size:14px;line-height:1.35;overflow-wrap:anywhere}
+.store-review-rail .post-author strong>.contributor-level{flex:none}
+.store-review-rail .post-details{display:flex;flex:1;flex-direction:column;width:100%;min-height:0;margin:0;padding:20px 0 0;border:0;border-radius:0;background:transparent;box-shadow:none}
+.store-review-rail .post-meta{justify-content:space-between;gap:12px;margin:0}
+.store-review-rail .post-written{margin:14px 0 18px;color:var(--ink-muted);font-size:13px;font-variant-numeric:tabular-nums}
+.store-review-rail .post-actions{width:100%;margin-top:auto;padding-top:12px}
+.store-review-rail .post-actions button{padding-inline:0}
 @media(max-width:700px){
   .store-rating-breakdown header{grid-template-columns:1fr;gap:18px}
   .store-rating-overall{width:100%}
@@ -230,8 +243,9 @@ svg{stroke-width:2}
   .store-rating-breakdown dl div:nth-child(2n){border-right:0}
   .store-rating-breakdown dl div:nth-last-child(-n+4){border-bottom:1px solid var(--line)}
   .store-rating-breakdown dl div:nth-last-child(-n+2){border-bottom:0}
-  .store-review-rail{grid-auto-columns:minmax(280px,88%);margin-inline:-18px;padding-inline:18px}
-  .store-review-rail>.post-card{padding:18px}
+  .store-reviews .store-section-title{margin-bottom:18px;font-size:24px}
+  .store-review-rail{grid-auto-columns:calc(100vw - 66px);gap:12px;margin-inline:-18px;padding:2px 18px 18px;scroll-padding-inline:18px}
+  .store-review-rail>.post-card{min-height:252px;padding:20px}
   .guidance-card{padding:18px}
   .guidance-card .category-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
 }
