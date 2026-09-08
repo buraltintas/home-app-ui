@@ -8,6 +8,15 @@ value involved.
 
 ---
 
+## Search cards now match the low-cost Places response
+
+- Search results show Boşa Gezme! community evidence together with the inexpensive Google
+  identity, photograph, business-status, and Maps-link fields. Google rating counts,
+  opening hours, and phone numbers no longer reserve space or imply that list requests
+  fetched store-detail data.
+- The web search DTO now mirrors the backend's lazy-detail contract. Rich Google fields are
+  loaded on the store page and cached by the backend after the first detail visit.
+
 ## Store reviews stay inside the page and read as community content
 
 - Store-detail reviews no longer reuse the feed card as a bordered card inside another

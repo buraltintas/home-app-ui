@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, Check, LocateFixed, MapPin, Search, X, Phone} from 'lucide-react';
+import { ArrowRight, Check, LocateFixed, MapPin, Search, X } from 'lucide-react';
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
 import type { Coordinates, LocationResult, Me, SearchHistory, SearchResponse, SearchResult } from '@/lib/types';
 import { Disclosure } from './Disclosure';
@@ -58,15 +58,6 @@ function growToFit(element:HTMLTextAreaElement|null){
 // Google photos are streamed through the BFF and never optimised, because caching
 // the bytes would breach the Places terms. Stores without a photo get a typographic
 // block rather than a stand-in image.
-// Today's line out of the week the provider publishes. Google writes the week starting on
-// Monday and a JavaScript weekday starts on Sunday, and the day wanted is the store's own,
-// not the reader's -- at 23:00 in Antalya it is already tomorrow in Auckland.
-function todaysHours(hours:{descriptions?:string[];utc_offset_minutes:number}):string|undefined{
-  if(!hours.descriptions?.length)return undefined;
-  const local=new Date(Date.now()+hours.utc_offset_minutes*60000);
-  return hours.descriptions[(local.getUTCDay()+6)%7];
-}
-
 function ResultPhoto({item}:{item:SearchResult}) {
   const {t}=useI18n();
   // An administrator-selected cover is the store's canonical image. Without one, the live
@@ -84,12 +75,9 @@ function ResultPhoto({item}:{item:SearchResult}) {
 
 // A result normally carries a store id and links to its detail page. One without an id
 // cannot be opened, so it stays plain content instead of linking to /stores/undefined.
-// A telephone number is dialled by stripping it down to what a dialler understands.
-// Everything Google publishes is spaced for reading, and tel: does not read spaces.
-const dialable=(phone:string)=>phone.replace(/[^\d+]/g,'');
 const isClosedStatus=(status?:string)=>status==='CLOSED_TEMPORARILY'||status==='CLOSED_PERMANENTLY';
 
-function Result({item,onSelect,onCall,saved}:{item:SearchResult;onSelect:()=>void;onCall:()=>void;saved:boolean}) {
+function Result({item,onSelect,saved}:{item:SearchResult;onSelect:()=>void;saved:boolean}) {
   const {t,locale}=useI18n();
   // The API guarantees an array, but this read path stays defensive: one malformed or
   // cached store result must never replace the whole result page with a global error.
@@ -115,12 +103,9 @@ function Result({item,onSelect,onCall,saved}:{item:SearchResult;onSelect:()=>voi
       return <><div className="dual-score"><div><span>{t('communityRating')}</span>{reviewed&&item.platform
         ?<><strong><Rating value={item.platform.average_rating}/></strong><small>{item.platform.review_count} {t('reviews')} · {item.platform.favorite_count} {t('favoriteCount')}</small></>
         :<><strong className="new-here">{t('newHere')}</strong><small>{t('firstReview')}</small>{(item.platform?.favorite_count??0)>0&&<small>{item.platform?.favorite_count} {t('favoriteCount')}</small>}</>}
-      </div>{item.google&&<div><span>{t('googleRating')}</span><strong><Rating value={item.google.rating}/></strong><small>{item.google.rating_count} {t('reviews')}</small></div>}</div>
+      </div></div>
       {item.id&&<SaveStoreButton storeId={item.id} initialSaved={saved}/>}</>;
     })();
-  // The call sits outside the link rather than inside it: an anchor cannot contain
-  // another anchor, and more to the point, tapping a phone number should place a call,
-  // not open a store page on the way there.
   return <div className="result-row" data-catalog-store={item.catalog_store||undefined}>
     {/* Not prefetched. A results page carries up to thirty of these, and prefetching them
         means thirty server renders and thirty backend reads for a page from which somebody
@@ -128,19 +113,8 @@ function Result({item,onSelect,onCall,saved}:{item:SearchResult;onSelect:()=>voi
         the stores in the list answer "not found" when they were plainly there. */}
     {item.id?<Link href={localePath(locale,`/stores/${item.id}`)} prefetch={false} onClick={onSelect}>{card}</Link>:card}
     {scores}
-    {/* Directly above the telephone number, because the two answer the same question in
-        sequence: is it open, and can I ring first. Inside the card it sat among the
-        address and the ratings, where it read as another statistic. */}
-    {(()=>{
-      const hours=item.google?.opening_hours;
-      if(!hours||hours.open_now===undefined)return null;
-      const today=todaysHours(hours);
-      return <p className="result-hours"><span className={hours.open_now?'is-open':'is-shut'}>{hours.open_now?t('openNow'):t('closedNow')}</span>{today&&<small>{today}</small>}</p>;
-    })()}
-    {item.phone&&<a className="result-call" href={`tel:${dialable(item.phone)}`} onClick={onCall}><Phone aria-hidden="true"/><span>{t('callStore')}</span><strong>{item.phone}</strong></a>}
-    {/* No directions here. A list is where somebody is still choosing; directions belong
-        on the page for the store they chose. This one is different -- it answers "is this
-        place real, is it open", which is a question people ask while still deciding. */}
+    {/* Provider identity is a cheap list field and keeps Maps available without pulling
+        rating, contact or hours into a page where most stores are never opened. */}
     {item.google?.place_id&&<a className="result-google" href={mapsLink(item.latitude,item.longitude,item.google.place_id)} target="_blank" rel="noopener noreferrer"><MapPin aria-hidden="true"/>{t('seeOnGoogleMaps')}</a>}
   </div>;
 }
@@ -513,16 +487,6 @@ export function SearchExperience() {
   };
   const fill=(example:string)=>{setQuery(example);void runSearch(example);};
 
-  // Attribute the visit back to the search so the backend can measure which results
-  // actually lead somewhere, and so a later favorite or review keeps the same origin.
-  // A call placed from the list is the moment the product replaces the trip to Google, so
-  // it is recorded as its own kind of interaction. It is fire-and-forget: the dialler is
-  // already opening and must not wait for us.
-  const call=(item:SearchResult)=>{
-    if(!data)return;
-    void apiFetch(`/api/proxy/searches/${data.search_id}/interactions`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({search_result_id:item.search_result_impression_id,event_type:'call_click',idempotency_key:`call_click:${item.search_result_impression_id}`})}).catch(()=>undefined);
-  };
-
   const select=(item:SearchResult)=>{
     if(!data)return;
     rememberOriginSearch({search_id:data.search_id,search_result_id:item.search_result_impression_id});
@@ -626,6 +590,6 @@ export function SearchExperience() {
     {!data&&!loading&&<div className="search-suggestions"><div>{suggestionsAnswered&&<Disclosure className="recent-search-disclosure home-question" summary={t('showRecentSearches')}>{history.length?history.map(entry=><button key={entry.id} onClick={()=>fill(entry.raw_query)}>{entry.raw_query}<ArrowRight aria-hidden="true"/></button>):<p>{t('pastSearchesEmpty')}</p>}</Disclosure>}</div><div><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>fill(category.name)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}{category.search_count>0&&<small title={t('searchCount')}>{category.search_count.toLocaleString(locale)} {t('searchCountShort')}</small>}</span></button>)}</div></div></div>}</header>
     {loading&&<SearchOverlay/>}
     {!loading&&data?.guidance&&<section className="guidance-card" role="alert"><p>{data.guidance.message}</p><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>fill(category.name)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}</span></button>)}</div></section>}
-    {!loading&&data&&!data.guidance&&<section className="results-layout"><div className="result-list"><p className="result-count">{data.results.length} {t('results')}</p>{data.results.length===0?<div className="zero-state"><h2>{t('zeroTitle')}</h2><p>{t('zeroBody')}</p></div>:data.results.map(item=><Result item={item} key={item.search_result_impression_id} onSelect={()=>select(item)} onCall={()=>call(item)} saved={savedStores.has(item.id??'')}/>)}</div></section>}
+    {!loading&&data&&!data.guidance&&<section className="results-layout"><div className="result-list"><p className="result-count">{data.results.length} {t('results')}</p>{data.results.length===0?<div className="zero-state"><h2>{t('zeroTitle')}</h2><p>{t('zeroBody')}</p></div>:data.results.map(item=><Result item={item} key={item.search_result_impression_id} onSelect={()=>select(item)} saved={savedStores.has(item.id??'')}/>)}</div></section>}
     <TimedNudge kind="discovery"/></main>;
 }

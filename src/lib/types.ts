@@ -18,10 +18,9 @@ export type SearchIntent = {
   price_intent: '' | 'budget' | 'midrange' | 'premium'; attributes: string[];
   sort_preference: '' | 'relevance' | 'distance' | 'rating' | 'popularity'; semantic_terms: string[];
 };
-export type GoogleExternal = { provider: 'google'; place_id: string; rating: number; rating_count: number; photo_name?: string; photo_attributions?: string[]; business_status?: string; opening_hours?: OpeningHours };
-// What the provider publishes about when a store is open. `open_now` is worked out by the
-// server at the moment it answers, so it is never older than the response carrying it.
-export type OpeningHours = { descriptions?: string[]; open_now?: boolean; utc_offset_minutes: number };
+// Search receives only the Places fields that classify and render a result. Ratings,
+// contact details and hours are loaded once by the store-detail endpoint instead.
+export type GoogleExternal = { provider: 'google'; place_id: string; photo_name?: string; photo_attributions?: string[]; business_status?: string };
 export type StoredPhoto = { source: 'admin' | 'google'; media_id?: string; name?: string; attributions?: string[] };
 export type SearchResult = {
   id: string; search_result_impression_id: string; source: SearchSource; name: string; address: string;
@@ -29,9 +28,6 @@ export type SearchResult = {
   // Named by the server, from the same translations the store's own page reads.
   category_labels?: string[];
   platform?: PlatformStats & { store_id: string }; google?: GoogleExternal; photo?: StoredPhoto; premium?: boolean; catalog_store?: boolean;
-  // The store's public telephone number, when we hold one. Absent for a result we have
-  // never had a number for; the card hides the action rather than offering a dead one.
-  phone?: string;
 };
 export type SearchGuidance = { code: 'HOME_LIVING_ONLY'; reason: 'out_of_scope' | 'unclear'; message: string; examples: [string, string] };
 export type SearchResponse = { search_id: string; visitor_session_id?: string; intent: SearchIntent; results: SearchResult[]; guidance?: SearchGuidance; fallback_state?: string };
