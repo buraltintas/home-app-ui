@@ -8,6 +8,56 @@ value involved.
 
 ---
 
+## A chosen location no longer disappears, and the pages that depend on it work again
+
+- The device-permission watcher cleared the visitor's location whenever the geolocation
+  permission was anything other than "granted" -- and it is "prompt" for everyone who has
+  never granted it. So a place somebody typed in themselves was discarded on every load,
+  together with the saved preference and the server-side copy. Withdrawing the device
+  permission now withdraws only what the device gave us; a typed place is the visitor's own
+  answer and survives.
+- With no location there is no search box, which is what "the suggested searches do not
+  appear" was. Nothing about the suggestions themselves was wrong.
+- Recent searches no longer wait on an unrelated neighbourhood request before they render.
+  They had been gated behind it, so a slow or refused call hid history that had arrived.
+- Search history is now readable and clearable without an account. Browsing is anonymous by
+  design and a visitor's searches are recorded against their session, but reading them
+  required a signed-in account, so every anonymous visitor was told they had never searched.
+
+## The loading state on the favourites and profile pages drew its own title
+
+- Both pages render a deliberately blank block while the session resolves, with the page
+  title carried for screen readers only. The class that hides it, `.sr-only`, was never
+  defined in any stylesheet -- so the title was drawn as ordinary text on an otherwise empty
+  page, with the footer directly beneath it. That is the flash that was reported twice. The
+  utility now exists, and the block holds the height the page is about to have.
+
+## Search bar, location button and bottom notification
+
+- The search row is centred on its field, so the magnifier and the Ara button sit level with
+  the words instead of being pinned to the top of a box that grows with them.
+- "Use current location" and its confirmation are now one control in one bubble: it turns
+  green in place rather than being replaced by a separate line, and it stays pressable.
+- The bottom notification is narrower, rises from below the edge of the screen and leaves
+  the same way, and the review receipt takes itself off after three seconds. An invitation
+  still waits for the reader to scroll; a receipt has said all it has to say.
+- The current destination in the bottom navigation now carries the accent colour.
+- The full-screen search panel closes from the top right corner, and its "more suggestions"
+  control is a full-size target.
+
+## Documents index and feedback pages gained the shared back arrow
+
+- Both now carry the same back control as every other document page: real history where
+  there is any, and the documents index otherwise.
+
+## Favourites summary counts what it says it counts
+
+- "Awaiting review" now names itself that, and its number is genuinely the saved stores this
+  visitor has not reviewed. The favourites query never returned the reviewed flag, so the
+  field defaulted to false and the count was simply the total.
+
+---
+
 ## Search feedback, favourites, and footer documents now match the current journey
 
 - Search feedback keeps the mascot at one stable, prominent size, removes the four

@@ -1,6 +1,7 @@
 import type {Metadata} from 'next';
 import Link from 'next/link';
 import {JsonLd} from '@/components/JsonLd';
+import {PageBackButton} from '@/components/PageBackButton';
 import {about} from '@/content/legal/about';
 import {accountDeletion} from '@/content/legal/account-deletion';
 import {locationPrivacy} from '@/content/legal/location-privacy';
@@ -32,6 +33,7 @@ export default async function Page(){
   const text=copy[locale];
   const docs=[about,contact,terms,privacy,kvkkAydinlatma,kvkkBasvuru,cookies,locationPrivacy,accountDeletion,childrenPrivacy,commercialCommunications,reportContent];
   return <main className="legal-page">
+    <PageBackButton fallback="/"/>
     <JsonLd data={{'@context':'https://schema.org','@type':'CollectionPage',name:text.title,description:text.summary,url:absolute('/legal'),inLanguage:locale,isPartOf:{'@id':`${absolute('/')}#website`}}}/>
     <header className="legal-header">
       <h1>{text.title}</h1>

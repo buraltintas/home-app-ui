@@ -156,12 +156,15 @@ svg{stroke-width:2}
 .store-save-dock .button.is-saved{background:var(--success);color:var(--surface)}
 .store-save-status{position:fixed;z-index:23;left:50%;bottom:108px;transform:translateX(-50%);margin:0;padding:9px 14px;border:1px solid var(--line);border-radius:var(--r-pill);background:var(--surface);color:var(--ink);box-shadow:var(--lift);font-weight:650}
 .page-back-button{position:fixed;z-index:21;top:86px;left:max(18px,calc((100vw - 1480px)/2));width:46px;height:46px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:color-mix(in srgb,var(--surface) 92%,transparent);color:var(--ink);box-shadow:0 8px 24px rgba(22,20,15,.09);backdrop-filter:blur(16px);cursor:pointer}.page-back-button:hover{background:var(--muted)}.page-back-button svg{width:20px;height:20px}
-.timed-nudge{position:fixed;z-index:23;left:50%;bottom:22px;transform:translateX(-50%);width:min(360px,calc(100% - 32px));min-height:74px;padding:12px 20px 12px 12px;display:flex;align-items:center;gap:14px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--lift);font-size:15px;font-weight:650;line-height:1.35;animation:nudge-in .22s cubic-bezier(.16,1,.3,1) both;pointer-events:none}
+.timed-nudge{position:fixed;z-index:23;left:50%;bottom:22px;transform:translateX(-50%);width:min(316px,calc(100% - 56px));min-height:74px;padding:12px 18px 12px 12px;display:flex;align-items:center;gap:12px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--lift);font-size:15px;font-weight:650;line-height:1.35;animation:nudge-in .28s cubic-bezier(.16,1,.3,1) both;pointer-events:none}
 .timed-nudge-icon{width:48px;height:48px;flex:none;display:grid;place-items:center;border-radius:50%;background:var(--accent-wash);color:var(--clay);animation:nudge-icon-shake .32s ease-in-out .26s both}.timed-nudge-icon img{width:42px;height:42px;object-fit:contain}.timed-nudge-icon svg{width:24px;height:24px}
-.timed-nudge[data-state=leaving]{animation:nudge-out .2s ease-in both}
+.timed-nudge[data-state=leaving]{animation:nudge-out .24s ease-in both}
 .store-page .timed-nudge{bottom:112px}
-@keyframes nudge-in{from{opacity:0;transform:translate(-50%,18px)}to{opacity:1;transform:translate(-50%,0)}}
-@keyframes nudge-out{from{opacity:1;transform:translate(-50%,0)}to{opacity:0;transform:translate(-50%,18px)}}
+/* It rises from off the bottom edge and leaves the same way, so it reads as something
+   arriving rather than fading in on top of the page. The distance is its own height plus
+   the gap it keeps, which is what puts it fully out of sight at either end. */
+@keyframes nudge-in{from{opacity:0;transform:translate(-50%,calc(100% + 22px))}to{opacity:1;transform:translate(-50%,0)}}
+@keyframes nudge-out{from{opacity:1;transform:translate(-50%,0)}to{opacity:0;transform:translate(-50%,calc(100% + 22px))}}
 @keyframes nudge-icon-shake{0%,100%{transform:rotate(0)}30%{transform:rotate(-7deg)}65%{transform:rotate(7deg)}}
 @media(prefers-reduced-motion:reduce){.timed-nudge,.timed-nudge-icon{animation:none}}
 .external-note,.guidance-card{background:var(--accent-wash);color:var(--ink)}
@@ -194,6 +197,10 @@ svg{stroke-width:2}
   .site-header nav a:nth-child(3) svg,
   .site-header nav a:nth-child(4) svg{color:var(--ink)}
   .site-header nav .nav-avatar{background:var(--ink);color:var(--surface)}
+  /* The destination you are on is the one thing here that is not a peer, so it is the one
+     thing that carries the accent. The shape says it, not a colour swap on the label. */
+  .site-header nav a.is-active svg{color:var(--clay)}
+  .site-header nav a.is-active .nav-avatar{background:var(--clay);color:var(--surface)}
 }
 
 /* Search is intentionally text-first. Removing result thumbnails prevents a result page
@@ -414,7 +421,7 @@ svg{stroke-width:2}
 .search-form{position:relative}
 .search-query-suggestions{position:absolute;z-index:10;left:0;right:0;top:calc(100% + 8px);background:var(--surface);box-shadow:var(--lift);border-radius:var(--r-md);padding:8px 8px 24px}
 .search-query-suggestions-list{max-height:176px;overflow-y:auto;overscroll-behavior:contain}
-.search-query-more{position:absolute;left:50%;bottom:1px;transform:translateX(-50%);display:grid!important;place-items:center!important;width:44px!important;min-height:34px!important;padding:0!important;color:var(--ink);font-size:30px!important;line-height:1}
+.search-query-more{position:absolute;left:50%;bottom:0;transform:translateX(-50%);display:grid!important;place-items:center!important;width:64px!important;min-height:44px!important;padding:0!important;color:var(--ink);font-size:38px!important;line-height:1}
 .search-query-close{display:none}
 .search-query-suggestions button{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;min-height:44px;padding:10px 12px;text-align:left;border:0;background:transparent;border-radius:var(--r-sm)}
 .search-query-suggestions button:hover,.search-query-suggestions button:focus-visible{background:var(--muted)}
@@ -428,8 +435,11 @@ svg{stroke-width:2}
 .recent-search-delete{padding-inline:8px;font-size:13px}
 .recent-search-more{padding:8px 0}
 @media(max-width:720px){
-  .search-form.is-query-open{position:fixed;z-index:80;inset:0;margin:0;padding:calc(18px + env(safe-area-inset-top)) 18px 24px;display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto 1fr;align-content:start;gap:10px;background:var(--canvas);border:0}
-  .search-form.is-query-open .search-query-close{display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;background:transparent;color:var(--ink)}
+  .search-form.is-query-open{position:fixed;z-index:80;inset:0;margin:0;padding:calc(18px + env(safe-area-inset-top)) 18px 24px;display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto auto 1fr;align-content:start;gap:10px;background:var(--canvas);border:0}
+  /* The way out of a full-screen panel belongs in the corner people already reach for,
+     not beside the field it is not part of. It takes the whole first row so the search
+     icon and the field keep the row below to themselves. */
+  .search-form.is-query-open .search-query-close{grid-column:1/-1;justify-self:end;display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;background:transparent;color:var(--ink)}
   .search-form.is-query-open>svg{grid-column:1;margin:14px 0 0}
   .search-form.is-query-open .search-field{grid-column:2}
   .search-form.is-query-open>button[type=submit]{grid-column:1/-1}

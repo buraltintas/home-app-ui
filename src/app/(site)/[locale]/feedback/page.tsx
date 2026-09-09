@@ -1,5 +1,6 @@
 import type {Metadata} from 'next';
 import {FeedbackForm} from '@/components/FeedbackForm';
+import {PageBackButton} from '@/components/PageBackButton';
 import {getServerI18n} from '@/i18n/server';
 import {canonicalFor} from '@/lib/site';
 
@@ -11,6 +12,7 @@ export async function generateMetadata():Promise<Metadata>{
 export default async function Page(){
   const {t}=await getServerI18n();
   return <main className="feedback-page">
+    <PageBackButton/>
     <p className="eyebrow">Boşa Gezme!</p>
     <h1>{t.feedbackTitle}</h1>
     <p className="feedback-intro">{t.feedbackIntro}</p>

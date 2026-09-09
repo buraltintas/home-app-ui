@@ -335,7 +335,15 @@ export function SearchExperience() {
     return()=>window.removeEventListener(LOCATION_LOST_EVENT,lost);
   },[setLocation]);
 
+  // Withdrawing the device permission withdraws what the device gave us, and nothing else.
+  // This cleared the chosen location outright, and the permission is "prompt" for everyone
+  // who has never granted it -- so a place somebody typed themselves was thrown away on
+  // every single load, along with the saved preference and the server-side copy. With no
+  // location the search box does not exist, which is what "the suggestions do not appear"
+  // and "my location keeps resetting" both were.
   useEffect(()=>watchLocationConsent(()=>{
+    const saved=savedSearchLocation();
+    if(saved&&saved.source!=='device')return;
     setLocation(undefined);
     setData(undefined);
     setLocationOpen(true);
@@ -522,9 +530,6 @@ export function SearchExperience() {
   // rather than collapsing to a loading state. These are suggestions, not results: a list
   // that is a moment out of date is worth far more than a list that blinks.
   const nearbyPhrases=nearbyKey?nearby.items:[];
-  // Without a location the neighbourhood is never asked, which counts as answered. With
-  // one, it counts as answered as soon as it has ever answered.
-  const nearbyAnswered=!nearbyKey||nearby.key!=='';
 
   const [categories,setCategories]=useState<{slug:string;name:string;search_count:number}[]>([]);
   // Built inside the effect so it is recomputed with the locale it belongs to, rather than
@@ -561,23 +566,22 @@ export function SearchExperience() {
   // of about fifty phrases for the season we are in. The strip is offset by a number
   // drawn once per visit, so it is a different six each time rather than the same six
   // forever.
-  // The heading names where these phrases came from, so it can only be chosen once both
-  // sources have answered. They arrive over the network and the seasonal list does not, so
-  // choosing early meant showing "Bu mevsim akla gelenler" and then swapping it for "Son
-  // aramalar" under the reader -- a heading changing by itself, with nothing they did to
-  // cause it. The three sources are right; the timing was not.
-  const suggestionsAnswered=historyAnswered&&nearbyAnswered;
+  // The strip carries no heading of its own any more, so nothing here waits on the
+  // neighbourhood question. Somebody's own last searches used to: they were held back
+  // until an unrelated request had answered, and a slow or refused one hid history that
+  // had already arrived.
   const strip=nearbyPhrases.length?{title:t('nearbySearches'),phrases:nearbyPhrases}
     :{title:t('seasonalSuggestions'),phrases:seasonalPool(locale)};
   const stripPhrases=Array.from(new Set(strip.phrases));
   const promptLimit=suggestionsExpanded?10:4;
   const prompts=stripPhrases.length<=promptLimit?stripPhrases:Array.from({length:promptLimit},(_,step)=>stripPhrases[(rotation+step)%stripPhrases.length]);
-  return <main className="search-page"><header className="search-hero"><div className="search-title"><h1>{t('searchTitle')}</h1><span aria-hidden="true">↗</span></div>{!location&&<p className="location-lead">{t('locationRequired')}</p>}{location&&<div className={`location-control${location.source==='device'?' is-device':''}`}><MapPin aria-hidden="true"/><span>{location.source==='device'?t('currentLocationActive'):location.label}</span><button onClick={()=>setLocationOpen(true)} disabled={loading}>{t('changeLocation')}</button><button className="location-clear" aria-label={t('clearLocation')} onClick={()=>{setLocation(undefined);setData(undefined);}} disabled={loading}><X/></button></div>}{sheetOpen&&<section className="location-sheet" aria-label={t('chooseLocation')}>{location&&<div><p>{t('locationBenefit')}</p></div>}<div className="location-actions">{autoLocating&&<p className="location-working" aria-live="polite"><span className="location-pulse" aria-hidden="true"/>{t('locatingYou')}</p>}{/* Once the device has answered, the button that asked it is not a button any more --
-          pressing it again does nothing anybody wanted. It becomes the same confirmation
-          the review flow shows, so "the location is settled" looks the same in both. */}
-      {location?.source==='device'
-        ?<p className="review-ok location-verified" role="status"><Check aria-hidden="true"/>{t('currentLocationActive')}</p>
-        :<button className="button primary" onClick={()=>void locateMe()} disabled={loading||autoLocating} aria-busy={autoLocating}><LocateFixed/>{t('useCurrentLocation')}</button>}<label><span>{t('chooseLocation')}</span><span className="location-field"><input value={manual} onChange={event=>setManual(event.target.value)} placeholder={t('locationHint')} disabled={loading}/>{manual&&<button type="button" className="location-clear-text" onClick={()=>{setManual('');}} aria-label={t('clearSearch')}><X aria-hidden="true"/></button>}</span></label>{/* Directly under the box it is about. At the top of the panel it read as a warning
+  return <main className="search-page"><header className="search-hero"><div className="search-title"><h1>{t('searchTitle')}</h1><span aria-hidden="true">↗</span></div>{!location&&<p className="location-lead">{t('locationRequired')}</p>}{location&&<div className={`location-control${location.source==='device'?' is-device':''}`}><MapPin aria-hidden="true"/><span>{location.source==='device'?t('currentLocationActive'):location.label}</span><button onClick={()=>setLocationOpen(true)} disabled={loading}>{t('changeLocation')}</button><button className="location-clear" aria-label={t('clearLocation')} onClick={()=>{setLocation(undefined);setData(undefined);}} disabled={loading}><X/></button></div>}{sheetOpen&&<section className="location-sheet" aria-label={t('chooseLocation')}>{location&&<div><p>{t('locationBenefit')}</p></div>}<div className="location-actions">{autoLocating&&<p className="location-working" aria-live="polite"><span className="location-pulse" aria-hidden="true"/>{t('locatingYou')}</p>}{/* One control, two states. It used to be swapped for a separate confirmation line,
+          which read as the button disappearing and something else taking its place. The
+          same bubble now carries the answer, and pressing it again re-reads the device
+          rather than being inert -- a control that looks pressable has to be pressable. */}
+      <button type="button" className={`button primary use-location${location?.source==='device'?' is-verified':''}`} onClick={()=>void locateMe()} disabled={loading||autoLocating} aria-busy={autoLocating} aria-live="polite">
+        {location?.source==='device'?<><Check aria-hidden="true"/>{t('currentLocationActive')}</>:<><LocateFixed/>{t('useCurrentLocation')}</>}
+      </button><label><span>{t('chooseLocation')}</span><span className="location-field"><input value={manual} onChange={event=>setManual(event.target.value)} placeholder={t('locationHint')} disabled={loading}/>{manual&&<button type="button" className="location-clear-text" onClick={()=>{setManual('');}} aria-label={t('clearSearch')}><X aria-hidden="true"/></button>}</span></label>{/* Directly under the box it is about. At the top of the panel it read as a warning
       about the whole screen; here it is plainly an answer to what was just typed or
       pressed. */}
       {error&&<LocationAlert message={error} reason={errorReason} onDismiss={()=>{setError('');setErrorReason('');}}/>}{location&&<button className="button quiet" onClick={()=>setLocationOpen(false)}>{location.source==='device'?t('close'):t('later')}</button>}</div>{/* The list is not thrown away to say "searching". Every keystroke starts another
@@ -588,7 +592,7 @@ export function SearchExperience() {
     {manual.trim().length>=2&&<div className="location-results" aria-live="polite">{lookingUp&&candidates.length===0?<p>{t('searchingLocations')}</p>:!lookingUp&&candidates.length===0?<p>{t('noLocations')}</p>:candidates.map(candidate=><button key={candidate.place_id} onClick={()=>void choose(candidate)} disabled={loading}><strong>{candidate.name}</strong><span>{candidate.address}</span><small>{candidate.attributions.join(' · ')}</small></button>)}</div>}</section>}{location&&<form className={`search-form${suggestionsOpen?' is-query-open':''}`} onBlur={event=>{if(!event.currentTarget.contains(event.relatedTarget as Node|null))setSuggestionsOpen(false);}} onSubmit={event=>{setSuggestionsOpen(false);submit(event);}} aria-busy={loading}><button type="button" className="search-query-close" onClick={()=>setSuggestionsOpen(false)} aria-label={t('close')}><X aria-hidden="true"/></button><Search aria-hidden="true"/><div className="search-field"><textarea ref={field} onFocus={()=>{setSuggestionsOpen(true);setSuggestionsExpanded(false);}} rows={1} value={query} onChange={event=>setQuery(event.target.value)} onKeyDown={event=>{if(event.key==='Escape')setSuggestionsOpen(false);if(event.key==='Enter'){event.preventDefault();void runSearch();}}} placeholder={placeholder} aria-label={t('searchHint')} disabled={loading}/>{query&&!loading&&<button type="button" className="search-clear" onClick={()=>{setQuery('');field.current?.focus();}} aria-label={t('clearSearch')}><X aria-hidden="true"/></button>}</div><button type="submit" disabled={loading}>{loading?t('loading'):t('searchAction')}</button>{suggestionsOpen&&<div className="search-query-suggestions"><div className="search-query-suggestions-list">{prompts.map(phrase=><button type="button" key={phrase} onClick={()=>{setSuggestionsOpen(false);fill(phrase);}}>{phrase}<ArrowRight aria-hidden="true"/></button>)}</div>{stripPhrases.length>4&&!suggestionsExpanded&&<button type="button" className="search-query-more" onClick={()=>setSuggestionsExpanded(true)} aria-label={historyCopy[locale].more}>⌄</button>}</div>}</form>}{/* The panel opens above these, it does not replace them. Hiding them while somebody
         changes their location threw away the recent searches and the categories they were
         about to pick from, and put them back only once the location was settled. */}
-    {!data&&!loading&&<div className="search-suggestions"><div>{suggestionsAnswered&&<section className="recent-searches"><header><h2>{t('showRecentSearches')}</h2>{history.length>0&&<button type="button" onClick={()=>void clearHistory()} disabled={historyBusy}>{t('clearSearches')}</button>}</header>{history.length?<><ul>{history.slice(0,historyExpanded?10:3).map(entry=><li key={entry.id}><button type="button" className="recent-search-query" onClick={()=>fill(entry.raw_query)}>{entry.raw_query}</button><button type="button" className="recent-search-delete" onClick={()=>void removeHistory(entry.id)} disabled={historyBusy}>{t('deleteSearch')}</button></li>)}</ul>{history.length>3&&!historyExpanded&&<button type="button" className="recent-search-more" onClick={()=>setHistoryExpanded(true)}>{historyCopy[locale].more}</button>}</>:<p>{t('pastSearchesEmpty')}</p>}</section>}</div><div><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>fill(category.name)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}{category.search_count>0&&<small title={t('searchCount')}>{category.search_count.toLocaleString(locale)} {t('searchCountShort')}</small>}</span></button>)}</div></div></div>}</header>
+    {!data&&!loading&&<div className="search-suggestions"><div>{historyAnswered&&<section className="recent-searches"><header><h2>{t('showRecentSearches')}</h2>{history.length>0&&<button type="button" onClick={()=>void clearHistory()} disabled={historyBusy}>{t('clearSearches')}</button>}</header>{history.length?<><ul>{history.slice(0,historyExpanded?10:3).map(entry=><li key={entry.id}><button type="button" className="recent-search-query" onClick={()=>fill(entry.raw_query)}>{entry.raw_query}</button><button type="button" className="recent-search-delete" onClick={()=>void removeHistory(entry.id)} disabled={historyBusy}>{t('deleteSearch')}</button></li>)}</ul>{history.length>3&&!historyExpanded&&<button type="button" className="recent-search-more" onClick={()=>setHistoryExpanded(true)}>{historyCopy[locale].more}</button>}</>:<p>{t('pastSearchesEmpty')}</p>}</section>}</div><div><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>fill(category.name)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}{category.search_count>0&&<small title={t('searchCount')}>{category.search_count.toLocaleString(locale)} {t('searchCountShort')}</small>}</span></button>)}</div></div></div>}</header>
     {loading&&<SearchOverlay/>}
     {!loading&&data?.guidance&&<section className="guidance-card" role="alert"><p>{data.guidance.message}</p><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>fill(category.name)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}</span></button>)}</div></section>}
     {!loading&&data&&!data.guidance&&<section className="results-layout"><div className="result-list"><p className="result-count">{data.results.length} {t('results')}</p>{data.results.length===0?<div className="zero-state"><h2>{t('zeroTitle')}</h2><p>{t('zeroBody')}</p></div>:data.results.map(item=><Result item={item} key={item.search_result_impression_id} onSelect={()=>select(item)} saved={savedStores.has(item.id??'')}/>)}</div></section>}
