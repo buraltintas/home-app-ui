@@ -8,6 +8,52 @@ value involved.
 
 ---
 
+## Store rating panel, review detail and contributor level
+
+- Star ratings are drawn to the fraction. A 3.5 was rounded up to four stars, which
+  overstated the store by half a point on almost every average; the fourth star is now half
+  filled, and any part between works the same way.
+- The panel is headed "Değerlendirme", says plainly that the store rating is the average of
+  the eight scores and that only location-verified visitors can review, leads its row with
+  the score itself, and offers a control that takes the reader to the reviews below.
+- Each review can open the eight scores behind it. Reviews written before the criteria
+  existed have nothing to open and show nothing.
+- A contributor badge now carries its level number as well as its name, and a review's score
+  is shown in the same colour as the store's own.
+
+## The waiting screen showed the mascot at two different sizes
+
+- The still is a portrait picture of the mascot; the video is a landscape frame with white
+  bars either side of the same mascot. Fitting both into one square gave the still the full
+  height and the video barely half of it, so the mascot appeared large and then shrank. The
+  box is now the shape of the mascot inside the video and both are drawn to its height, with
+  the video's white bars clipped against a white card. The whole card is smaller.
+
+## The review form's last visual change is reverted
+
+- Framing the eight questions like the store's score panel was rejected on review. The plain
+  ruled list is back, along with the two-column form layout it had before.
+
+## The store's save dock is back
+
+- It was hidden for any store the visitor had already saved, so on every later visit it was
+  simply gone. "Hide it two seconds after saving" is about that action, not about the store's
+  state; the dock is part of the page and carries the saved colour when the store is saved.
+
+## Google sign-in has a way out of giving up
+
+- The Google script loads when the sign-in dialog opens, and on a slow first connection the
+  ten-second wait ran out and the dialog said Google was unavailable with no way back. That
+  is the reported "it failed the first time and worked on a fresh page". There is now a
+  retry, and by then the script is usually cached.
+
+## Russian broke the location row
+
+- "Изменить местоположение" is far wider than the Turkish label and took its width from the
+  one column meant to flex, so the place name was squeezed to nothing and overlapped. On a
+  phone the row is now two: the place and the cross, then the control beneath. That holds in
+  any language, including ones the product has not been translated into yet.
+
 ## A chosen location no longer disappears, and the pages that depend on it work again
 
 - The device-permission watcher cleared the visitor's location whenever the geolocation

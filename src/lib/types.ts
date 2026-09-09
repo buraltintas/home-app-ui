@@ -3,6 +3,7 @@ export type SearchSource = 'internal' | 'google' | 'google+platform';
 export type Coordinates = { latitude: number; longitude: number };
 
 export type MediaAsset = { id: string; url: string; mime_type: 'image/jpeg' | 'image/png' | 'image/webp'; width: number; height: number };
+export type ReviewCriteriaScores = { availability:number;value:number;layout:number;staff_care:number;staff_knowledge:number;checkout:number;returns:number;cleanliness:number };
 export type PlatformStats = { average_rating: number; rating_count?: number; review_count: number; favorite_count: number; post_count: number };
 export type CriteriaAverages = { review_count:number;availability:number;value:number;layout:number;staff_care:number;staff_knowledge:number;checkout:number;returns:number;cleanliness:number };
 export type Post = {
@@ -11,6 +12,8 @@ export type Post = {
   display_name: string; avatar_url: string; store_name: string; store_city: string; store_district: string; store_photo?: StoredPhoto;
   media: MediaAsset[]; like_count: number; comment_count: number; viewer_has_liked: boolean;
   viewer_follows_author: boolean; viewer_has_favorited_store: boolean; author_level: number;
+  // Absent on reviews written before the eight criteria existed.
+  criteria?: ReviewCriteriaScores;
 };
 export type SearchIntent = {
   scope: 'home_living' | 'out_of_scope' | 'unclear'; query_language: Locale; normalized_query: string;

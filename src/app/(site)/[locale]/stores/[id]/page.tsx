@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import {permanentRedirect} from 'next/navigation';
 import {PostCard} from '@/components/PostCard';
+import {ReviewsJump} from '@/components/ReviewsJump';
 import {Rating,RatingStars} from '@/components/Rating';
 import {StoreActions} from '@/components/StoreActions';
 import {JsonLd} from '@/components/JsonLd';
@@ -32,11 +33,11 @@ const externalNote:Record<Locale,string>={
   de:'Google-Daten sind unabhängig von den Community-Bewertungen auf Boşa Gezme! und werden deshalb separat angezeigt.',
   ru:'Данные Google не зависят от оценок сообщества Boşa Gezme!, поэтому показываются отдельно.',
 };
-const scoreCopy:Record<Locale,{title:string;intro:string;overall:string;basedOn:(count:number)=>string;empty:string}>={
-  tr:{title:'Değerlendirme puanları',intro:'Topluluğun sekiz mağaza deneyimi ölçütündeki ortalaması.',overall:'Boşa Gezme! puanı',basedOn:count=>`${count} değerlendirmeye göre`,empty:'Henüz ölçüt puanı yok'},
-  en:{title:'Review scores',intro:'The community average across eight in-store experience criteria.',overall:'Boşa Gezme! score',basedOn:count=>`Based on ${count} reviews`,empty:'No criteria scores yet'},
-  de:{title:'Bewertungspunkte',intro:'Der Community-Durchschnitt aus acht Kriterien zum Einkaufserlebnis.',overall:'Boşa Gezme!-Punktzahl',basedOn:count=>`Aus ${count} Bewertungen`,empty:'Noch keine Kriterienbewertungen'},
-  ru:{title:'Оценки магазина',intro:'Средняя оценка сообщества по восьми критериям посещения магазина.',overall:'Оценка Boşa Gezme!',basedOn:count=>`На основе ${count} отзывов`,empty:'Оценок по критериям пока нет'},
+const scoreCopy:Record<Locale,{title:string;intro:string[];seeReviews:string;empty:string}>={
+  tr:{title:'Değerlendirme',intro:['Mağaza puanı, sekiz değerlendirme puanının ortalamasından oluşur.','Yalnızca konum doğrulaması yapan kullanıcılar değerlendirme yapabilir.'],seeReviews:'Değerlendirmeyi gör',empty:'Henüz ölçüt puanı yok'},
+  en:{title:'Rating',intro:['The store rating is the average of eight review scores.','Only visitors who verify their location can write a review.'],seeReviews:'See the reviews',empty:'No criteria scores yet'},
+  de:{title:'Bewertung',intro:['Die Ladenbewertung ist der Durchschnitt aus acht Bewertungspunkten.','Bewerten kann nur, wer seinen Standort bestätigt hat.'],seeReviews:'Bewertungen ansehen',empty:'Noch keine Kriterienbewertungen'},
+  ru:{title:'Оценка',intro:['Оценка магазина — среднее восьми оценок отзыва.','Оставить отзыв могут только пользователи, подтвердившие местоположение.'],seeReviews:'Смотреть отзывы',empty:'Оценок по критериям пока нет'},
 };
 
 // Everything Google gives us for a store lives in the external source attribution
@@ -123,7 +124,7 @@ export default async function Page({params}:Props){
       <div className="store-score"><span>{t.savedBy}</span><strong>{store.platform.favorite_count}</strong><small>{t.people}</small></div>
       <StoreActions storeId={store.id} name={store.name} latitude={store.latitude} longitude={store.longitude} initialFavorited={store.viewer_has_favorited} phone={store.phone}/>
       <section className="store-rating-breakdown" aria-labelledby="store-rating-title">
-        <header><div><h2 id="store-rating-title">{scores.title}</h2><p>{scores.intro}</p></div><div className="store-rating-overall"><span>{scores.overall}</span><strong>{store.platform.review_count?formatScore(store.platform.average_rating):'—'}</strong><small>{store.platform.review_count?scores.basedOn(store.platform.review_count):scores.empty}</small></div></header>
+        <header><div><h2 id="store-rating-title">{scores.title}</h2>{scores.intro.map(line=><p key={line}>{line}</p>)}</div><div className="store-rating-overall"><strong>{store.platform.review_count?formatScore(store.platform.average_rating):'—'}</strong>{store.platform.review_count?<ReviewsJump label={scores.seeReviews}/>:<small>{scores.empty}</small>}</div></header>
         <dl>{criteriaRows.map(([label,value])=><div key={label}><dt>{label}</dt><dd>{value!==undefined?<RatingStars value={value}/>:'—'}</dd></div>)}</dl>
       </section>
       {/* Directly under save, directions, call and share, because it belongs with them: they

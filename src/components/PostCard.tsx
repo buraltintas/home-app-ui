@@ -4,11 +4,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import {Bookmark,Heart,MessageCircle,Send,Trash2} from 'lucide-react';
 import {useState} from 'react';
-import type {Post} from '@/lib/types';
+import type {Post,ReviewCriteriaScores} from '@/lib/types';
 import {useI18n} from '@/i18n/I18nProvider';
 import { localePath } from '@/lib/site';
 import {apiFetch} from '@/lib/api-client';
-import {Rating,Verified} from './Rating';
+import {Rating,RatingStars,Verified} from './Rating';
 import {AuthDialog} from './AuthDialog';
 import {ContributorLevel} from './ContributorLevel';
 import {storePhotoURL} from '@/lib/store-photo';
@@ -20,6 +20,19 @@ import {storePhotoURL} from '@/lib/store-photo';
 // drops everything that repeats it -- the store's name, the store's photo -- and everything
 // that sends the reader somewhere else: saving the review, opening its comments, the
 // written text. What is left is the judgement: who, what they scored it, when.
+// The eight questions in the order the review form asks them, paired with the dictionary
+// key that names each one. One list, so the review and the form can never disagree.
+const criteriaRows=(c:ReviewCriteriaScores)=>[
+  ['criterionAvailability',c.availability],
+  ['criterionValue',c.value],
+  ['criterionLayout',c.layout],
+  ['criterionStaffCare',c.staff_care],
+  ['criterionStaffKnowledge',c.staff_knowledge],
+  ['criterionCheckout',c.checkout],
+  ['criterionReturns',c.returns],
+  ['criterionCleanliness',c.cleanliness],
+] as const;
+
 type PostSurface='feed'|'store';
 type PostCardProps={post:Post;surface?:PostSurface;owned?:boolean;onDeleted?:()=>void};
 
@@ -89,7 +102,7 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
     <div className="post-heading">
       {!owned&&<header className="post-author">
         <div className="avatar">{post.display_name.slice(0,1).toLocaleUpperCase(locale)}</div>
-        <div><strong>{post.display_name}<ContributorLevel level={post.author_level}/></strong>{!onStorePage&&<span>{written}</span>}</div>
+        <div><strong>{post.display_name}<ContributorLevel level={post.author_level} withNumber/></strong>{!onStorePage&&<span>{written}</span>}</div>
         {!onStorePage&&<button className="icon-button" disabled={busy==='save'} aria-label={t('save')} aria-pressed={saved} onClick={()=>void mutate('save')}><Bookmark className={saved?'active-icon':''}/></button>}
       </header>}
       {!onStorePage&&<Link href={localePath(locale,`/stores/${post.store_id}`)} className="post-store"><h2>{post.store_name}</h2>{place&&<p>{place}</p>}</Link>}
@@ -102,6 +115,14 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
     <div className="post-details">
       <div className="post-meta"><Rating value={post.rating}/><Verified label={t('verified')}/></div>
       <p className="post-written">{written}</p>
+      {/* The score is an average of eight answers, and the eight are what somebody reading
+          a review actually wants: a four out of five means one thing when the staff carried
+          it and another when the prices did. Reviews written before the criteria existed
+          have nothing to open, so they show nothing rather than a row of dashes. */}
+      {post.criteria&&<details className="post-criteria">
+        <summary>{t('seeScoreDetail')}</summary>
+        <dl>{criteriaRows(post.criteria).map(([key,value])=><div key={key}><dt>{t(key)}</dt><dd><RatingStars value={value} showValue={false}/><span>{value}</span></dd></div>)}</dl>
+      </details>}
       {/* A review is eight scores now. The written text and the photographs people uploaded
           are still in the database, untouched -- they are simply no longer shown. One line
           brings them back if that decision changes. */}

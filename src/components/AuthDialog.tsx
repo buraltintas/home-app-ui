@@ -164,7 +164,12 @@ export function AuthDialog({open,onClose,onAuthenticated}:{open:boolean;onClose:
               A spinner promises nothing but waiting. */}
           {googleWorking&&<p className="google-button-loading" role="status" aria-busy="true" aria-label={t('googleLoading')}/>}
         </div>
-        {googleMissing&&<p role="alert">{t('googleUnavailable')}</p>}
+        {/* Giving up on a slow network is not the same as Google being unavailable, and
+            this used to be a dead end: the message stood there with no way back to the
+            button, which is how "it failed the first time and worked on a fresh page" was
+            reported. Pressing this waits again, and the script is by then usually cached. */}
+        {googleMissing&&<><p role="alert">{t('googleUnavailable')}</p>
+          {!runtimeConfigReady||googleClientId?<button type="button" className="button quiet" disabled={busy} onClick={()=>{setGoogleGaveUp(false);setGoogleReady(typeof window!=='undefined'&&!!window.google?.accounts?.id)}}>{t('tryAgain')}</button>:null}</>}
         {error&&<p role="alert">{error}</p>}
         <button className="button secondary" disabled={busy} onClick={()=>{setGoogleButtonReady(false);setGoogleGaveUp(false);setEmailMode(true)}}>{t('email')}</button>
         <button className="button quiet" disabled={busy} onClick={closeDialog}>{t('later')}</button>

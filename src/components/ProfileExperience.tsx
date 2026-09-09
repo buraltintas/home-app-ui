@@ -65,7 +65,7 @@ export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages
     {!section&&<section className="profile-summary">
       <div className="profile-avatar">{me.avatar_url?<Image src={me.avatar_url} width={64} height={64} unoptimized alt=""/>:(me.display_name||me.email).slice(0,1).toLocaleUpperCase(locale)}</div>
       <div className="profile-summary-identity"><strong>{me.display_name||me.email}</strong><span>{me.email}</span></div>
-      <dl><div><dd><ContributorLevel level={me.level}/></dd><dt>{t('levelTitle')}</dt></div><div><dd>{me.post_count}</dd><dt>{t('profileRatings')}</dt></div></dl>
+      <dl><div><dd><ContributorLevel level={me.level} withNumber/></dd><dt>{t('levelTitle')}</dt></div><div><dd>{me.post_count}</dd><dt>{t('profileRatings')}</dt></div></dl>
       {(me.next_level!==undefined||me.level>=5)&&<div className="profile-progression"><ContributorLevel level={me.level}/><p>{me.next_level!==undefined?progression.next(me.next_level,me.reviews_to_next_level??0):progression.top}</p>{me.next_level!==undefined&&<span className="profile-reward"><Gift aria-hidden="true"/>{progression.reward}</span>}</div>}
     </section>}
     {!section&&<ProfileInvite locale={locale}/>}

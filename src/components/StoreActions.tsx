@@ -18,7 +18,11 @@ export function StoreActions({storeId,name,latitude,longitude,initialFavorited,p
   const [status,setStatus]=useState('');
   const statusTimer=useRef<number|undefined>(undefined);
   const dockTimer=useRef<number|undefined>(undefined);
-  const [dockVisible,setDockVisible]=useState(!initialFavorited);
+  // The dock belongs to the page, not to the unsaved state. Starting it hidden for a store
+  // the visitor had already saved meant it was simply gone on every later visit -- which is
+  // not what "hide it two seconds after saving" asked for. It hides after that action, and
+  // otherwise it is there, carrying the saved colour when the store is already saved.
+  const [dockVisible,setDockVisible]=useState(true);
   const [auth,setAuth]=useState(false);
   // What the user was trying to do when the sign-in dialog opened, so the intent is
   // resumed afterwards instead of silently dropped.
