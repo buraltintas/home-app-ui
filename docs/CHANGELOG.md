@@ -8,6 +8,25 @@ value involved.
 
 ---
 
+## The language switch left the answer in the old language
+
+- Search results, the out-of-scope sentence and the category names are written by the
+  server in the language the search was made in. Switching language kept the old answer on
+  screen, which is why "this sentence is not translated" was reported three times against a
+  sentence that had all four translations from the start. Two causes, one behind the other:
+  the stored answer was stamped with the language on screen rather than the language it was
+  written in, so a Turkish answer was relabelled as English the moment the switcher was
+  used; and nothing re-asked the question when the page survived the switch instead of
+  being rebuilt. The question typed by the visitor and their chosen place are kept; only
+  the answer is asked again.
+- A `/tr` address handed an English-speaking browser an English page. The prefix is dropped
+  to keep one address per page, and the address left behind is negotiated from the browser's
+  own preference -- so the one thing the prefix asked for was the first thing lost. The
+  choice now travels with the redirect.
+- The invitation shared from the profile carried the site address twice: once inside the
+  sentence and once in the field the share sheet prints beneath it. The sentence no longer
+  carries it. Email, which has no such field, still appends it once.
+
 ## Store rating panel, review detail and contributor level
 
 - Star ratings are drawn to the fraction. A 3.5 was rounded up to four stars, which

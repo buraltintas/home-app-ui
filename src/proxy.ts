@@ -47,7 +47,13 @@ export function proxy(request:NextRequest){
     if(segment===DEFAULT_LOCALE){
       const url=request.nextUrl.clone();
       url.pathname=pathname.slice(3)||'/';
-      return NextResponse.redirect(url,308);
+      const response=NextResponse.redirect(url,308);
+      // The address the visitor asked for is dropped here to keep one URL per page, and
+      // the unprefixed address is negotiated -- so a /tr link opened in an English browser
+      // was answered in English, which is the one thing the prefix was asking for. The
+      // choice is carried into the negotiation through the cookie it already reads.
+      response.cookies.set(COOKIE,DEFAULT_LOCALE,{path:'/',maxAge:31536000,sameSite:'lax'});
+      return response;
     }
     return withLocale(request,segment);
   }

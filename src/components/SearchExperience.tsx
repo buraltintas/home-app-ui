@@ -3,10 +3,11 @@
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight, Check, LocateFixed, MapPin, Search, X } from 'lucide-react';
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import type { Coordinates, Locale, LocationResult, Me, SearchHistory, SearchResponse, SearchResult } from '@/lib/types';
 import { SaveStoreButton } from './SaveStoreButton';
 import { useI18n } from '@/i18n/I18nProvider';
-import { localePath } from '@/lib/site';
+import { localePath, stripLocale } from '@/lib/site';
 import { apiFetch } from '@/lib/api-client';
 import type { LocationFailure } from '@/lib/location';
 import { LOCATION_LOST_EVENT, deviceLocationAllowed, forgetDeviceLocation, watchLocationConsent, watchLocationGranted, canUseDeviceLocationWithoutPrompt, clearSearchLocation, LOCATION_UPDATE_EVENT, locationMessage, rememberedPosition, requestPosition, savedSearchLocation, saveSearchLocation } from '@/lib/location';
@@ -109,6 +110,7 @@ function Result({item,onSelect,saved}:{item:SearchResult;onSelect:()=>void;saved
 
 export function SearchExperience() {
   const {t,locale}=useI18n();
+  const pathname=usePathname();
   // Which stores this viewer has already saved. The search response does not carry it, so
   // it is read once from the same place the favourites page reads, and a failure here --
   // including the ordinary one of not being signed in -- leaves every row unsaved rather
@@ -142,6 +144,12 @@ export function SearchExperience() {
   const [candidates,setCandidates]=useState<LocationResult[]>([]);const [lookingUp,setLookingUp]=useState(false);
   const [location,setLocationState]=useState<SearchPlace>();
   const [restored,setRestored]=useState(false);
+  // The language the answer on screen is written in, which is not always the language on
+  // screen: between the switcher and the new address they differ, and stamping the stored
+  // answer with the current one relabelled a Turkish answer as English. The page was then
+  // rebuilt, found a snapshot claiming to be in the right language, and put the Turkish
+  // sentence back -- three rounds of "this is still not translated" came from this line.
+  const [dataLocale,setDataLocale]=useState<Locale>(locale);
   // A query carried in from the homepage, waiting for the page to settle before it runs.
   const pending=useRef<string>('');
   const [history,setHistory]=useState<SearchHistory[]>([]);
@@ -228,7 +236,7 @@ export function SearchExperience() {
     // the query and the place are the visitor's own and translate to nothing, while the
     // results are re-asked in the language now on screen.
     else if(snapshot&&snapshot.data&&snapshot.locale&&snapshot.locale!==locale){setQuery(snapshot.query);const initial=snapshot.location??persisted;if(initial)setLocation(initial);pending.current=snapshot.query;}
-    else if(snapshot){setQuery(snapshot.query);const initial=snapshot.location??persisted;if(initial)setLocation(initial);setData(snapshot.data);}
+    else if(snapshot){setQuery(snapshot.query);const initial=snapshot.location??persisted;if(initial)setLocation(initial);setData(snapshot.data);setDataLocale(snapshot.locale??locale);}
     else if(persisted)setLocation(persisted);
     // Offering the same three examples on every visit teaches people the product only
     // understands those three.
@@ -288,10 +296,10 @@ export function SearchExperience() {
   useEffect(()=>{
     if(!restored)return;
     try{
-      if(data)writeSearchSnapshot<SearchSnapshot>({query,location,data,locale});
+      if(data)writeSearchSnapshot<SearchSnapshot>({query,location,data,locale:dataLocale});
       else clearSearchSnapshot();
     }catch{}
-  },[restored,query,location,data,locale]);
+  },[restored,query,location,data,dataLocale]);
 
   // The field grows with whatever ends up in it, including text put there by tapping
   // a suggestion rather than typing.
@@ -452,7 +460,7 @@ export function SearchExperience() {
       const response=await apiFetch('/api/proxy/search',{method:'POST',signal:controller.signal,headers:{'Content-Type':'application/json','X-Locale':locale},body:JSON.stringify({query:normalizedQuery,...(nextLocation?.coordinates??{})})});
       if(!response.ok)throw await response.json();
       const responseData=await response.json() as SearchResponse;
-      if(sequence===searchSequence.current)setData(responseData);
+      if(sequence===searchSequence.current){setData(responseData);setDataLocale(locale);}
     }catch(reason){
       if(sequence===searchSequence.current&&(reason as Error)?.name!=='AbortError')setError(t('searchError'));
     }finally{
@@ -460,6 +468,28 @@ export function SearchExperience() {
     }
   };
   const submit=(event:FormEvent)=>{event.preventDefault();void runSearch();};
+
+  // The answer is written in the language it was asked in: the guidance sentence, the
+  // category names and the store descriptions all arrive translated from the server. So
+  // when the language changes under an answer that is already on screen, the answer has to
+  // be asked again -- the question is the visitor's own and is kept.
+  //
+  // The switcher changes the language first and the address a moment later. Re-asking in
+  // that gap would empty the results in the very window where the page is about to be
+  // rebuilt from the address, and the rebuild would then find nothing stored. Waiting for
+  // the address to agree with the language leaves exactly one of the two paths to act:
+  // this one when the page survived the switch, the restore above when it did not.
+  const answeredIn=useRef(locale);
+  useEffect(()=>{
+    if(answeredIn.current===locale)return;
+    if(localePath(locale,stripLocale(pathname))!==pathname)return;
+    answeredIn.current=locale;
+    if(!restored||!data||!location)return;
+    // Asking the server again is the work here, and it cannot happen during render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void runSearch(query,location);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[locale,pathname,restored,data,location,query]);
 
   useEffect(()=>{
     if(!restored||!pending.current||!location)return;
