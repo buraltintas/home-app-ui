@@ -63,6 +63,11 @@ svg{stroke-width:2}
 .feed-skeleton{grid-column:1/-1;aspect-ratio:8/1;border-radius:var(--r-md);background:linear-gradient(90deg,var(--muted),var(--accent-wash),var(--muted));background-size:200% 100%}
 .button{border-radius:var(--r-md);min-height:48px}
 .button.primary{background:var(--ink);color:var(--surface)}
+/* Confirmed device location. It sits here, immediately after the rule that paints every
+   primary button, because that rule has the same weight and this file is loaded second:
+   written anywhere else it simply lost, and the button stayed black while the label said
+   the location had been confirmed. */
+.button.primary.use-location.is-verified,.button.primary.use-location.is-verified:hover{background:var(--success);border-color:var(--success);color:var(--surface)}
 .button.secondary{background:var(--surface);border:1px solid var(--line-strong);color:var(--ink)}
 .search-page{min-height:calc(100vh - 82px)}
 /* The page ground is the canvas, as everywhere else. Honey is an area colour and it was
@@ -156,9 +161,9 @@ svg{stroke-width:2}
 .store-save-dock .button.is-saved{background:var(--success);color:var(--surface)}
 .store-save-status{position:fixed;z-index:23;left:50%;bottom:108px;transform:translateX(-50%);margin:0;padding:9px 14px;border:1px solid var(--line);border-radius:var(--r-pill);background:var(--surface);color:var(--ink);box-shadow:var(--lift);font-weight:650}
 .page-back-button{position:fixed;z-index:21;top:86px;left:max(18px,calc((100vw - 1480px)/2));width:46px;height:46px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:color-mix(in srgb,var(--surface) 92%,transparent);color:var(--ink);box-shadow:0 8px 24px rgba(22,20,15,.09);backdrop-filter:blur(16px);cursor:pointer}.page-back-button:hover{background:var(--muted)}.page-back-button svg{width:20px;height:20px}
-.timed-nudge{position:fixed;z-index:23;left:50%;bottom:22px;transform:translateX(-50%);width:min(316px,calc(100% - 56px));min-height:74px;padding:12px 18px 12px 12px;display:flex;align-items:center;gap:12px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--lift);font-size:15px;font-weight:650;line-height:1.35;animation:nudge-in .28s cubic-bezier(.16,1,.3,1) both;pointer-events:none}
+.timed-nudge{position:fixed;z-index:23;left:50%;bottom:22px;transform:translateX(-50%);width:min(316px,calc(100% - 56px));min-height:74px;padding:12px 18px 12px 12px;display:flex;align-items:center;gap:12px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--lift);font-size:15px;font-weight:650;line-height:1.35;animation:nudge-in .52s cubic-bezier(.16,1,.3,1) both;pointer-events:none}
 .timed-nudge-icon{width:48px;height:48px;flex:none;display:grid;place-items:center;border-radius:50%;background:var(--accent-wash);color:var(--clay);animation:nudge-icon-shake .32s ease-in-out .26s both}.timed-nudge-icon img{width:42px;height:42px;object-fit:contain}.timed-nudge-icon svg{width:24px;height:24px}
-.timed-nudge[data-state=leaving]{animation:nudge-out .24s ease-in both}
+.timed-nudge[data-state=leaving]{animation:nudge-out .42s cubic-bezier(.4,0,.75,.3) both}
 .store-page .timed-nudge{bottom:112px}
 /* It rises from off the bottom edge and leaves the same way, so it reads as something
    arriving rather than fading in on top of the page. The distance is its own height plus
@@ -196,12 +201,18 @@ svg{stroke-width:2}
   .site-header nav a:nth-child(2) svg,
   .site-header nav a:nth-child(3) svg,
   .site-header nav a:nth-child(4) svg{color:var(--ink)}
-  .site-header nav .nav-avatar{background:var(--ink);color:var(--surface)}
   /* The destination you are on is the one thing here that is not a peer, so it is the one
-     thing that carries the accent. The shape says it, not a colour swap on the label. */
+     thing that carries the accent. The shape says it, not a colour swap on the label, and
+     not a coloured panel behind it either -- a filled shape is the whole signal. */
   .site-header nav a.is-active svg{color:var(--clay)}
+  .site-header nav a.is-active .nav-icon-solid{fill:currentColor;stroke:none}
   .site-header nav a.is-active .nav-avatar{background:var(--clay);color:var(--surface)}
+  .site-header nav a.is-active{background:transparent}
+  /* Signed out, the profile shape is an outline like its three neighbours. Filled black it
+     was the only solid mark in the bar, which read as the current destination. */
+  .site-header nav .nav-avatar{background:transparent;color:var(--ink);border:2px solid currentColor}
 }
+.nav-icon-solid{fill:none}
 
 /* Search is intentionally text-first. Removing result thumbnails prevents a result page
    from issuing one Google Photo request per store and gives names, distance and community
@@ -393,7 +404,9 @@ svg{stroke-width:2}
 .contribution-progress strong{font-size:14px}.contribution-progress small{color:var(--ink-muted);font-size:11px}
 @media(max-width:720px){.store-overview,.store-body{max-width:100vw}.store-contribution{width:100%;max-width:100vw;padding:20px 18px 0;overflow:hidden}.review-invitation{width:100%;max-width:calc(100vw - 36px);padding:22px 20px;grid-template-columns:minmax(0,1fr);gap:20px}.review-invitation h2{font-size:24px}.review-invitation p{overflow-wrap:anywhere}.review-invitation-actions{width:100%;max-width:100%}}
 @media(max-width:720px){.store-save-dock{bottom:calc(86px + env(safe-area-inset-bottom));width:calc(100% - 24px);min-height:68px;padding:10px 10px 10px 16px;gap:12px}.store-save-dock>span{font-size:13px}.store-save-dock .button{min-width:0;padding-inline:14px;white-space:nowrap}}
-@media(max-width:720px){.timed-nudge{bottom:calc(88px + env(safe-area-inset-bottom));width:calc(100% - 24px)}.store-page .timed-nudge{bottom:calc(164px + env(safe-area-inset-bottom))}}
+/* The phone override was still the full width of the screen, which is why narrowing the
+   base rule changed nothing on a phone -- the only place anybody looks at it. */
+@media(max-width:720px){.timed-nudge{bottom:calc(88px + env(safe-area-inset-bottom));width:min(316px,calc(100% - 56px))}.store-page .timed-nudge{bottom:calc(164px + env(safe-area-inset-bottom))}}
 @media(max-width:720px){.store-save-status{bottom:calc(166px + env(safe-area-inset-bottom))}}
 
 
@@ -449,13 +462,19 @@ svg{stroke-width:2}
 .search-query-suggestions button{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;min-height:44px;padding:10px 12px;text-align:left;border:0;background:transparent;border-radius:var(--r-sm)}
 .search-query-suggestions button:hover,.search-query-suggestions button:focus-visible{background:var(--muted)}
 .search-suggestions .recent-search-disclosure>.disclosure-summary{padding:0;align-items:center;font-weight:600}
-.recent-searches>header{display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:2px solid var(--ink)}
-.recent-searches>header h2{margin:0;font-size:16px;letter-spacing:.02em;color:var(--ink)}
-.recent-searches>header button,.recent-search-delete,.recent-search-more{min-height:44px;border:0;background:transparent;color:var(--clay);font-weight:700;cursor:pointer}
+/* The heading keeps its line and the clear control sits on the same right edge as the
+   per-row delete, so the column reads as one column rather than two ragged ones. */
+.recent-searches>header{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:2px solid var(--ink)}
+.recent-searches>header h2{margin:0;font-size:16px;letter-spacing:.02em;color:var(--ink);white-space:nowrap}
+.recent-searches>header button{width:auto;padding:0;justify-content:flex-end;text-align:right;font-size:13px;font-weight:500;color:var(--ink);opacity:.6}
+.recent-searches>header button:hover{opacity:1}
+.recent-searches>header button,.recent-search-delete,.recent-search-more{min-height:44px;border:0;background:transparent;cursor:pointer}
+.recent-search-more{color:var(--clay);font-weight:700}
 .recent-searches ul{list-style:none;margin:0;padding:0}
 .recent-searches li{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;border-bottom:1px solid var(--line)}
 .recent-search-query{min-height:48px;padding:0;text-align:left;font-size:16px;color:var(--ink)}
-.recent-search-delete{padding-inline:8px;font-size:13px}
+.recent-search-delete{padding:0;font-size:13px;font-weight:500;color:var(--ink);opacity:.6}
+.recent-search-delete:hover{opacity:1}
 .recent-search-more{padding:8px 0}
 @media(max-width:720px){
   .search-form.is-query-open{position:fixed;z-index:80;inset:0;margin:0;padding:calc(18px + env(safe-area-inset-top)) 18px 24px;display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto auto 1fr;align-content:start;gap:10px;background:var(--canvas);border:0}

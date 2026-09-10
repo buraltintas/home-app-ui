@@ -22,7 +22,11 @@ import {CategoryIcon} from './CategoryIcon';
 import {TimedNudge} from './TimedNudge';
 
 type SearchPlace={source?:'device'|'manual';label:string;city?:string;placeID?:string;address?:string;accuracyMeters?:number;coordinates:Coordinates};
-type SearchSnapshot={query:string;location?:SearchPlace;data?:SearchResponse};
+// The locale is part of the snapshot because the answer is written in it: the guidance
+// sentence, the category names and the store descriptions all come back translated. A
+// snapshot restored under a different language would put a Turkish answer on an English
+// page -- which is what "this sentence is not translated" turned out to be.
+type SearchSnapshot={query:string;location?:SearchPlace;data?:SearchResponse;locale?:Locale};
 const historyCopy:Record<Locale,{more:string}>={
   tr:{more:'Daha fazla göster'},en:{more:'Show more'},de:{more:'Mehr anzeigen'},ru:{more:'Показать ещё'},
 };
@@ -220,12 +224,20 @@ export function SearchExperience() {
     // which also spares a refetch of results we already hold.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     if(asked&&asked!==snapshot?.query){setQuery(asked);const initial=snapshot?.location??persisted;if(initial)setLocation(initial);pending.current=asked;}
+    // A snapshot written in another language is kept as the question, not as the answer:
+    // the query and the place are the visitor's own and translate to nothing, while the
+    // results are re-asked in the language now on screen.
+    else if(snapshot&&snapshot.data&&snapshot.locale&&snapshot.locale!==locale){setQuery(snapshot.query);const initial=snapshot.location??persisted;if(initial)setLocation(initial);pending.current=snapshot.query;}
     else if(snapshot){setQuery(snapshot.query);const initial=snapshot.location??persisted;if(initial)setLocation(initial);setData(snapshot.data);}
     else if(persisted)setLocation(persisted);
     // Offering the same three examples on every visit teaches people the product only
     // understands those three.
     setRotation(Math.floor(Math.random()*997));
     setRestored(true);
+    // This restores once, on arrival. The locale is read to decide whether the stored
+    // answer is still in the right language; it belongs to the route and cannot change
+    // without a new page, so it is deliberately not a reason to restore again.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   },[setLocation]);
 
   // Local storage gives the fastest return path. The private profile is the cross-device
@@ -276,10 +288,10 @@ export function SearchExperience() {
   useEffect(()=>{
     if(!restored)return;
     try{
-      if(data)writeSearchSnapshot<SearchSnapshot>({query,location,data});
+      if(data)writeSearchSnapshot<SearchSnapshot>({query,location,data,locale});
       else clearSearchSnapshot();
     }catch{}
-  },[restored,query,location,data]);
+  },[restored,query,location,data,locale]);
 
   // The field grows with whatever ends up in it, including text put there by tapping
   // a suggestion rather than typing.
@@ -592,7 +604,9 @@ export function SearchExperience() {
     {manual.trim().length>=2&&<div className="location-results" aria-live="polite">{lookingUp&&candidates.length===0?<p>{t('searchingLocations')}</p>:!lookingUp&&candidates.length===0?<p>{t('noLocations')}</p>:candidates.map(candidate=><button key={candidate.place_id} onClick={()=>void choose(candidate)} disabled={loading}><strong>{candidate.name}</strong><span>{candidate.address}</span><small>{candidate.attributions.join(' · ')}</small></button>)}</div>}</section>}{location&&<form className={`search-form${suggestionsOpen?' is-query-open':''}`} onBlur={event=>{if(!event.currentTarget.contains(event.relatedTarget as Node|null))setSuggestionsOpen(false);}} onSubmit={event=>{setSuggestionsOpen(false);submit(event);}} aria-busy={loading}><button type="button" className="search-query-close" onClick={()=>setSuggestionsOpen(false)} aria-label={t('close')}><X aria-hidden="true"/></button><Search aria-hidden="true"/><div className="search-field"><textarea ref={field} onFocus={()=>{setSuggestionsOpen(true);setSuggestionsExpanded(false);}} rows={1} value={query} onChange={event=>setQuery(event.target.value)} onKeyDown={event=>{if(event.key==='Escape')setSuggestionsOpen(false);if(event.key==='Enter'){event.preventDefault();void runSearch();}}} placeholder={placeholder} aria-label={t('searchHint')} disabled={loading}/>{query&&!loading&&<button type="button" className="search-clear" onClick={()=>{setQuery('');field.current?.focus();}} aria-label={t('clearSearch')}><X aria-hidden="true"/></button>}</div><button type="submit" disabled={loading}>{loading?t('loading'):t('searchAction')}</button>{suggestionsOpen&&<div className="search-query-suggestions"><div className="search-query-suggestions-list">{prompts.map(phrase=><button type="button" key={phrase} onClick={()=>{setSuggestionsOpen(false);fill(phrase);}}>{phrase}<ArrowRight aria-hidden="true"/></button>)}</div>{stripPhrases.length>4&&!suggestionsExpanded&&<button type="button" className="search-query-more" onClick={()=>setSuggestionsExpanded(true)} aria-label={historyCopy[locale].more}>⌄</button>}</div>}</form>}{/* The panel opens above these, it does not replace them. Hiding them while somebody
         changes their location threw away the recent searches and the categories they were
         about to pick from, and put them back only once the location was settled. */}
-    {!data&&!loading&&<div className="search-suggestions"><div>{historyAnswered&&<section className="recent-searches"><header><h2>{t('showRecentSearches')}</h2>{history.length>0&&<button type="button" onClick={()=>void clearHistory()} disabled={historyBusy}>{t('clearSearches')}</button>}</header>{history.length?<><ul>{history.slice(0,historyExpanded?10:3).map(entry=><li key={entry.id}><button type="button" className="recent-search-query" onClick={()=>fill(entry.raw_query)}>{entry.raw_query}</button><button type="button" className="recent-search-delete" onClick={()=>void removeHistory(entry.id)} disabled={historyBusy}>{t('deleteSearch')}</button></li>)}</ul>{history.length>3&&!historyExpanded&&<button type="button" className="recent-search-more" onClick={()=>setHistoryExpanded(true)}>{historyCopy[locale].more}</button>}</>:<p>{t('pastSearchesEmpty')}</p>}</section>}</div><div><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>fill(category.name)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}{category.search_count>0&&<small title={t('searchCount')}>{category.search_count.toLocaleString(locale)} {t('searchCountShort')}</small>}</span></button>)}</div></div></div>}</header>
+    {!data&&!loading&&<div className="search-suggestions"><div>{historyAnswered&&<section className="recent-searches"><header><h2>{t('showRecentSearches')}</h2>{history.length>0&&<button type="button" onClick={()=>void clearHistory()} disabled={historyBusy}>{t('clearSearches')}</button>}</header>{history.length?<><ul>{history.slice(0,historyExpanded?10:3).map(entry=><li key={entry.id}><button type="button" className="recent-search-query" onClick={()=>fill(entry.raw_query)}>{entry.raw_query}</button><button type="button" className="recent-search-delete" onClick={()=>void removeHistory(entry.id)} disabled={historyBusy} aria-label={t('deleteSearch')}>{t('deleteShort')}</button></li>)}</ul>{history.length>3&&(historyExpanded
+  ?<button type="button" className="recent-search-more" onClick={()=>setHistoryExpanded(false)}>{t('showFewer')}</button>
+  :<button type="button" className="recent-search-more" onClick={()=>setHistoryExpanded(true)}>{historyCopy[locale].more}</button>)}</>:<p>{t('pastSearchesEmpty')}</p>}</section>}</div><div><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>fill(category.name)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}{category.search_count>0&&<small title={t('searchCount')}>{category.search_count.toLocaleString(locale)} {t('searchCountShort')}</small>}</span></button>)}</div></div></div>}</header>
     {loading&&<SearchOverlay/>}
     {!loading&&data?.guidance&&<section className="guidance-card" role="alert"><p>{data.guidance.message}</p><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>fill(category.name)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}</span></button>)}</div></section>}
     {!loading&&data&&!data.guidance&&<section className="results-layout"><div className="result-list"><p className="result-count">{data.results.length} {t('results')}</p>{data.results.length===0?<div className="zero-state"><h2>{t('zeroTitle')}</h2><p>{t('zeroBody')}</p></div>:data.results.map(item=><Result item={item} key={item.search_result_impression_id} onSelect={()=>select(item)} saved={savedStores.has(item.id??'')}/>)}</div></section>}

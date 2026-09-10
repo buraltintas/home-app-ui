@@ -615,9 +615,9 @@ body>main{flex:1 0 auto;min-width:0;width:100%}
    so the panel does not jump when the device answers. */
 /* One control, two states: asking for the device fix and confirming it. Both live in the
    same bubble, so the confirmed state is a colour on the button rather than a different
-   element in its place. */
+   element in its place. The confirmed colours are in daylight.css beside .button.primary,
+   because that is the rule they have to beat and it is loaded after this file. */
 .use-location{gap:8px}
-.use-location.is-verified,.use-location.is-verified:hover{background:var(--success);border-color:var(--success);color:var(--surface)}
 .use-location svg{width:18px;height:18px}
 
 /* "Değiştir" was underlined text sitting between a place name and a cross, which reads as

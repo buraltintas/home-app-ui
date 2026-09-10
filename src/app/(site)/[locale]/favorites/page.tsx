@@ -7,7 +7,7 @@ import {useCallback,useEffect,useState} from 'react';
 import {AuthDialog} from '@/components/AuthDialog';
 import {AccountPageSkeleton} from '@/components/AccountPageSkeleton';
 import {useScrollTopWhenReady} from '@/lib/scroll-top';
-import {Rating} from '@/components/Rating';
+import {RatingStars} from '@/components/Rating';
 import {useI18n} from '@/i18n/I18nProvider';
 import { localePath } from '@/lib/site';
 import {apiFetch} from '@/lib/api-client';
@@ -80,7 +80,7 @@ export default function Page(){
       <Link href={localePath(locale,`/stores/${store.id}`)} prefetch={false}>
         {photo?<Image className="favorite-store-photo" src={photo} width={160} height={120} alt="" unoptimized/>:<div className="favorite-store-photo is-empty" aria-hidden="true">{store.name.trim().charAt(0)}</div>}
         <div><strong>{store.name}</strong><span>{[store.district,store.city].filter(Boolean).join(', ')}</span>
-        {store.platform.review_count?<small><Rating value={store.platform.average_rating}/> · {store.platform.review_count} {t('reviews')}</small>:<small>{t('noCommunity')}</small>}</div>
+        {store.platform.review_count?<small><RatingStars value={store.platform.average_rating}/> · {store.platform.review_count} {t('reviews')}</small>:<small>{t('noCommunity')}</small>}</div>
         <ArrowRight aria-hidden="true"/>
       </Link>
       <Link className="button store-contribution-action favorite-review-action" href={localePath(locale,`/create?store=${store.id}`)}>{reviewAction[locale]}</Link>

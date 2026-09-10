@@ -1,6 +1,7 @@
 'use client';
-import Image from 'next/image';import Link from 'next/link';import {Heart,Home,Search,UserRound} from 'lucide-react';import {usePathname,useRouter} from 'next/navigation';import {useEffect,useState} from 'react';import {useI18n} from '@/i18n/I18nProvider';import {localePath,stripLocale,tagline} from '@/lib/site';import {apiFetch,SESSION_REFRESHED} from '@/lib/api-client';import {HeaderLocale} from './HeaderLocale';import type {Me} from '@/lib/types';
-const links=[['/',Home,'home'],['/discover',Search,'discover'],['/favorites',Heart,'favorites']] as const;
+import Image from 'next/image';import Link from 'next/link';import {UserRound} from 'lucide-react';import {usePathname,useRouter} from 'next/navigation';import {useEffect,useState} from 'react';import {useI18n} from '@/i18n/I18nProvider';import {localePath,stripLocale,tagline} from '@/lib/site';import {apiFetch,SESSION_REFRESHED} from '@/lib/api-client';import {HeaderLocale} from './HeaderLocale';
+import {NavFavorites,NavHome,NavSearch} from './NavIcons';import type {Me} from '@/lib/types';
+const links=[['/',NavHome,'home'],['/discover',NavSearch,'discover'],['/favorites',NavFavorites,'favorites']] as const;
 export function Header(){
   const {t,locale}=useI18n();const pathname=usePathname();const router=useRouter();
   // undefined means the session has not been read yet, null means signed out. Collapsing
