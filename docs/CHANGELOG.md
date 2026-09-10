@@ -54,6 +54,67 @@ value involved.
   phone the row is now two: the place and the cross, then the control beneath. That holds in
   any language, including ones the product has not been translated into yet.
 
+## Navigation shapes, and why the accent could not be applied by a stylesheet
+
+- The current destination now fills its own shape with the accent, with the doorway of the
+  house left open. The icon library draws the house as two paths with the door first, so
+  filling both paints the house over the door and no ordering in CSS can undo that. The
+  three shapes are drawn here now: a solid layer holding both outlines with `evenodd`, so
+  the door is a hole in the fill rather than a shape buried under it.
+- The coloured panel behind the current destination is gone -- a filled shape is the whole
+  signal -- and the profile mark is an outline when it is not the current destination.
+
+## The receipt after a review was dismissed by the page's own scroll
+
+- "Your review was saved" is shown on a page that scrolls itself to the top on arrival, and
+  that programmatic scroll fired the same listener a reader's scroll would. The receipt was
+  therefore dismissed in the instant it appeared, however long its timer said it should
+  stay. Its life is now the timer alone; only the invitations still yield to a scroll.
+- Its flag is also spent when the receipt has been shown rather than when the effect first
+  reads it, so the effect can no longer consume it on one pass and find nothing on the next.
+- The notification is narrower on a phone as well -- the phone rule was still full width, so
+  narrowing the desktop rule changed nothing where anybody actually sees it -- and it rises
+  and leaves more slowly.
+
+## The confirmed-location colour was written where it could not win
+
+- The button turns green when the device location is confirmed. The rule said so, and lost:
+  `.button.primary` carries the same weight and lives in the stylesheet loaded second, so
+  the button stayed black while its label said the location was confirmed. Written beside
+  the rule it has to beat, it works -- and with it, "the button does nothing" goes too,
+  because the colour was the only thing that ever said it had.
+
+## The mascot no longer changes size while you wait
+
+- The still and the video are two different pictures: one framed portrait, one landscape.
+  Drawn one after the other they are never the same size, which is what "it starts large and
+  shrinks" was, three reports running. The swap is gone from the ordinary case: the video is
+  what is shown, drawing its own first frame while it buffers. The still appears only when
+  the video will not run at all, and only after a grace period.
+
+## Search panel, recent searches, store rating and profile
+
+- The full-screen search panel closes from a mark on the same line as the language control,
+  its magnifier is now the way back out, and its suggestions carry a heading of their own.
+  Its rows start at their own top, so the suggestions no longer float in the middle of the
+  space below the button.
+- Recent searches: the heading holds one line, the clear control and the per-row delete share
+  one right edge in a lighter weight, and an expanded list can be collapsed again.
+- The store rating panel separates the sentence the whole rating rests on -- only visitors
+  who verify their location can review -- from the sentence explaining the arithmetic. The
+  reviews below centre their two actions, and the score breakdown clears the rule beneath it.
+- The profile heading is the product's word for the page rather than the brand plus the word.
+  The level label sits under the middle of the badge it labels, the level name is not printed
+  twice, and the levels explanation opens where somebody is looking at their own level --
+  read from the About document rather than written out a second time.
+- Favourites show the same filled stars as the store's own breakdown.
+- Document pages and the feedback page open at the top, using the same correction the store
+  page already had: a page carried the scroll offset of the page you came from, so the back
+  arrow at the top was above the fold on arrival.
+- A search answer is remembered with the language it was written in. Restored under another
+  language it put a Turkish answer on an English page; the question is kept and the answer
+  re-asked.
+
 ## A chosen location no longer disappears, and the pages that depend on it work again
 
 - The device-permission watcher cleared the visitor's location whenever the geolocation

@@ -414,6 +414,10 @@ body>main{flex:1 0 auto;min-width:0;width:100%}
 .profile-summary-identity span{color:var(--ink-muted);font-size:14px;overflow-wrap:anywhere}
 .profile-summary dl{grid-column:1/-1;display:flex;gap:28px;margin:6px 0 0;padding-top:18px;border-top:1px solid var(--line);flex-wrap:wrap}
 .profile-summary dl div{display:flex;flex-direction:column-reverse;align-items:flex-start;gap:2px}
+/* The label belongs under the middle of what it labels. "Katkı seviyesi" is wider than the
+   badge alone but narrower than the badge and its number together, so left-aligning it left
+   it hanging off the start of the pair. */
+.profile-summary dl div:first-child{align-items:center}
 .profile-summary dt{font-size:11px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.12em;font-weight:800}
 .profile-summary dd{font-size:24px;font-weight:700;letter-spacing:-.03em;margin:0}
 .profile-signout{margin-left:auto;align-self:end}

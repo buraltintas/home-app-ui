@@ -40,21 +40,35 @@ export function MascotArt({className='mascot-loader-art'}:{className?:string}){
   // phone that pauses a muted background loop on entering low power mode does not always
   // announce it -- which is why this kept coming back. Four times a second the element is
   // asked outright whether it is still running, and the still returns the moment it is not.
-  const [playing,setPlaying]=useState(false);
+  // The video leads and the still is the fallback, rather than the other way round.
+  //
+  // They are two different pictures of the same mascot: the still is a portrait
+  // composition and the video frames it in landscape. Drawn one after the other they are
+  // never the same size, and swapping them on every search is what was reported -- three
+  // times -- as the mascot starting large and then shrinking. No stylesheet fixes that,
+  // because the two artworks do not agree with each other.
+  //
+  // So the swap is gone from the ordinary case. The video is what is shown; it draws its
+  // own first frame while it buffers and then plays, and nothing changes size. The still
+  // appears only when the video genuinely will not run -- an iPhone in low power mode
+  // refusing autoplay, the case the still was added for -- and only after a grace period,
+  // so a slow start is not mistaken for a refusal.
+  const [stalled,setStalled]=useState(false);
   const video=useRef<HTMLVideoElement|null>(null);
-  const stopped=()=>setPlaying(false);
   useEffect(()=>{
     if(reducedMotion)return;
+    const started=Date.now();
     const timer=window.setInterval(()=>{
       const element=video.current;
-      setPlaying(Boolean(element&&!element.paused&&!element.ended&&element.readyState>2));
+      const running=Boolean(element&&!element.paused&&!element.ended&&element.readyState>2);
+      setStalled(!running&&Date.now()-started>700);
     },250);
     return()=>window.clearInterval(timer);
   },[reducedMotion]);
-  return <span className={className} data-playing={playing||undefined}>
-    <Image src="/brand/mascot-magnifier.png" width={168} height={168} alt="" priority/>
-    {!reducedMotion&&<video ref={video} src="/brand/mascot-search.mp4" autoPlay muted loop playsInline aria-hidden="true"
-      onPlaying={()=>setPlaying(true)} onPause={stopped} onEnded={stopped} onError={stopped} onStalled={stopped} onSuspend={stopped}/>}
+  const showStill=reducedMotion||stalled;
+  return <span className={className} data-playing={!showStill||undefined}>
+    {showStill&&<Image src="/brand/mascot-magnifier.png" width={168} height={168} alt="" priority/>}
+    {!reducedMotion&&<video ref={video} src="/brand/mascot-search.mp4" autoPlay muted loop playsInline aria-hidden="true"/>}
   </span>;
 }
 

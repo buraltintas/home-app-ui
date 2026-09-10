@@ -33,11 +33,14 @@ const externalNote:Record<Locale,string>={
   de:'Google-Daten sind unabhängig von den Community-Bewertungen auf Boşa Gezme! und werden deshalb separat angezeigt.',
   ru:'Данные Google не зависят от оценок сообщества Boşa Gezme!, поэтому показываются отдельно.',
 };
-const scoreCopy:Record<Locale,{title:string;intro:string[];seeReviews:string;empty:string}>={
-  tr:{title:'Değerlendirme',intro:['Mağaza puanı, sekiz değerlendirme puanının ortalamasından oluşur.','Yalnızca konum doğrulaması yapan kullanıcılar değerlendirme yapabilir.'],seeReviews:'Değerlendirmeyi gör',empty:'Henüz ölçüt puanı yok'},
-  en:{title:'Rating',intro:['The store rating is the average of eight review scores.','Only visitors who verify their location can write a review.'],seeReviews:'See the reviews',empty:'No criteria scores yet'},
-  de:{title:'Bewertung',intro:['Die Ladenbewertung ist der Durchschnitt aus acht Bewertungspunkten.','Bewerten kann nur, wer seinen Standort bestätigt hat.'],seeReviews:'Bewertungen ansehen',empty:'Noch keine Kriterienbewertungen'},
-  ru:{title:'Оценка',intro:['Оценка магазина — среднее восьми оценок отзыва.','Оставить отзыв могут только пользователи, подтвердившие местоположение.'],seeReviews:'Смотреть отзывы',empty:'Оценок по критериям пока нет'},
+// Two sentences that say different kinds of thing: the first explains how the number is
+// worked out, the second is why it can be trusted. They are held apart because the second
+// is the claim the whole rating rests on, and buried in a paragraph nobody reads it.
+const scoreCopy:Record<Locale,{title:string;intro:string;trust:string;seeReviews:string;empty:string}>={
+  tr:{title:'Değerlendirme',intro:'Mağaza puanı, sekiz değerlendirme puanının ortalamasından oluşur.',trust:'Yalnızca konum doğrulaması yapan kullanıcılar değerlendirme yapabilir.',seeReviews:'Değerlendirmeleri gör',empty:'Henüz ölçüt puanı yok'},
+  en:{title:'Rating',intro:'The store rating is the average of eight review scores.',trust:'Only visitors who verify their location can write a review.',seeReviews:'See the reviews',empty:'No criteria scores yet'},
+  de:{title:'Bewertung',intro:'Die Ladenbewertung ist der Durchschnitt aus acht Bewertungspunkten.',trust:'Bewerten kann nur, wer seinen Standort bestätigt hat.',seeReviews:'Bewertungen ansehen',empty:'Noch keine Kriterienbewertungen'},
+  ru:{title:'Оценка',intro:'Оценка магазина — среднее восьми оценок отзыва.',trust:'Оставить отзыв могут только пользователи, подтвердившие местоположение.',seeReviews:'Смотреть отзывы',empty:'Оценок по критериям пока нет'},
 };
 
 // Everything Google gives us for a store lives in the external source attribution
@@ -124,7 +127,7 @@ export default async function Page({params}:Props){
       <div className="store-score"><span>{t.savedBy}</span><strong>{store.platform.favorite_count}</strong><small>{t.people}</small></div>
       <StoreActions storeId={store.id} name={store.name} latitude={store.latitude} longitude={store.longitude} initialFavorited={store.viewer_has_favorited} phone={store.phone}/>
       <section className="store-rating-breakdown" aria-labelledby="store-rating-title">
-        <header><div><h2 id="store-rating-title">{scores.title}</h2>{scores.intro.map(line=><p key={line}>{line}</p>)}</div><div className="store-rating-overall"><strong>{store.platform.review_count?formatScore(store.platform.average_rating):'—'}</strong>{store.platform.review_count?<ReviewsJump label={scores.seeReviews}/>:<small>{scores.empty}</small>}</div></header>
+        <header><div><h2 id="store-rating-title">{scores.title}</h2><p>{scores.intro}</p><p className="store-rating-trust">{scores.trust}</p></div><div className="store-rating-overall"><strong>{store.platform.review_count?formatScore(store.platform.average_rating):'—'}</strong>{store.platform.review_count?<ReviewsJump label={scores.seeReviews}/>:<small>{scores.empty}</small>}</div></header>
         <dl>{criteriaRows.map(([label,value])=><div key={label}><dt>{label}</dt><dd>{value!==undefined?<RatingStars value={value}/>:'—'}</dd></div>)}</dl>
       </section>
       {/* Directly under save, directions, call and share, because it belongs with them: they

@@ -237,7 +237,9 @@ svg{stroke-width:2}
 .store-rating-breakdown header{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:32px;align-items:end;margin-bottom:22px}
 .store-rating-breakdown h2{margin:0 0 4px;font-size:24px;line-height:1.2}
 .store-rating-breakdown header p{margin:0;color:var(--ink-muted);font-size:15px;line-height:1.45}
-.store-rating-breakdown header p+p{margin-top:4px}
+/* Not another sentence in the same paragraph: this is the claim the rating rests on, so it
+   stands on its own with a mark of its own. */
+.store-rating-breakdown header p.store-rating-trust{margin-top:10px;padding-left:12px;border-left:3px solid var(--accent);color:var(--ink);font-weight:650}
 /* The score leads its own row and the way to the reviews sits beside it. The label that
    used to open the row said what the number already says. */
 .store-rating-overall{display:flex;align-items:center;gap:16px}
@@ -263,8 +265,12 @@ svg{stroke-width:2}
 .store-review-rail .post-author>div:nth-child(2){min-width:0}
 .store-review-rail .post-author strong{display:flex;align-items:center;flex-wrap:wrap;gap:7px;min-width:0;font-size:14px;line-height:1.35;overflow-wrap:anywhere}
 .store-review-rail .post-author strong>.contributor-level{flex:none}
+/* Two controls in a row of their own read as a pair when they are together, and as two
+   unrelated corners when they are pushed apart. */
+.store-review-rail .post-actions{justify-content:center;gap:36px}
 /* The eight answers behind one score, folded away until asked for. */
-.post-criteria{margin:10px 0 0}
+/* Clear of the rule that closes the review underneath it. */
+.post-criteria{margin:10px 0 18px}
 .post-criteria>summary{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid var(--line-strong);border-radius:var(--r-pill);background:var(--surface);color:var(--ink);font-size:14px;font-weight:650;cursor:pointer;list-style:none}
 .post-criteria>summary::-webkit-details-marker{display:none}
 .post-criteria>summary:hover{border-color:var(--ink);background:var(--muted)}
@@ -307,6 +313,16 @@ svg{stroke-width:2}
 .profile-progression p{grid-column:1/-1;margin:0;font-size:15px;line-height:1.45;font-weight:650}
 .contributor-level-group{display:inline-flex;align-items:center;gap:8px}
 .contributor-level-number{font-size:12px;font-weight:700;color:var(--ink-muted)}
+/* The levels explanation, offered where somebody is looking at their own level. Its own
+   frame, matching the invitation block underneath it. */
+.level-boost{width:100%;margin:0 0 4px;padding:18px 20px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);display:flex}
+.level-boost-action{width:100%}
+.level-dialog h2{font-size:26px;margin:10px 0 14px}
+.level-dialog p{margin:0 0 14px;line-height:1.55;color:var(--ink-muted)}
+.level-table-wrap{overflow-x:auto;margin:0 0 16px}
+.level-table-wrap table{width:100%;border-collapse:collapse;font-size:15px}
+.level-table-wrap th,.level-table-wrap td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--line)}
+.level-table-wrap th{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted)}
 .profile-reward{grid-column:1/-1;display:flex;align-items:center;gap:7px;color:var(--ink-muted);font-size:13px}
 .profile-reward svg{width:16px;height:16px;color:var(--clay)}
 .profile-invite{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 24px;align-items:center;margin:28px 0 24px;padding:24px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
@@ -459,6 +475,8 @@ svg{stroke-width:2}
 .search-query-suggestions-list{max-height:176px;overflow-y:auto;overscroll-behavior:contain}
 .search-query-more{position:absolute;left:50%;bottom:0;transform:translateX(-50%);display:grid!important;place-items:center!important;width:64px!important;min-height:44px!important;padding:0!important;color:var(--ink);font-size:38px!important;line-height:1}
 .search-query-close{display:none}
+.search-query-back{display:none}
+.search-query-suggestions-title{margin:2px 4px 8px;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted)}
 .search-query-suggestions button{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;min-height:44px;padding:10px 12px;text-align:left;border:0;background:transparent;border-radius:var(--r-sm)}
 .search-query-suggestions button:hover,.search-query-suggestions button:focus-visible{background:var(--muted)}
 .search-suggestions .recent-search-disclosure>.disclosure-summary{padding:0;align-items:center;font-weight:600}
@@ -477,12 +495,19 @@ svg{stroke-width:2}
 .recent-search-delete:hover{opacity:1}
 .recent-search-more{padding:8px 0}
 @media(max-width:720px){
-  .search-form.is-query-open{position:fixed;z-index:80;inset:0;margin:0;padding:calc(18px + env(safe-area-inset-top)) 18px 24px;display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto auto 1fr;align-content:start;gap:10px;background:var(--canvas);border:0}
+  /* The row is centred when this is a bar; in the full-screen panel every row starts at
+     its own top, or the suggestions float in the middle of the space left below them. */
+  .search-form.is-query-open{position:fixed;z-index:80;inset:0;margin:0;padding:calc(18px + env(safe-area-inset-top)) 18px 24px;display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto auto 1fr;align-content:start;align-items:start;gap:10px;background:var(--canvas);border:0}
   /* The way out of a full-screen panel belongs in the corner people already reach for,
      not beside the field it is not part of. It takes the whole first row so the search
      icon and the field keep the row below to themselves. */
-  .search-form.is-query-open .search-query-close{grid-column:1/-1;justify-self:end;display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;background:transparent;color:var(--ink)}
-  .search-form.is-query-open>svg{grid-column:1;margin:14px 0 0}
+  /* The close sits on the same right-hand line as the language control in the header, not
+     inside the panel's own text inset, so the two read as the same edge. */
+  .search-form.is-query-open .search-query-close{grid-column:1/-1;justify-self:end;margin-right:2px;display:grid;place-items:center;width:44px;min-width:0;height:44px;padding:0;border:0;background:transparent;color:var(--ink)}
+  /* In the panel the magnifier is not decoration, it is the way back. */
+  .search-form.is-query-open>svg{display:none}
+  .search-form.is-query-open .search-query-back{grid-column:1;display:grid;place-items:center;width:40px;height:44px;margin:6px 0 0;padding:0;border:0;background:transparent;color:var(--ink)}
+  .search-form.is-query-open .search-query-back svg{width:24px;height:24px}
   .search-form.is-query-open .search-field{grid-column:2}
   .search-form.is-query-open>button[type=submit]{grid-column:1/-1}
   .search-form.is-query-open .search-query-suggestions{position:relative;grid-column:1/-1;top:auto;left:auto;right:auto;box-shadow:none;border-top:1px solid var(--line);border-radius:0;padding:8px 0 44px;background:transparent}

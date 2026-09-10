@@ -15,6 +15,7 @@ import {useScrollTopWhenReady} from '@/lib/scroll-top';
 import {MyReviews} from '@/components/MyReviews';
 import {ProfileMessages} from '@/components/ProfileMessages';
 import {ProfileEditor} from '@/components/ProfileEditor';
+import {ContributorLevelsDialog} from '@/components/ContributorLevelsDialog';
 import {ProfileInvite} from '@/components/ProfileInvite';
 import {useI18n} from '@/i18n/I18nProvider';
 import {apiFetch} from '@/lib/api-client';
@@ -66,8 +67,9 @@ export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages
       <div className="profile-avatar">{me.avatar_url?<Image src={me.avatar_url} width={64} height={64} unoptimized alt=""/>:(me.display_name||me.email).slice(0,1).toLocaleUpperCase(locale)}</div>
       <div className="profile-summary-identity"><strong>{me.display_name||me.email}</strong><span>{me.email}</span></div>
       <dl><div><dd><ContributorLevel level={me.level} withNumber/></dd><dt>{t('levelTitle')}</dt></div><div><dd>{me.post_count}</dd><dt>{t('profileRatings')}</dt></div></dl>
-      {(me.next_level!==undefined||me.level>=5)&&<div className="profile-progression"><ContributorLevel level={me.level}/><p>{me.next_level!==undefined?progression.next(me.next_level,me.reviews_to_next_level??0):progression.top}</p>{me.next_level!==undefined&&<span className="profile-reward"><Gift aria-hidden="true"/>{progression.reward}</span>}</div>}
+      {(me.next_level!==undefined||me.level>=5)&&<div className="profile-progression"><p>{me.next_level!==undefined?progression.next(me.next_level,me.reviews_to_next_level??0):progression.top}</p>{me.next_level!==undefined&&<span className="profile-reward"><Gift aria-hidden="true"/>{progression.reward}</span>}</div>}
     </section>}
+    {!section&&<ContributorLevelsDialog locale={locale}/>}
     {!section&&<ProfileInvite locale={locale}/>}
     {!section?<nav className="profile-sections">
       {[
