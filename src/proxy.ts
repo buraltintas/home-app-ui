@@ -47,11 +47,16 @@ export function proxy(request:NextRequest){
     if(segment===DEFAULT_LOCALE){
       const url=request.nextUrl.clone();
       url.pathname=pathname.slice(3)||'/';
-      const response=NextResponse.redirect(url,308);
       // The address the visitor asked for is dropped here to keep one URL per page, and
       // the unprefixed address is negotiated -- so a /tr link opened in an English browser
       // was answered in English, which is the one thing the prefix was asking for. The
       // choice is carried into the negotiation through the cookie it already reads.
+      //
+      // Temporary rather than permanent, because a permanent redirect is answered from the
+      // browser's own cache on every later visit: the hop would stop reaching the server,
+      // and the header that carries the choice would never be sent again. The canonical
+      // link and hreflang on the page itself are what consolidate the two addresses.
+      const response=NextResponse.redirect(url,307);
       response.cookies.set(COOKIE,DEFAULT_LOCALE,{path:'/',maxAge:31536000,sameSite:'lax'});
       return response;
     }

@@ -22,7 +22,8 @@ value involved.
 - A `/tr` address handed an English-speaking browser an English page. The prefix is dropped
   to keep one address per page, and the address left behind is negotiated from the browser's
   own preference -- so the one thing the prefix asked for was the first thing lost. The
-  choice now travels with the redirect.
+  choice now travels with the redirect, and the redirect is temporary rather than permanent
+  so that a browser answering it from its own cache cannot drop that choice again.
 - The invitation shared from the profile carried the site address twice: once inside the
   sentence and once in the field the share sheet prints beneath it. The sentence no longer
   carries it. Email, which has no such field, still appends it once.
