@@ -42,7 +42,7 @@ export const locationPrivacy:LegalDoc={
           {p:'Kaydettiğiniz konumu profilinizden değiştirebilir veya kaldırabilirsiniz. Hesabınızı silerseniz bu kayıt da silinir.'},
         ]},
         {id:'ucuncu-taraf',heading:'Konumunuz kimlere gidiyor',blocks:[
-          {p:'Arama sırasında sorgunuz, koordinatlarınız ve arama yarıçapı mağaza sonuçlarını getirmek için Google Places servisine iletilir.'},
+          {p:'Arama sırasında sorgunuz, koordinatlarınız ve arama yarıçapı yalnızca kendi sunucumuzda işlenir; sonuçlar kendi mağaza kataloğumuzdan gelir. Konum bilginiz bu iş için hiçbir üçüncü tarafa iletilmez. Yalnızca yazdığınız arama metni, ne aradığınızı anlamak üzere OpenAI\'ın dil modeline gönderilir — konumunuz gönderilmez.'},
           {p:'Aramanızın ne aradığını anlamak için kullanılan yapay zekâ servisine konumunuz gönderilmez. O servise yalnızca yazdığınız metin ve dil tercihiniz iletilir.'},
         ]},
         {id:'tarayici',heading:'Tarayıcınızda tutulanlar',blocks:[
@@ -79,7 +79,7 @@ export const locationPrivacy:LegalDoc={
           {p:'You can change or remove the saved location from your profile. Deleting your account deletes it as well.'},
         ]},
         {id:'ucuncu-taraf',heading:'Who receives your location',blocks:[
-          {p:'During a search your query, your coordinates and the search radius are sent to Google Places in order to return store results.'},
+          {p:'During a search your query, your coordinates and the search radius are processed only on our own server, and the results come from our own store catalogue. Your location is not sent to any third party for this. Only the text you typed is sent to OpenAI\'s language model, to work out what you are looking for -- your coordinates are not.'},
           {p:'Your location is not sent to the AI service used to interpret what your search means. That service receives only the text you typed and your language preference.'},
         ]},
         {id:'tarayici',heading:'What stays in your browser',blocks:[
@@ -116,7 +116,7 @@ export const locationPrivacy:LegalDoc={
           {p:'Du kannst den gespeicherten Standort in deinem Profil ändern oder entfernen. Beim Löschen deines Kontos wird er ebenfalls gelöscht.'},
         ]},
         {id:'ucuncu-taraf',heading:'Wer deinen Standort erhält',blocks:[
-          {p:'Bei einer Suche werden deine Anfrage, deine Koordinaten und der Suchradius an Google Places übermittelt, um Geschäftsergebnisse zu liefern.'},
+          {p:'Bei einer Suche werden deine Anfrage, deine Koordinaten und der Suchradius ausschließlich auf unserem eigenen Server verarbeitet; die Ergebnisse stammen aus unserem eigenen Geschäftskatalog. Dein Standort wird dafür an keinen Dritten übermittelt. Nur der eingegebene Text geht an das Sprachmodell von OpenAI, um deine Absicht zu verstehen -- deine Koordinaten nicht.'},
           {p:'An den KI-Dienst, der die Bedeutung deiner Suche auswertet, wird dein Standort nicht übermittelt. Dieser Dienst erhält nur den eingegebenen Text und deine Spracheinstellung.'},
         ]},
         {id:'tarayici',heading:'Was in deinem Browser bleibt',blocks:[
@@ -153,7 +153,7 @@ export const locationPrivacy:LegalDoc={
           {p:'Сохранённое место можно изменить или удалить в профиле. При удалении аккаунта оно также удаляется.'},
         ]},
         {id:'ucuncu-taraf',heading:'Кто получает ваше местоположение',blocks:[
-          {p:'При поиске ваш запрос, координаты и радиус поиска передаются в Google Places для получения результатов по магазинам.'},
+          {p:'При поиске ваш запрос, координаты и радиус обрабатываются только на нашем сервере, а результаты берутся из нашего собственного каталога магазинов. Ваше местоположение при этом не передаётся третьим лицам. Третьей стороне — языковой модели OpenAI — отправляется только введённый текст, чтобы понять, что вы ищете; координаты не отправляются.'},
           {p:'В сервис искусственного интеллекта, который определяет смысл запроса, местоположение не передаётся. Туда попадают только введённый текст и выбранный язык.'},
         ]},
         {id:'tarayici',heading:'Что остаётся в браузере',blocks:[

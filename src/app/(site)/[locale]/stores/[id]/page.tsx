@@ -1,5 +1,4 @@
 import type {Metadata} from 'next';
-import {mapsLink} from '@/lib/maps';
 import Image from 'next/image';
 import Link from 'next/link';
 import {permanentRedirect} from 'next/navigation';
@@ -13,9 +12,8 @@ import {getStore} from '@/lib/server-api';
 import {getServerI18n} from '@/i18n/server';
 import {canonicalFor,localePath,storePath} from '@/lib/site';
 import {breadcrumbJsonLd,storeJsonLd} from '@/lib/structured-data';
-import type {Locale,Store} from '@/lib/types';
+import type {Locale} from '@/lib/types';
 import {isBrandMark,storePhotoURL} from '@/lib/store-photo';
-import {storeStatusCopy} from '@/i18n/dictionaries';
 import {TimedNudge} from '@/components/TimedNudge';
 import {PageBackButton} from '@/components/PageBackButton';
 
@@ -27,42 +25,18 @@ const contributionCopy:Record<Locale,{title:string;body:string;action:string;pro
   de:{title:'Warst du in diesem Geschäft?',body:'Deine Erfahrung hilft der nächsten Person, das passende Geschäft zu wählen. Jede bestätigte Bewertung erhöht auch deine Beitragsstufe.',action:'Bewertung abgeben',progress:'Beitragsstufe erhöhen',levels:'Wozu dienen Beitragsstufen?',correction:'Änderung der Geschäftsinformationen vorschlagen'},
   ru:{title:'Вы были в этом магазине?',body:'Ваш опыт поможет следующему человеку выбрать подходящий магазин. Каждый подтверждённый отзыв также повышает ваш уровень участника.',action:'Оставить оценку',progress:'Повысить уровень участника',levels:'Для чего нужны уровни участника?',correction:'Предложить исправление данных магазина'},
 };
-const externalNote:Record<Locale,string>={
-  tr:'Google verileri Boşa Gezme! topluluk puanlarından bağımsızdır. Bu nedenle ayrı olarak gösterilir.',
-  en:'Google data is independent of Boşa Gezme! community ratings. It is therefore shown separately.',
-  de:'Google-Daten sind unabhängig von den Community-Bewertungen auf Boşa Gezme! und werden deshalb separat angezeigt.',
-  ru:'Данные Google не зависят от оценок сообщества Boşa Gezme!, поэтому показываются отдельно.',
-};
 // Two sentences that say different kinds of thing: the first explains how the number is
 // worked out, the second is why it can be trusted. They are held apart because the second
 // is the claim the whole rating rests on, and buried in a paragraph nobody reads it.
 const scoreCopy:Record<Locale,{title:string;intro:string;trust:string;seeReviews:string;empty:string}>={
-  tr:{title:'Değerlendirme',intro:'Mağaza puanı, sekiz değerlendirme puanının ortalamasından oluşur.',trust:'Yalnızca konum doğrulaması yapan kullanıcılar değerlendirme yapabilir.',seeReviews:'Değerlendirmeleri gör',empty:'Henüz ölçüt puanı yok'},
-  en:{title:'Rating',intro:'The store rating is the average of eight review scores.',trust:'Only visitors who verify their location can write a review.',seeReviews:'See the reviews',empty:'No criteria scores yet'},
-  de:{title:'Bewertung',intro:'Die Ladenbewertung ist der Durchschnitt aus acht Bewertungspunkten.',trust:'Bewerten kann nur, wer seinen Standort bestätigt hat.',seeReviews:'Bewertungen ansehen',empty:'Noch keine Kriterienbewertungen'},
-  ru:{title:'Оценка',intro:'Оценка магазина — среднее восьми оценок отзыва.',trust:'Оставить отзыв могут только пользователи, подтвердившие местоположение.',seeReviews:'Смотреть отзывы',empty:'Оценок по критериям пока нет'},
+  tr:{title:'Değerlendirme',intro:'Mağaza puanı, sekiz değerlendirme puanının ortalamasından oluşur.',trust:'Mağazanın yanındayken yazılan değerlendirmeler “Doğrulanmış ziyaret” rozetiyle işaretlenir ve önce gösterilir.',seeReviews:'Değerlendirmeleri gör',empty:'Henüz ölçüt puanı yok'},
+  en:{title:'Rating',intro:'The store rating is the average of eight review scores.',trust:'A review written next to the store carries a “Verified visit” badge and is shown first.',seeReviews:'See the reviews',empty:'No criteria scores yet'},
+  de:{title:'Bewertung',intro:'Die Ladenbewertung ist der Durchschnitt aus acht Bewertungspunkten.',trust:'Eine Bewertung, die direkt beim Geschäft geschrieben wird, trägt das Abzeichen „Bestätigter Besuch“ und wird zuerst gezeigt.',seeReviews:'Bewertungen ansehen',empty:'Noch keine Kriterienbewertungen'},
+  ru:{title:'Оценка',intro:'Оценка магазина — среднее восьми оценок отзыва.',trust:'Отзыв, написанный рядом с магазином, помечается значком «Подтверждённое посещение» и показывается первым.',seeReviews:'Смотреть отзывы',empty:'Оценок по критериям пока нет'},
 };
 
 // Everything Google gives us for a store lives in the external source attribution
 // jsonb. Nothing here is invented: a missing field is simply not rendered.
-type GoogleSource={place_id?:string;photo_name?:string;photo_attributions?:string[];attributions?:string[];rating?:number;rating_count?:number;business_status?:string;refreshed_at?:string};
-function googleSource(store:Store):GoogleSource|undefined{
-  const source=store.external_sources?.find(entry=>entry.provider==='google');
-  if(!source)return undefined;
-  const attribution=source.attribution as Record<string,unknown>;
-  const placeID=typeof source.external_id==='string'?source.external_id:undefined;
-  const list=(value:unknown)=>Array.isArray(value)?value.filter((entry):entry is string=>typeof entry==='string'):undefined;
-  return {
-    place_id:placeID,
-    photo_name:typeof attribution.photo_name==='string'?attribution.photo_name:undefined,
-    photo_attributions:list(attribution.photo_attributions),
-    attributions:list(attribution.attributions),
-    rating:typeof attribution.rating==='number'?attribution.rating:undefined,
-    rating_count:typeof attribution.rating_count==='number'?attribution.rating_count:undefined,
-    business_status:typeof attribution.business_status==='string'?attribution.business_status:undefined,
-    refreshed_at:source.refreshed_at,
-  };
-}
 
 export async function generateMetadata({params}:Props):Promise<Metadata>{
   const [{id},{t,locale}]=await Promise.all([params,getServerI18n()]);
@@ -85,11 +59,9 @@ export default async function Page({params}:Props){
   // One store, one address. Links created before slugs existed still resolve, they just
   // do not stay on a second URL competing with the canonical one.
   if(store.slug&&id!==store.slug)permanentRedirect(storePath(store));
-  const google=googleSource(store);
   // A bare personal name under a photograph of a shop reads as the shop's name, so the
   // credit says what it is. The provider requires it to be shown either way.
   const photo=storePhotoURL(store.photo,1200);
-  const photoCredit=store.photo?.attributions?.length?`${t.photoBy}: ${store.photo.attributions.join(' · ')}`:t.photoByGoogle;
   const contribution=contributionCopy[locale];
   const scores=scoreCopy[locale];
   const criteria=store.criteria_averages;
@@ -113,7 +85,7 @@ export default async function Page({params}:Props){
           nothing about it, and the only thing that fixes it is somebody going there and
           taking a picture -- so the space asks for exactly that. */}
       {photo
-        ?<figure className={`store-hero-photo${isBrandMark(store.photo)?' is-brand-mark':''}`}><Image src={photo} fill style={{objectFit:isBrandMark(store.photo)?'contain':'cover'}} sizes="100vw" priority unoptimized alt=""/>{store.photo?.source==='google'&&<figcaption>{photoCredit}</figcaption>}</figure>
+        ?<figure className={`store-hero-photo${isBrandMark(store.photo)?' is-brand-mark':''}`}><Image src={photo} fill style={{objectFit:isBrandMark(store.photo)?'contain':'cover'}} sizes="100vw" priority unoptimized alt=""/></figure>
         :<div className="store-hero-photo store-hero-empty"><span className="store-hero-initial" aria-hidden="true">{store.name.trim().charAt(0)}</span><p>{t.noPhotoYet}</p><Link className="button secondary" href={localePath(locale,`/create?store=${store.id}`)}>{t.addFirstPhoto}</Link></div>}
     </section>
     <section className="store-overview">
@@ -150,23 +122,10 @@ export default async function Page({params}:Props){
         {store.localized_description&&<p>{store.localized_description}</p>}
         <address>{[store.address,[store.district,store.city].filter(Boolean).join('/')].filter(Boolean).join(', ')}</address>
         <Link className="store-correction-link" href={correctionPath}>{contribution.correction}</Link>
-        {google&&<aside className="external-panel" aria-label={t.googleData}>
-          <p className="eyebrow">{t.googleData}</p>
-          {(google.business_status==='CLOSED_TEMPORARILY'||google.business_status==='CLOSED_PERMANENTLY')&&<p className="store-status-warning">{storeStatusCopy[locale]}</p>}
-          {google.rating_count!==undefined&&<p className="external-rating"><Rating value={google.rating??0}/> <span>{google.rating_count} {t.reviews}</span></p>}
-          <p className="external-note">{externalNote[locale]}</p>
-          {google.attributions?.length?<p className="external-attribution">{google.attributions.join(' · ')}</p>:null}
-          {google.refreshed_at&&<small>{t.googleUpdated}: {new Date(google.refreshed_at).toLocaleDateString(locale)}</small>}
-          {/* Deliberately a link of its own rather than making the rating clickable. A
-              clickable rating gets pressed by accident -- somebody reading a number ends
-              up on another site without meaning to. This gets pressed on purpose, and a
-              product confident enough to show what Google says reads as more trustworthy
-              than one that hides it. */}
-          {google.place_id&&<a className="external-link" href={mapsLink(store.latitude,store.longitude,google.place_id)} target="_blank" rel="noopener noreferrer">{t.seeOnGoogleMaps}</a>}
-          {/* The store's own site, where it has one. Not a social account: Google does not
-              publish those, and guessing a handle from a name would put somebody else's
-              Instagram on this page. This is the store speaking for itself. */}
-          {store.website&&<a className="external-link" href={store.website} target="_blank" rel="noopener noreferrer">{t.storeWebsite}</a>}
+        {store.website&&<aside className="external-panel" aria-label={t.storeWebsite}>
+          {/* The store's own site, where it has one. This is the store speaking for
+              itself, which is the only outside source this page carries now. */}
+          <a className="external-link" href={store.website} target="_blank" rel="noopener noreferrer">{t.storeWebsite}</a>
         </aside>}
       </div>
       <div className="store-reviews" aria-labelledby="store-reviews-title">

@@ -1,4 +1,4 @@
-import 'server-only'; import { cookies,headers } from 'next/headers'; import { notFound } from 'next/navigation'; import type { Comment,Locale,Post,PublicProfile,StoreDetail } from './types';
+import 'server-only'; import { cache } from 'react'; import { cookies,headers } from 'next/headers'; import { notFound } from 'next/navigation'; import type { Comment,Locale,Post,PublicProfile,StoreDetail } from './types';
 const API_ORIGIN=process.env.API_ORIGIN??'http://localhost:8080';
 export async function serverApi<T>(path:string,init:RequestInit={}):Promise<T>{
   const cookieStore=await cookies();const requestHeaders=await headers();
@@ -38,7 +38,10 @@ const STORE_REF=/^[a-z0-9]+(?:-[a-z0-9]+)*$/i;
 // used to render a fictional store for any unknown id, including /stores/undefined.
 // A store with no reviews yet comes back with a null recent_posts, so the list is
 // normalised here rather than leaving every caller to guard against it.
-export async function getStore(ref:string):Promise<StoreDetail>{
+// Wrapped in React's request cache: a store page fetches its store twice, once for the
+// page and once for generateMetadata, and those are the same store in the same request.
+// Two backend round trips per view, halved by four characters of memoisation.
+export const getStore=cache(async function getStore(ref:string):Promise<StoreDetail>{
   if(!STORE_REF.test(ref)&&!UUID.test(ref))notFound();
   try{
     const detail=await serverApi<StoreDetail>(`/v1/stores/${encodeURIComponent(ref)}`);
@@ -52,7 +55,7 @@ export async function getStore(ref:string):Promise<StoreDetail>{
     if(reason instanceof ApiError&&reason.status===404)notFound();
     throw reason;
   }
-}
+});
 
 // A review page shows that review. Comments are a separate read so a failure there
 // still leaves the review itself on screen rather than turning the page into a 404.

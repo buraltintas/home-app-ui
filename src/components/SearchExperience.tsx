@@ -14,11 +14,10 @@ import { LOCATION_LOST_EVENT, deviceLocationAllowed, forgetDeviceLocation, watch
 import { seasonalPool } from '@/i18n/search-seasons';
 import { rememberOriginSearch } from '@/lib/search-origin';
 import { clearSearchSnapshot, readSearchSnapshot, writeSearchSnapshot } from '@/lib/search-session';
-import { categoryLabels, searchExamples, storeStatusCopy } from '@/i18n/dictionaries';
+import { categoryLabels, searchExamples } from '@/i18n/dictionaries';
 import { Rating } from './Rating';
 import { SearchOverlay } from './SearchOverlay';
 import { LocationAlert } from './LocationAlert';
-import {mapsLink} from '@/lib/maps';
 import {CategoryIcon} from './CategoryIcon';
 import {TimedNudge} from './TimedNudge';
 
@@ -62,7 +61,6 @@ function growToFit(element:HTMLTextAreaElement|null){
 
 // A result normally carries a store id and links to its detail page. One without an id
 // cannot be opened, so it stays plain content instead of linking to /stores/undefined.
-const isClosedStatus=(status?:string)=>status==='CLOSED_TEMPORARILY'||status==='CLOSED_PERMANENTLY';
 
 function Result({item,onSelect,saved}:{item:SearchResult;onSelect:()=>void;saved:boolean}) {
   const {t,locale}=useI18n();
@@ -71,7 +69,7 @@ function Result({item,onSelect,saved}:{item:SearchResult;onSelect:()=>void;saved
   const categoryText=(item.category_labels?.length
     ?item.category_labels
     :(item.categories??[]).map(category=>categoryLabels[locale][category]??category)).join(' · ');
-  const card=<div className="search-result"><div className="result-identity">{item.catalog_store&&<span className="catalog-store-label">{t('catalogStore')}</span>}<p className="result-category">{categoryText}{item.premium&&<span className="promoted-flag">{t('promoted')}</span>}</p><h2>{item.name}</h2><p className="result-address">{item.address}</p>{isClosedStatus(item.google?.business_status)&&<p className="store-status-warning">{storeStatusCopy[locale]}</p>}{item.distance_meters!==undefined&&<p className="distance">{(item.distance_meters/1000).toLocaleString(locale,{maximumFractionDigits:1})} km</p>}{/* "Boşa Gezme!'de yeni" used to depend on whether the store was in our catalogue at
+  const card=<div className="search-result"><div className="result-identity">{item.catalog_store&&<span className="catalog-store-label">{t('catalogStore')}</span>}<p className="result-category">{categoryText}{item.premium&&<span className="promoted-flag">{t('promoted')}</span>}</p><h2>{item.name}</h2><p className="result-address">{item.address}</p>{item.distance_meters!==undefined&&<p className="distance">{(item.distance_meters/1000).toLocaleString(locale,{maximumFractionDigits:1})} km</p>}{/* "Boşa Gezme!'de yeni" used to depend on whether the store was in our catalogue at
        all, which is our bookkeeping and none of the reader's business. It made the badge
        move on its own: a store arriving from the provider showed it, and the same store
        searched again showed "0 reviews · 0 favourites" instead -- because the first search
@@ -103,7 +101,6 @@ function Result({item,onSelect,saved}:{item:SearchResult;onSelect:()=>void;saved
       {scores}
       {/* Provider identity is a cheap list field and keeps Maps available without pulling
           rating, contact or hours into a page where most stores are never opened. */}
-      {item.google?.place_id&&<a className="result-google" href={mapsLink(item.latitude,item.longitude,item.google.place_id)} target="_blank" rel="noopener noreferrer"><MapPin aria-hidden="true"/>{t('seeOnGoogleMaps')}</a>}
     </div>
   </article>;
 }

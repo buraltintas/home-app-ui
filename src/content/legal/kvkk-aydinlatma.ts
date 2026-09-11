@@ -51,7 +51,6 @@ export const kvkkAydinlatma:LegalDoc={
         ]},
         {id:'aktarim',heading:'Aktarılan taraflar ve aktarım amacı',blocks:[
           {table:{head:['Alıcı','Aktarılan veri','Aktarım amacı'],rows:[
-            ['Google Places','Arama metni, koordinatlar, arama yarıçapı','Mağaza sonuçlarının getirilmesi'],
             ['Google Identity Services','Kimlik doğrulama verisi','Google ile giriş'],
             ['Google (Gmail API)','E-posta adresi ve mesaj içeriği','Doğrulama ve bilgilendirme e-postalarının iletilmesi'],
             ['Bulut depolama sağlayıcısı','Yüklediğiniz görseller','Görsellerin saklanması ve sunulması'],
@@ -124,7 +123,6 @@ export const kvkkAydinlatma:LegalDoc={
         ]},
         {id:'aktarim',heading:'Recipients and purpose of transfer',blocks:[
           {table:{head:['Recipient','Data transferred','Purpose'],rows:[
-            ['Google Places','Search text, coordinates, search radius','Returning store results'],
             ['Google Identity Services','Authentication data','Signing in with Google'],
             ['Google (Gmail API)','Email address and message content','Delivering verification and notice emails'],
             ['Cloud storage provider','Images you upload','Storing and serving images'],
@@ -197,7 +195,6 @@ export const kvkkAydinlatma:LegalDoc={
         ]},
         {id:'aktarim',heading:'Empfänger und Zweck der Übermittlung',blocks:[
           {table:{head:['Empfänger','Übermittelte Daten','Zweck'],rows:[
-            ['Google Places','Suchtext, Koordinaten, Suchradius','Lieferung von Geschäftsergebnissen'],
             ['Google Identity Services','Authentifizierungsdaten','Anmeldung mit Google'],
             ['Google (Gmail API)','E-Mail-Adresse und Nachrichteninhalt','Zustellung von Bestätigungs- und Hinweis-E-Mails'],
             ['Cloud-Speicheranbieter','Hochgeladene Bilder','Speicherung und Auslieferung von Bildern'],
@@ -270,7 +267,6 @@ export const kvkkAydinlatma:LegalDoc={
         ]},
         {id:'aktarim',heading:'Получатели и цели передачи',blocks:[
           {table:{head:['Получатель','Передаваемые данные','Цель'],rows:[
-            ['Google Places','Текст запроса, координаты, радиус поиска','Получение результатов по магазинам'],
             ['Google Identity Services','Данные аутентификации','Вход через Google'],
             ['Google (Gmail API)','Адрес почты и содержание сообщения','Доставка писем подтверждения и уведомлений'],
             ['Облачное хранилище','Загруженные изображения','Хранение и выдача изображений'],

@@ -53,11 +53,10 @@ export const privacy:LegalDoc={
           {note:'Giriş kodu isteklerinde IP adresiniz yalnızca özetlenerek (hash) saklanır, açık hâliyle tutulmaz.'},
         ]},
         {id:'kaynak',heading:'Bilgilerin kaynağı',blocks:[
-          {p:'Bilgilerin çoğunu doğrudan sizden alırız. Google ile giriş yapmayı seçerseniz kimliğiniz ve e-posta adresiniz Google Identity Services üzerinden gelir. Mağazalara ait bilgiler (ad, adres, konum) büyük ölçüde Google Places kaynaklıdır ve kişisel verileriniz değildir.'},
+          {p:'Bilgilerin çoğunu doğrudan sizden alırız. Google ile giriş yapmayı seçerseniz kimliğiniz ve e-posta adresiniz Google Identity Services üzerinden gelir. Mağazalara ait bilgiler (ad, adres, konum) markaların kendi yayımladıkları mağaza listelerinden derlenir ve kişisel verileriniz değildir.'},
         ]},
         {id:'paylasim',heading:'Kimlerle paylaşılıyor',blocks:[
           {table:{head:['Alıcı','Giden bilgi'],rows:[
-            ['Google Places','Arama metni, koordinatlar, arama yarıçapı'],
             ['Google Identity Services','Google ile giriş seçilirse kimlik doğrulama verisi'],
             ['Google (Gmail API)','E-posta adresiniz ve gönderilen mesajın içeriği'],
             ['Bulut depolama','Yüklediğiniz görseller'],
@@ -120,11 +119,10 @@ export const privacy:LegalDoc={
           {note:'On sign-in code requests your IP address is stored only as a hash, never in the clear.'},
         ]},
         {id:'kaynak',heading:'Where information comes from',blocks:[
-          {p:'Most of it comes directly from you. If you choose Google sign-in, your identifier and email arrive through Google Identity Services. Store information (name, address, location) largely comes from Google Places and is not your personal data.'},
+          {p:'Most of it comes directly from you. If you choose Google sign-in, your identifier and email arrive through Google Identity Services. Store information (name, address, location) is compiled from the brands\' own published store lists and is not your personal data.'},
         ]},
         {id:'paylasim',heading:'Who it is shared with',blocks:[
           {table:{head:['Recipient','What is sent'],rows:[
-            ['Google Places','Search text, coordinates, search radius'],
             ['Google Identity Services','Authentication data, if you choose Google sign-in'],
             ['Google (Gmail API)','Your email address and the content of the message sent'],
             ['Cloud storage','Images you upload'],
@@ -187,11 +185,10 @@ export const privacy:LegalDoc={
           {note:'Bei Anfragen für einen Anmeldecode wird deine IP-Adresse nur als Hash gespeichert, nie im Klartext.'},
         ]},
         {id:'kaynak',heading:'Herkunft der Informationen',blocks:[
-          {p:'Das meiste stammt unmittelbar von dir. Bei der Google-Anmeldung kommen Kennung und E-Mail über Google Identity Services. Geschäftsdaten (Name, Adresse, Standort) stammen überwiegend aus Google Places und sind keine personenbezogenen Daten von dir.'},
+          {p:'Das meiste stammt unmittelbar von dir. Bei der Google-Anmeldung kommen Kennung und E-Mail über Google Identity Services. Geschäftsdaten (Name, Adresse, Standort) werden aus den von den Marken selbst veröffentlichten Filiallisten zusammengestellt und sind keine personenbezogenen Daten von dir.'},
         ]},
         {id:'paylasim',heading:'Mit wem geteilt wird',blocks:[
           {table:{head:['Empfänger','Was übermittelt wird'],rows:[
-            ['Google Places','Suchtext, Koordinaten, Suchradius'],
             ['Google Identity Services','Authentifizierungsdaten bei Google-Anmeldung'],
             ['Google (Gmail API)','Deine E-Mail-Adresse und der Inhalt der Nachricht'],
             ['Cloud-Speicher','Hochgeladene Bilder'],
@@ -254,11 +251,10 @@ export const privacy:LegalDoc={
           {note:'При запросе кода входа ваш IP-адрес сохраняется только в виде хеша, никогда в открытом виде.'},
         ]},
         {id:'kaynak',heading:'Откуда поступают данные',blocks:[
-          {p:'Большая часть — непосредственно от вас. При входе через Google идентификатор и почта поступают через Google Identity Services. Данные о магазинах (название, адрес, координаты) в основном из Google Places и не являются вашими персональными данными.'},
+          {p:'Большая часть — непосредственно от вас. При входе через Google идентификатор и почта поступают через Google Identity Services. Данные о магазинах (название, адрес, координаты) собираются из списков магазинов, которые публикуют сами бренды, и не являются вашими персональными данными.'},
         ]},
         {id:'paylasim',heading:'Кому передаётся',blocks:[
           {table:{head:['Получатель','Что передаётся'],rows:[
-            ['Google Places','Текст запроса, координаты, радиус поиска'],
             ['Google Identity Services','Данные аутентификации при входе через Google'],
             ['Google (Gmail API)','Ваш адрес почты и содержание отправляемого письма'],
             ['Облачное хранилище','Загруженные изображения'],
