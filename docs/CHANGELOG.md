@@ -8,6 +8,14 @@ value involved.
 
 ---
 
+## One store total in the panel, not two
+
+The overview carried a second store card splitting the catalogue by where its rows came
+from. That mattered while we were leaving a provider and stopped mattering the moment we had
+left: every row in the table is ours now, and two counts side by side only invite the
+question of which one is the real number.
+
+
 ## The panel's Google counter outlived Google
 
 "Google'dan alınan: 1.076" sat on the admin overview beside "Mağaza: 1.076", which read as

@@ -9,8 +9,11 @@ export const dynamic='force-dynamic';
 // this page for come first, and the lifetime bookkeeping goes last.
 const SNAPSHOT_LABELS:[string,string][]=[
   ['registered_users_total','Kayıtlı kullanıcı'],
+  // One store count, not two. There was a second card here splitting the catalogue by where
+  // its rows came from, which mattered while we were leaving a provider and stopped
+  // mattering the moment we had left: every row in the table is ours now, and a panel that
+  // still sorts them by origin invites the question of which number is the real one.
   ['stores_total','Mağaza'],
-  ['brand_verified_stores_total','Markadan doğrulanan'],
   ['posts_current_total','Yayında olan yorum'],
   ['searches_lifetime','Toplam arama'],
   ['favorites_current_total','Favori'],
