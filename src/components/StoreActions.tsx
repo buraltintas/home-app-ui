@@ -18,11 +18,10 @@ export function StoreActions({storeId,name,latitude,longitude,initialFavorited,p
   const [status,setStatus]=useState('');
   const statusTimer=useRef<number|undefined>(undefined);
   const dockTimer=useRef<number|undefined>(undefined);
-  // The dock belongs to the page, not to the unsaved state. Starting it hidden for a store
-  // the visitor had already saved meant it was simply gone on every later visit -- which is
-  // not what "hide it two seconds after saving" asked for. It hides after that action, and
-  // otherwise it is there, carrying the saved colour when the store is already saved.
-  const [dockVisible,setDockVisible]=useState(true);
+  // The dock invites one thing: saving this store for later. A store already saved has
+  // nothing to be invited to, so the page opens without it. Unsaving brings it back,
+  // because at that point the invitation is true again.
+  const [dockVisible,setDockVisible]=useState(!initialFavorited);
   const [auth,setAuth]=useState(false);
   // What the user was trying to do when the sign-in dialog opened, so the intent is
   // resumed afterwards instead of silently dropped.
@@ -43,7 +42,7 @@ export function StoreActions({storeId,name,latitude,longitude,initialFavorited,p
       if(response.status===401){setFavorited(!next);setPending(true);setAuth(true);return;}
       // An optimistic flip is not success. Only a 2xx keeps it.
       if(!response.ok)throw new Error();
-      if(next){announce(savedMessage[locale]);dockTimer.current=window.setTimeout(()=>setDockVisible(false),2000);}
+      if(next){announce(savedMessage[locale]);dockTimer.current=window.setTimeout(()=>setDockVisible(false),1000);}
       else setDockVisible(true);
     }catch{setFavorited(!next);announce(t('saveError'));}
     finally{setBusy(false);}

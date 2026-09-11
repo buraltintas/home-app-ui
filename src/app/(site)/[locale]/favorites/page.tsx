@@ -14,6 +14,7 @@ import {apiFetch} from '@/lib/api-client';
 import type {Locale,Store} from '@/lib/types';
 import {storePhotoURL} from '@/lib/store-photo';
 import {TimedNudge} from '@/components/TimedNudge';
+import {StoreDistance,useReviewRadius,useViewerPosition} from '@/components/StoreDistance';
 
 // The same wording the store page uses for the same action; one product, one name for it.
 const reviewAction:Record<Locale,string>={tr:'Değerlendirme yap',en:'Write a review',de:'Bewertung abgeben',ru:'Оставить оценку'};
@@ -26,6 +27,10 @@ const favoriteSummary:Record<Locale,{saved:string;pending:string}>={
 
 export default function Page(){
   const {t,locale}=useI18n();
+  // How far the reader is from each saved store, and whether that is near enough to
+  // review it. Read from the device, and only where the browser has already granted it.
+  const viewer=useViewerPosition();
+  const reviewRadius=useReviewRadius();
   const [open,setOpen]=useState(false);
   const [signedIn,setSignedIn]=useState(false);
   const [checking,setChecking]=useState(true);
@@ -83,7 +88,10 @@ export default function Page(){
         {store.platform.review_count?<small><RatingStars value={store.platform.average_rating}/> · {store.platform.review_count} {t('reviews')}</small>:<small>{t('noCommunity')}</small>}</div>
         <ArrowRight aria-hidden="true"/>
       </Link>
-      <Link className="button store-contribution-action favorite-review-action" href={localePath(locale,`/create?store=${store.id}`)}>{reviewAction[locale]}</Link>
+      <div className="favorite-review-row">
+        <StoreDistance store={{latitude:store.latitude,longitude:store.longitude}} viewer={viewer} radiusMeters={reviewRadius} locale={locale}/>
+        <Link className="button store-contribution-action favorite-review-action" href={localePath(locale,`/create?store=${store.id}`)}>{reviewAction[locale]}</Link>
+      </div>
     </li>})}</ul><TimedNudge kind="favorites"/>
   </main>;
 

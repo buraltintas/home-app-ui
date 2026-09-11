@@ -156,7 +156,7 @@ svg{stroke-width:2}
 .store-actions svg{width:20px;height:20px;flex:none}
 .store-actions button:disabled{cursor:not-allowed;opacity:.55}
 .store-actions button:hover,.store-actions a:hover{background:var(--muted)}
-.store-save-dock{position:fixed;z-index:22;left:50%;bottom:22px;transform:translateX(-50%);width:min(720px,calc(100% - 40px));min-height:76px;padding:12px 14px 12px 22px;display:flex;align-items:center;justify-content:space-between;gap:24px;background:color-mix(in srgb,var(--surface) 92%,transparent);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--lift);backdrop-filter:blur(20px) saturate(130%)}
+.store-save-dock{position:fixed;z-index:22;left:50%;bottom:22px;transform:translateX(-50%);width:min(420px,calc(100% - 28px));min-height:76px;padding:12px 14px 12px 22px;display:flex;align-items:center;justify-content:space-between;gap:24px;background:color-mix(in srgb,var(--surface) 92%,transparent);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--lift);backdrop-filter:blur(20px) saturate(130%)}
 .store-save-dock>span{font-size:15px;font-weight:650;white-space:nowrap}.store-save-dock .button{min-width:0;white-space:nowrap}
 .store-save-dock .button.is-saved{background:var(--success);color:var(--surface)}
 .store-save-status{position:fixed;z-index:23;left:50%;bottom:108px;transform:translateX(-50%);margin:0;padding:9px 14px;border:1px solid var(--line);border-radius:var(--r-pill);background:var(--surface);color:var(--ink);box-shadow:var(--lift);font-weight:650}
@@ -245,8 +245,14 @@ svg{stroke-width:2}
 .store-rating-overall{display:flex;align-items:center;gap:16px}
 .store-rating-overall strong{font-size:38px;line-height:1;color:var(--clay);font-variant-numeric:tabular-nums}
 .store-rating-overall small{font-size:12px;color:var(--ink-muted)}
-.store-rating-jump{min-height:40px;padding:0 16px;border:1px solid var(--line-strong);border-radius:var(--r-pill);background:var(--surface);color:var(--ink);font-size:14px;font-weight:650;cursor:pointer;transition:border-color .16s ease,background-color .16s ease}
-.store-rating-jump:hover{border-color:var(--ink);background:var(--muted)}
+/* How many reviews the score is made of, beside the score itself: a 4.7 out of three
+   visits and a 4.7 out of ninety are not the same claim. */
+.store-rating-count{font-size:13px;font-weight:700;color:var(--ink-muted);white-space:nowrap}
+/* Not a second button beside the score. It moves the reader down the page, so it is drawn
+   as a way down: the words, underlined, with an arrow pointing where they go. */
+.store-rating-jump{min-height:40px;padding:0;display:inline-flex;align-items:center;gap:6px;border:0;background:transparent;color:var(--clay);font-size:14px;font-weight:700;cursor:pointer;text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px}
+.store-rating-jump::after{content:"↓";font-size:15px;line-height:1;text-decoration:none}
+.store-rating-jump:hover{color:var(--ink)}
 .store-rating-breakdown dl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .store-rating-breakdown dl div{display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:8px;min-width:0;padding:14px 16px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
 .store-rating-breakdown dl div:nth-child(4n){border-right:0}
@@ -262,6 +268,9 @@ svg{stroke-width:2}
 .store-review-rail .post-number{display:none}
 .store-review-rail .post-heading{display:block;margin:0;padding:0 0 18px;border-bottom:1px solid var(--line)}
 .store-review-rail .post-author{min-width:0;margin:0;padding:0}
+/* A flex row with a long name in it shrinks whatever will shrink, and the circle went
+   oval. It is a circle at a fixed size or it is nothing. */
+.post-author>.avatar{flex:none}
 .store-review-rail .post-author>div:nth-child(2){min-width:0}
 .store-review-rail .post-author strong{display:flex;align-items:center;flex-wrap:wrap;gap:7px;min-width:0;font-size:14px;line-height:1.35;overflow-wrap:anywhere}
 .store-review-rail .post-author strong>.contributor-level{flex:none}
@@ -271,9 +280,14 @@ svg{stroke-width:2}
 /* The eight answers behind one score, folded away until asked for. */
 /* Clear of the rule that closes the review underneath it. */
 .post-criteria{margin:10px 0 18px}
-.post-criteria>summary{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid var(--line-strong);border-radius:var(--r-pill);background:var(--surface);color:var(--ink);font-size:14px;font-weight:650;cursor:pointer;list-style:none}
+.post-criteria>summary{display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:0;border:0;background:transparent;color:var(--clay);font-size:14px;font-weight:700;cursor:pointer;list-style:none}
 .post-criteria>summary::-webkit-details-marker{display:none}
-.post-criteria>summary:hover{border-color:var(--ink);background:var(--muted)}
+/* The mark turns from pointing down to pointing up, so the control says both what is
+   about to happen and, once it has, that it can be undone. A frame around it said neither
+   and read as a button that would take the reader somewhere else. */
+.post-criteria>summary::after{content:"";width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg);transition:transform .18s ease}
+.post-criteria[open]>summary::after{transform:translateY(2px) rotate(-135deg)}
+.post-criteria>summary:hover{color:var(--ink)}
 .post-criteria dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;margin:14px 0 0;border-top:1px solid var(--line)}
 .post-criteria dl div{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;padding:10px 0;border-bottom:1px solid var(--line)}
 .post-criteria dl div:nth-child(2n){padding-left:18px}
@@ -316,7 +330,7 @@ svg{stroke-width:2}
 /* The levels explanation, offered where somebody is looking at their own level. Its own
    frame, matching the invitation block underneath it. */
 .level-boost{width:100%;margin:0 0 4px;padding:18px 20px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);display:flex}
-.level-boost-action{width:100%}
+.level-boost-action{width:100%;background:color-mix(in srgb,var(--surface) 72%,transparent)}
 .level-dialog h2{font-size:26px;margin:10px 0 14px}
 .level-dialog p{margin:0 0 14px;line-height:1.55;color:var(--ink-muted)}
 .level-table-wrap{overflow-x:auto;margin:0 0 16px}
@@ -414,12 +428,14 @@ svg{stroke-width:2}
 .review-invitation h2{margin:0;font-size:28px;line-height:1.15;letter-spacing:-.025em}
 .review-invitation p{max-width:720px;margin:10px 0 0;color:var(--ink-muted);font-size:16px;line-height:1.55}
 .review-invitation-actions{display:grid;gap:10px}
-.contribution-progress{min-height:58px;padding:9px 12px;border:1px solid color-mix(in srgb,var(--clay) 28%,var(--line));border-radius:var(--r-sm);display:grid;grid-template-columns:34px 1fr;align-items:center;gap:9px;color:var(--ink);text-decoration:none;background:color-mix(in srgb,var(--surface) 72%,transparent)}
+.contribution-progress{width:100%;text-align:left;min-height:58px;padding:9px 12px;border:1px solid color-mix(in srgb,var(--clay) 28%,var(--line));border-radius:var(--r-sm);display:grid;grid-template-columns:34px 1fr;align-items:center;gap:9px;color:var(--ink);text-decoration:none;background:color-mix(in srgb,var(--surface) 72%,transparent)}
 .contribution-progress>span:first-child{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--surface);font-size:20px}
 .contribution-progress>span:last-child{display:grid;gap:2px}
 .contribution-progress strong{font-size:14px}.contribution-progress small{color:var(--ink-muted);font-size:11px}
 @media(max-width:720px){.store-overview,.store-body{max-width:100vw}.store-contribution{width:100%;max-width:100vw;padding:20px 18px 0;overflow:hidden}.review-invitation{width:100%;max-width:calc(100vw - 36px);padding:22px 20px;grid-template-columns:minmax(0,1fr);gap:20px}.review-invitation h2{font-size:24px}.review-invitation p{overflow-wrap:anywhere}.review-invitation-actions{width:100%;max-width:100%}}
-@media(max-width:720px){.store-save-dock{bottom:calc(86px + env(safe-area-inset-bottom));width:calc(100% - 24px);min-height:68px;padding:10px 10px 10px 16px;gap:12px}.store-save-dock>span{font-size:13px}.store-save-dock .button{min-width:0;padding-inline:14px;white-space:nowrap}}
+/* The same width as the navigation dock it stands above; two floating bars on one
+   screen that nearly line up read as a mistake rather than as a pair. */
+@media(max-width:720px){.store-save-dock{bottom:calc(86px + env(safe-area-inset-bottom));width:min(420px,calc(100% - 28px));min-height:68px;padding:10px 10px 10px 16px;gap:12px}.store-save-dock>span{font-size:13px}.store-save-dock .button{min-width:0;padding-inline:14px;white-space:nowrap}}
 /* The phone override was still the full width of the screen, which is why narrowing the
    base rule changed nothing on a phone -- the only place anybody looks at it. */
 @media(max-width:720px){.timed-nudge{bottom:calc(88px + env(safe-area-inset-bottom));width:min(316px,calc(100% - 56px))}.store-page .timed-nudge{bottom:calc(164px + env(safe-area-inset-bottom))}}
@@ -462,7 +478,15 @@ svg{stroke-width:2}
 /* Placement only, in each of the three homes. */
 .review-invitation .store-contribution-action{display:flex}
 .store-review-action{grid-column:1/-1;display:flex}
-.favorite-review-action{grid-column:2/3;justify-self:start}
+.favorite-review-action{justify-self:start}
+/* The distance stands to the left of the action it qualifies: how far away the store is,
+   and then what you can do about it. */
+.favorite-review-row{grid-column:2/3;display:flex;align-items:center;flex-wrap:wrap;gap:8px 16px}
+.store-distance{display:grid;gap:2px;margin:0}
+.store-distance strong{font-size:15px;font-weight:750;color:var(--clay)}
+.store-distance small{font-size:12px;line-height:1.3;color:var(--ink-muted)}
+.store-distance.is-eligible small{color:var(--success);font-weight:700}
+@media(max-width:600px){.favorite-review-row{grid-column:1/-1}}
 .profile-sections{display:grid}
 .profile-sections a{display:flex;flex-direction:column;gap:4px;padding:20px 0;border-bottom:1px solid var(--line);min-height:44px}
 .profile-sections a:hover{color:var(--clay)}
@@ -476,7 +500,7 @@ svg{stroke-width:2}
 .search-query-more{position:absolute;left:50%;bottom:0;transform:translateX(-50%);display:grid!important;place-items:center!important;width:64px!important;min-height:44px!important;padding:0!important;color:var(--ink);font-size:38px!important;line-height:1}
 .search-query-close{display:none}
 .search-query-back{display:none}
-.search-query-suggestions-title{margin:2px 4px 8px;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted)}
+.search-query-suggestions-title{margin:2px 4px 10px;font-size:15px;font-weight:800;letter-spacing:.02em;text-transform:none;color:var(--ink)}
 .search-query-suggestions button{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;min-height:44px;padding:10px 12px;text-align:left;border:0;background:transparent;border-radius:var(--r-sm)}
 .search-query-suggestions button:hover,.search-query-suggestions button:focus-visible{background:var(--muted)}
 .search-suggestions .recent-search-disclosure>.disclosure-summary{padding:0;align-items:center;font-weight:600}
@@ -485,6 +509,12 @@ svg{stroke-width:2}
 .recent-searches>header{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:2px solid var(--ink)}
 .recent-searches>header h2{margin:0;font-size:16px;letter-spacing:.02em;color:var(--ink);white-space:nowrap}
 .recent-searches>header button{width:auto;padding:0;justify-content:flex-end;text-align:right;font-size:13px;font-weight:500;color:var(--ink);opacity:.6}
+/* The box already ended on the same right-hand line as the row's own delete, but it was
+   the width of the whole row and held its words at its left edge, so the two controls
+   still did not read as one column. The rule that made every button in this block a
+   full-width row is more specific than the one beside it, which is why setting the width
+   next door changed nothing; this one is written to reach past it. */
+.search-suggestions>div:first-child .recent-searches>header button{flex:0 0 auto;width:max-content;min-width:0;padding:0;justify-content:flex-end}
 .recent-searches>header button:hover{opacity:1}
 .recent-searches>header button,.recent-search-delete,.recent-search-more{min-height:44px;border:0;background:transparent;cursor:pointer}
 .recent-search-more{color:var(--clay);font-weight:700}
@@ -495,30 +525,46 @@ svg{stroke-width:2}
 .recent-search-delete:hover{opacity:1}
 .recent-search-more{padding:8px 0}
 @media(max-width:720px){
+  /* The hero's entry animation holds its last frame for good, and a held transform makes
+     the element the frame of reference for anything fixed inside it. So the full-screen
+     panel was fixed to the hero rather than to the screen: it stopped at the hero's lower
+     edge and the results underneath showed through it. The animation has finished playing
+     long before anyone opens the panel; it is dropped while the panel is open. */
+  .search-hero:has(.search-form.is-query-open){animation:none}
   /* The row is centred when this is a bar; in the full-screen panel every row starts at
      its own top, or the suggestions float in the middle of the space left below them. */
-  .search-form.is-query-open{position:fixed;z-index:80;inset:0;margin:0;padding:calc(18px + env(safe-area-inset-top)) 18px 24px;display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto auto 1fr;align-content:start;align-items:start;gap:10px;background:var(--canvas);border:0}
+  .search-form.is-query-open{position:fixed;z-index:80;inset:0;margin:0;padding:calc(18px + env(safe-area-inset-top)) 18px 24px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-rows:auto auto 1fr;align-content:start;align-items:start;gap:10px;background:var(--canvas);border:0}
   /* The way out of a full-screen panel belongs in the corner people already reach for,
      not beside the field it is not part of. It takes the whole first row so the search
      icon and the field keep the row below to themselves. */
-  /* The close sits on the same right-hand line as the language control in the header, not
-     inside the panel's own text inset, so the two read as the same edge. */
-  .search-form.is-query-open .search-query-close{grid-column:1/-1;justify-self:end;margin-right:2px;display:grid;place-items:center;width:44px;min-width:0;height:44px;padding:0;border:0;background:transparent;color:var(--ink)}
+  /* The way out and the field belong to one another, so they share a row: back, the
+     question, the way out. Two rows put the corner control above a field it had nothing
+     to do with. The circle is the same one the store page uses for its own way back. */
+  .search-form.is-query-open .search-query-close{grid-column:3;grid-row:1;justify-self:end;align-self:start;margin:6px 0 0;display:grid;place-items:center;width:44px;min-width:0;height:44px;padding:0;border:1px solid var(--line);border-radius:50%;background:color-mix(in srgb,var(--surface) 92%,transparent);color:var(--ink);box-shadow:0 8px 24px rgba(22,20,15,.09)}
+  .search-form.is-query-open .search-query-close svg{width:20px;height:20px}
   /* In the panel the magnifier is not decoration, it is the way back. */
   .search-form.is-query-open>svg{display:none}
-  .search-form.is-query-open .search-query-back{grid-column:1;display:grid;place-items:center;width:40px;height:44px;margin:6px 0 0;padding:0;border:0;background:transparent;color:var(--ink)}
+  .search-form.is-query-open .search-query-back{grid-column:1;grid-row:1;display:grid;place-items:center;width:40px;height:44px;margin:6px 0 0;padding:0;border:0;background:transparent;color:var(--ink)}
   .search-form.is-query-open .search-query-back svg{width:24px;height:24px}
-  .search-form.is-query-open .search-field{grid-column:2}
-  .search-form.is-query-open>button[type=submit]{grid-column:1/-1}
-  .search-form.is-query-open .search-query-suggestions{position:relative;grid-column:1/-1;top:auto;left:auto;right:auto;box-shadow:none;border-top:1px solid var(--line);border-radius:0;padding:8px 0 44px;background:transparent}
+  /* The panel takes the bar's own frame away -- it is the whole screen now -- so the
+     field has to carry one of its own, or the question sits on bare paper between two
+     controls and no longer looks like something to type in. */
+  .search-form.is-query-open .search-field{grid-column:2;grid-row:1;align-items:center;padding:0 14px;background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--r-pill)}
+  /* One line in the panel. The field on the search page grows to hold a whole sentence of
+     placeholder; here the row carries two controls beside it and a field that wraps pushes
+     them out of line with it. */
+  .search-form.is-query-open textarea{height:44px!important;padding-top:11px;padding-bottom:11px;white-space:nowrap;overflow-x:hidden;text-overflow:ellipsis}
+  .search-form.is-query-open>button[type=submit]{grid-column:1/-1;grid-row:2}
+  .search-form.is-query-open .search-query-suggestions{position:relative;grid-column:1/-1;grid-row:3;top:auto;left:auto;right:auto;box-shadow:none;border-top:1px solid var(--line);border-radius:0;padding:8px 0 44px;background:transparent}
   .search-form.is-query-open .search-query-suggestions-list{max-height:calc(100vh - 250px)}
 }
 
 /* Keep each question's five radio targets in a single row. */
+.criteria-intro span{display:block}
 .criterion-stars{display:flex;gap:0;flex-wrap:nowrap}
 .criteria-list .criterion-stars label{position:relative;width:44px;height:44px;flex:none;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
 .criterion-stars input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer}
-.criterion-stars svg{width:26px;height:26px;color:var(--ink-muted);pointer-events:none}
+.criterion-stars svg{width:22px;height:22px;color:var(--ink-muted);pointer-events:none}
 .criterion-stars svg.is-on{fill:var(--clay);color:var(--clay)}
 .criterion-stars label:has(input:focus-visible){outline:3px solid var(--accent);outline-offset:2px;border-radius:var(--r-sm)}
 .profile-review-list .post-card.is-owned .post-meta{flex-wrap:nowrap;align-items:center;margin:0;gap:8px}

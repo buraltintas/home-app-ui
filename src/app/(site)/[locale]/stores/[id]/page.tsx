@@ -127,7 +127,7 @@ export default async function Page({params}:Props){
       <div className="store-score"><span>{t.savedBy}</span><strong>{store.platform.favorite_count}</strong><small>{t.people}</small></div>
       <StoreActions storeId={store.id} name={store.name} latitude={store.latitude} longitude={store.longitude} initialFavorited={store.viewer_has_favorited} phone={store.phone}/>
       <section className="store-rating-breakdown" aria-labelledby="store-rating-title">
-        <header><div><h2 id="store-rating-title">{scores.title}</h2><p>{scores.intro}</p><p className="store-rating-trust">{scores.trust}</p></div><div className="store-rating-overall"><strong>{store.platform.review_count?formatScore(store.platform.average_rating):'—'}</strong>{store.platform.review_count?<ReviewsJump label={scores.seeReviews}/>:<small>{scores.empty}</small>}</div></header>
+        <header><div><h2 id="store-rating-title">{scores.title}</h2><p>{scores.intro}</p><p className="store-rating-trust">{scores.trust}</p></div><div className="store-rating-overall"><strong>{store.platform.review_count?formatScore(store.platform.average_rating):'—'}</strong>{store.platform.review_count?<><span className="store-rating-count">{store.platform.review_count} {t.reviewWord}</span><ReviewsJump label={scores.seeReviews}/></>:<small>{scores.empty}</small>}</div></header>
         <dl>{criteriaRows.map(([label,value])=><div key={label}><dt>{label}</dt><dd>{value!==undefined?<RatingStars value={value}/>:'—'}</dd></div>)}</dl>
       </section>
       {/* Directly under save, directions, call and share, because it belongs with them: they

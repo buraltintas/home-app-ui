@@ -152,6 +152,9 @@ export function SearchExperience() {
   const [dataLocale,setDataLocale]=useState<Locale>(locale);
   // A query carried in from the homepage, waiting for the page to settle before it runs.
   const pending=useRef<string>('');
+  // Set when a press for the device's location was refused by the browser, so that turning
+  // the permission back on can finish what that press started.
+  const awaitingGrant=useRef(false);
   const [history,setHistory]=useState<SearchHistory[]>([]);
   const [historyExpanded,setHistoryExpanded]=useState(false);
   const [historyBusy,setHistoryBusy]=useState(false);
@@ -512,7 +515,11 @@ export function SearchExperience() {
     if(!outcome.ok){
       // A grant cannot diagnose a stale document or guarantee a device fix. Show the
       // actual acquisition failure instead of claiming that reloading will resolve it.
+      // A refusal is the one failure the visitor can go and undo, so it is the one worth
+      // remembering: if the permission turns up granted later, this press resumes.
+      awaitingGrant.current=outcome.reason==='blocked'||outcome.reason==='denied';
       setError(t(locationMessage(outcome.reason)));setErrorReason(outcome.reason);return;}
+    awaitingGrant.current=false;
     const selected:SearchPlace={source:'device',label:t('currentLocation'),accuracyMeters:outcome.position.accuracy_meters,coordinates:{latitude:outcome.position.latitude,longitude:outcome.position.longitude}};
     // The panel stays open. It used to close the instant the device answered, which meant
     // the confirmation that replaces the button was never on screen long enough to be seen
@@ -521,7 +528,13 @@ export function SearchExperience() {
   };
   // Kept in an effect rather than assigned while rendering: the watcher outlives every
   // render and needs whichever locateMe belongs to the latest one.
-  useEffect(()=>{locateRef.current=()=>{if(!location)void locateMe();};});
+  //
+  // Somebody who presses this while the browser is blocking us, goes into the browser's
+  // settings, turns location back on and comes back has asked for their location twice and
+  // been answered neither time. The grant is the answer to the press, so the press is
+  // resumed -- even when a place they typed earlier is still on screen, which is the case
+  // the old guard refused and the case the report described.
+  useEffect(()=>{locateRef.current=()=>{if(!location||awaitingGrant.current)void locateMe();};});
   // The list carries no coordinates -- a prediction has none, and a point we search
   // around should be fetched from the provider rather than taken from the page. So the
   // chosen place is resolved first, and only a resolved one is ever set.
@@ -614,7 +627,11 @@ export function SearchExperience() {
   // had already arrived.
   const strip=nearbyPhrases.length?{title:t('nearbySearches'),phrases:nearbyPhrases}
     :{title:t('seasonalSuggestions'),phrases:seasonalPool(locale)};
-  const stripPhrases=Array.from(new Set(strip.phrases));
+  // What the neighbourhood searched comes first, and the seasonal pool stands behind it.
+  // On its own the neighbourhood can hold five or six phrases, so "show more" had more to
+  // show in principle and one extra line to show in practice -- which reads exactly like a
+  // control that does nothing. There is always a tenth suggestion now.
+  const stripPhrases=Array.from(new Set([...strip.phrases,...seasonalPool(locale)]));
   const promptLimit=suggestionsExpanded?10:4;
   const prompts=stripPhrases.length<=promptLimit?stripPhrases:Array.from({length:promptLimit},(_,step)=>stripPhrases[(rotation+step)%stripPhrases.length]);
   return <main className="search-page"><header className="search-hero"><div className="search-title"><h1>{t('searchTitle')}</h1><span aria-hidden="true">↗</span></div>{!location&&<p className="location-lead">{t('locationRequired')}</p>}{location&&<div className={`location-control${location.source==='device'?' is-device':''}`}><MapPin aria-hidden="true"/><span>{location.source==='device'?t('currentLocationActive'):location.label}</span><button onClick={()=>setLocationOpen(true)} disabled={loading}>{t('changeLocation')}</button><button className="location-clear" aria-label={t('clearLocation')} onClick={()=>{setLocation(undefined);setData(undefined);}} disabled={loading}><X/></button></div>}{sheetOpen&&<section className="location-sheet" aria-label={t('chooseLocation')}>{location&&<div><p>{t('locationBenefit')}</p></div>}<div className="location-actions">{autoLocating&&<p className="location-working" aria-live="polite"><span className="location-pulse" aria-hidden="true"/>{t('locatingYou')}</p>}{/* One control, two states. It used to be swapped for a separate confirmation line,
@@ -631,7 +648,12 @@ export function SearchExperience() {
             that was reported: list, searching, list, searching. The previous answers stay
             on screen while the next ones are fetched, and the status line appears only when
             there is genuinely nothing to show yet. */}
-    {manual.trim().length>=2&&<div className="location-results" aria-live="polite">{lookingUp&&candidates.length===0?<p>{t('searchingLocations')}</p>:!lookingUp&&candidates.length===0?<p>{t('noLocations')}</p>:candidates.map(candidate=><button key={candidate.place_id} onClick={()=>void choose(candidate)} disabled={loading}><strong>{candidate.name}</strong><span>{candidate.address}</span><small>{candidate.attributions.join(' · ')}</small></button>)}</div>}</section>}{location&&<form className={`search-form${suggestionsOpen?' is-query-open':''}`} onBlur={event=>{if(!event.currentTarget.contains(event.relatedTarget as Node|null))setSuggestionsOpen(false);}} onSubmit={event=>{setSuggestionsOpen(false);submit(event);}} aria-busy={loading}><button type="button" className="search-query-close" onClick={()=>setSuggestionsOpen(false)} aria-label={t('close')}><X aria-hidden="true"/></button>{suggestionsOpen?<button type="button" className="search-query-back" onClick={()=>setSuggestionsOpen(false)} aria-label={t('back')}><ArrowLeft aria-hidden="true"/></button>:<Search aria-hidden="true"/>}<div className="search-field"><textarea ref={field} onFocus={()=>{setSuggestionsOpen(true);setSuggestionsExpanded(false);}} rows={1} value={query} onChange={event=>setQuery(event.target.value)} onKeyDown={event=>{if(event.key==='Escape')setSuggestionsOpen(false);if(event.key==='Enter'){event.preventDefault();void runSearch();}}} placeholder={placeholder} aria-label={t('searchHint')} disabled={loading}/>{query&&!loading&&<button type="button" className="search-clear" onClick={()=>{setQuery('');field.current?.focus();}} aria-label={t('clearSearch')}><X aria-hidden="true"/></button>}</div><button type="submit" disabled={loading}>{loading?t('loading'):t('searchAction')}</button>{suggestionsOpen&&<div className="search-query-suggestions"><h2 className="search-query-suggestions-title">{t('suggestedSearches')}</h2><div className="search-query-suggestions-list">{prompts.map(phrase=><button type="button" key={phrase} onClick={()=>{setSuggestionsOpen(false);fill(phrase);}}>{phrase}<ArrowRight aria-hidden="true"/></button>)}</div>{stripPhrases.length>4&&!suggestionsExpanded&&<button type="button" className="search-query-more" onClick={()=>setSuggestionsExpanded(true)} aria-label={historyCopy[locale].more}>⌄</button>}</div>}</form>}{/* The panel opens above these, it does not replace them. Hiding them while somebody
+    {manual.trim().length>=2&&<div className="location-results" aria-live="polite">{lookingUp&&candidates.length===0?<p>{t('searchingLocations')}</p>:!lookingUp&&candidates.length===0?<p>{t('noLocations')}</p>:candidates.map(candidate=><button key={candidate.place_id} onClick={()=>void choose(candidate)} disabled={loading}><strong>{candidate.name}</strong><span>{candidate.address}</span><small>{candidate.attributions.join(' · ')}</small></button>)}</div>}</section>}{location&&<form className={`search-form${suggestionsOpen?' is-query-open':''}`} onBlur={event=>{const panel=event.currentTarget;
+      // Asking where focus went is unreliable on a touch screen: the element being tapped
+      // is often not named as the blur's destination, so the panel closed under the finger
+      // on its way to the control inside it. Asking a tick later, where focus actually
+      // landed, is the same question with an answer.
+      window.setTimeout(()=>{if(!panel.contains(document.activeElement))setSuggestionsOpen(false);},0);}} onSubmit={event=>{setSuggestionsOpen(false);submit(event);}} aria-busy={loading}>{suggestionsOpen&&<button type="button" className="search-query-close" onClick={()=>setSuggestionsOpen(false)} aria-label={t('close')}><X aria-hidden="true"/></button>}{suggestionsOpen?<button type="button" className="search-query-back" onClick={()=>setSuggestionsOpen(false)} aria-label={t('back')}><ArrowLeft aria-hidden="true"/></button>:<Search aria-hidden="true"/>}<div className="search-field"><textarea ref={field} onFocus={()=>{setSuggestionsOpen(true);setSuggestionsExpanded(false);}} rows={1} value={query} onChange={event=>setQuery(event.target.value)} onKeyDown={event=>{if(event.key==='Escape')setSuggestionsOpen(false);if(event.key==='Enter'){event.preventDefault();void runSearch();}}} placeholder={placeholder} aria-label={t('searchHint')} disabled={loading}/>{query&&!loading&&<button type="button" className="search-clear" onClick={()=>{setQuery('');field.current?.focus();}} aria-label={t('clearSearch')}><X aria-hidden="true"/></button>}</div>{suggestionsOpen&&<button type="submit" disabled={loading}>{loading?t('loading'):t('searchAction')}</button>}{suggestionsOpen&&<div className="search-query-suggestions"><h2 className="search-query-suggestions-title">{t('suggestedSearches')}</h2><div className="search-query-suggestions-list">{prompts.map(phrase=><button type="button" key={phrase} onClick={()=>{setSuggestionsOpen(false);fill(phrase);}}>{phrase}<ArrowRight aria-hidden="true"/></button>)}</div>{stripPhrases.length>4&&!suggestionsExpanded&&<button type="button" className="search-query-more" onMouseDown={event=>event.preventDefault()} onClick={()=>setSuggestionsExpanded(true)} aria-label={historyCopy[locale].more}>⌄</button>}</div>}</form>}{/* The panel opens above these, it does not replace them. Hiding them while somebody
         changes their location threw away the recent searches and the categories they were
         about to pick from, and put them back only once the location was settled. */}
     {!data&&!loading&&<div className="search-suggestions"><div>{historyAnswered&&<section className="recent-searches"><header><h2>{t('showRecentSearches')}</h2>{history.length>0&&<button type="button" onClick={()=>void clearHistory()} disabled={historyBusy}>{t('clearSearches')}</button>}</header>{history.length?<><ul>{history.slice(0,historyExpanded?10:3).map(entry=><li key={entry.id}><button type="button" className="recent-search-query" onClick={()=>fill(entry.raw_query)}>{entry.raw_query}</button><button type="button" className="recent-search-delete" onClick={()=>void removeHistory(entry.id)} disabled={historyBusy} aria-label={t('deleteSearch')}>{t('deleteShort')}</button></li>)}</ul>{history.length>3&&(historyExpanded

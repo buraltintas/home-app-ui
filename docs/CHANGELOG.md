@@ -8,6 +8,45 @@ value involved.
 
 ---
 
+## The full-screen search panel was fixed to the wrong thing
+
+- The panel that opens when the search field is tapped was never covering the page: the
+  hero's entry animation holds its last frame, and an element holding a transform becomes
+  the frame of reference for anything fixed inside it. So the panel stopped at the hero's
+  lower edge and the results underneath showed through. It covers the screen now.
+- In that panel the way back, the question and the way out share one row, the field is a
+  single line with a frame of its own, the close is the same circle the store page uses for
+  its own way back, and the suggestions heading is readable as a heading. The close and the
+  search button belong to the panel and no longer appear on the search page behind it.
+- "Show more" under the suggestions had nothing to show when the neighbourhood had only
+  five or six phrases, and the panel could close under the finger before the tap landed.
+  The seasonal pool now stands behind the neighbourhood's own phrases, and the panel asks
+  where focus actually went rather than trusting what the blur event names.
+- "Clear all" sat at the right edge of the recent searches but inside a box the width of the
+  whole row, so its words stayed on the left and it never lined up with the row's own
+  delete. The box is the width of what it says.
+- The waiting screen is smaller, and the mascot fits it. The box is measured from the film
+  rather than guessed -- the drawing occupies 1031 of its 1376 columns, starting 164 in --
+  so the white margin is cropped exactly instead of the mascot's right-hand side.
+- The navigation icons no longer flash a focus ring when tapped. The ring stays wherever
+  there is a keyboard to navigate with.
+- The store's save dock is the width of the navigation dock it stands above, is not shown
+  on a store already saved, and leaves one second after saving rather than two.
+- The store's score panel says how many reviews it is the average of; the way down to them
+  is drawn as a way down rather than as a second button. A review on that page shows its
+  score as the same five stars the panel uses, drops liking and sharing, keeps its author's
+  initial a circle, and opens its eight scores from a line with a mark that turns.
+- The review form's eight questions are laid out as the store's own score table, and its
+  two opening sentences get a line each. The stepper's labels sit level with their bubbles;
+  they were centred against a second row that no longer exists.
+- Each saved store now shows how far away it is, and says so plainly when that is near
+  enough to review it. Read from the device, and only where the browser has already granted
+  it -- nothing is prompted, and a browser that has not is simply not asked.
+- Turning the browser's location permission back on now finishes the press that was refused
+  before it, instead of requiring a reload.
+- The profile's "raise your contributor level" control is the store page's control, not a
+  second one that resembles it.
+
 ## The language switch left the answer in the old language
 
 - Search results, the out-of-scope sentence and the category names are written by the

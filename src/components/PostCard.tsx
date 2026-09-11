@@ -8,7 +8,7 @@ import type {Post,ReviewCriteriaScores} from '@/lib/types';
 import {useI18n} from '@/i18n/I18nProvider';
 import { localePath } from '@/lib/site';
 import {apiFetch} from '@/lib/api-client';
-import {Rating,RatingStars,Verified} from './Rating';
+import {RatingStars,Verified} from './Rating';
 import {AuthDialog} from './AuthDialog';
 import {ContributorLevel} from './ContributorLevel';
 import {storePhotoURL} from '@/lib/store-photo';
@@ -113,7 +113,7 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
       :!onStorePage?<Link href={localePath(locale,`/reviews/${post.id}`)} className="post-photo is-empty"><span aria-hidden="true">{post.store_name.slice(0,2).toLocaleUpperCase(locale)}</span><small>{t('noPhoto')}</small></Link>:null}
 
     <div className="post-details">
-      <div className="post-meta"><Rating value={post.rating}/><Verified label={t('verified')}/></div>
+      <div className="post-meta"><RatingStars value={post.rating}/><Verified label={t('verified')}/></div>
       <p className="post-written">{written}</p>
       {/* The score is an average of eight answers, and the eight are what somebody reading
           a review actually wants: a four out of five means one thing when the staff carried
@@ -126,7 +126,10 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
       {/* A review is eight scores now. The written text and the photographs people uploaded
           are still in the database, untouched -- they are simply no longer shown. One line
           brings them back if that decision changes. */}
-      <footer className="post-actions">
+      {/* On the store's own page these go: liking and sharing a single review are things
+          you do in the feed, and in a row of narrow cards under the score table they read
+          as chrome on top of the one thing the card is there to say. */}
+      {!onStorePage&&<footer className="post-actions">
         <button disabled={busy==='like'} aria-pressed={liked} onClick={()=>void mutate('like')}><Heart className={liked?'active-icon':''}/>{likes}</button>
         {!owned&&!onStorePage&&<Link href={localePath(locale,`/reviews/${post.id}`)} className="post-action-link"><MessageCircle/>{post.comment_count}</Link>}
         {/* On your own reviews these two are icons. The row is a list entry, not a page,
@@ -134,7 +137,7 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
             actions into a sentence. The names are still there for screen readers. */}
         <button aria-label={owned?(shared?t('copied'):t('share')):undefined} title={owned?t('share'):undefined} onClick={()=>void share()}><Send/>{owned?null:shared?t('copied'):t('share')}</button>
         {owned&&<button className="post-delete" disabled={removing} aria-label={t('deleteReview')} title={t('deleteReview')} onClick={()=>void remove()}><Trash2/></button>}
-      </footer>
+      </footer>}
       {removeFailed&&<p className="form-error" role="alert">{t('deleteReviewFailed')}</p>}
     </div>
     <AuthDialog open={auth} onClose={()=>setAuth(false)}/>

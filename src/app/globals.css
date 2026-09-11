@@ -74,7 +74,7 @@
 .comment-form{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
 .comment-form label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-muted)}
 .comment-form textarea{width:100%;min-height:96px;padding:13px 14px;font:inherit;font-size:16px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface);color:inherit;resize:vertical}.public-profile{max-width:1100px;margin:70px auto 40px;padding:0 32px;display:grid;grid-template-columns:auto 1fr auto;gap:28px;align-items:start}.profile-avatar{width:96px;height:96px;font-size:32px}.public-profile h1{font-size:46px;margin:8px 0}.public-profile>div:nth-child(2)>p:not(.eyebrow){font-size:17px;color:var(--ink-muted)}.public-profile dl{display:flex;gap:28px}.public-profile dl div{display:flex;flex-direction:column-reverse}.public-profile dt{font-size:12px;color:var(--ink-muted)}.public-profile dd{font-size:24px;font-weight:700;margin:0}.empty-page{min-height:calc(100vh - 72px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px}.empty-page>svg{width:40px;height:40px;color:var(--clay);margin-bottom:24px}.empty-page .locale-field{margin-top:38px;display:grid;gap:8px;justify-items:start}
-.locale-switcher{display:flex;align-items:center;gap:10px}.locale-switcher select{width:100%;max-width:320px;min-height:48px;border:1px solid var(--line-strong);background:var(--surface);padding:0 14px;border-radius:var(--r-md);font-size:16px}/* Kept out of sight, kept in the accessibility tree. */.visually-hidden{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}.create-page{max-width:1000px;margin:80px auto;padding:0 32px;display:grid;grid-template-columns:1fr 1fr;gap:80px}.create-page>.button{grid-column:2;width:max-content}.review-steps{list-style:none;margin:0;padding:0}.review-steps li{display:grid;grid-template-columns:46px 1fr;column-gap:14px;padding:16px 0;border-bottom:1px solid var(--line);align-items:center}.review-steps li>span{grid-row:1/3;width:40px;height:40px;border-radius:var(--r-pill);background:var(--muted);color:var(--ink-muted);display:grid;place-items:center;flex:none}/* A checklist where every row looks the same tells nobody where they are. The step in
+.locale-switcher{display:flex;align-items:center;gap:10px}.locale-switcher select{width:100%;max-width:320px;min-height:48px;border:1px solid var(--line-strong);background:var(--surface);padding:0 14px;border-radius:var(--r-md);font-size:16px}/* Kept out of sight, kept in the accessibility tree. */.visually-hidden{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}.create-page{max-width:1000px;margin:80px auto;padding:0 32px;display:grid;grid-template-columns:1fr 1fr;gap:80px}.create-page>.button{grid-column:2;width:max-content}.review-steps{list-style:none;margin:0;padding:0}.review-steps li{display:grid;grid-template-columns:46px 1fr;column-gap:14px;padding:16px 0;border-bottom:1px solid var(--line);align-items:center}.review-steps li>span{width:40px;height:40px;border-radius:var(--r-pill);background:var(--muted);color:var(--ink-muted);display:grid;place-items:center;flex:none}/* A checklist where every row looks the same tells nobody where they are. The step in
    hand is the only one that carries weight; the rest step back and the finished ones
    stop competing entirely. */.review-steps li{opacity:.5}.review-steps li strong{font-size:16px;font-weight:600;color:var(--ink-muted)}.review-steps .current{opacity:1;background:var(--surface);border-radius:var(--r-lg);border:1px solid var(--line);border-bottom-color:var(--line);padding:16px 18px;margin:6px 0}.review-steps .current strong{font-size:19px;font-weight:700;color:var(--ink)}.review-steps .done{opacity:.62}.review-steps .done>span{background:var(--success);color:var(--surface)}.review-steps small{color:var(--ink-muted)}.review-steps .current>span{background:var(--ink);color:var(--surface)}.review-steps .done{opacity:.6}/* Text meant for a screen reader and for nobody else. It was being used before it was
    defined, so a loading page that was supposed to draw nothing drew its own title in the
@@ -106,6 +106,11 @@
 @media(max-width:600px){.feed-layout{max-width:none;padding-left:0;padding-right:0}}
 @media(max-width:900px){.site-header nav::before{display:none}}
 .location-control>.nearby-button:last-child{display:flex;width:auto}.location-control>.location-clear{display:grid;place-items:center;width:44px;text-decoration:none}.site-header nav a:focus-visible{outline:0;border-radius:8px;box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 58%,white)}
+/* A tap is not keyboard focus, but a touch browser hands the link focus anyway and the
+   ring flashed round the icon for an instant on the way to the next page. The ring is
+   what a keyboard visitor navigates by, so it stays wherever there is a keyboard to
+   navigate with. */
+@media(pointer:coarse){.site-header nav a:focus-visible{box-shadow:none}}
 
 .brand-link{display:flex;align-items:center;gap:12px;min-height:58px;font-size:23px;font-weight:700;white-space:nowrap}.brand-mark{width:52px;height:52px;border-radius:var(--r-pill);overflow:hidden;flex-shrink:0;box-shadow:0 1px 0 rgba(38,37,33,.12)}.brand-link img{width:100%;height:100%;object-fit:cover}
 @media(max-width:600px){.brand-link{gap:9px;font-size:19px}.brand-mark{width:46px;height:46px}}
@@ -375,21 +380,25 @@ body>main{flex:1 0 auto;min-width:0;width:100%}
    the results underneath are the previous answer, and leaving them half visible invites
    somebody to read a stale list as the new one. */
 .search-overlay{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:24px;background:color-mix(in srgb,var(--canvas) 88%,transparent);backdrop-filter:blur(6px)}
-.search-overlay-card{width:min(348px,100%);background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);box-shadow:10px 10px 0 var(--accent);padding:24px 22px;display:grid;justify-items:center;gap:6px;text-align:center}
+.search-overlay-card{width:min(286px,100%);background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);box-shadow:8px 8px 0 var(--accent);padding:18px 18px 16px;display:grid;justify-items:center;gap:6px;text-align:center}
 /* The mascot was drawn twice at two different sizes, which is why it appeared large and
    then shrank. The still is a portrait picture of the mascot; the video is a landscape
-   frame with white bars either side of the same mascot. Fitting both inside one square
-   gave the still the full height and the video barely half of it.
-   The box is now the shape of the mascot inside the video, and both are drawn to the box's
-   height. The video's white bars fall outside it and are clipped against a white card, so
-   what is on screen is the same mascot at the same size, before and after the swap. */
-.search-overlay-art{position:relative;display:block;width:190px;height:140px;overflow:hidden}
-.search-overlay-card video,.search-overlay-card img{position:absolute;top:0;left:50%;transform:translateX(-50%);width:auto;max-width:none;height:100%;object-fit:contain}
+   frame with white bars either side of the same mascot. The video is what is shown now,
+   and the box is measured from the video itself rather than guessed: the drawing inside
+   the file occupies 1031 of its 1376 columns and its full height, starting 164 columns
+   in. So the box carries that drawing's proportions (768/1031), the film is scaled to the
+   box's height, and it is pushed left by exactly the white margin instead of being
+   centred -- centring is what pushed the right-hand side of the mascot out of the box.
+   The still keeps its own proportions inside the same box; it is only ever seen when the
+   video refuses to run. */
+.search-overlay-art{position:relative;display:block;width:150px;height:112px;overflow:hidden}
+.search-overlay-card video{position:absolute;top:0;left:-15.9%;transform:none;width:auto;max-width:none;height:100%;object-fit:contain}
+.search-overlay-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
 .search-overlay-card video{opacity:0}
 .search-overlay-art[data-playing]>video{opacity:1}
 .search-overlay-art[data-playing]>img{opacity:0}
-.search-overlay-title{margin:4px 0 8px;font-weight:650;letter-spacing:-.03em;font-size:20px}
-@media(max-width:600px){.search-overlay-card{padding:22px 18px}.search-overlay-art{width:170px;height:125px}}
+.search-overlay-title{margin:2px 0 4px;font-weight:650;letter-spacing:-.03em;font-size:17px}
+@media(max-width:600px){.search-overlay-card{width:min(268px,100%);padding:16px 16px 14px}.search-overlay-art{width:132px;height:98px}}
 @media(prefers-reduced-motion:reduce){.search-overlay{backdrop-filter:none}}
 
 /* Profile — City Print. See DESIGN.md.
@@ -596,14 +605,21 @@ body>main{flex:1 0 auto;min-width:0;width:100%}
    375px without shrinking the targets below the size a thumb can hit. */
 /* Reverted at the reviewer's request: framing the eight questions like the store's score
    table turned the form into a panel and broke the screen. A ruled list is what it was. */
-.criteria-list{display:grid;gap:2px;margin:0 0 22px;border-top:1px solid var(--line)}
-.criteria-list .criterion{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:16px;margin:0;padding:14px 0;border:0;border-bottom:1px solid var(--line)}
-.criteria-list .criterion legend{float:left;width:100%;padding:0;font-size:16px;font-weight:600;color:var(--ink)}
+.criteria-list{display:grid;width:100%;justify-self:stretch;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;margin:0 0 22px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.criteria-list .criterion{display:block;margin:0;padding:14px 16px;border:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.criteria-list .criterion:nth-child(2n){border-right:0}
+.criteria-list .criterion:nth-last-child(-n+2){border-bottom:0}
+.criteria-list .criterion legend{float:left;width:100%;margin-bottom:6px;padding:0;font-size:13px;line-height:1.35;font-weight:500;color:var(--ink-muted)}
+.criteria-list .criterion-stars{clear:both}
 .criteria-list .criterion label{display:inline-grid;place-items:center}
 .criteria-hint{margin:0 0 18px;color:var(--ink-muted);font-size:14px}
 @media(max-width:600px){
-  .criteria-list .criterion{grid-template-columns:minmax(0,1fr);gap:8px;padding:16px 0}
-  .criteria-list .criterion legend{font-size:15px}
+  /* Five 44 px targets need the whole width of a phone, so the questions run one to a row
+     there; the cells and the type stay the store page's. */
+  .criteria-list{grid-template-columns:minmax(0,1fr)}
+  .criteria-list .criterion{padding:14px 0;border-right:0}
+  .criteria-list .criterion:nth-last-child(-n+2){border-bottom:1px solid var(--line)}
+  .criteria-list .criterion:last-child{border-bottom:0}
 }
 
 /* The same single cross the two search boxes carry, on the location box. It sits inside the

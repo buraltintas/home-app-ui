@@ -10,11 +10,19 @@ import type {Locale} from '@/lib/types';
 // from the "katki" section of the About document, which is the one place this is stated
 // and the place the store page links to. Two copies of an explanation drift apart, and the
 // one nobody remembers to update is the one people read.
+// The same two lines the store page shows, in the same order, so the control a reader
+// meets in two places is one control rather than two that happen to agree.
 const openLabel:Record<Locale,string>={
   tr:'Katkı seviyeni yükselt',
   en:'Raise your contributor level',
   de:'Beitragsstufe erhöhen',
   ru:'Повысить уровень участника',
+};
+const openHint:Record<Locale,string>={
+  tr:'Katkı seviyeleri ne işe yarar?',
+  en:'What are contributor levels for?',
+  de:'Wozu dienen Beitragsstufen?',
+  ru:'Для чего нужны уровни участника?',
 };
 const closeLabel:Record<Locale,string>={tr:'Kapat',en:'Close',de:'Schließen',ru:'Закрыть'};
 
@@ -33,7 +41,9 @@ export function ContributorLevelsDialog({locale}:{locale:Locale}){
   if(!section)return null;
   return <>
     <div className="level-boost">
-      <button type="button" className="button secondary level-boost-action" onClick={()=>setOpen(true)}>{openLabel[locale]}</button>
+      <button type="button" className="contribution-progress level-boost-action" onClick={()=>setOpen(true)}>
+        <span aria-hidden="true">↗</span><span><strong>{openLabel[locale]}</strong><small>{openHint[locale]}</small></span>
+      </button>
     </div>
     {open&&<div className="dialog-backdrop" role="presentation" onMouseDown={()=>setOpen(false)}>
       <section className="auth-dialog level-dialog" role="dialog" aria-modal="true" aria-labelledby="level-dialog-title" onMouseDown={event=>event.stopPropagation()}>

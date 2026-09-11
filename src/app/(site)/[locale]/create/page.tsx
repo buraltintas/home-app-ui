@@ -27,11 +27,13 @@ const criterionLabels={
   returns:'criterionReturns',
   cleanliness:'criterionCleanliness',
 } as const;
-const criteriaIntroCopy:Record<Locale,string>={
-  tr:'Sekiz başlığın hepsini puanla. Mağaza puanı bunların ortalamasıdır.',
-  en:'Score all eight headings. The store rating is their average.',
-  de:'Bewerte alle acht Bereiche. Die Ladenbewertung ist ihr Durchschnitt.',
-  ru:'Оцените все восемь пунктов. Оценка магазина — их среднее.',
+// Two sentences that do two different jobs -- what to do, and what it produces -- so they
+// are given a line each rather than run together.
+const criteriaIntroCopy:Record<Locale,[string,string]>={
+  tr:['Sekiz başlığın hepsini puanla.','Mağaza puanı bunların ortalamasıdır.'],
+  en:['Score all eight headings.','The store rating is their average.'],
+  de:['Bewerte alle acht Bereiche.','Die Ladenbewertung ist ihr Durchschnitt.'],
+  ru:['Оцените все восемь пунктов.','Оценка магазина — их среднее.'],
 };
 type CriterionKey=keyof typeof criterionLabels;
 const criterionKeys=Object.keys(criterionLabels) as CriterionKey[];
@@ -232,7 +234,7 @@ function ReviewWizard({storeId}:{storeId:string}){
     </section>}
 
     {step===2&&<section className="review-step">
-      <p>{criteriaIntroCopy[locale]}</p>
+      <p className="criteria-intro">{criteriaIntroCopy[locale][0]}<span>{criteriaIntroCopy[locale][1]}</span></p>
       {/* Eight fieldsets rather than one, because each line is its own question and a
           screen reader has to be able to say which one it is reading. The overall rating is
           not among them: it is the average of these, worked out by the server. */}
