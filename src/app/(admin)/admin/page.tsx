@@ -10,7 +10,7 @@ export const dynamic='force-dynamic';
 const SNAPSHOT_LABELS:[string,string][]=[
   ['registered_users_total','Kayıtlı kullanıcı'],
   ['stores_total','Mağaza'],
-  ['google_imported_stores_total',"Google'dan alınan"],
+  ['brand_verified_stores_total','Markadan doğrulanan'],
   ['posts_current_total','Yayında olan yorum'],
   ['searches_lifetime','Toplam arama'],
   ['favorites_current_total','Favori'],

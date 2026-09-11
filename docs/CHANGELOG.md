@@ -8,6 +8,23 @@ value involved.
 
 ---
 
+## The panel's Google counter outlived Google
+
+"Google'dan alınan: 1.076" sat on the admin overview beside "Mağaza: 1.076", which read as
+though every store in the catalogue still came from Google. Nothing did: the provider rows
+that figure counted were deleted, but it is an incrementally maintained counter and nothing
+recounted it, so it kept showing the last number it ever had.
+
+The useful figure now is how much of the catalogue a brand's own published list stands
+behind, so the column holds that instead and is labelled "Markadan doğrulanan". The daily
+metrics table keeps its old column under its old name -- what it recorded on the days it
+recorded it was true -- and simply stops being written.
+
+**English Home has a mark.** Its wordmark is drawn inline in its own page rather than served
+as a file, which is why the collector reported none; `public/brands/english-home.svg` is
+that wordmark. Its stores show it instead of an initial.
+
+
 ## The full-screen search panel was fixed to the wrong thing
 
 - The panel that opens when the search field is tapped was never covering the page: the
