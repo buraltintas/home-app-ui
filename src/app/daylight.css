@@ -627,3 +627,11 @@ svg{stroke-width:2}
   .result-support .result-save{width:auto;min-width:132px}
   .result-support .result-google{grid-column:1/-1;min-height:40px}
 }
+
+/* A chain's mark is not a photograph of the shop. A photograph fills its frame and is
+   cropped to it; a mark has to sit inside its frame, on a plain ground, with room around
+   it -- drawn the other way it reads as a mistake rather than as a logo. */
+.is-brand-mark{background:var(--surface);border:1px solid var(--line)}
+.is-brand-mark img,img.is-brand-mark{object-fit:contain!important;padding:10%;background:var(--surface)}
+.store-hero-photo.is-brand-mark{background:var(--surface)}
+.store-hero-photo.is-brand-mark img{padding:6% 12%}

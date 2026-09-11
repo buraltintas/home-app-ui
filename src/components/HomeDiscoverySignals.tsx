@@ -7,7 +7,7 @@ import {useEffect,useState} from 'react';
 import {useI18n} from '@/i18n/I18nProvider';
 import {apiFetch} from '@/lib/api-client';
 import {localePath} from '@/lib/site';
-import {storePhotoURL} from '@/lib/store-photo';
+import {isBrandMark,storePhotoURL} from '@/lib/store-photo';
 import type {MonthlyStoreHighlights,StoreHighlight} from '@/lib/types';
 import {homeSignalsCopy} from '@/content/home';
 
@@ -21,7 +21,7 @@ function HighlightLink({item,label,metric}:{item:StoreHighlight;label:string;met
   const photo=storePhotoURL(item.photo,520);
   return <Link className="store-highlight" href={localePath(locale,`/stores/${item.id}`)}>
     {photo
-      ?<Image className="store-highlight-photo" src={photo} width={72} height={72} alt="" unoptimized/>
+      ?<Image className={`store-highlight-photo${isBrandMark(item.photo)?' is-brand-mark':''}`} src={photo} width={72} height={72} alt="" unoptimized/>
       :<span className="store-highlight-photo store-highlight-photo-empty" aria-hidden="true">{item.name.trim().charAt(0)}</span>}
     <span className="store-highlight-copy">
       <span>{label}</span>

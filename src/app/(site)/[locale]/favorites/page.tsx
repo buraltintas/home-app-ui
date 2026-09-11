@@ -12,7 +12,7 @@ import {useI18n} from '@/i18n/I18nProvider';
 import { localePath } from '@/lib/site';
 import {apiFetch} from '@/lib/api-client';
 import type {Locale,Store} from '@/lib/types';
-import {storePhotoURL} from '@/lib/store-photo';
+import {isBrandMark,storePhotoURL} from '@/lib/store-photo';
 import {TimedNudge} from '@/components/TimedNudge';
 import {StoreDistance,useReviewRadius,useViewerPosition} from '@/components/StoreDistance';
 
@@ -83,7 +83,7 @@ export default function Page(){
         store's page. It is the same control, and the same wording, the store page uses. */}
     <ul className="favorites-list">{stores.map(store=>{const photo=storePhotoURL(store.photo,320);return <li key={store.id}>
       <Link href={localePath(locale,`/stores/${store.id}`)} prefetch={false}>
-        {photo?<Image className="favorite-store-photo" src={photo} width={160} height={120} alt="" unoptimized/>:<div className="favorite-store-photo is-empty" aria-hidden="true">{store.name.trim().charAt(0)}</div>}
+        {photo?<Image className={`favorite-store-photo${isBrandMark(store.photo)?' is-brand-mark':''}`} src={photo} width={160} height={120} alt="" unoptimized/>:<div className="favorite-store-photo is-empty" aria-hidden="true">{store.name.trim().charAt(0)}</div>}
         <div><strong>{store.name}</strong><span>{[store.district,store.city].filter(Boolean).join(', ')}</span>
         {store.platform.review_count?<small><RatingStars value={store.platform.average_rating}/> · {store.platform.review_count} {t('reviews')}</small>:<small>{t('noCommunity')}</small>}</div>
         <ArrowRight aria-hidden="true"/>

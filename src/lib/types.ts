@@ -24,7 +24,7 @@ export type SearchIntent = {
 // Search receives only the Places fields that identify and classify a result. Ratings,
 // photos, contact details and hours are loaded once by the store-detail endpoint instead.
 export type GoogleExternal = { provider: 'google'; place_id: string; business_status?: string };
-export type StoredPhoto = { source: 'admin' | 'google'; media_id?: string; name?: string; attributions?: string[] };
+export type StoredPhoto = { source: 'admin' | 'brand' | 'google'; media_id?: string; name?: string; brand_slug?: string; attributions?: string[] };
 export type SearchResult = {
   id: string; search_result_impression_id: string; source: SearchSource; name: string; address: string;
   city?: string; district?: string; latitude: number; longitude: number; distance_meters?: number; categories: string[];

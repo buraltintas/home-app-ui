@@ -14,7 +14,7 @@ import {getServerI18n} from '@/i18n/server';
 import {canonicalFor,localePath,storePath} from '@/lib/site';
 import {breadcrumbJsonLd,storeJsonLd} from '@/lib/structured-data';
 import type {Locale,Store} from '@/lib/types';
-import {storePhotoURL} from '@/lib/store-photo';
+import {isBrandMark,storePhotoURL} from '@/lib/store-photo';
 import {storeStatusCopy} from '@/i18n/dictionaries';
 import {TimedNudge} from '@/components/TimedNudge';
 import {PageBackButton} from '@/components/PageBackButton';
@@ -113,7 +113,7 @@ export default async function Page({params}:Props){
           nothing about it, and the only thing that fixes it is somebody going there and
           taking a picture -- so the space asks for exactly that. */}
       {photo
-        ?<figure className="store-hero-photo"><Image src={photo} fill style={{objectFit:'cover'}} sizes="100vw" priority unoptimized alt=""/>{store.photo?.source==='google'&&<figcaption>{photoCredit}</figcaption>}</figure>
+        ?<figure className={`store-hero-photo${isBrandMark(store.photo)?' is-brand-mark':''}`}><Image src={photo} fill style={{objectFit:isBrandMark(store.photo)?'contain':'cover'}} sizes="100vw" priority unoptimized alt=""/>{store.photo?.source==='google'&&<figcaption>{photoCredit}</figcaption>}</figure>
         :<div className="store-hero-photo store-hero-empty"><span className="store-hero-initial" aria-hidden="true">{store.name.trim().charAt(0)}</span><p>{t.noPhotoYet}</p><Link className="button secondary" href={localePath(locale,`/create?store=${store.id}`)}>{t.addFirstPhoto}</Link></div>}
     </section>
     <section className="store-overview">
