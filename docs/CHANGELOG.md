@@ -8,6 +8,20 @@ value involved.
 
 ---
 
+## The matching queue has a screen
+
+Every row in it is a judgement the importer refused to make alone: a published shop that
+resembles one already in the catalogue closely enough to be suspicious and not closely
+enough to merge on. That refusal was the right call -- guessing either way is how a
+catalogue grows twins or loses shops -- but a queue nobody can open is just a slower way of
+losing the row.
+
+The two shops are shown side by side, with the distance and the resemblance that made it a
+question, because the decision is a comparison. "The same shop" ties the existing row to
+this brand, so the next import of that brand keeps it current; "a different shop" closes the
+question and leaves both. Either way the audit log says who decided.
+
+
 ## Adding a shop by hand, with the neighbours shown first
 
 The catalogue is ours now, so somebody has to be able to add a shop the importers do not

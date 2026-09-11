@@ -130,3 +130,13 @@
 .admin-nearby p{margin:0 0 8px;font-size:14px}
 .admin-nearby p:last-child{margin-bottom:0}
 .admin-form-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+
+/* The matching queue. One card per judgement, the two shops side by side, because the
+   decision is a comparison and a table makes a comparison into two rows to scroll between. */
+.admin-queue{display:grid;gap:12px;margin-top:16px}
+.admin-queue-item{border:1px solid var(--line);border-radius:8px;padding:14px}
+.admin-queue-item header{display:flex;gap:12px;flex-wrap:wrap;align-items:baseline;justify-content:space-between;margin-bottom:10px}
+.admin-queue-item header span{font-size:12px;color:var(--ink-muted)}
+.admin-queue-pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.admin-queue-pair h3{margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-muted)}
+.admin-queue-pair p{margin:0 0 4px}

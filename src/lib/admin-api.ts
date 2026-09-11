@@ -22,6 +22,7 @@ export type CategoryOption={slug:string;name:string};
 export type ReviewRow={id:string;store_id:string;store_name:string;user_id:string;author:string;rating:number;text:string;created_at:string;deleted:boolean};
 export type SearchRow={id:string;query:string;user_id?:string;query_language:string;scope:string;result_count:number;click_count:number;duration_ms?:number;fallback_state?:string;created_at:string};
 export type FeedbackRow={id:string;user_id?:string;kind:string;message:string;contact_email?:string;author?:string;locale:string;status:string;created_at:string;handled_at?:string;reply?:string;replied_at?:string};
+export type MatchQueueRow={id:string;brand:string;name:string;address:string;city:string;district:string;reason:string;similarity:number;distance_meters:number;created_at:string;match_id:string|null;match_name:string;match_address:string;match_source_kind:string};
 export type AuditRow={id:string;actor_email:string;action:string;target_type:string;target_id:string;metadata:Record<string,unknown>;created_at:string};
 
 const qs=(params:Record<string,string|number|undefined>)=>{
@@ -54,3 +55,11 @@ export const getSearches=(q?:string,page=0)=>readPage<SearchRow>('searches',{q},
 export const getAudit=(page=0)=>readPage<AuditRow>('audit',{},page);
 export const getFeedback=(q?:string,page=0)=>readPage<FeedbackRow>('feedback',{q},page);
 export const getCategories=()=>read<{items:CategoryOption[]}>('categories');
+
+// The rows the catalogue matcher parked for a person: too like an existing shop to ignore,
+// too unlike it to merge on. Read straight rather than paged like the logs -- the queue is
+// meant to be emptied, and a queue long enough to need pages is itself the finding.
+export async function getMatchQueue():Promise<AdminResult<MatchQueueRow[]>>{
+  const result=await read<{items:MatchQueueRow[]}>('match-queue?limit=200');
+  return result.ok?{ok:true,data:result.data.items??[]}:{ok:false};
+}
