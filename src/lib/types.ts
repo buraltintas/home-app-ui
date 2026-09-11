@@ -36,7 +36,9 @@ export type SearchGuidance = { code: 'HOME_LIVING_ONLY'; reason: 'out_of_scope' 
 export type SearchResponse = { search_id: string; visitor_session_id?: string; intent: SearchIntent; results: SearchResult[]; guidance?: SearchGuidance; fallback_state?: string };
 export type StoreHighlight = { id:string;name:string;city:string;district?:string;average_rating:number;review_count:number;recent_review_count:number;rating_increase?:number;photo?:StoredPhoto };
 export type MonthlyStoreHighlights = { rating_gainer?:StoreHighlight;most_reviewed?:StoreHighlight };
-export type LocationResult = { provider: 'google'; place_id: string; name: string; address: string; latitude: number; longitude: number; types: string[]; attributions: string[] };
+// The picker's places are ours now, read from a Turkish administrative table the API
+// ships with rather than bought from a provider. `place_id` carries that table's own id.
+export type LocationResult = { provider: 'bosagezme'; place_id: string; name: string; address: string; latitude: number; longitude: number; types: string[]; attributions: string[] };
 export type DiscoveryLocation = { source: 'device' | 'manual'; label: string; address: string; place_id?: string; latitude: number; longitude: number; accuracy_meters?: number; updated_at: string };
 export type Store = { id:string;name:string;slug:string;is_premium?:boolean;is_catalog_store:boolean;brand_name?:string;address:string;city:string;district:string;phone?:string;website?:string;latitude:number;longitude:number;distance_meters?:number;categories:string[];category_labels:string[];localized_description?:string;platform:PlatformStats;criteria_averages?:CriteriaAverages;viewer_has_favorited:boolean;viewer_has_reviewed:boolean;photo?:StoredPhoto;external_sources?:{provider:'google';external_id:string;attribution:Record<string,unknown>;refreshed_at?:string}[] };
 export type StoreDetail = { store: Store; recent_posts: Post[] };
