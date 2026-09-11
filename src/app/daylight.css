@@ -518,6 +518,12 @@ svg{stroke-width:2}
 .recent-searches>header button:hover{opacity:1}
 .recent-searches>header button,.recent-search-delete,.recent-search-more{min-height:44px;border:0;background:transparent;cursor:pointer}
 .recent-search-more{color:var(--clay);font-weight:700}
+/* Revealing the rest of an answer. It sits at the end of the list because that is where
+   somebody runs out of results, and it is a full-width target because on a phone that is
+   the only place a thumb reliably lands after a scroll. */
+.result-more{width:100%;min-height:48px;margin-top:8px;border:1px solid var(--line);border-radius:12px;
+  background:transparent;color:var(--clay);font:inherit;font-weight:700;cursor:pointer}
+.result-more:hover{background:color-mix(in srgb,var(--clay) 6%,transparent)}
 .recent-searches ul{list-style:none;margin:0;padding:0}
 .recent-searches li{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;border-bottom:1px solid var(--line)}
 .recent-search-query{min-height:48px;padding:0;text-align:left;font-size:16px;color:var(--ink)}

@@ -105,6 +105,10 @@ function Result({item,onSelect,saved}:{item:SearchResult;onSelect:()=>void;saved
   </article>;
 }
 
+// One screenful of results. The search answers with up to ninety; this is how many are on
+// screen before somebody asks for more.
+const PAGE=30;
+
 export function SearchExperience() {
   const {t,locale}=useI18n();
   const pathname=usePathname();
@@ -113,6 +117,9 @@ export function SearchExperience() {
   // including the ordinary one of not being signed in -- leaves every row unsaved rather
   // than breaking the results.
   const [savedStores,setSavedStores]=useState<Set<string>>(new Set());
+  // How many of the answer is on screen. The backend returns up to ninety stores in one
+  // response, so revealing the next screenful costs nothing -- no request, no wait, and no
+  // second row in the search log for one person's one question.
   useEffect(()=>{
     let active=true;
     void(async()=>{
@@ -129,6 +136,16 @@ export function SearchExperience() {
   const [suggestionsOpen,setSuggestionsOpen]=useState(false);
   const [suggestionsExpanded,setSuggestionsExpanded]=useState(false);
   const [data,setData]=useState<SearchResponse>();
+  // How many of the answer is on screen. The backend returns up to ninety stores in one
+  // response, so revealing the next screenful costs nothing -- no request, no wait, and no
+  // second row in the search log for one person's one question.
+  //
+  // A new answer starts at the top again, adjusted during render rather than in an effect:
+  // an effect would paint the previous answer's scroll depth for a frame first, and this is
+  // the pattern React documents for exactly that.
+  const [shown,setShown]=useState(PAGE);
+  const [shownFor,setShownFor]=useState(data);
+  if(shownFor!==data){setShownFor(data);setShown(PAGE);}
   const [loading,setLoading]=useState(false);
   const [error,setError]=useState('');
   // Why the location failed, not just what to say about it. The instruction that helps
@@ -658,6 +675,6 @@ export function SearchExperience() {
   :<button type="button" className="recent-search-more" onClick={()=>setHistoryExpanded(true)}>{historyCopy[locale].more}</button>)}</>:<p>{t('pastSearchesEmpty')}</p>}</section>}</div><div><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>fill(category.name)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}{category.search_count>0&&<small title={t('searchCount')}>{category.search_count.toLocaleString(locale)} {t('searchCountShort')}</small>}</span></button>)}</div></div></div>}</header>
     {loading&&<SearchOverlay/>}
     {!loading&&data?.guidance&&<section className="guidance-card" role="alert"><p>{data.guidance.message}</p><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>fill(category.name)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}</span></button>)}</div></section>}
-    {!loading&&data&&!data.guidance&&<section className="results-layout"><div className="result-list"><p className="result-count">{data.results.length} {t('results')}</p>{data.results.length===0?<div className="zero-state"><h2>{t('zeroTitle')}</h2><p>{t('zeroBody')}</p></div>:data.results.map(item=><Result item={item} key={item.search_result_impression_id} onSelect={()=>select(item)} saved={savedStores.has(item.id??'')}/>)}</div></section>}
+    {!loading&&data&&!data.guidance&&<section className="results-layout"><div className="result-list"><p className="result-count">{data.results.length} {t('results')}</p>{data.results.length===0?<div className="zero-state"><h2>{t('zeroTitle')}</h2><p>{t('zeroBody')}</p></div>:<>{data.results.slice(0,shown).map(item=><Result item={item} key={item.search_result_impression_id} onSelect={()=>select(item)} saved={savedStores.has(item.id??'')}/>)}{shown<data.results.length&&<button type="button" className="result-more" onClick={()=>setShown(count=>count+PAGE)}>{t('showMoreResults')}</button>}</>}</div></section>}
     <TimedNudge kind="discovery"/></main>;
 }
