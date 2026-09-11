@@ -114,3 +114,19 @@
   .admin-export a{flex:1;justify-content:center}
   .admin-gate{margin:24px auto;padding:0 4px}
 }
+
+/* Adding a shop by hand. It sits inside the stores page rather than on its own, because
+   the first thing anybody adding a shop should see is the list they might be adding to. */
+.admin-form{margin:16px 0;padding:16px;border:1px solid var(--line);border-radius:8px}
+.admin-form h2{margin:0 0 4px;font-size:16px}
+.admin-form h3{margin:0 0 8px;font-size:14px}
+.admin-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:12px 0}
+.admin-fields label{display:grid;gap:4px}
+.admin-fields span{font-size:12px;color:var(--ink-muted)}
+.admin-fields input{padding:8px 10px;border:1px solid var(--line);border-radius:6px;font:inherit;min-height:40px}
+/* The neighbours, shown before anything is written. Marked out rather than tucked away:
+   this block existing at all is the point of the form. */
+.admin-nearby{margin:12px 0;padding:12px;border-left:2px solid var(--cobalt);background:var(--surface)}
+.admin-nearby p{margin:0 0 8px;font-size:14px}
+.admin-nearby p:last-child{margin-bottom:0}
+.admin-form-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}

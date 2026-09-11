@@ -8,6 +8,7 @@ import {CategoryEditor} from '../CategoryEditor';
 import {getCategories,getStores} from '@/lib/admin-api';
 import {adminDate} from '@/lib/admin-time';
 import {StoreCoverEditor} from '../StoreCoverEditor';
+import {StoreCreator} from '../StoreCreator';
 
 export const dynamic='force-dynamic';
 const when=adminDate;
@@ -29,7 +30,7 @@ export default async function Page({searchParams}:{searchParams:Promise<{q?:stri
       editoryal mağazaları arama ve detay ekranında ayırt eder. Kategoriler ayrıca düzenlenebilir.
       Her değişiklik işlem kayıtlarına yazılır.
     </p>
-    <div className="admin-toolbar"><AdminSearch placeholder="Mağaza adı veya şehir"/><ExportLinks table="stores" q={q}/></div>
+    <div className="admin-toolbar"><AdminSearch placeholder="Mağaza adı veya şehir"/><StoreCreator categories={options}/><ExportLinks table="stores" q={q}/></div>
     <div className="admin-table-wrap">
       <table className="admin-table">
         <thead><tr><th>Mağaza</th><th>Kapak</th><th>Şehir</th><th>Yorum</th><th>Puan</th><th>Öne çıkarma</th><th>Katalog</th><th>Kategoriler</th><th>Eklendi</th><th></th></tr></thead>

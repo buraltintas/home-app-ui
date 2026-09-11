@@ -8,6 +8,26 @@ value involved.
 
 ---
 
+## Adding a shop by hand, with the neighbours shown first
+
+The catalogue is ours now, so somebody has to be able to add a shop the importers do not
+reach. The stores page has a form for it, and the form's own step is the duplicate check:
+before it will add anything, it shows every shop already within four hundred metres, with
+how far away and how alike the names are.
+
+That check is shown rather than enforced, and the distinction matters. The importer decides
+alone, with nobody watching, so it needs thresholds and a review queue for what falls between
+them. An operator adding one shop can see what no similarity score got right -- that the row
+seven metres away is this same shop under the name it had before -- and can equally see that
+the row seven metres away is a different chain on the next unit of the same mall floor.
+Refusing would be wrong about half the time. The only thing the form insists on is that the
+question was asked at all: the add button stays unavailable until the neighbours have been
+looked at.
+
+A shop added this way is recorded as entered by an operator and verified now, which is the
+strongest provenance this catalogue has; a brand import will not overwrite it.
+
+
 ## One store total in the panel, not two
 
 The overview carried a second store card splitting the catalogue by where its rows came
