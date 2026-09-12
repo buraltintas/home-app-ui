@@ -8,6 +8,20 @@ value involved.
 
 ---
 
+## Merging two rows that are one shop, from the store list
+
+The matching queue settles rows arriving from a brand's list. Two rows already in the
+catalogue that turn out to be one shop had nowhere to be settled at all.
+
+Every row in the admin store list has a merge control now. It does not let anybody type an
+id: it fetches what stands within 400 m and shows each neighbour with its distance, how alike
+the names are and where it came from, with the merge button beside the one being merged away.
+A shop 400 m off with a similar name is exactly the case this exists for, and also exactly
+the case where reading the two side by side is what stops the wrong one being pressed. The
+row it is opened from is the one that survives, and the confirmation says so in those words.
+
+---
+
 ## An approximate location says it is approximate
 
 Five hundred shops stand where we put them rather than where their chain says they are: the

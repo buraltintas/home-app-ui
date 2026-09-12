@@ -9,6 +9,7 @@ import {getCategories,getStores} from '@/lib/admin-api';
 import {adminDate} from '@/lib/admin-time';
 import {StoreCoverEditor} from '../StoreCoverEditor';
 import {StoreCreator} from '../StoreCreator';
+import {StoreMerge} from '../StoreMerge';
 
 export const dynamic='force-dynamic';
 const when=adminDate;
@@ -86,6 +87,8 @@ export default async function Page({searchParams}:{searchParams:Promise<{q?:stri
                 label={store.is_catalog_store?'Katalogdan çıkar':'Kataloğa ekle'}/>
               {' '}
               <CategoryEditor storeId={store.id} selected={store.categories} options={options}/>
+              {' '}
+              <StoreMerge storeId={store.id} name={store.name} latitude={store.latitude} longitude={store.longitude}/>
             </td>
           </tr>)}
           {result.data.rows.length===0&&<tr><td colSpan={11} className="admin-empty">Sonuç yok.</td></tr>}

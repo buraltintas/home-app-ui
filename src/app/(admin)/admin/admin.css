@@ -42,6 +42,12 @@
 .admin-pager{display:flex;align-items:center;gap:14px;padding:12px 2px;font-size:14px;color:var(--ink-muted)}
 .admin-pager a{color:var(--cobalt);font-weight:700;min-height:44px;display:inline-flex;align-items:center}
 .admin-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.admin-merge{display:grid;gap:8px;margin-top:8px;padding:12px;border:1px solid color-mix(in srgb,var(--cobalt) 28%,transparent);background:var(--surface);min-width:320px}
+.admin-merge-keep{margin:0;font-size:13px;color:var(--ink)}
+.admin-merge-row{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;padding:8px 0;border-top:1px solid color-mix(in srgb,var(--cobalt) 20%,transparent)}
+.admin-merge-row>div{display:grid;gap:2px;min-width:0}
+.admin-merge-row span{font-size:12px;color:var(--ink-muted)}
+.admin-merge-row small{font-size:12px;color:var(--ink-muted)}
 .admin-filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
 .admin-filters a{min-height:40px;padding:0 14px;display:inline-flex;align-items:center;border:1px solid color-mix(in srgb,var(--cobalt) 28%,transparent);background:var(--surface);font-size:13px;font-weight:600;color:var(--ink)}
 .admin-filters a[data-on="true"]{background:var(--cobalt);border-color:var(--cobalt);color:var(--surface)}
