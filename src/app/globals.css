@@ -388,7 +388,7 @@ body>main{flex:1 0 auto;min-width:0;width:100%}
    the results underneath are the previous answer, and leaving them half visible invites
    somebody to read a stale list as the new one. */
 .search-overlay{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:24px;background:color-mix(in srgb,var(--canvas) 88%,transparent);backdrop-filter:blur(6px)}
-.search-overlay-card{width:min(286px,100%);background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);box-shadow:8px 8px 0 var(--accent);padding:18px 18px 16px;display:grid;justify-items:center;gap:6px;text-align:center}
+.search-overlay-card{width:min(286px,100%);background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:18px 18px 16px;display:grid;justify-items:center;gap:6px;text-align:center}
 /* The mascot was drawn twice at two different sizes, which is why it appeared large and
    then shrank. The still is a portrait picture of the mascot; the video is a landscape
    frame with white bars either side of the same mascot. The video is what is shown now,
@@ -399,14 +399,10 @@ body>main{flex:1 0 auto;min-width:0;width:100%}
    centred -- centring is what pushed the right-hand side of the mascot out of the box.
    The still keeps its own proportions inside the same box; it is only ever seen when the
    video refuses to run. */
-.search-overlay-art{position:relative;display:block;width:150px;height:112px;overflow:hidden}
-.search-overlay-card video{position:absolute;top:0;left:-15.9%;transform:none;width:auto;max-width:none;height:100%;object-fit:contain}
-.search-overlay-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
-.search-overlay-card video{opacity:0}
-.search-overlay-art[data-playing]>video{opacity:1}
-.search-overlay-art[data-playing]>img{opacity:0}
+/* Drawn whole: its own proportions, nothing clipping it. */
+.search-overlay-art{display:block;width:150px;height:auto;object-fit:contain}
 .search-overlay-title{margin:2px 0 4px;font-weight:650;letter-spacing:-.03em;font-size:17px}
-@media(max-width:600px){.search-overlay-card{width:min(268px,100%);padding:16px 16px 14px}.search-overlay-art{width:132px;height:98px}}
+@media(max-width:600px){.search-overlay-card{width:min(268px,100%);padding:16px 16px 14px}.search-overlay-art{width:132px}}
 @media(prefers-reduced-motion:reduce){.search-overlay{backdrop-filter:none}}
 
 /* Profile — City Print. See DESIGN.md.

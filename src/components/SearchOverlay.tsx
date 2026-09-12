@@ -1,6 +1,6 @@
 'use client';
 import {useI18n} from '@/i18n/I18nProvider';
-import {MascotArt} from './MascotLoader';
+import Image from 'next/image';
 
 const copy={
   tr:'Mağazalar sıralanıyor…',
@@ -14,12 +14,14 @@ export function SearchOverlay(){
 
   return <div className="search-overlay" role="status" aria-live="polite">
     <div className="search-overlay-card">
-      {/* A bare video with a poster is what put Safari's own play button on this screen:
-          autoplay is refused in low power mode, and the browser then offers the control
-          it thinks the reader wants. A loading indicator you can press is not a loading
-          indicator. This draws the still and lets the video take over only once it is
-          genuinely running -- the same rule the profile and favourites loaders follow. */}
-      <MascotArt className="search-overlay-art"/>
+      {/* The still, and only the still.
+          Two drawings of the mascot exist: this one, which is portrait, and the video,
+          which is landscape with white either side. They are not two states of one picture
+          -- the dog is drawn at a different size and proportion in each -- so whichever box
+          they share, the mascot changes size the moment the video takes over, and whatever
+          crop hides the video's white margins cuts the still. Three attempts at reconciling
+          them failed for that reason, and the request all along was to use the big one. */}
+      <Image src="/brand/mascot-magnifier.png" width={168} height={168} alt="" priority className="search-overlay-art"/>
 
       <p className="search-overlay-title">{copy[locale]}</p>
     </div>
