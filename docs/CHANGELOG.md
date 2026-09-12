@@ -8,6 +8,22 @@ value involved.
 
 ---
 
+## The store page: caching turned on, then straight back off
+
+**Turned off again, within the hour, because it broke the page.** Declared static, every
+view in production answered 500: "page changed from static to dynamic at runtime, reason:
+headers". Something below this page still asks for the request, and it is not the two things
+that were fixed for it. A local production build reproduces it in one request, which is how
+it will be found -- and is how it should have been checked before it shipped, because
+`next dev` renders every page dynamically and cannot show this class of fault at all.
+
+What remains from the attempt is worth keeping and is still in place: the store is read
+anonymously, the locale comes from the address rather than from a request header, and the
+reader's own state -- saved shop, liked reviews -- is read in the browser after the page
+arrives. Turning caching back on is one line once the last reader of the request is named.
+
+The original entry follows.
+
 ## The store page is cached now, and the reader's own state arrives after it
 
 A store page was assembled on every view: two backend round trips, one for the page and one

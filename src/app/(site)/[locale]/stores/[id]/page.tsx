@@ -29,13 +29,13 @@ type Props={params:Promise<{id:string;locale:string}>};
 // headers is what makes a page dynamic, and what it would have read is one reader's view.
 // Everything that does differ per reader is read in the browser after the page arrives:
 // whether this reader saved the shop, and which of its reviews they liked.
-export const revalidate=3600;
-
-// Nothing is prebuilt: eight and a half thousand shops in four languages is a build nobody
-// wants to wait for, and the pages people actually open are a small fraction of them. What
-// this declares is that the route may be cached at all -- the first visitor to a shop pays
-// for rendering it and everybody after them, for the next hour, does not.
-export function generateStaticParams(){return [] as {id:string}[];}
+// Caching is off again while the last thing that reads a request header is found. Declared
+// static, this page threw "changed from static to dynamic at runtime, reason: headers" on
+// every view in production -- something below it still asks for the request, and until that
+// is named this page is rendered per request as it always was. The store is still read
+// anonymously and the reader's own state still arrives in the browser, so turning it back on
+// is one line.
+export const revalidate=0;
 
 const contributionCopy:Record<Locale,{title:string;body:string;action:string;progress:string;levels:string;correction:string}>={
   tr:{title:'Bu mağazaya gittin mi?',body:'Deneyimin bir sonraki kişinin doğru mağazayı seçmesine yardım eder. Doğrulanmış her değerlendirme katkı seviyeni de yükseltir.',action:'Değerlendirme yap',progress:'Katkı seviyeni yükselt',levels:'Katkı seviyeleri ne işe yarar?',correction:'Mağaza bilgilerinde düzenleme öner.'},
