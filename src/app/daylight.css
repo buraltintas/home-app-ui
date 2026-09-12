@@ -150,6 +150,16 @@ svg{stroke-width:2}
 .map-panel{top:82px;height:calc(100vh - 82px);background:var(--muted);color:var(--ink-muted);font-size:20px}
 .map-grid{opacity:.34}
 .auth-dialog{border-radius:var(--r-lg);border-top:0;box-shadow:var(--lift)}
+/* The same speed and the same curve as the docks, which are the only other thing here that
+   arrives from the bottom edge. */
+.dialog-backdrop[data-state] .level-dialog{animation:level-in .52s cubic-bezier(.16,1,.3,1) both}
+.dialog-backdrop[data-state]{animation:level-fade .52s ease both}
+.dialog-backdrop[data-state=leaving] .level-dialog{animation:level-out .42s cubic-bezier(.4,0,.75,.3) both}
+.dialog-backdrop[data-state=leaving]{animation:level-fade .42s ease reverse both}
+@keyframes level-fade{from{opacity:0}to{opacity:1}}
+@keyframes level-in{from{opacity:0;transform:translateY(calc(100% + 24px))}to{opacity:1;transform:none}}
+@keyframes level-out{from{opacity:1;transform:none}to{opacity:0;transform:translateY(calc(100% + 24px))}}
+@media(prefers-reduced-motion:reduce){.dialog-backdrop[data-state],.dialog-backdrop[data-state] .level-dialog{animation:none}}
 .auth-dialog h2,.store-copy h1,.store-description h2,.comments-section h2,.public-profile h1,.danger-zone h2{letter-spacing:-.035em}
 .auth-dialog input,.locale-switcher select,.location-actions input{border-radius:var(--r-md);border:1px solid var(--line)}
 .store-hero-grid{gap:0;border-bottom:0;}
@@ -365,11 +375,15 @@ svg{stroke-width:2}
    frame, matching the invitation block underneath it. */
 .level-boost{width:100%;margin:0 0 4px;padding:18px 20px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);display:flex}
 .level-boost-action{width:100%;background:color-mix(in srgb,var(--surface) 72%,transparent)}
-.level-dialog h2{font-size:26px;margin:10px 0 14px}
-.level-dialog p{margin:0 0 14px;line-height:1.55;color:var(--ink-muted)}
-.level-table-wrap{overflow-x:auto;margin:0 0 16px}
-.level-table-wrap table{width:100%;border-collapse:collapse;font-size:15px}
-.level-table-wrap th,.level-table-wrap td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--line)}
+/* Shorter than it was, at the same width. It is a table of five rows and two sentences, and
+   it was taking most of a phone screen to say that -- the reader had to scroll a sheet that
+   has nothing below the fold worth scrolling to. Only the vertical measurements moved. */
+.level-dialog{padding:20px 22px 22px;max-height:min(74vh,560px);overflow-y:auto}
+.level-dialog h2{font-size:20px;margin:4px 0 10px}
+.level-dialog p{margin:0 0 10px;font-size:14px;line-height:1.45;color:var(--ink-muted)}
+.level-table-wrap{overflow-x:auto;margin:0 0 4px}
+.level-table-wrap table{width:100%;border-collapse:collapse;font-size:13.5px}
+.level-table-wrap th,.level-table-wrap td{padding:6px 10px;text-align:left;border-bottom:1px solid var(--line)}
 .level-table-wrap th{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted)}
 .profile-reward{grid-column:1/-1;display:flex;align-items:center;gap:7px;color:var(--ink-muted);font-size:13px}
 .profile-reward svg{width:16px;height:16px;color:var(--clay)}

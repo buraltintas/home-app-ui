@@ -62,25 +62,28 @@ export function ProfileEditor({me,onSaved}:{me:Me;onSaved:(next:Me)=>void}){
 // Two steps, and the second one is where anything changes.
 function EmailEditor({me,onSaved}:{me:Me;onSaved:(next:Me)=>void}){
   const {t}=useI18n();
-  const [email,setEmail]=useState(me.email);
+  const [changing,setChanging]=useState(false);
+  const [email,setEmail]=useState('');
   const [code,setCode]=useState('');
-  const [stage,setStage]=useState<'idle'|'sent'>('idle');
+  const [stage,setStage]=useState<'address'|'code'>('address');
   const [busy,setBusy]=useState(false);
   const [note,setNote]=useState('');
   const [problem,setProblem]=useState('');
-  const changed=email.trim().toLowerCase()!==me.email.trim().toLowerCase();
+  const ready=/.+@.+\..+/.test(email.trim())&&email.trim().toLowerCase()!==me.email.trim().toLowerCase();
+
+  const reset=()=>{setChanging(false);setStage('address');setEmail('');setCode('');setNote('');setProblem('');};
 
   const sendCode=async()=>{
     setBusy(true);setProblem('');setNote('');
     try{
       // The same route the sign-in dialog asks through, because it is the same request: a
-      // login code for an address. What makes this a change of address rather than a sign-in
-      // is what the code is spent on, one step further down.
+      // login code for an address. What makes this a change of address rather than a
+      // sign-in is what the code is spent on, one step further down.
       const response=await fetch('/api/auth/request-code',{
         method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email:email.trim()}),
       });
       if(!response.ok)throw new Error();
-      setStage('sent');setNote(t('emailCodeSent'));
+      setStage('code');setNote(t('emailCodeSent'));
     }catch{setProblem(t('emailSendFailed'));}
     finally{setBusy(false);}
   };
@@ -96,28 +99,37 @@ function EmailEditor({me,onSaved}:{me:Me;onSaved:(next:Me)=>void}){
       if(!response.ok)throw new Error();
       const body=await response.json() as {email:string};
       onSaved({...me,email:body.email});
-      setEmail(body.email);setCode('');setStage('idle');setNote(t('emailChanged'));
+      reset();setNote(t('emailChanged'));
     }catch{setProblem(t('emailSendFailed'));}
     finally{setBusy(false);}
   };
 
   return <section className="profile-form profile-email">
+    {/* What is in this field is not an input, it is a fact: the address this account signs
+        in with. It is shown greyed and cannot be typed into, so nobody edits it expecting a
+        Save to carry the change -- the change is the two steps below. */}
     <label><span>{t('emailLabel')}</span>
-      <input type="email" inputMode="email" autoComplete="email" value={email} maxLength={254}
-        onChange={event=>{setEmail(event.target.value);setStage('idle');setNote('');setProblem('');}}/>
+      <input className="is-readonly" type="email" value={me.email} readOnly aria-readonly="true" tabIndex={-1}/>
     </label>
     <p className="profile-form-hint">{t('emailHint')}</p>
-    {stage==='sent'&&<label><span>{t('emailCodeLabel')}</span>
-      <input inputMode="numeric" autoComplete="one-time-code" maxLength={6} value={code}
-        onChange={event=>setCode(event.target.value.replace(/\D/g,''))}/>
-    </label>}
+    {changing&&<>
+      <label><span>{t('emailNewLabel')}</span>
+        <input type="email" inputMode="email" autoComplete="email" value={email} maxLength={254} disabled={stage==='code'}
+          onChange={event=>{setEmail(event.target.value);setProblem('');}}/>
+      </label>
+      {stage==='code'&&<label><span>{t('emailCodeLabel')}</span>
+        <input inputMode="numeric" autoComplete="one-time-code" maxLength={6} value={code}
+          onChange={event=>setCode(event.target.value.replace(/\D/g,''))}/>
+      </label>}
+    </>}
     <div className="profile-form-actions">
-      {stage==='idle'
-        ?<button type="button" className="button secondary" disabled={!changed||busy} onClick={()=>void sendCode()}>{busy?'…':t('emailSendCode')}</button>
-        :<>
-          <button type="button" className="button primary" disabled={code.length!==6||busy} onClick={()=>void confirm()}>{busy?'…':t('emailConfirm')}</button>
-          <button type="button" className="button quiet" disabled={busy} onClick={()=>{setStage('idle');setCode('');setNote('');}}>{t('emailCancel')}</button>
-        </>}
+      {!changing
+        ?<button type="button" className="button secondary" onClick={()=>setChanging(true)}>{t('emailChangeStart')}</button>
+        :stage==='address'
+          ?<><button type="button" className="button secondary" disabled={!ready||busy} onClick={()=>void sendCode()}>{busy?'…':t('emailSendCode')}</button>
+            <button type="button" className="button quiet" disabled={busy} onClick={reset}>{t('emailCancel')}</button></>
+          :<><button type="button" className="button primary" disabled={code.length!==6||busy} onClick={()=>void confirm()}>{busy?'…':t('emailConfirm')}</button>
+            <button type="button" className="button quiet" disabled={busy} onClick={reset}>{t('emailCancel')}</button></>}
       {note&&<p role="status">{note}</p>}
     </div>
     {problem&&<p className="form-error" role="alert">{problem}</p>}

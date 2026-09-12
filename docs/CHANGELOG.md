@@ -22,6 +22,26 @@ row it is opened from is the one that survives, and the confirmation says so in 
 
 ---
 
+## The email you sign in with is a fact, not a field
+
+It was an editable input, which invited somebody to type a new address into it and expect
+Save to carry the change -- and Save does not, because changing it takes a code. It is greyed
+and read-only now, with a separate "change your email address" step underneath that asks for
+the new address, sends the code there, and takes the code back.
+
+## The levels sheet is shorter, and arrives the way the docks do
+
+Two sentences and a five-row table were taking most of a phone screen, so the reader had to
+scroll a sheet with nothing below the fold worth scrolling to. Only the vertical measurements
+moved -- heading, paddings, table text -- and the width is untouched.
+
+It also appeared and vanished in the same frame, which said nothing about where it came from
+or that it had gone. It now slides from the bottom edge at the docks' own speed and curve,
+in 0.52s and out 0.42s, and waits for the exit before it unmounts, because an element removed
+from the page cannot animate its way off it.
+
+---
+
 ## The docks say one thing each, and the mascot lost its square
 
 Five changes to the floating docks.

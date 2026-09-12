@@ -28,12 +28,24 @@ const closeLabel:Record<Locale,string>={tr:'Kapat',en:'Close',de:'Schließen',ru
 
 export function ContributorLevelsDialog({locale}:{locale:Locale}){
   const [open,setOpen]=useState(false);
+  const [leaving,setLeaving]=useState(false);
   const section=about.content[locale].sections.find(entry=>entry.id==='katki');
+
+  // It arrives and leaves at the speed the docks do, which is the only other thing on this
+  // product that slides up from the bottom edge. It used to appear and vanish in the same
+  // frame -- nothing about that said which direction it came from or that it had gone.
+  //
+  // Closing waits for the animation before it unmounts, because an element removed from the
+  // page cannot animate its way off it.
+  const close=()=>{
+    setLeaving(true);
+    window.setTimeout(()=>{setOpen(false);setLeaving(false);},420);
+  };
 
   // Escape closes it, as it does every other dialog here.
   useEffect(()=>{
     if(!open)return;
-    const key=(event:KeyboardEvent)=>{if(event.key==='Escape')setOpen(false);};
+    const key=(event:KeyboardEvent)=>{if(event.key==='Escape')close();};
     window.addEventListener('keydown',key);
     return()=>window.removeEventListener('keydown',key);
   },[open]);
@@ -45,9 +57,9 @@ export function ContributorLevelsDialog({locale}:{locale:Locale}){
         <span aria-hidden="true">↗</span><span><strong>{openLabel[locale]}</strong><small>{openHint[locale]}</small></span>
       </button>
     </div>
-    {open&&<div className="dialog-backdrop" role="presentation" onMouseDown={()=>setOpen(false)}>
+    {open&&<div className="dialog-backdrop" data-state={leaving?'leaving':'visible'} role="presentation" onMouseDown={close}>
       <section className="auth-dialog level-dialog" role="dialog" aria-modal="true" aria-labelledby="level-dialog-title" onMouseDown={event=>event.stopPropagation()}>
-        <button className="icon-button dialog-close" onClick={()=>setOpen(false)} aria-label={closeLabel[locale]}><X/></button>
+        <button className="icon-button dialog-close" onClick={close} aria-label={closeLabel[locale]}><X/></button>
         <h2 id="level-dialog-title">{section.heading}</h2>
         {section.blocks.map((block,index)=>{
           if('p' in block)return <p key={index}>{block.p}</p>;
