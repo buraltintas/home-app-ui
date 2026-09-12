@@ -523,11 +523,24 @@ svg{stroke-width:2}
 .search-query-suggestions{position:absolute;z-index:10;left:0;right:0;top:calc(100% + 8px);background:var(--surface);box-shadow:var(--lift);border-radius:var(--r-md);padding:8px 8px 24px}
 .search-query-suggestions-list{max-height:176px;overflow-y:auto;overscroll-behavior:contain}
 .search-query-more{position:absolute;left:50%;bottom:0;transform:translateX(-50%);display:grid!important;place-items:center!important;width:64px!important;min-height:44px!important;padding:0!important;color:var(--ink);font-size:38px!important;line-height:1}
-.search-query-close{display:none}
 .search-query-back{display:none}
 .search-query-suggestions-title{margin:2px 4px 10px;font-size:15px;font-weight:800;letter-spacing:.02em;text-transform:none;color:var(--ink)}
 .search-query-suggestions button{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;min-height:44px;padding:10px 12px;text-align:left;border:0;background:transparent;border-radius:var(--r-sm)}
 .search-query-suggestions button:hover,.search-query-suggestions button:focus-visible{background:var(--muted)}
+/* Recent searches, inside the panel. One column: the query on the left, the way to forget
+   it on the right, sharing its right-hand line with the clear-all above. The rule that
+   makes every button in this panel a full-width row is written with one class and one
+   element, so each of these reaches past it rather than fighting it with !important. */
+.search-query-recent{margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--line)}
+.search-query-recent>header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.search-query-recent>header h2{margin:2px 4px 4px}
+.search-query-recent>header button{width:max-content;min-width:0;flex:0 0 auto;min-height:36px;padding:0 4px;font-size:13px;font-weight:500;color:var(--ink);opacity:.6}
+.search-query-recent>header button:hover{opacity:1}
+.search-query-recent-list{list-style:none;margin:0;padding:0}
+.search-query-recent-list>li{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center}
+.search-query-recent-list>li>button{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.search-query-recent-list>li>.search-query-recent-delete{display:grid;place-items:center;width:44px;min-width:44px;padding:0;color:var(--ink-muted)}
+.search-query-recent-list>li>.search-query-recent-delete svg{width:16px;height:16px}
 .search-suggestions .recent-search-disclosure>.disclosure-summary{padding:0;align-items:center;font-weight:600}
 /* The heading keeps its line and the clear control sits on the same right edge as the
    per-row delete, so the column reads as one column rather than two ragged ones. */
@@ -564,28 +577,25 @@ svg{stroke-width:2}
   .search-hero:has(.search-form.is-query-open){animation:none}
   /* The row is centred when this is a bar; in the full-screen panel every row starts at
      its own top, or the suggestions float in the middle of the space left below them. */
-  .search-form.is-query-open{position:fixed;z-index:80;inset:0;margin:0;padding:calc(18px + env(safe-area-inset-top)) 18px 24px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-rows:auto auto 1fr;align-content:start;align-items:start;gap:10px;background:var(--canvas);border:0}
-  /* The way out of a full-screen panel belongs in the corner people already reach for,
-     not beside the field it is not part of. It takes the whole first row so the search
-     icon and the field keep the row below to themselves. */
-  /* The way out and the field belong to one another, so they share a row: back, the
-     question, the way out. Two rows put the corner control above a field it had nothing
-     to do with. The circle is the same one the store page uses for its own way back. */
-  .search-form.is-query-open .search-query-close{grid-column:3;grid-row:1;justify-self:end;align-self:start;margin:6px 0 0;display:grid;place-items:center;width:44px;min-width:0;height:44px;padding:0;border:1px solid var(--line);border-radius:50%;background:color-mix(in srgb,var(--surface) 92%,transparent);color:var(--ink);box-shadow:0 8px 24px rgba(22,20,15,.09)}
-  .search-form.is-query-open .search-query-close svg{width:20px;height:20px}
+  .search-form.is-query-open{position:fixed;z-index:80;inset:0;margin:0;padding:calc(18px + env(safe-area-inset-top)) 18px 24px;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto 1fr;align-content:start;align-items:start;gap:10px;background:var(--canvas);border:0}
   /* In the panel the magnifier is not decoration, it is the way back. */
   .search-form.is-query-open>svg{display:none}
-  .search-form.is-query-open .search-query-back{grid-column:1;grid-row:1;display:grid;place-items:center;width:40px;height:44px;margin:6px 0 0;padding:0;border:0;background:transparent;color:var(--ink)}
+  .search-form.is-query-open .search-query-back{flex:none;display:grid;place-items:center;width:36px;height:44px;margin-left:-6px;padding:0;border:0;background:transparent;color:var(--ink)}
   .search-form.is-query-open .search-query-back svg{width:24px;height:24px}
   /* The panel takes the bar's own frame away -- it is the whole screen now -- so the
      field has to carry one of its own, or the question sits on bare paper between two
      controls and no longer looks like something to type in. */
-  .search-form.is-query-open .search-field{grid-column:2;grid-row:1;align-items:center;padding:0 14px;background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--r-pill)}
+  .search-form.is-query-open .search-field{grid-column:1/-1;grid-row:1;align-items:center;padding:0 14px;background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--r-pill)}
   /* One line in the panel. The field on the search page grows to hold a whole sentence of
      placeholder; here the row carries two controls beside it and a field that wraps pushes
      them out of line with it. */
   .search-form.is-query-open textarea{height:44px!important;padding-top:11px;padding-bottom:11px;white-space:nowrap;overflow-x:hidden;text-overflow:ellipsis}
-  .search-form.is-query-open>button[type=submit]{grid-column:1/-1;grid-row:2}
+  /* The panel's one action is the only thing on the screen that does something, and on a
+     sheet of paper-coloured ground a near-black slab reads as a heading rather than as a
+     button. Clay is the colour this product already uses for the thing to press -- the
+     nearby button, the distance, the category label -- so the panel borrows it rather than
+     inventing a colour of its own, and white on it clears AA at 5:1. */
+  .search-form.is-query-open>button[type=submit]{grid-column:1/-1;grid-row:2;background:var(--clay)}
   .search-form.is-query-open .search-query-suggestions{position:relative;grid-column:1/-1;grid-row:3;top:auto;left:auto;right:auto;box-shadow:none;border-top:1px solid var(--line);border-radius:0;padding:8px 0 44px;background:transparent}
   .search-form.is-query-open .search-query-suggestions-list{max-height:calc(100vh - 250px)}
 }

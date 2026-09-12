@@ -170,9 +170,7 @@ export function SearchExperience() {
   // the permission back on can finish what that press started.
   const awaitingGrant=useRef(false);
   const [history,setHistory]=useState<SearchHistory[]>([]);
-  const [historyExpanded,setHistoryExpanded]=useState(false);
   const [historyBusy,setHistoryBusy]=useState(false);
-  const [historyAnswered,setHistoryAnswered]=useState(false);
   const [rotation,setRotation]=useState(0);
   const field=useRef<HTMLTextAreaElement>(null);
   const searchSequence=useRef(0);
@@ -290,10 +288,10 @@ export function SearchExperience() {
     let active=true;
     apiFetch('/api/proxy/me/searches?limit=10')
       .then(async response=>response.ok?(await response.json() as {items:SearchHistory[]}).items:[])
-      .then(items=>{if(active){setHistory(items);setHistoryAnswered(true);}})
+      .then(items=>{if(active)setHistory(items);})
       // A refusal is an answer too. What matters here is that the question has been
       // settled, because the strip below must not choose a heading before it has been.
-      .catch(()=>{if(active)setHistoryAnswered(true);});
+      .catch(()=>{});
     return()=>{active=false;};
   },[]);
 
@@ -306,7 +304,7 @@ export function SearchExperience() {
   const clearHistory=async()=>{
     if(historyBusy)return;
     setHistoryBusy(true);
-    try{const response=await apiFetch('/api/proxy/me/searches',{method:'DELETE'});if(response.ok){setHistory([]);setHistoryExpanded(false);}}
+    try{const response=await apiFetch('/api/proxy/me/searches',{method:'DELETE'});if(response.ok)setHistory([]);}
     finally{setHistoryBusy(false);}
   };
 
@@ -321,6 +319,20 @@ export function SearchExperience() {
   // The field grows with whatever ends up in it, including text put there by tapping
   // a suggestion rather than typing.
   useEffect(()=>{growToFit(field.current);},[query]);
+
+  // The panel covers the screen, but the page it opened from is still behind it and still
+  // scrollable. On a phone, focusing a field inside a fixed element makes the browser
+  // scroll that page to bring the field into view -- and the panel, being fixed to the
+  // layout viewport, travels with it: the bar ends up above the top edge and has to be
+  // dragged back down. With the page behind held still there is nothing to travel.
+  useEffect(()=>{
+    if(!suggestionsOpen)return;
+    const body=document.body;
+    const previous=body.style.overflow;
+    window.scrollTo(0,0);
+    body.style.overflow='hidden';
+    return ()=>{body.style.overflow=previous;};
+  },[suggestionsOpen]);
 
   // The panel is open either because it was asked for or because there is no location
   // yet. Gating this on the first case alone left the field on screen with nothing behind
@@ -667,12 +679,26 @@ export function SearchExperience() {
       // is often not named as the blur's destination, so the panel closed under the finger
       // on its way to the control inside it. Asking a tick later, where focus actually
       // landed, is the same question with an answer.
-      window.setTimeout(()=>{if(!panel.contains(document.activeElement))setSuggestionsOpen(false);},0);}} onSubmit={event=>{setSuggestionsOpen(false);submit(event);}} aria-busy={loading}>{suggestionsOpen&&<button type="button" className="search-query-close" onClick={()=>setSuggestionsOpen(false)} aria-label={t('close')}><X aria-hidden="true"/></button>}{suggestionsOpen?<button type="button" className="search-query-back" onClick={()=>setSuggestionsOpen(false)} aria-label={t('back')}><ArrowLeft aria-hidden="true"/></button>:<Search aria-hidden="true"/>}<div className="search-field"><textarea ref={field} onFocus={()=>{setSuggestionsOpen(true);setSuggestionsExpanded(false);}} rows={1} value={query} onChange={event=>setQuery(event.target.value)} onKeyDown={event=>{if(event.key==='Escape')setSuggestionsOpen(false);if(event.key==='Enter'){event.preventDefault();void runSearch();}}} placeholder={placeholder} aria-label={t('searchHint')} disabled={loading}/>{query&&!loading&&<button type="button" className="search-clear" onClick={()=>{setQuery('');field.current?.focus();}} aria-label={t('clearSearch')}><X aria-hidden="true"/></button>}</div>{suggestionsOpen&&<button type="submit" disabled={loading}>{loading?t('loading'):t('searchAction')}</button>}{suggestionsOpen&&<div className="search-query-suggestions"><h2 className="search-query-suggestions-title">{t('suggestedSearches')}</h2><div className="search-query-suggestions-list">{prompts.map(phrase=><button type="button" key={phrase} onClick={()=>{setSuggestionsOpen(false);fill(phrase);}}>{phrase}<ArrowRight aria-hidden="true"/></button>)}</div>{stripPhrases.length>4&&!suggestionsExpanded&&<button type="button" className="search-query-more" onMouseDown={event=>event.preventDefault()} onClick={()=>setSuggestionsExpanded(true)} aria-label={historyCopy[locale].more}>⌄</button>}</div>}</form>}{/* The panel opens above these, it does not replace them. Hiding them while somebody
+      window.setTimeout(()=>{if(!panel.contains(document.activeElement))setSuggestionsOpen(false);},0);}} onSubmit={event=>{setSuggestionsOpen(false);submit(event);}} aria-busy={loading}>{!suggestionsOpen&&<Search aria-hidden="true"/>}<div className="search-field">{/* The way out sits inside the field, where the magnifier sits on the page this
+        panel opens from: one control in one place, doing the opposite job. A separate
+        corner button was a second way out of a screen that only needs one. */}
+      {suggestionsOpen&&<button type="button" className="search-query-back" onClick={()=>setSuggestionsOpen(false)} aria-label={t('back')}><ArrowLeft aria-hidden="true"/></button>}<textarea ref={field} onFocus={()=>{setSuggestionsOpen(true);setSuggestionsExpanded(false);}} rows={1} value={query} onChange={event=>setQuery(event.target.value)} onKeyDown={event=>{if(event.key==='Escape')setSuggestionsOpen(false);if(event.key==='Enter'){event.preventDefault();void runSearch();}}} placeholder={placeholder} aria-label={t('searchHint')} disabled={loading}/>{query&&!loading&&<button type="button" className="search-clear" onClick={()=>{setQuery('');field.current?.focus();}} aria-label={t('clearSearch')}><X aria-hidden="true"/></button>}</div>{suggestionsOpen&&<button type="submit" disabled={loading}>{loading?t('loading'):t('searchAction')}</button>}{suggestionsOpen&&<div className="search-query-suggestions">{history.length>0&&<div className="search-query-recent">
+      <header><h2 className="search-query-suggestions-title">{t('showRecentSearches')}</h2><button type="button" onMouseDown={event=>event.preventDefault()} onClick={()=>void clearHistory()} disabled={historyBusy}>{t('clearSearches')}</button></header>
+      {/* Three, because this is a shortcut and not a record: the whole history is a page of
+          its own, and a list long enough to scan is a list that hides the suggestions under
+          it. Each can still be forgotten one at a time -- a search you would rather not be
+          offered again is the reason anybody looks at this list twice. */}
+      <ul className="search-query-recent-list">{history.slice(0,3).map(entry=><li key={entry.id}>
+        <button type="button" onMouseDown={event=>event.preventDefault()} onClick={()=>{setSuggestionsOpen(false);fill(entry.raw_query);}}>{entry.raw_query}</button>
+        <button type="button" className="search-query-recent-delete" onMouseDown={event=>event.preventDefault()} onClick={()=>void removeHistory(entry.id)} disabled={historyBusy} aria-label={t('deleteSearch')}><X aria-hidden="true"/></button>
+      </li>)}</ul></div>}<h2 className="search-query-suggestions-title">{t('suggestedSearches')}</h2><div className="search-query-suggestions-list">{prompts.map(phrase=><button type="button" key={phrase} onClick={()=>{setSuggestionsOpen(false);fill(phrase);}}>{phrase}<ArrowRight aria-hidden="true"/></button>)}</div>{stripPhrases.length>4&&!suggestionsExpanded&&<button type="button" className="search-query-more" onMouseDown={event=>event.preventDefault()} onClick={()=>setSuggestionsExpanded(true)} aria-label={historyCopy[locale].more}>⌄</button>}</div>}</form>}{/* The panel opens above these, it does not replace them. Hiding them while somebody
         changes their location threw away the recent searches and the categories they were
         about to pick from, and put them back only once the location was settled. */}
-    {!data&&!loading&&<div className="search-suggestions"><div>{historyAnswered&&<section className="recent-searches"><header><h2>{t('showRecentSearches')}</h2>{history.length>0&&<button type="button" onClick={()=>void clearHistory()} disabled={historyBusy}>{t('clearSearches')}</button>}</header>{history.length?<><ul>{history.slice(0,historyExpanded?10:3).map(entry=><li key={entry.id}><button type="button" className="recent-search-query" onClick={()=>fill(entry.raw_query)}>{entry.raw_query}</button><button type="button" className="recent-search-delete" onClick={()=>void removeHistory(entry.id)} disabled={historyBusy} aria-label={t('deleteSearch')}>{t('deleteShort')}</button></li>)}</ul>{history.length>3&&(historyExpanded
-  ?<button type="button" className="recent-search-more" onClick={()=>setHistoryExpanded(false)}>{t('showFewer')}</button>
-  :<button type="button" className="recent-search-more" onClick={()=>setHistoryExpanded(true)}>{historyCopy[locale].more}</button>)}</>:<p>{t('pastSearchesEmpty')}</p>}</section>}</div><div><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>fill(category.name)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}{category.search_count>0&&<small title={t('searchCount')}>{category.search_count.toLocaleString(locale)} {t('searchCountShort')}</small>}</span></button>)}</div></div></div>}</header>
+    {/* Recent searches used to sit here, on the page. They belong with the field instead:
+        they are the answer to "what shall I type", which is a question somebody only has
+        once they have opened the panel to type in. The categories stay -- they are a way
+        to browse rather than a way to repeat yourself. */}
+    {!data&&!loading&&<div className="search-suggestions"><div><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>fill(category.name)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}{category.search_count>0&&<small title={t('searchCount')}>{category.search_count.toLocaleString(locale)} {t('searchCountShort')}</small>}</span></button>)}</div></div></div>}</header>
     {loading&&<SearchOverlay/>}
     {!loading&&data?.guidance&&<section className="guidance-card" role="alert"><p>{data.guidance.message}</p><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>fill(category.name)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}</span></button>)}</div></section>}
     {!loading&&data&&!data.guidance&&<section className="results-layout"><div className="result-list"><p className="result-count">{data.results.length} {t('results')}</p>{data.results.length===0?<div className="zero-state"><h2>{t('zeroTitle')}</h2><p>{t('zeroBody')}</p></div>:<>{data.results.slice(0,shown).map(item=><Result item={item} key={item.search_result_impression_id} onSelect={()=>select(item)} saved={savedStores.has(item.id??'')}/>)}{shown<data.results.length&&<button type="button" className="result-more" onClick={()=>setShown(count=>count+PAGE)}>{t('showMoreResults')}</button>}</>}</div></section>}

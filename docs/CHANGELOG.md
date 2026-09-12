@@ -8,6 +8,43 @@ value involved.
 
 ---
 
+## The full-screen search panel: one way out, one bar, one action
+
+Six revisions from the search card, all in the panel a phone opens when the field is
+tapped.
+
+**The bar stayed above the top edge.** The page the panel opens from is still behind it and
+still scrollable, and on a phone the browser scrolls that page to bring a focused field into
+view. The panel is fixed to the layout viewport, so it travelled with the page and the bar
+ended up off the top of the screen -- you had to drag it back down to see what you were
+typing in. The page behind is now held still while the panel is open, so there is nothing to
+travel.
+
+**One way out, and it is inside the field.** The corner close button is gone. The way back
+is the arrow inside the field, where the magnifier sits on the page this panel opens from:
+one control in one place doing the opposite job, rather than two ways out of a screen that
+needs one.
+
+**The bar is the width of the bar it replaced.** The panel's first row held three columns
+for two controls that are no longer there; the field now spans the row, so it is exactly as
+wide as the bar on the search page and the panel reads as that bar grown, not as a different
+one.
+
+**Recent searches moved off the page and into the panel.** They are the answer to "what
+shall I type", which is a question somebody only has once they have opened the panel to
+type. Three of them, above the suggestions -- a shortcut, not a record -- each still
+forgettable one at a time, with clear-all on the heading's line. This takes a block of
+changing text off the search page itself; the page keeps its categories, which are the
+links that were carrying anything.
+
+**The action is clay, not ink.** On paper-coloured ground a near-black slab reads as a
+heading rather than as a button, and it is the only thing on that screen that does
+something. Clay is what this product already uses for the thing to press -- the nearby
+button, the distance, the category label -- so the panel borrows it rather than inventing a
+colour, and white on it clears AA at just over 5:1.
+
+---
+
 ## A saved shop reads its own state, and why the store page is still not cached
 
 Whether this visitor saved this shop was rendered into the markup and trusted. That is fine
