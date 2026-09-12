@@ -89,12 +89,13 @@ const noLocation:Record<Locale,string>={
 
 // A distance to a shop we placed ourselves is a distance to the middle of its neighbourhood,
 // not to its door. Rounding it away would be a lie of a different kind, so the number stays
-// and the tilde says what it is.
+// and the tilde says what it is. Said the way a person would say it: nobody outside this
+// codebase calls it a coordinate, and nobody is shown one.
 const approximate:Record<Locale,string>={
-  tr:'yaklaşık — mağaza kendi koordinatını yayımlamıyor',
-  en:'approximate — this shop publishes no coordinate of its own',
-  de:'ungefähr — dieses Geschäft veröffentlicht keine eigenen Koordinaten',
-  ru:'приблизительно — магазин не публикует свои координаты',
+  tr:'Yaklaşık — mağaza tam konumunu paylaşmamış',
+  en:'Approximate — this store has not shared its exact location',
+  de:'Ungefähr — dieses Geschäft hat seinen genauen Standort nicht angegeben',
+  ru:'Примерно — магазин не указал точное расположение',
 };
 
 export function StoreDistance({store,viewer,radiusMeters,locale,isApproximate}:{store:Coordinates;viewer?:Position;radiusMeters:number;locale:Locale;isApproximate?:boolean}){
