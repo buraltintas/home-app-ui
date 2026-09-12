@@ -29,12 +29,19 @@ type Props={params:Promise<{id:string;locale:string}>};
 // headers is what makes a page dynamic, and what it would have read is one reader's view.
 // Everything that does differ per reader is read in the browser after the page arrives:
 // whether this reader saved the shop, and which of its reviews they liked.
-// Caching is off again while the last thing that reads a request header is found. Declared
-// static, this page threw "changed from static to dynamic at runtime, reason: headers" on
-// every view in production -- something below it still asks for the request, and until that
-// is named this page is rendered per request as it always was. The store is still read
-// anonymously and the reader's own state still arrives in the browser, so turning it back on
-// is one line.
+// Caching is off, and what is in the way is not on this page.
+//
+// The proxy rewrites every request with an added `x-locale` header so that a server
+// component can read the locale without threading it down, and mutating a request's headers
+// in middleware is exactly what makes a page dynamic. Declared static, this page answered
+// "changed from static to dynamic at runtime, reason: headers" on every view in production --
+// and so would any other page, including an empty one, which is how it was found.
+//
+// Turning it on is one line here, after the locale stops travelling as a request header: the
+// address already carries it, in this route's own [locale] segment, and 62 calls to
+// getServerI18n across 23 files would read it from params instead. Everything else this page
+// needed is already done -- the store is read anonymously, and the reader's own state arrives
+// in the browser after the page.
 export const revalidate=0;
 
 const contributionCopy:Record<Locale,{title:string;body:string;action:string;progress:string;levels:string;correction:string}>={

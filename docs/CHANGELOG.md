@@ -12,10 +12,20 @@ value involved.
 
 **Turned off again, within the hour, because it broke the page.** Declared static, every
 view in production answered 500: "page changed from static to dynamic at runtime, reason:
-headers". Something below this page still asks for the request, and it is not the two things
-that were fixed for it. A local production build reproduces it in one request, which is how
-it will be found -- and is how it should have been checked before it shipped, because
-`next dev` renders every page dynamically and cannot show this class of fault at all.
+headers". `next dev` renders every page dynamically and cannot show this class of fault at
+all, which is why it shipped; a local production build shows it in one request, and that is
+the check this needed.
+
+**What is in the way is the proxy, not this page.** It rewrites every request with an added
+`x-locale` header so a server component can read the locale without threading it down, and
+mutating request headers in middleware is exactly what makes a page dynamic. An empty page
+at the same address fails identically -- which is how this was narrowed down, and it means no
+page in this application can be cached while the locale travels as a request header.
+
+**So the next step is named.** The address already carries the locale, in each route's own
+`[locale]` segment; 62 calls to `getServerI18n` across 23 files would read it from params
+instead, the proxy would stop rewriting request headers, and this page's one line comes
+back.
 
 What remains from the attempt is worth keeping and is still in place: the store is read
 anonymously, the locale comes from the address rather than from a request header, and the
