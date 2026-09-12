@@ -2,6 +2,7 @@ import {AdminNav} from '../AdminNav';
 import {AccessDenied} from '../AccessDenied';
 import {getBrands} from '@/lib/admin-api';
 import {adminDate} from '@/lib/admin-time';
+import {BrandImport} from '../BrandImport';
 
 export const dynamic='force-dynamic';
 
@@ -32,7 +33,7 @@ export default async function Page(){
       <table className="admin-table">
         <thead><tr>
           <th>Marka</th><th>Tier</th><th>Kaynak</th><th>Mağaza</th><th>Taşıyan</th>
-          <th>Son çekim</th><th>Çekilen</th><th>Yeni</th><th>Güncellenen</th><th>İnceleme</th>
+          <th>Son çekim</th><th>Çekilen</th><th>Yeni</th><th>Güncellenen</th><th>İnceleme</th><th></th>
         </tr></thead>
         <tbody>
           {rows.map(brand=><tr key={brand.slug} data-off={!brand.active||undefined}>
@@ -51,13 +52,14 @@ export default async function Page(){
             <td data-warn={brand.last_new>0&&brand.last_new>brand.stores/2||undefined}>{brand.last_run?brand.last_new:'—'}</td>
             <td>{brand.last_run?brand.last_updated:'—'}</td>
             <td>{brand.last_run?(brand.last_review||'—'):'—'}</td>
+            <td>{brand.active&&brand.locator_kind!=='none'?<BrandImport slug={brand.slug} stores={brand.stores}/>:null}</td>
           </tr>)}
         </tbody>
       </table>
     </div>
     <p className="admin-note" style={{marginTop:16}}>
-      İçe aktarma şu an komut satırından çalışır: <code>go run ./cmd/catalog -source &lt;marka&gt; -apply</code>.
-      Panelden tetiklemek sıradaki iş.
+      Bütün markaları birden çekmek hâlâ komut satırının işi:
+      <code>go run ./cmd/catalog -apply</code>.
     </p>
   </>;
 }
