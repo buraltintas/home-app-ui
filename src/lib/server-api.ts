@@ -57,6 +57,26 @@ export const getStore=cache(async function getStore(ref:string):Promise<StoreDet
   }
 });
 
+// The same store, read the way a cached page has to read it: with nobody's credentials and
+// nobody's cookies.
+//
+// Touching cookies() or headers() is what makes a page dynamic, so a page that wants to be
+// built once and served to everybody cannot use the reader above -- and must not, because
+// what it would fetch is one reader's view of the store. This asks anonymously, tells Next
+// how long the answer may be reused, and leaves everything that differs per reader to be
+// read in the browser afterwards.
+export const getPublicStore=cache(async function getPublicStore(ref:string,locale:Locale,seconds:number):Promise<StoreDetail>{
+  if(!STORE_REF.test(ref)&&!UUID.test(ref))notFound();
+  const response=await fetch(`${API_ORIGIN}/v1/stores/${encodeURIComponent(ref)}`,{
+    next:{revalidate:seconds},
+    headers:{'Content-Type':'application/json','X-BFF-Secret':process.env.BFF_SECRET??'','X-Locale':locale,'Accept-Language':locale},
+  });
+  if(response.status===404)notFound();
+  if(!response.ok)throw new ApiError(response.status,await response.json().catch(()=>undefined));
+  const detail=await response.json() as StoreDetail;
+  return {...detail,recent_posts:detail.recent_posts??[]};
+});
+
 // A review page shows that review. Comments are a separate read so a failure there
 // still leaves the review itself on screen rather than turning the page into a 404.
 export async function getPost(id:string):Promise<Post>{if(!UUID.test(id))notFound();try{return await serverApi<Post>(`/v1/posts/${id}`)}catch(reason){if(reason instanceof ApiError&&reason.status===404)notFound();throw reason}}

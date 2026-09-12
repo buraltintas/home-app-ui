@@ -11,6 +11,7 @@ import {apiFetch} from '@/lib/api-client';
 import {RatingStars,Verified} from './Rating';
 import {AuthDialog} from './AuthDialog';
 import {ContributorLevel} from './ContributorLevel';
+import {useViewerLiked} from './ViewerLikes';
 import {storePhotoURL} from '@/lib/store-photo';
 
 // `owned` is the profile's view of your own reviews. Saving a store you have already
@@ -40,7 +41,14 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
   const onStorePage=surface==='store';
   const {t,locale}=useI18n();
   const [auth,setAuth]=useState(false);
+  // The markup says whether this reader liked it only on a page rendered for this reader.
+  // On a cached one it cannot, so the reader's own answer arrives after the page does and
+  // turns the card on; until then, and whenever nobody is signed in, the rendered state
+  // stands.
+  const own=useViewerLiked(post.id);
   const [liked,setLiked]=useState(post.viewer_has_liked);
+  const [touched,setTouched]=useState(false);
+  const showLiked=touched?liked:liked||own;
   const [saved,setSaved]=useState(post.viewer_has_favorited_store);
   const [busy,setBusy]=useState<'like'|'save'|null>(null);
   const [shared,setShared]=useState(false);
@@ -63,14 +71,16 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
   };
 
   const mutate=async(kind:'like'|'save')=>{
-    const active=kind==='like'?liked:saved;
+    const active=kind==='like'?showLiked:saved;
     setBusy(kind);
     try{
       const path=kind==='like'?`/api/proxy/posts/${post.id}/like`:`/api/proxy/stores/${post.store_id}/favorite`;
       const response=await apiFetch(path,{method:active?'DELETE':'POST'});
       if(response.status===401){setAuth(true);return;}
       if(!response.ok)throw new Error();
-      if(kind==='like')setLiked(!active);else setSaved(!active);
+      // Once the reader has pressed it, what they pressed is the answer -- the state that
+      // arrived from the server a moment ago must not turn it back on.
+      if(kind==='like'){setLiked(!active);setTouched(true);}else setSaved(!active);
     }finally{setBusy(null);}
   };
 
@@ -95,7 +105,7 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
   // A date without its year answers "which day" and not "which year", and a review list
   // that goes back further than twelve months needs both.
   const written=new Intl.DateTimeFormat(locale,{day:'numeric',month:'short',year:'numeric'}).format(new Date(post.created_at));
-  const likes=post.like_count+(liked&&!post.viewer_has_liked?1:!liked&&post.viewer_has_liked?-1:0);
+  const likes=post.like_count+(showLiked&&!post.viewer_has_liked?1:!showLiked&&post.viewer_has_liked?-1:0);
 
   return <article className={`post-card${owned?' is-owned':''}${hasPhoto?'':' is-photo-free'}`}>
     <div className="post-number" aria-hidden="true">BG/{new Intl.DateTimeFormat(locale,{month:'2-digit',day:'2-digit'}).format(new Date(post.created_at)).replace(/\D/g,'')}</div>
@@ -130,7 +140,7 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
           you do in the feed, and in a row of narrow cards under the score table they read
           as chrome on top of the one thing the card is there to say. */}
       {!onStorePage&&<footer className="post-actions">
-        <button disabled={busy==='like'} aria-pressed={liked} onClick={()=>void mutate('like')}><Heart className={liked?'active-icon':''}/>{likes}</button>
+        <button disabled={busy==='like'} aria-pressed={showLiked} onClick={()=>void mutate('like')}><Heart className={showLiked?'active-icon':''}/>{likes}</button>
         {!owned&&!onStorePage&&<Link href={localePath(locale,`/reviews/${post.id}`)} className="post-action-link"><MessageCircle/>{post.comment_count}</Link>}
         {/* On your own reviews these two are icons. The row is a list entry, not a page,
             and a spelled-out "Delete review" beside a spelled-out "Share" turns a row of

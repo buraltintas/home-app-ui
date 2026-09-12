@@ -8,6 +8,31 @@ value involved.
 
 ---
 
+## The store page is cached now, and the reader's own state arrives after it
+
+A store page was assembled on every view: two backend round trips, one for the page and one
+for its metadata, with nothing reused between visitors. It is built once and served for an
+hour now.
+
+Two things stood in the way and both are gone. The locale was read from a request header,
+which makes a page dynamic; it comes from the address, which is where it already was. And
+the store was read with the reader's own cookies, which is both what made the page dynamic
+and what would have been wrong to cache -- it is read anonymously now, by a reader that
+touches neither cookies nor headers.
+
+What genuinely differs per reader is read in the browser once the page is there: whether
+this reader saved the shop (already), and which of its reviews they liked (new -- one
+request for all the reviews on the page, not one per card). Both only ever turn something
+on, and a failure, including the ordinary one of not being signed in, leaves the page
+exactly as it rendered. Pressing like wins over the answer that arrives from the server, so
+a card cannot flip back under the reader's finger.
+
+Nothing is prebuilt: eight and a half thousand shops in four languages is a build nobody
+wants to wait for. The first visitor to a shop pays for rendering it; everybody after them,
+for the next hour, does not.
+
+---
+
 ## The store list shows where a row came from, and can be narrowed to the leftovers
 
 A thousand rows in the catalogue came from the provider the product no longer uses: their

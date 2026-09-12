@@ -8,16 +8,34 @@ import {Rating,RatingStars} from '@/components/Rating';
 import {StoreActions} from '@/components/StoreActions';
 import {JsonLd} from '@/components/JsonLd';
 import {ScrollTop} from '@/components/ScrollTop';
-import {getStore} from '@/lib/server-api';
-import {getServerI18n} from '@/i18n/server';
+import {getPublicStore} from '@/lib/server-api';
+import {getDictionary} from '@/i18n/dictionaries';
+import {asLocale} from '@/lib/site';
 import {canonicalFor,localePath,storePath} from '@/lib/site';
 import {breadcrumbJsonLd,storeJsonLd} from '@/lib/structured-data';
 import type {Locale} from '@/lib/types';
 import {isBrandMark,storePhotoURL} from '@/lib/store-photo';
 import {TimedNudge} from '@/components/TimedNudge';
 import {PageBackButton} from '@/components/PageBackButton';
+import {ViewerLikes} from '@/components/ViewerLikes';
 
-type Props={params:Promise<{id:string}>};
+type Props={params:Promise<{id:string;locale:string}>};
+
+// A store page is the same page for everybody, so it is built once and served from the
+// edge for an hour rather than assembled from two backend round trips on every view.
+//
+// Two things had to be true first, and now are. The locale comes from the address rather
+// than from a request header, and the store is read anonymously -- touching cookies or
+// headers is what makes a page dynamic, and what it would have read is one reader's view.
+// Everything that does differ per reader is read in the browser after the page arrives:
+// whether this reader saved the shop, and which of its reviews they liked.
+export const revalidate=3600;
+
+// Nothing is prebuilt: eight and a half thousand shops in four languages is a build nobody
+// wants to wait for, and the pages people actually open are a small fraction of them. What
+// this declares is that the route may be cached at all -- the first visitor to a shop pays
+// for rendering it and everybody after them, for the next hour, does not.
+export function generateStaticParams(){return [] as {id:string}[];}
 
 const contributionCopy:Record<Locale,{title:string;body:string;action:string;progress:string;levels:string;correction:string}>={
   tr:{title:'Bu mağazaya gittin mi?',body:'Deneyimin bir sonraki kişinin doğru mağazayı seçmesine yardım eder. Doğrulanmış her değerlendirme katkı seviyeni de yükseltir.',action:'Değerlendirme yap',progress:'Katkı seviyeni yükselt',levels:'Katkı seviyeleri ne işe yarar?',correction:'Mağaza bilgilerinde düzenleme öner.'},
@@ -39,8 +57,10 @@ const scoreCopy:Record<Locale,{title:string;intro:string;trust:string;seeReviews
 // jsonb. Nothing here is invented: a missing field is simply not rendered.
 
 export async function generateMetadata({params}:Props):Promise<Metadata>{
-  const [{id},{t,locale}]=await Promise.all([params,getServerI18n()]);
-  const {store}=await getStore(id);
+  const {id,locale:raw}=await params;
+  const locale=asLocale(raw);
+  const t=getDictionary(locale);
+  const {store}=await getPublicStore(id,locale,revalidate);
   const place=[store.district,store.city].filter(Boolean).join(', ');
   const title=place?`${store.name} — ${place}`:store.name;
   const description=store.localized_description??`${store.name}${place?`, ${place}`:''} — ${t.community}`;
@@ -54,8 +74,10 @@ export async function generateMetadata({params}:Props):Promise<Metadata>{
 }
 
 export default async function Page({params}:Props){
-  const [{id},{locale,t}]=await Promise.all([params,getServerI18n()]);
-  const {store,recent_posts}=await getStore(id);
+  const {id,locale:raw}=await params;
+  const locale=asLocale(raw);
+  const t=getDictionary(locale);
+  const {store,recent_posts}=await getPublicStore(id,locale,revalidate);
   // One store, one address. Links created before slugs existed still resolve, they just
   // do not stay on a second URL competing with the canonical one.
   if(store.slug&&id!==store.slug)permanentRedirect(storePath(store));
@@ -130,7 +152,7 @@ export default async function Page({params}:Props){
       </div>
       <div className="store-reviews" aria-labelledby="store-reviews-title">
         <h2 className="store-section-title" id="store-reviews-title">{t.community}</h2>
-        {recent_posts.length?<div className="store-review-rail">{recent_posts.map(post=><PostCard post={post} surface="store" key={post.id}/>)}</div>:<div className="empty-state"><h3>{t.noCommunity}</h3><p>{t.noReviewsBody}</p></div>}
+        {recent_posts.length?<ViewerLikes postIds={recent_posts.map(post=>post.id)}><div className="store-review-rail">{recent_posts.map(post=><PostCard post={post} surface="store" key={post.id}/>)}</div></ViewerLikes>:<div className="empty-state"><h3>{t.noCommunity}</h3><p>{t.noReviewsBody}</p></div>}
       </div>
     </section>
     <TimedNudge kind="review" requireReviewFlag/>
