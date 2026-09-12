@@ -23,6 +23,7 @@ export type ReviewRow={id:string;store_id:string;store_name:string;user_id:strin
 export type SearchRow={id:string;query:string;user_id?:string;query_language:string;scope:string;result_count:number;click_count:number;duration_ms?:number;fallback_state?:string;created_at:string};
 export type FeedbackRow={id:string;user_id?:string;kind:string;message:string;contact_email?:string;author?:string;locale:string;status:string;created_at:string;handled_at?:string;reply?:string;replied_at?:string};
 export type MatchQueueRow={id:string;brand:string;name:string;address:string;city:string;district:string;reason:string;similarity:number;distance_meters:number;created_at:string;match_id:string|null;match_name:string;match_address:string;match_source_kind:string};
+export type BrandRow={slug:string;name:string;website:string;tier:number;locator_kind:string;active:boolean;stores:number;carried:number;last_run:string|null;last_fetched:number;last_new:number;last_updated:number;last_review:number;last_error:string};
 export type AuditRow={id:string;actor_email:string;action:string;target_type:string;target_id:string;metadata:Record<string,unknown>;created_at:string};
 
 const qs=(params:Record<string,string|number|undefined>)=>{
@@ -61,5 +62,11 @@ export const getCategories=()=>read<{items:CategoryOption[]}>('categories');
 // meant to be emptied, and a queue long enough to need pages is itself the finding.
 export async function getMatchQueue():Promise<AdminResult<MatchQueueRow[]>>{
   const result=await read<{items:MatchQueueRow[]}>('match-queue?limit=200');
+  return result.ok?{ok:true,data:result.data.items??[]}:{ok:false};
+}
+
+// The brand registry with what each brand's last import actually did.
+export async function getBrands():Promise<AdminResult<BrandRow[]>>{
+  const result=await read<{items:BrandRow[]}>('brands');
   return result.ok?{ok:true,data:result.data.items??[]}:{ok:false};
 }

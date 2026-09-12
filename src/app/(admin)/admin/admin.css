@@ -140,3 +140,9 @@
 .admin-queue-pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
 .admin-queue-pair h3{margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-muted)}
 .admin-queue-pair p{margin:0 0 4px}
+
+/* A brand we have decided not to carry stays in the table, greyed, with the reason in the
+   registry -- deleting the row would lose the decision and invite somebody to add it back. */
+.admin-table tr[data-off]{opacity:.55}
+.admin-table td[data-warn]{color:var(--error);font-weight:700}
+.admin-error-note{color:var(--error)}

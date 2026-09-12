@@ -8,6 +8,7 @@ const tabs=[
   {href:'/admin',label:'Genel bakış'},
   {href:'/admin/searches',label:'Aramalar'},
   {href:'/admin/stores',label:'Mağazalar'},
+  {href:'/admin/markalar',label:'Markalar'},
   {href:'/admin/eslesme',label:'Eşleştirme'},
   {href:'/admin/users',label:'Kullanıcılar'},
   {href:'/admin/reviews',label:'Değerlendirmeler'},
