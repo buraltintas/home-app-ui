@@ -75,12 +75,24 @@ export function formatDistance(metres:number,locale:Locale):string{
     :`${new Intl.NumberFormat(locale,{maximumFractionDigits:1}).format(metres/1000)} km`;
 }
 
+// The label stays whether or not there is a number to put after it. A row that shows a
+// distance sometimes and nothing at other times leaves the reader guessing which of the two
+// they are looking at; saying "we cannot work this out, and here is why" is an answer, and
+// an empty space is not.
+const distanceLabel:Record<Locale,string>={tr:'Mesafeniz',en:'Your distance',de:'Deine Entfernung',ru:'Ваше расстояние'};
+const noLocation:Record<Locale,string>={
+  tr:'Mesafeniz hesaplanamıyor. Konum iznini açman gerek.',
+  en:'Your distance cannot be worked out. Location permission is needed.',
+  de:'Deine Entfernung kann nicht ermittelt werden. Standortfreigabe wird benötigt.',
+  ru:'Расстояние не определить. Нужно разрешение на доступ к геопозиции.',
+};
+
 export function StoreDistance({store,viewer,radiusMeters,locale}:{store:Coordinates;viewer?:Position;radiusMeters:number;locale:Locale}){
-  if(!viewer)return null;
+  if(!viewer)return <p className="store-distance is-unknown"><span>{distanceLabel[locale]}</span> <small>{noLocation[locale]}</small></p>;
   const metres=metresBetween(viewer,store);
   const close=metres<=radiusMeters;
   return <p className={`store-distance${close?' is-eligible':''}`}>
-    <strong>{formatDistance(metres,locale)}</strong>
+    <span>{distanceLabel[locale]}</span> <strong>{formatDistance(metres,locale)}</strong>
     {close&&<small>{eligible[locale]}</small>}
   </p>;
 }

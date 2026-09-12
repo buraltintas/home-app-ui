@@ -485,12 +485,19 @@ svg{stroke-width:2}
 /* Placement only, in each of the three homes. */
 .review-invitation .store-contribution-action{display:flex}
 .store-review-action{grid-column:1/-1;display:flex}
-.favorite-review-action{justify-self:start}
+/* Smaller than a page's primary action: on this page the store is the subject and the
+   invitation is an aside beside it, not the thing being offered. */
+.favorite-review-action{justify-self:start;min-height:38px;padding:0 14px;font-size:14px}
 /* The distance stands to the left of the action it qualifies: how far away the store is,
    and then what you can do about it. */
 .favorite-review-row{grid-column:2/3;display:flex;align-items:center;flex-wrap:wrap;gap:8px 16px}
-.store-distance{display:grid;gap:2px;margin:0}
+/* The label and the number sit on one line; anything explaining them goes under. */
+.store-distance{display:grid;grid-template-columns:auto auto;align-items:baseline;gap:2px 6px;margin:0;justify-content:start}
+.store-distance>span{font-size:13px;color:var(--ink-muted)}
+.store-distance small{grid-column:1/-1}
 .store-distance strong{font-size:15px;font-weight:750;color:var(--clay)}
+/* Nothing to point at, so nothing is coloured as though there were. */
+.store-distance.is-unknown small{color:var(--ink-muted)}
 .store-distance small{font-size:12px;line-height:1.3;color:var(--ink-muted)}
 .store-distance.is-eligible small{color:var(--success);font-weight:700}
 @media(max-width:600px){.favorite-review-row{grid-column:1/-1}}

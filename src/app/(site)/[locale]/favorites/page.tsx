@@ -85,12 +85,15 @@ export default function Page(){
       <Link href={localePath(locale,`/stores/${store.id}`)} prefetch={false}>
         {photo?<Image className={`favorite-store-photo${isBrandMark(store.photo)?' is-brand-mark':''}`} src={photo} width={160} height={120} alt="" unoptimized/>:<div className="favorite-store-photo is-empty" aria-hidden="true">{store.name.trim().charAt(0)}</div>}
         <div><strong>{store.name}</strong><span>{[store.district,store.city].filter(Boolean).join(', ')}</span>
-        {store.platform.review_count?<small><RatingStars value={store.platform.average_rating}/> · {store.platform.review_count} {t('reviews')}</small>:<small>{t('noCommunity')}</small>}</div>
+        {store.platform.review_count?<small><RatingStars value={store.platform.average_rating}/> · {store.platform.review_count} {t('reviewWord')}</small>:<small>{t('noCommunity')}</small>}</div>
         <ArrowRight aria-hidden="true"/>
       </Link>
       <div className="favorite-review-row">
         <StoreDistance store={{latitude:store.latitude,longitude:store.longitude}} viewer={viewer} radiusMeters={reviewRadius} locale={locale}/>
-        <Link className="button store-contribution-action favorite-review-action" href={localePath(locale,`/create?store=${store.id}`)}>{reviewAction[locale]}</Link>
+        {/* Offered only once the distance is known. A review has to be written from the
+            shop, so inviting somebody to start one before we can tell where they are is an
+            invitation to be turned away at the end of the form. */}
+        {viewer&&<Link className="button store-contribution-action favorite-review-action" href={localePath(locale,`/create?store=${store.id}`)}>{reviewAction[locale]}</Link>}
       </div>
     </li>})}</ul><TimedNudge kind="favorites"/>
   </main>;
