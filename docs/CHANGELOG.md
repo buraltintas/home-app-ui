@@ -8,6 +8,20 @@ value involved.
 
 ---
 
+## The store list shows where a row came from, and can be narrowed to the leftovers
+
+A thousand rows in the catalogue came from the provider the product no longer uses: their
+name and address are still there, and nothing stands behind them. The admin store list now
+carries each row's origin -- the chain's own published list, typed in here, from a visitor,
+or an unverified leftover -- with the brand under it, and a row of links narrows the table to
+any one of them. Filtering is in the address rather than in a control, so the list of
+leftovers can be bookmarked and handed on; it is worked through over weeks, not retyped.
+
+Searching from inside a filtered view used to throw the filter away. It keeps everything
+else in the address now and only replaces the search itself.
+
+---
+
 ## The full-screen search panel: one way out, one bar, one action
 
 Six revisions from the search card, all in the panel a phone opens when the field is

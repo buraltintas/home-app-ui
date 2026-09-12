@@ -17,7 +17,7 @@ async function read<T>(path:string):Promise<AdminResult<T>>{
 
 export type Snapshot={total_users?:number;total_stores?:number;total_posts?:number;total_searches?:number}&Record<string,unknown>;
 export type UserRow={id:string;email:string;display_name:string;status:string;review_count:number;created_at:string;deleted_at?:string};
-export type StoreRow={id:string;name:string;slug:string;city:string;is_premium:boolean;is_catalog_store:boolean;cover_media_id?:string;categories:string[];review_count:number;average_rating:number;created_at:string};
+export type StoreRow={id:string;name:string;slug:string;city:string;is_premium:boolean;is_catalog_store:boolean;cover_media_id?:string;categories:string[];review_count:number;average_rating:number;created_at:string;source_kind:string;brand_slug:string;verified:boolean};
 export type CategoryOption={slug:string;name:string};
 export type ReviewRow={id:string;store_id:string;store_name:string;user_id:string;author:string;rating:number;text:string;created_at:string;deleted:boolean};
 export type SearchRow={id:string;query:string;user_id?:string;query_language:string;scope:string;result_count:number;click_count:number;duration_ms?:number;fallback_state?:string;created_at:string};
@@ -50,7 +50,7 @@ async function readPage<T>(path:string,params:Record<string,string|number|undefi
 export const getOverview=()=>read<{snapshot:Snapshot;daily:unknown[]}>('overview');
 export const getSearchInsights=()=>read<Record<string,unknown>>('search-insights');
 export const getUsers=(q?:string,page=0)=>readPage<UserRow>('users',{q},page);
-export const getStores=(q?:string,premium?:boolean,page=0)=>readPage<StoreRow>('stores',{q,premium:premium?'true':undefined},page);
+export const getStores=(q?:string,premium?:boolean,page=0,source?:string)=>readPage<StoreRow>('stores',{q,premium:premium?'true':undefined,source},page);
 export const getReviews=(q?:string,page=0)=>readPage<ReviewRow>('reviews',{q},page);
 export const getSearches=(q?:string,page=0)=>readPage<SearchRow>('searches',{q},page);
 export const getAudit=(page=0)=>readPage<AuditRow>('audit',{},page);
