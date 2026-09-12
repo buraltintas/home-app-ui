@@ -153,6 +153,11 @@ export default async function Page({params}:Props){
         <p className="eyebrow store-section-title">{t.about}</p>
         {store.localized_description&&<p>{store.localized_description}</p>}
         <address>{[store.address,[store.district,store.city].filter(Boolean).join('/')].filter(Boolean).join(', ')}</address>
+        {/* Said out loud, because the map pin and the distance look exactly as certain
+            either way. A shop whose chain publishes no coordinate stands at the centre of
+            the smallest place its address names -- right to a few hundred metres, not to
+            the doorway -- and a reader who is not told that reads it as exact. */}
+        {store.location_approximate&&<p className="store-location-approximate">{t.approximateLocation}</p>}
         <Link className="store-correction-link" href={correctionPath}>{contribution.correction}</Link>
         {store.website&&<aside className="external-panel" aria-label={t.storeWebsite}>
           {/* The store's own site, where it has one. This is the store speaking for

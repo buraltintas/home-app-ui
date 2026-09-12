@@ -89,7 +89,7 @@ export default function Page(){
         <ArrowRight aria-hidden="true"/>
       </Link>
       <div className="favorite-review-row">
-        <StoreDistance store={{latitude:store.latitude,longitude:store.longitude}} viewer={viewer} radiusMeters={reviewRadius} locale={locale}/>
+        <StoreDistance store={{latitude:store.latitude,longitude:store.longitude}} viewer={viewer} radiusMeters={reviewRadius} locale={locale} isApproximate={store.location_approximate}/>
         {/* Offered only once the distance is known. A review has to be written from the
             shop, so inviting somebody to start one before we can tell where they are is an
             invitation to be turned away at the end of the form. */}

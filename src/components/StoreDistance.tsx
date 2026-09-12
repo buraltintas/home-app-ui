@@ -87,12 +87,25 @@ const noLocation:Record<Locale,string>={
   ru:'Расстояние не определить. Нужно разрешение на доступ к геопозиции.',
 };
 
-export function StoreDistance({store,viewer,radiusMeters,locale}:{store:Coordinates;viewer?:Position;radiusMeters:number;locale:Locale}){
+// A distance to a shop we placed ourselves is a distance to the middle of its neighbourhood,
+// not to its door. Rounding it away would be a lie of a different kind, so the number stays
+// and the tilde says what it is.
+const approximate:Record<Locale,string>={
+  tr:'yaklaşık — mağaza kendi koordinatını yayımlamıyor',
+  en:'approximate — this shop publishes no coordinate of its own',
+  de:'ungefähr — dieses Geschäft veröffentlicht keine eigenen Koordinaten',
+  ru:'приблизительно — магазин не публикует свои координаты',
+};
+
+export function StoreDistance({store,viewer,radiusMeters,locale,isApproximate}:{store:Coordinates;viewer?:Position;radiusMeters:number;locale:Locale;isApproximate?:boolean}){
   if(!viewer)return <p className="store-distance is-unknown"><span>{distanceLabel[locale]}</span> <small>{noLocation[locale]}</small></p>;
   const metres=metresBetween(viewer,store);
-  const close=metres<=radiusMeters;
+  // Close enough to review is a claim about where the reader is standing, and it cannot be
+  // made from a point we invented: the shop could be half a kilometre from where we put it.
+  const close=metres<=radiusMeters&&!isApproximate;
   return <p className={`store-distance${close?' is-eligible':''}`}>
-    <span>{distanceLabel[locale]}</span> <strong>{formatDistance(metres,locale)}</strong>
+    <span>{distanceLabel[locale]}</span> <strong>{isApproximate?'~':''}{formatDistance(metres,locale)}</strong>
     {close&&<small>{eligible[locale]}</small>}
+    {isApproximate&&<small>{approximate[locale]}</small>}
   </p>;
 }

@@ -8,6 +8,19 @@ value involved.
 
 ---
 
+## An approximate location says it is approximate
+
+Five hundred shops stand where we put them rather than where their chain says they are: the
+chain publishes no usable coordinate, so the row sits at the centre of the smallest place its
+address names -- right to a few hundred metres, not to the doorway. The map pin and the
+distance looked exactly as certain as everybody else's.
+
+The store page says it under the address now, and a distance to such a shop is written with a
+tilde and a line saying why. "Close enough to review" no longer appears on one: that is a
+claim about where the reader is standing, and it cannot be made from a point we invented.
+
+---
+
 ## The locale left the request, and the store page is cached
 
 The proxy added an `x-locale` header to every request so a server component could read the

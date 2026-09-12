@@ -511,6 +511,9 @@ svg{stroke-width:2}
 .store-distance.is-unknown small{color:var(--ink-muted)}
 .store-distance small{font-size:12px;line-height:1.3;color:var(--ink-muted)}
 .store-distance.is-eligible small{color:var(--success);font-weight:700}
+/* Said quietly, beside the address it qualifies -- it is a caveat on what is above it, not
+   a warning about the shop. */
+.store-location-approximate{margin:6px 0 0;font-size:13px;line-height:1.4;color:var(--ink-muted)}
 @media(max-width:600px){.favorite-review-row{grid-column:1/-1}}
 .profile-sections{display:grid}
 .profile-sections a{display:flex;flex-direction:column;gap:4px;padding:20px 0;border-bottom:1px solid var(--line);min-height:44px}
