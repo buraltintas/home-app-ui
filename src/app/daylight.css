@@ -161,6 +161,10 @@ svg{stroke-width:2}
 .store-actions button:hover,.store-actions a:hover{background:var(--muted)}
 .store-save-dock{position:fixed;z-index:22;left:50%;bottom:22px;transform:translateX(-50%);width:min(420px,calc(100% - 28px));min-height:76px;padding:12px 14px 12px 22px;display:flex;align-items:center;justify-content:space-between;gap:24px;background:color-mix(in srgb,var(--surface) 92%,transparent);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--lift);backdrop-filter:blur(20px) saturate(130%)}
 .store-save-dock>span{font-size:15px;font-weight:650;white-space:nowrap}.store-save-dock .button{min-width:0;white-space:nowrap}
+/* This button exists to get somebody to come back and write a review, so it wears the
+   colour the product uses for what it wants you to do. Filled near-black it was the same
+   weight as every other button on the page and read as a form control. */
+.store-save-dock .button.primary{background:var(--clay);color:var(--surface)}
 .store-save-dock .button.is-saved{background:var(--success);color:var(--surface)}
 .store-save-status{position:fixed;z-index:23;left:50%;bottom:108px;transform:translateX(-50%);margin:0;padding:9px 14px;border:1px solid var(--line);border-radius:var(--r-pill);background:var(--surface);color:var(--ink);box-shadow:var(--lift);font-weight:650}
 .page-back-button{position:fixed;z-index:21;top:86px;left:max(18px,calc((100vw - 1480px)/2));width:46px;height:46px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:color-mix(in srgb,var(--surface) 92%,transparent);color:var(--ink);box-shadow:0 8px 24px rgba(22,20,15,.09);backdrop-filter:blur(16px);cursor:pointer}.page-back-button:hover{background:var(--muted)}.page-back-button svg{width:20px;height:20px}
@@ -442,7 +446,14 @@ svg{stroke-width:2}
 @media(max-width:720px){.store-overview,.store-body{max-width:100vw}.store-contribution{width:100%;max-width:100vw;padding:20px 18px 0;overflow:hidden}.review-invitation{width:100%;max-width:calc(100vw - 36px);padding:22px 20px;grid-template-columns:minmax(0,1fr);gap:20px}.review-invitation h2{font-size:24px}.review-invitation p{overflow-wrap:anywhere}.review-invitation-actions{width:100%;max-width:100%}}
 /* The same width as the navigation dock it stands above; two floating bars on one
    screen that nearly line up read as a mistake rather than as a pair. */
-@media(max-width:720px){.store-save-dock{bottom:calc(86px + env(safe-area-inset-bottom));width:min(420px,calc(100% - 28px));min-height:68px;padding:10px 10px 10px 16px;gap:12px}.store-save-dock>span{font-size:13px}.store-save-dock .button{min-width:0;padding-inline:14px;white-space:nowrap}}
+@media(max-width:720px){
+  /* Edge to edge, like the navigation bar it stands on: two floating bars of different
+     widths stacked on one another read as two unrelated things, and the one underneath is
+     the one the reader already knows. Same width, same edges, so they look like one stack. */
+  .store-save-dock{bottom:calc(68px + env(safe-area-inset-bottom));left:0;right:0;transform:none;width:auto;min-height:68px;padding:10px 16px;gap:12px;border-radius:0;border-left:0;border-right:0}
+  .store-save-dock>span{font-size:13px}
+  .store-save-dock .button{min-width:0;padding-inline:14px;white-space:nowrap}
+}
 /* The phone override was still the full width of the screen, which is why narrowing the
    base rule changed nothing on a phone -- the only place anybody looks at it. */
 @media(max-width:720px){.timed-nudge{bottom:calc(88px + env(safe-area-inset-bottom));width:min(316px,calc(100% - 56px))}.store-page .timed-nudge{bottom:calc(164px + env(safe-area-inset-bottom))}}
