@@ -22,6 +22,28 @@ row it is opened from is the one that survives, and the confirmation says so in 
 
 ---
 
+## The profile shows your email, and can change it
+
+Somebody could not see the address their account signs in with, let alone change it. It sits
+under the display name now, in its own block with a rule above it, because it is not the same
+kind of edit and must not be carried along by the same Save.
+
+Changing it takes two steps: a code goes to the new address, and the change lands when that
+code is typed back. The card asked for it to save on submit. It does not, and the reason is
+worth stating: signing in here means asking for a code and reading it, so this address is how
+somebody gets back into the account. Saved on the session alone, a borrowed phone would own
+the account for good, and a typo would lock somebody out of their own reviews with nobody to
+appeal to. The two steps are the same proof signing in already asks for.
+
+## The bottom navigation's four marks are the same size
+
+Signed in, the profile mark was a 20 px ring beside three 24 px drawings -- the same ink, a
+quarter less of it, which reads as the lighter, greyer one of the four. Measured rather than
+eyeballed: house 18x19, magnifier 18x18, heart 20x17, and the avatar alone in a 20 px box. It
+is 24 px now like its neighbours.
+
+---
+
 ## An approximate location says it is approximate
 
 Five hundred shops stand where we put them rather than where their chain says they are: the

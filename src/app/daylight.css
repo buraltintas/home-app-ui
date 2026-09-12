@@ -221,6 +221,12 @@ svg{stroke-width:2}
   /* Signed out, the profile shape is an outline like its three neighbours. Filled black it
      was the only solid mark in the bar, which read as the current destination. */
   .site-header nav .nav-avatar{background:transparent;color:var(--ink);border:2px solid currentColor}
+  /* And the same size as them. The three drawn marks fill a 24 px box; the avatar kept the
+     20 px it is given in the desktop header, so signed in, the profile stood a quarter
+     smaller than its neighbours and read as the lighter, greyer one of the four -- the same
+     ink, less of it. Measured rather than eyeballed: house 18x19, magnifier 18x18, heart
+     20x17, avatar 20x20 in a 20 px box. */
+  .site-header nav .nav-avatar{width:24px;height:24px;font-size:11px}
 }
 .nav-icon-solid{fill:none}
 
