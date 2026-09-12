@@ -71,19 +71,21 @@ export function proxy(request:NextRequest){
     return NextResponse.redirect(url,307);
   }
   url.pathname=`/${DEFAULT_LOCALE}${pathname}`;
-  return withLocale(NextResponse.rewrite(url,{request:localeHeaders(request,DEFAULT_LOCALE)}),DEFAULT_LOCALE);
+  return withLocale(NextResponse.rewrite(url),DEFAULT_LOCALE);
 }
 
-function localeHeaders(request:NextRequest,locale:Locale){
-  const headers=new Headers(request.headers);
-  headers.set('x-locale',locale);
-  return {headers};
-}
-
-// Server components read the locale from this header rather than from params, so no page
-// has to thread it down by hand.
+// The locale is announced on the way out and never written onto the way in.
+//
+// Server components used to read it from a request header this added, which saved threading
+// it down by hand and cost something nobody saw: rewriting a request's headers in middleware
+// makes every page in the application dynamic, so nothing could be cached and declaring a
+// page static answered 500 on every view. Every route that renders text has its own [locale]
+// segment, so each page reads it from there now.
+//
+// The response header stays. It costs nothing, it does not touch the request, and a proxy or
+// a log downstream can still see which language was served.
 function withLocale(input:NextRequest|NextResponse,locale:Locale):NextResponse{
-  const response=input instanceof NextResponse?input:NextResponse.next({request:localeHeaders(input,locale)});
+  const response=input instanceof NextResponse?input:NextResponse.next();
   response.headers.set('x-locale',locale);
   return response;
 }

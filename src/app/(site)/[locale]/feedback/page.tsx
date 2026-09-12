@@ -5,13 +5,13 @@ import {ScrollTop} from '@/components/ScrollTop';
 import {getServerI18n} from '@/i18n/server';
 import {canonicalFor} from '@/lib/site';
 
-export async function generateMetadata():Promise<Metadata>{
-  const {locale,t}=await getServerI18n();
+export async function generateMetadata({params}:{params:Promise<{locale:string}>}):Promise<Metadata>{
+  const {locale,t}=getServerI18n((await params).locale);
   return {title:t.feedbackTitle,description:t.feedbackIntro,alternates:canonicalFor(locale,'/feedback')};
 }
 
-export default async function Page(){
-  const {t}=await getServerI18n();
+export default async function Page({params}:{params:Promise<{locale:string}>}){
+  const {t}=getServerI18n((await params).locale);
   return <main className="feedback-page">
     <ScrollTop/>
     <PageBackButton/>

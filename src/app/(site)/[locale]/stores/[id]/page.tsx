@@ -29,20 +29,23 @@ type Props={params:Promise<{id:string;locale:string}>};
 // headers is what makes a page dynamic, and what it would have read is one reader's view.
 // Everything that does differ per reader is read in the browser after the page arrives:
 // whether this reader saved the shop, and which of its reviews they liked.
-// Caching is off, and what is in the way is not on this page.
+// A store page is the same page for everybody, so it is built once and served for an hour
+// rather than assembled from two backend round trips on every view.
 //
-// The proxy rewrites every request with an added `x-locale` header so that a server
-// component can read the locale without threading it down, and mutating a request's headers
-// in middleware is exactly what makes a page dynamic. Declared static, this page answered
-// "changed from static to dynamic at runtime, reason: headers" on every view in production --
-// and so would any other page, including an empty one, which is how it was found.
-//
-// Turning it on is one line here, after the locale stops travelling as a request header: the
-// address already carries it, in this route's own [locale] segment, and 62 calls to
-// getServerI18n across 23 files would read it from params instead. Everything else this page
-// needed is already done -- the store is read anonymously, and the reader's own state arrives
-// in the browser after the page.
-export const revalidate=0;
+// Three things had to be true first, and now are. The locale comes from the address rather
+// than from a request header -- the header the proxy used to add made every page in the
+// application dynamic, which is what defeated the first attempt at this. The store is read
+// anonymously: touching cookies is the other thing that makes a page dynamic, and what it
+// would have read is one reader's view. And everything that does differ per reader is read
+// in the browser after the page arrives -- whether this reader saved the shop, and which of
+// its reviews they liked.
+export const revalidate=3600;
+
+// Nothing is prebuilt: eight and a half thousand shops in four languages is a build nobody
+// wants to wait for, and the pages people open are a small fraction of them. What this
+// declares is that the route may be cached at all -- the first visitor to a shop pays for
+// rendering it and everybody after them, for the next hour, does not.
+export function generateStaticParams(){return [] as {id:string}[];}
 
 const contributionCopy:Record<Locale,{title:string;body:string;action:string;progress:string;levels:string;correction:string}>={
   tr:{title:'Bu mağazaya gittin mi?',body:'Deneyimin bir sonraki kişinin doğru mağazayı seçmesine yardım eder. Doğrulanmış her değerlendirme katkı seviyeni de yükseltir.',action:'Değerlendirme yap',progress:'Katkı seviyeni yükselt',levels:'Katkı seviyeleri ne işe yarar?',correction:'Mağaza bilgilerinde düzenleme öner.'},

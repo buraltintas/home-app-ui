@@ -9,8 +9,8 @@ import {reviewPageJsonLd} from '@/lib/structured-data';
 
 // This page used to ignore its own id and render a sample review, so every photo in the
 // feed led to the same fictional store. It now shows the review that was tapped.
-export async function generateMetadata({params}:{params:Promise<{id:string}>}):Promise<Metadata>{
-  const [{id},{locale}]=await Promise.all([params,getServerI18n()]);
+export async function generateMetadata({params}:{params:Promise<{id:string;locale:string}>}):Promise<Metadata>{
+  const [{id},{locale}]=await Promise.all([params,params.then(p=>getServerI18n(p.locale))]);
   const post=await getPost(id);
   const title=`${post.store_name} · ${post.display_name}`;
   // A review used to describe itself with its own words. It no longer has any: the review
@@ -28,7 +28,7 @@ export async function generateMetadata({params}:{params:Promise<{id:string}>}):P
     twitter:{card:image?'summary_large_image':'summary',title,description,...(image?{images:[image]}:{})}};
 }
 
-export default async function Page({params}:{params:Promise<{id:string}>}){
+export default async function Page({params}:{params:Promise<{id:string;locale:string}>}){
   const {id}=await params;
   const [post,comments]=await Promise.all([getPost(id),getComments(id)]);
   return <main className="public-narrow">

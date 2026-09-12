@@ -23,14 +23,14 @@ const copy:Record<Locale,{title:string;summary:string;version:string;updated:str
   ru:{title:'Правовые документы',summary:'Документы о том, как работает Boşa Gezme! и что происходит с вашими данными. У каждого своя версия и дата вступления в силу.',version:'Версия',updated:'Обновлено',pendingTitle:'Документы в подготовке',pendingBody:'Политика конфиденциальности, уведомление KVKK, условия использования и политика cookie будут опубликованы после того, как будут указаны личность и контактные данные оператора данных. Публикация раньше дала бы документ, не называющий ответственное лицо.'},
 };
 
-export async function generateMetadata():Promise<Metadata>{
-  const {locale}=await getServerI18n();
+export async function generateMetadata({params}:{params:Promise<{locale:string}>}):Promise<Metadata>{
+  const {locale}=getServerI18n((await params).locale);
   const description=metaDescription(copy[locale].summary);
   return {title:copy[locale].title,description,alternates:canonicalFor(locale,'/legal'),openGraph:{url:'/legal',title:copy[locale].title,description,images:[shareImage]}};
 }
 
-export default async function Page(){
-  const {locale}=await getServerI18n();
+export default async function Page({params}:{params:Promise<{locale:string}>}){
+  const {locale}=getServerI18n((await params).locale);
   const text=copy[locale];
   const docs=[about,contact,terms,privacy,kvkkAydinlatma,kvkkBasvuru,cookies,locationPrivacy,accountDeletion,childrenPrivacy,commercialCommunications,reportContent];
   return <main className="legal-page">

@@ -1,9 +1,8 @@
 import Image from 'next/image';
 import {homeBannerCopy} from '@/content/home';
-import {getServerI18n} from '@/i18n/server';
+import type {Locale} from '@/lib/types';
 
-export async function HomeDiscoveryBanner(){
-  const {locale}=await getServerI18n();
+export function HomeDiscoveryBanner({locale}:{locale:Locale}){
   const copy=homeBannerCopy[locale];
   return <section className="home-discovery-banner" aria-labelledby="home-discovery-banner-title">
     <Image

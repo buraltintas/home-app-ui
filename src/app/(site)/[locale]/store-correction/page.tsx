@@ -13,13 +13,13 @@ const copy:Record<Locale,{title:string;intro:string;store:string}>={
   ru:{title:'В данных магазина есть ошибка?',intro:'Сообщите о неверном адресе, категории или закрытом магазине. Мы проверим предложение и внесём исправление после подтверждения.',store:'Магазин, данные которого вы предлагаете изменить'},
 };
 
-export async function generateMetadata():Promise<Metadata>{
-  const {locale}=await getServerI18n();
+export async function generateMetadata({params}:{params:Promise<{locale:string}>}):Promise<Metadata>{
+  const {locale}=getServerI18n((await params).locale);
   return {title:copy[locale].title,description:copy[locale].intro,alternates:canonicalFor(locale,'/store-correction')};
 }
 
-export default async function Page({searchParams}:{searchParams:Promise<{store?:string;name?:string}>}){
-  const [{locale},query]=await Promise.all([getServerI18n(),searchParams]);
+export default async function Page({params,searchParams}:{params:Promise<{locale:string}>;searchParams:Promise<{store?:string;name?:string}>}){
+  const [{locale},query]=await Promise.all([params.then(p=>getServerI18n(p.locale)),searchParams]);
   const storeId=UUID.test(query.store??'')?query.store??'':'';
   const storeName=(query.name??'').trim().slice(0,160);
   if(!storeId||!storeName)redirect(localePath(locale,'/feedback'));

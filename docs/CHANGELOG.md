@@ -8,6 +8,31 @@ value involved.
 
 ---
 
+## The locale left the request, and the store page is cached
+
+The proxy added an `x-locale` header to every request so a server component could read the
+language without threading it down. That saved a parameter and cost the whole application
+its cacheability: rewriting a request's headers in middleware makes every page dynamic, so
+nothing could be cached and declaring a page static answered 500 on every view. An empty page
+at the same address failed identically, which is how it was found.
+
+Every route that renders text has its own `[locale]` segment, so each page reads the language
+from the address it was asked for. `getServerI18n` takes it as a required argument rather than
+an optional one on purpose: a page that forgets is a compile error, not a page that quietly
+reads the request again. Nineteen pages and two components changed; the proxy still announces
+the language on the way out, where it costs nothing.
+
+The store page is built once and served for an hour now, instead of being assembled from two
+backend round trips on every view. `x-nextjs-cache: HIT` on the second request, all four
+languages rendering their own, in a local production build -- which is the check this needed
+the first time and did not get, because `next dev` renders every page dynamically and cannot
+show this class of fault at all.
+
+One page could not follow: a not-found boundary is handed no params. It reads the locale from
+the provider in the layout instead, which was given it by the address.
+
+---
+
 ## The store page: caching turned on, then straight back off
 
 **Turned off again, within the hour, because it broke the page.** Declared static, every

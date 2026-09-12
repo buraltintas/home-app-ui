@@ -9,8 +9,8 @@ import {getServerI18n} from '@/i18n/server';
 import {canonicalFor,shareImage} from '@/lib/site';
 import {organizationJsonLd,websiteJsonLd} from '@/lib/structured-data';
 
-export async function generateMetadata():Promise<Metadata>{
-  const {t,locale}=await getServerI18n();
+export async function generateMetadata({params}:{params:Promise<{locale:string}>}):Promise<Metadata>{
+  const {t,locale}=getServerI18n((await params).locale);
   return {alternates:canonicalFor(locale,'/'),openGraph:{url:'/',type:'website',images:[shareImage],description:t.siteSnippet},description:t.siteSnippet};
 }
 
@@ -19,13 +19,13 @@ export async function generateMetadata():Promise<Metadata>{
 // them to care before they have a reason to. What it opens with instead is the search,
 // and under it the questions people actually ask before trusting a place they have not
 // used -- read from the about page so there is one wording, not two.
-export default async function Page(){
-  const {t,locale}=await getServerI18n();
+export default async function Page({params}:{params:Promise<{locale:string}>}){
+  const {t,locale}=getServerI18n((await params).locale);
   return <>
     <JsonLd data={[organizationJsonLd(t.siteSnippet),websiteJsonLd(t.siteSnippet,locale)]}/>
     <main className="feed-layout"><section className="feed-main">
-      <HomeIntro/>
-      <HomeDiscoveryBanner/>
+      <HomeIntro locale={locale}/>
+      <HomeDiscoveryBanner locale={locale}/>
       <HomeDiscoverySignals/>
       <HomeQuestions locale={locale}/>
     </section></main>

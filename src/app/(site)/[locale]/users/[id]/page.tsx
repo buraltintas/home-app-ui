@@ -4,8 +4,8 @@ import {getServerI18n} from '@/i18n/server';
 import {getProfile,getUserPosts} from '@/lib/server-api';
 import {canonicalFor,userPath} from '@/lib/site';
 
-export async function generateMetadata({params}:{params:Promise<{id:string}>}):Promise<Metadata>{
-  const [{id},{locale}]=await Promise.all([params,getServerI18n()]);
+export async function generateMetadata({params}:{params:Promise<{id:string;locale:string}>}):Promise<Metadata>{
+  const [{id},{locale}]=await Promise.all([params,params.then(p=>getServerI18n(p.locale))]);
   const profile=await getProfile(id);
   const title=profile.display_name;
   const description=profile.bio||undefined;
@@ -14,9 +14,9 @@ export async function generateMetadata({params}:{params:Promise<{id:string}>}):P
 
 // Every visitor used to land on the same invented person. This reads the profile whose
 // id is in the URL, and shows the reviews that person actually wrote.
-export default async function Page({params}:{params:Promise<{id:string}>}){
+export default async function Page({params}:{params:Promise<{id:string;locale:string}>}){
   const {id}=await params;
-  const {t,locale}=await getServerI18n();
+  const {t,locale}=getServerI18n((await params).locale);
   const [profile,posts]=await Promise.all([getProfile(id),getUserPosts(id)]);
   return <main className="profile-page">
     <header className="public-profile">
