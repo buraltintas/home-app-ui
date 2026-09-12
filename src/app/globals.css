@@ -110,7 +110,15 @@
    ring flashed round the icon for an instant on the way to the next page. The ring is
    what a keyboard visitor navigates by, so it stays wherever there is a keyboard to
    navigate with. */
-@media(pointer:coarse){.site-header nav a:focus-visible{box-shadow:none}}
+/* On a touch screen there is no keyboard to lose your place with, and the browser counts a
+   finger press as focus -- so the ring meant for keyboard users was flashing under every
+   thumb. The tap highlight the browser paints on its own goes with it: it borrows the
+   accent and reads as the same yellow flash. Both are removed only where the pointer is
+   coarse, so keyboard users keep the ring that tells them where they are. */
+@media(pointer:coarse){
+  .site-header nav a:focus-visible,.site-header nav a:focus{box-shadow:none;outline:0}
+  .site-header nav a{-webkit-tap-highlight-color:transparent}
+}
 
 .brand-link{display:flex;align-items:center;gap:12px;min-height:58px;font-size:23px;font-weight:700;white-space:nowrap}.brand-mark{width:52px;height:52px;border-radius:var(--r-pill);overflow:hidden;flex-shrink:0;box-shadow:0 1px 0 rgba(38,37,33,.12)}.brand-link img{width:100%;height:100%;object-fit:cover}
 @media(max-width:600px){.brand-link{gap:9px;font-size:19px}.brand-mark{width:46px;height:46px}}

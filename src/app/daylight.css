@@ -206,7 +206,10 @@ svg{stroke-width:2}
      not a coloured panel behind it either -- a filled shape is the whole signal. */
   .site-header nav a.is-active svg{color:var(--clay)}
   .site-header nav a.is-active .nav-icon-solid{fill:currentColor;stroke:none}
-  .site-header nav a.is-active .nav-avatar{background:var(--clay);color:var(--surface)}
+  /* The whole shape is the accent when this is where you are, ring included. The ring took
+     its colour from the glyph, so a filled clay circle wore a white outline around it and
+     read as a shape inside another shape. */
+  .site-header nav a.is-active .nav-avatar{background:var(--clay);color:var(--surface);border-color:var(--clay)}
   .site-header nav a.is-active{background:transparent}
   /* Signed out, the profile shape is an outline like its three neighbours. Filled black it
      was the only solid mark in the bar, which read as the current destination. */
