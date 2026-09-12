@@ -22,6 +22,25 @@ export function StoreActions({storeId,name,latitude,longitude,initialFavorited,p
   // nothing to be invited to, so the page opens without it. Unsaving brings it back,
   // because at that point the invitation is true again.
   const [dockVisible,setDockVisible]=useState(!initialFavorited);
+  // Whether this visitor saved this shop is read here rather than trusted from the markup.
+  // The page it sits on is cached and served to everybody alike, so the server cannot know
+  // -- and a saved shop rendering as unsaved is the kind of wrong that makes somebody save
+  // it twice. A failure, including the ordinary one of not being signed in, leaves the
+  // state exactly as the page rendered it.
+  useEffect(()=>{
+    let active=true;
+    void(async()=>{
+      try{
+        const response=await apiFetch('/api/proxy/me/favorites?limit=100',{cache:'no-store'});
+        if(!response.ok)return;
+        const body=await response.json() as {items?:{store?:{id?:string}}[]};
+        if(active&&(body.items??[]).some(item=>item.store?.id===storeId)){
+          setFavorited(true);setDockVisible(false);
+        }
+      }catch{/* leave the rendered state alone */}
+    })();
+    return()=>{active=false;};
+  },[storeId]);
   const [auth,setAuth]=useState(false);
   // What the user was trying to do when the sign-in dialog opened, so the intent is
   // resumed afterwards instead of silently dropped.

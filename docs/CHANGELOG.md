@@ -8,6 +8,25 @@ value involved.
 
 ---
 
+## A saved shop reads its own state, and why the store page is still not cached
+
+Whether this visitor saved this shop was rendered into the markup and trusted. That is fine
+for a page built per request and wrong the moment it is cached, so it is read on the client
+now; a failure, including the ordinary one of not being signed in, leaves the rendered state
+alone.
+
+**The store page still is not cached, and this is what is in the way.** The review rail
+carries the same kind of viewer state -- whether you liked a review, whether you saved the
+shop it is about -- rendered from the server and trusted by the card. Cache the page and
+every signed-in visitor is shown their own like as un-liked. Moving that to the client is a
+request per card unless a batched read exists for it, which is a real piece of work rather
+than a flag on this page, and half of it shipped is a page that lies to the people most
+likely to notice.
+
+So the caching is blocked on that, deliberately, and the blocker is written down here rather
+than left as an item somebody re-discovers.
+
+
 ## The matching queue has a screen
 
 Every row in it is a judgement the importer refused to make alone: a published shop that
