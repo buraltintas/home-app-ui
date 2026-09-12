@@ -282,7 +282,8 @@ svg{stroke-width:2}
 .store-rating-breakdown header p{margin:0;color:var(--ink-muted);font-size:15px;line-height:1.45}
 /* Not another sentence in the same paragraph: this is the claim the rating rests on, so it
    stands on its own with a mark of its own. */
-.store-rating-breakdown header p.store-rating-trust{margin-top:10px;padding-left:12px;border-left:3px solid var(--accent);color:var(--ink);font-weight:650}
+/* It sits over the reviews now, where the thing it describes is. */
+.store-reviews p.store-rating-trust{margin:0 0 18px;padding-left:12px;border-left:3px solid var(--accent);color:var(--ink);font-weight:650;line-height:1.5;max-width:64ch}
 /* The score leads its own row and the way to the reviews sits beside it. The label that
    used to open the row said what the number already says. */
 .store-rating-overall{display:flex;align-items:center;gap:16px}
@@ -307,7 +308,10 @@ svg{stroke-width:2}
 .store-rating-breakdown dd span{font-size:11px;color:var(--ink-muted);font-weight:500}
 .store-reviews{min-width:0}
 .store-reviews .store-section-title{margin:0 0 24px;font-size:28px;line-height:1.15;letter-spacing:-.025em}
-.store-review-rail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(286px,340px);gap:16px;max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scroll-padding-inline:2px;scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent;padding:2px 2px 18px}
+/* Narrower than a full column on purpose: the edge of the next review has to be visible or
+   nothing says there is one. A rail that ends flush with its container reads as a single
+   card somebody could scroll past without knowing. */
+.store-review-rail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(258px,296px);gap:16px;max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scroll-padding-inline:2px;scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent;padding:2px 2px 18px}
 .store-review-rail>.post-card{scroll-snap-align:start;display:flex;flex-direction:column;min-width:0;min-height:270px;padding:22px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface)}
 .store-review-rail .post-number{display:none}
 .store-review-rail .post-heading{display:block;margin:0;padding:0 0 18px;border-bottom:1px solid var(--line)}
@@ -356,7 +360,7 @@ svg{stroke-width:2}
   .store-rating-breakdown dl div:nth-last-child(-n+4){border-bottom:1px solid var(--line)}
   .store-rating-breakdown dl div:nth-last-child(-n+2){border-bottom:0}
   .store-reviews .store-section-title{margin-bottom:18px;font-size:24px}
-  .store-review-rail{grid-auto-columns:calc(100vw - 66px);gap:12px;margin-inline:-18px;padding:2px 18px 18px;scroll-padding-inline:18px}
+  .store-review-rail{grid-auto-columns:calc(100vw - 96px);gap:12px;margin-inline:-18px;padding:2px 18px 18px;scroll-padding-inline:18px}
   .store-review-rail>.post-card{min-height:252px;padding:20px}
   .guidance-card{padding:18px}
   .guidance-card .category-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -469,6 +473,7 @@ svg{stroke-width:2}
 @media(max-width:1100px) and (min-width:701px){.category-links{grid-template-columns:1fr}}
 @media(max-width:600px){.category-links{grid-template-columns:minmax(0,1fr);gap:0}.category-links button{grid-template-columns:24px minmax(0,1fr);gap:12px;min-height:56px;padding:10px 0}.category-icon{width:24px;height:24px}.category-icon svg{width:20px;height:20px}.category-links button>span:last-child{font-size:16px}}
 .store-correction-link{display:inline-flex;align-items:center;min-height:44px;margin-top:12px;color:var(--ink-muted);font-size:15px;text-decoration:underline;text-underline-offset:4px}
+.store-website-link{display:flex;margin-top:0}
 .store-correction-link:hover{color:var(--ink)}
 .store-contribution{max-width:1320px;margin:0 auto;padding:28px 32px 0}
 .review-invitation{min-width:0;margin:0;padding:28px 30px;background:var(--accent-wash);border:1px solid color-mix(in srgb,var(--clay) 22%,var(--line));border-radius:var(--r-lg);display:grid;grid-template-columns:minmax(0,1fr) minmax(230px,320px);align-items:center;gap:28px}

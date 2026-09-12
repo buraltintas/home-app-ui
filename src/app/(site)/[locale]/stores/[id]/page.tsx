@@ -103,7 +103,11 @@ export default async function Page({params}:Props){
     [t.criterionStaffKnowledge,criteria?.staff_knowledge],[t.criterionCheckout,criteria?.checkout],
     [t.criterionReturns,criteria?.returns],[t.criterionCleanliness,criteria?.cleanliness],
   ] as const;
-  const formatScore=(value:number|undefined)=>value===undefined?'—':value.toLocaleString(locale,{minimumFractionDigits:1,maximumFractionDigits:1});
+  // Two decimals where there are two, one where there is one. This number is the average of
+  // eight scores, so a reader can and does check the arithmetic: ten stars across eight
+  // questions is 1.25, and rounding that to 1.3 on the page makes the sum look wrong. A
+  // round 4.5 is still shown as 4.5, not 4.50.
+  const formatScore=(value:number|undefined)=>value===undefined?'—':value.toLocaleString(locale,{minimumFractionDigits:1,maximumFractionDigits:2});
   const correctionPath=localePath(locale,`/store-correction?store=${encodeURIComponent(store.id)}&name=${encodeURIComponent(store.name)}`);
   const trail=[{name:t.discover??'',path:'/discover'},...(store.city?[{name:store.city,path:'/discover'}]:[]),{name:store.name,path:storePath(store)}].filter(entry=>entry.name);
   return <main className="store-page">
@@ -131,7 +135,7 @@ export default async function Page({params}:Props){
       <div className="store-score"><span>{t.savedBy}</span><strong>{store.platform.favorite_count}</strong><small>{t.people}</small></div>
       <StoreActions storeId={store.id} name={store.name} latitude={store.latitude} longitude={store.longitude} initialFavorited={store.viewer_has_favorited} phone={store.phone}/>
       <section className="store-rating-breakdown" aria-labelledby="store-rating-title">
-        <header><div><h2 id="store-rating-title">{scores.title}</h2><p>{scores.intro}</p><p className="store-rating-trust">{scores.trust}</p></div><div className="store-rating-overall"><strong>{store.platform.review_count?formatScore(store.platform.average_rating):'—'}</strong>{store.platform.review_count?<><span className="store-rating-count">{store.platform.review_count} {t.reviewWord}</span><ReviewsJump label={scores.seeReviews}/></>:<small>{scores.empty}</small>}</div></header>
+        <header><div><h2 id="store-rating-title">{scores.title}</h2><p>{scores.intro}</p></div><div className="store-rating-overall"><strong>{store.platform.review_count?formatScore(store.platform.average_rating):'—'}</strong>{store.platform.review_count?<><span className="store-rating-count">{store.platform.review_count} {t.reviewWord}</span><ReviewsJump label={scores.seeReviews}/></>:<small>{scores.empty}</small>}</div></header>
         <dl>{criteriaRows.map(([label,value])=><div key={label}><dt>{label}</dt><dd>{value!==undefined?<RatingStars value={value}/>:'—'}</dd></div>)}</dl>
       </section>
       {/* Directly under save, directions, call and share, because it belongs with them: they
@@ -159,14 +163,16 @@ export default async function Page({params}:Props){
             the doorway -- and a reader who is not told that reads it as exact. */}
         {store.location_approximate&&<p className="store-location-approximate">{t.approximateLocation}</p>}
         <Link className="store-correction-link" href={correctionPath}>{contribution.correction}</Link>
-        {store.website&&<aside className="external-panel" aria-label={t.storeWebsite}>
-          {/* The store's own site, where it has one. This is the store speaking for
-              itself, which is the only outside source this page carries now. */}
-          <a className="external-link" href={store.website} target="_blank" rel="noopener noreferrer">{t.storeWebsite}</a>
-        </aside>}
+        {/* The store's own site, where it has one: the store speaking for itself, which is
+            the only outside source this page carries now. A link, not a panel -- the frame
+            around it made one line of text look like a section of its own. */}
+        {store.website&&<a className="store-correction-link store-website-link" href={store.website} target="_blank" rel="noopener noreferrer">{t.storeWebsite}</a>}
       </div>
       <div className="store-reviews" aria-labelledby="store-reviews-title">
         <h2 className="store-section-title" id="store-reviews-title">{t.community}</h2>
+        {/* The sentence about verified visits belongs here, over the reviews it describes,
+            rather than beside the score it does not explain. */}
+        <p className="store-rating-trust">{scores.trust}</p>
         {recent_posts.length?<ViewerLikes postIds={recent_posts.map(post=>post.id)}><div className="store-review-rail">{recent_posts.map(post=><PostCard post={post} surface="store" key={post.id}/>)}</div></ViewerLikes>:<div className="empty-state"><h3>{t.noCommunity}</h3><p>{t.noReviewsBody}</p></div>}
       </div>
     </section>

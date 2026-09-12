@@ -22,6 +22,26 @@ row it is opened from is the one that survives, and the confirmation says so in 
 
 ---
 
+## The store score shows the arithmetic it is made of
+
+A rating is the average of eight scores, so a reader can check it -- and one did: ten stars
+across eight questions is 1.25, and the page said 1.3. The score carries two decimals where
+there are two now, and one where there is one, so 4.5 is still 4.5 rather than 4.50.
+
+(The 1.0 that was reported earlier was the older defect, from when a review's rating was
+stored as a whole number. That storage is fractional since this morning, and the live page
+had already moved to 1.3 before this change.)
+
+**Three more from the same card.** The sentence about verified visits moved from beside the
+score, which it does not explain, to over the reviews, which it does. The store's own site is
+a link under the correction link rather than a framed panel -- the frame made one line of
+text look like a section -- and it is called "Web sitesi". And the review rail's cards are
+narrower than its container on purpose: the edge of the next review has to show, or nothing
+says there is one. Measured at 375 px: rail 339, card 279, so 60 px of the next card is
+visible.
+
+---
+
 ## The email you sign in with is a fact, not a field
 
 It was an editable input, which invited somebody to type a new address into it and expect
