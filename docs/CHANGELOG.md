@@ -22,6 +22,32 @@ row it is opened from is the one that survives, and the confirmation says so in 
 
 ---
 
+## The docks say one thing each, and the mascot lost its square
+
+Five changes to the floating docks.
+
+**The faint square around the mascot was the mascot.** Its file is a square with its own
+cream ground, opaque to the corners, drawn at 42 px inside a 48 px circle -- so its four
+corners sat outside the circle and read as a shadow. It fills the circle and is clipped by it.
+
+**The home dock has a lead and a call.** Everything before "Bize sor!" is the situation;
+"Bize sor!" is what to do about it, so it is its own piece rather than the far side of a line
+break: quiet muted lead, clay call at a heavier weight, with a band of light that crosses it
+twice and stops. The card asked for a different typeface; this product has one family and
+four weights (DESIGN.md), so the separation is made with weight, size and colour instead --
+noted on the card.
+
+**The search page has its own dock.** It was showing the home page's words; it now says what
+you can type into the field above it.
+
+**Favourites carries the review mark, not a heart.** A favourite is kept in order to be
+reviewed, and the heart said "saved" -- the thing already done rather than the thing being
+asked for.
+
+**The profile dock says level, not badge**, which is what the rest of that page calls it.
+
+---
+
 ## The profile shows your email, and can change it
 
 Somebody could not see the address their account signs in with, let alone change it. It sits
