@@ -53,7 +53,7 @@ export const privacy:LegalDoc={
           {note:'Giriş kodu isteklerinde IP adresiniz yalnızca özetlenerek (hash) saklanır, açık hâliyle tutulmaz.'},
         ]},
         {id:'kaynak',heading:'Bilgilerin kaynağı',blocks:[
-          {p:'Bilgilerin çoğunu doğrudan sizden alırız. Google ile giriş yapmayı seçerseniz kimliğiniz ve e-posta adresiniz Google Identity Services üzerinden gelir. Mağazalara ait bilgiler (ad, adres, konum) markaların kendi yayımladıkları mağaza listelerinden derlenir ve kişisel verileriniz değildir.'},
+          {p:'Bilgilerin çoğunu doğrudan sizden alırız. Google ile giriş yapmayı seçerseniz kimliğiniz ve e-posta adresiniz Google Identity Services üzerinden gelir. Mağazalara ait bilgiler (ad, adres, konum) markaların kendi yayımladıkları mağaza listelerinden derlenir ve kişisel verileriniz değildir. Zincir olmayan bağımsız mağazaların kayıtları ise açık harita OpenStreetMap’ten alınır (© OpenStreetMap katkıcıları, ODbL).'},
         ]},
         {id:'paylasim',heading:'Kimlerle paylaşılıyor',blocks:[
           {table:{head:['Alıcı','Giden bilgi'],rows:[
@@ -119,7 +119,7 @@ export const privacy:LegalDoc={
           {note:'On sign-in code requests your IP address is stored only as a hash, never in the clear.'},
         ]},
         {id:'kaynak',heading:'Where information comes from',blocks:[
-          {p:'Most of it comes directly from you. If you choose Google sign-in, your identifier and email arrive through Google Identity Services. Store information (name, address, location) is compiled from the brands\' own published store lists and is not your personal data.'},
+          {p:'Most of it comes directly from you. If you choose Google sign-in, your identifier and email arrive through Google Identity Services. Store information (name, address, location) is compiled from the brands\' own published store lists and is not your personal data. Records of independent shops that belong to no chain come from the open map OpenStreetMap (© OpenStreetMap contributors, ODbL).'},
         ]},
         {id:'paylasim',heading:'Who it is shared with',blocks:[
           {table:{head:['Recipient','What is sent'],rows:[
@@ -185,7 +185,7 @@ export const privacy:LegalDoc={
           {note:'Bei Anfragen für einen Anmeldecode wird deine IP-Adresse nur als Hash gespeichert, nie im Klartext.'},
         ]},
         {id:'kaynak',heading:'Herkunft der Informationen',blocks:[
-          {p:'Das meiste stammt unmittelbar von dir. Bei der Google-Anmeldung kommen Kennung und E-Mail über Google Identity Services. Geschäftsdaten (Name, Adresse, Standort) werden aus den von den Marken selbst veröffentlichten Filiallisten zusammengestellt und sind keine personenbezogenen Daten von dir.'},
+          {p:'Das meiste stammt unmittelbar von dir. Bei der Google-Anmeldung kommen Kennung und E-Mail über Google Identity Services. Geschäftsdaten (Name, Adresse, Standort) werden aus den von den Marken selbst veröffentlichten Filiallisten zusammengestellt und sind keine personenbezogenen Daten von dir. Einträge unabhängiger Geschäfte ohne Kette stammen aus der offenen Karte OpenStreetMap (© OpenStreetMap-Mitwirkende, ODbL).'},
         ]},
         {id:'paylasim',heading:'Mit wem geteilt wird',blocks:[
           {table:{head:['Empfänger','Was übermittelt wird'],rows:[
@@ -251,7 +251,7 @@ export const privacy:LegalDoc={
           {note:'При запросе кода входа ваш IP-адрес сохраняется только в виде хеша, никогда в открытом виде.'},
         ]},
         {id:'kaynak',heading:'Откуда поступают данные',blocks:[
-          {p:'Большая часть — непосредственно от вас. При входе через Google идентификатор и почта поступают через Google Identity Services. Данные о магазинах (название, адрес, координаты) собираются из списков магазинов, которые публикуют сами бренды, и не являются вашими персональными данными.'},
+          {p:'Большая часть — непосредственно от вас. При входе через Google идентификатор и почта поступают через Google Identity Services. Данные о магазинах (название, адрес, координаты) собираются из списков магазинов, которые публикуют сами бренды, и не являются вашими персональными данными. Записи о независимых магазинах, не входящих в сети, берутся из открытой карты OpenStreetMap (© участники OpenStreetMap, ODbL).'},
         ]},
         {id:'paylasim',heading:'Кому передаётся',blocks:[
           {table:{head:['Получатель','Что передаётся'],rows:[

@@ -8,6 +8,22 @@ value involved.
 
 ---
 
+## The open map gets its credit
+
+The independent shops in the catalogue -- the ones that are nobody's branch -- were read from
+OpenStreetMap, and OSM data comes under ODbL: attribution is a condition of showing it, not a
+courtesy. So a store whose record came from the map now says so, on the store page, beside the
+address the data describes, with the licence linked. The credit is driven by the row's own
+source (`store_external_sources.provider='osm'`), so a shop later confirmed by its chain stops
+carrying a credit it no longer needs, and nothing has to be maintained by hand.
+
+The three documents that describe where store data comes from say it too, in all four
+languages: chains publish their own store lists, and the shops that belong to no chain come
+from the open map. Naming the source is part of the obligation; it is also simply true, and
+the previous sentence had stopped being.
+
+---
+
 ## Merging two rows that are one shop, from the store list
 
 The matching queue settles rows arriving from a brand's list. Two rows already in the

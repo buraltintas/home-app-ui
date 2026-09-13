@@ -166,6 +166,10 @@ export default async function Page({params}:Props){
             line of text look like a section of its own. */}
         {store.website&&<a className="store-correction-link store-website-link" href={store.website} target="_blank" rel="noopener noreferrer">{t.storeWebsite}</a>}
         {store.location_approximate&&<p className="store-location-approximate">{t.approximateLocation}</p>}
+        {/* ODbL, and it is a condition rather than a courtesy: a row read from the open map
+            may be shown only where OpenStreetMap is credited. Attribution sits on the store
+            itself, beside the address it describes, so it travels with the data. */}
+        {store.external_sources?.some(source=>source.provider==='osm')&&<p className="store-location-approximate">{t.openMapCredit} <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">{t.openMapCreditLink}</a></p>}
         <Link className="store-correction-link" href={correctionPath}>{contribution.correction}</Link>
       </div>
       <div className="store-reviews" id="store-reviews-title" aria-label={t.community}>

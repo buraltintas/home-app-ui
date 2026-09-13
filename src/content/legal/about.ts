@@ -29,7 +29,7 @@ export const about:LegalDoc={
           {p:'Ücretli yerleşim, sponsorluk veya bir mağazanın öne çıkarılması söz konusu olduğunda, bu durum ilgili yerde açıkça belirtilir. Etiketlenmemiş bir sonuç, ödeme karşılığı öne çıkarılmış değildir.'},
         ]},
         {id:'kaynak',heading:'Mağaza bilgileri nereden geliyor?',blocks:[
-          {p:'Mağaza adları, adresleri ve konumları markaların kendi yayımladıkları mağaza listelerinden ve kendi topluluğumuzdan gelir. Üçüncü taraf bir puan ya da yorum göstermiyoruz; sayfalardaki her puan, konumu doğrulanmış kullanıcılarımızın yazdığı değerlendirmelerden hesaplanır.'},
+          {p:'Mağaza adları, adresleri ve konumları markaların kendi yayımladıkları mağaza listelerinden ve kendi topluluğumuzdan gelir. Üçüncü taraf bir puan ya da yorum göstermiyoruz; sayfalardaki her puan, konumu doğrulanmış kullanıcılarımızın yazdığı değerlendirmelerden hesaplanır. Zincir olmayan bağımsız mağazaların kayıtları ise açık harita OpenStreetMap’ten alınır (© OpenStreetMap katkıcıları, ODbL).'},
           {p:'Bu iki veri kaynağı kasıtlı olarak birbirine karıştırılmaz. Topluluk puanı yalnızca Boşa Gezme! kullanıcılarının yazdığı değerlendirmelerden hesaplanır.'},
           {p:'Üçüncü taraf kaynaklardan gelen bilgiler eskimiş olabilir. Bir yere gitmeden önce mağazanın açık olduğunu doğrulamanızı öneririz.'},
         ]},
@@ -71,7 +71,7 @@ export const about:LegalDoc={
           {p:'Wherever paid placement, sponsorship or promotion of a store applies, it is marked clearly at the point you see it. A result without such a label was not promoted in exchange for payment.'},
         ]},
         {id:'kaynak',heading:'Where does store information come from?',blocks:[
-          {p:'Store names, addresses and locations come from the brands\' own published store lists and from our own community. We show no third-party rating or review count; every score on a store page is calculated from reviews written by our own visitors.'},
+          {p:'Store names, addresses and locations come from the brands\' own published store lists and from our own community. We show no third-party rating or review count; every score on a store page is calculated from reviews written by our own visitors. Records of independent shops that belong to no chain come from the open map OpenStreetMap (© OpenStreetMap contributors, ODbL).'},
           {p:'The two sources are deliberately never mixed. The community rating is calculated only from reviews written by Boşa Gezme! users.'},
           {p:'Information from third-party sources can be out of date. We recommend confirming that a store is open before travelling to it.'},
         ]},
@@ -113,7 +113,7 @@ export const about:LegalDoc={
           {p:'Wo bezahlte Platzierung, Sponsoring oder die Hervorhebung eines Geschäfts vorliegt, wird das an der betreffenden Stelle deutlich gekennzeichnet. Ein Ergebnis ohne solche Kennzeichnung wurde nicht gegen Bezahlung hervorgehoben.'},
         ]},
         {id:'kaynak',heading:'Woher stammen die Geschäftsinformationen?',blocks:[
-          {p:'Geschäftsnamen, Adressen und Standorte stammen aus den von den Marken selbst veröffentlichten Filiallisten und aus unserer eigenen Community. Wir zeigen keine Bewertungen Dritter; jede Punktzahl auf einer Geschäftsseite wird aus Bewertungen unserer eigenen Besucher berechnet.'},
+          {p:'Geschäftsnamen, Adressen und Standorte stammen aus den von den Marken selbst veröffentlichten Filiallisten und aus unserer eigenen Community. Wir zeigen keine Bewertungen Dritter; jede Punktzahl auf einer Geschäftsseite wird aus Bewertungen unserer eigenen Besucher berechnet. Einträge unabhängiger Geschäfte ohne Kette stammen aus der offenen Karte OpenStreetMap (© OpenStreetMap-Mitwirkende, ODbL).'},
           {p:'Die beiden Quellen werden bewusst nie vermischt. Die Community-Bewertung wird ausschließlich aus Bewertungen von Boşa Gezme!-Nutzenden berechnet.'},
           {p:'Informationen aus Drittquellen können veraltet sein. Wir empfehlen, vor der Fahrt zu prüfen, ob ein Geschäft geöffnet ist.'},
         ]},
@@ -155,7 +155,7 @@ export const about:LegalDoc={
           {p:'Там, где применяется платное размещение, спонсорство или продвижение магазина, это явно обозначается на месте. Результат без такой пометки не продвигался за плату.'},
         ]},
         {id:'kaynak',heading:'Откуда берутся сведения о магазинах?',blocks:[
-          {p:'Названия магазинов, адреса и координаты берутся из списков магазинов, которые публикуют сами бренды, и из нашего сообщества. Мы не показываем сторонние рейтинги и отзывы; каждая оценка на странице магазина рассчитывается из отзывов наших посетителей.'},
+          {p:'Названия магазинов, адреса и координаты берутся из списков магазинов, которые публикуют сами бренды, и из нашего сообщества. Мы не показываем сторонние рейтинги и отзывы; каждая оценка на странице магазина рассчитывается из отзывов наших посетителей. Записи о независимых магазинах, не входящих в сети, берутся из открытой карты OpenStreetMap (© участники OpenStreetMap, ODbL).'},
           {p:'Эти два источника намеренно никогда не смешиваются. Рейтинг сообщества рассчитывается только по отзывам пользователей Boşa Gezme!.'},
           {p:'Сведения из сторонних источников могут устареть. Рекомендуем убедиться, что магазин открыт, прежде чем ехать.'},
         ]},

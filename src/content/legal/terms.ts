@@ -74,7 +74,7 @@ export const terms:LegalDoc={
           {p:'İçerik denetimi yapıyor olmamız, hukuka aykırı veya yanlış her içeriğin her zaman tespit edileceği anlamına gelmez. Kaldırılmamış olması onaylandığı anlamına gelmez.'},
         ]},
         {id:'ucuncu-taraf',heading:'7. Mağaza bilgileri ve üçüncü taraf kaynaklar',blocks:[
-          {p:'Mağaza adları, adresleri ve konumları markaların kendi yayımladıkları mağaza listelerinden derlenir. Bu bilgiler eskimiş, eksik veya yanlış olabilir; bir mağaza taşınmış ya da kapanmış olabilir.'},
+          {p:'Mağaza adları, adresleri ve konumları markaların kendi yayımladıkları mağaza listelerinden derlenir. Bu bilgiler eskimiş, eksik veya yanlış olabilir; bir mağaza taşınmış ya da kapanmış olabilir. Zincir olmayan bağımsız mağazaların kayıtları ise açık harita OpenStreetMap’ten alınır (© OpenStreetMap katkıcıları, ODbL).'},
           {p:'Çalışma saatleri, fiyatlar, stok durumu, ürün çeşitliliği, mağazanın açık olup olmadığı ve adres doğruluğu konusunda garanti veremeyiz. Bir yere gitmeden önce bu bilgileri bağımsız olarak doğrulamanızı öneririz.'},
           {p:'Değerlendirmeler yazanların kişisel görüşleridir. Boşa Gezme! bu görüşleri benimsemez ve doğruluklarını garanti etmez.'},
           {p:'Sıralama ve öneriler, keşfe yardımcı olmayı amaçlayan bilgilendirici araçlardır; bir tavsiye veya kalite garantisi değildir.'},
@@ -165,7 +165,7 @@ export const terms:LegalDoc={
           {p:'That we moderate does not mean every unlawful or inaccurate piece of content will always be detected. Content that has not been removed has not thereby been approved.'},
         ]},
         {id:'ucuncu-taraf',heading:'7. Store information and third-party sources',blocks:[
-          {p:'Store names, addresses and locations are compiled from the brands\' own published store lists. That information may be out of date, incomplete or wrong; a shop may have moved or closed.'},
+          {p:'Store names, addresses and locations are compiled from the brands\' own published store lists. That information may be out of date, incomplete or wrong; a shop may have moved or closed. Records of independent shops that belong to no chain come from the open map OpenStreetMap (© OpenStreetMap contributors, ODbL).'},
           {p:'We cannot guarantee opening hours, prices, stock, product range, whether a store is open, or the accuracy of an address. We recommend confirming these independently before travelling.'},
           {p:'Reviews are the personal opinions of the people who wrote them. Boşa Gezme! does not adopt those opinions and does not guarantee their accuracy.'},
           {p:'Rankings and recommendations are informational aids to discovery, not advice or a guarantee of quality.'},
@@ -256,7 +256,7 @@ export const terms:LegalDoc={
           {p:'Dass wir moderieren, bedeutet nicht, dass jeder rechtswidrige oder unrichtige Inhalt stets erkannt wird. Nicht entfernte Inhalte sind damit nicht gebilligt.'},
         ]},
         {id:'ucuncu-taraf',heading:'7. Geschäftsdaten und Drittquellen',blocks:[
-          {p:'Namen, Adressen und Standorte werden aus den von den Marken selbst veröffentlichten Filiallisten zusammengestellt und können veraltet, unvollständig oder falsch sein; ein Geschäft kann umgezogen oder geschlossen sein.'},
+          {p:'Namen, Adressen und Standorte werden aus den von den Marken selbst veröffentlichten Filiallisten zusammengestellt und können veraltet, unvollständig oder falsch sein; ein Geschäft kann umgezogen oder geschlossen sein. Einträge unabhängiger Geschäfte ohne Kette stammen aus der offenen Karte OpenStreetMap (© OpenStreetMap-Mitwirkende, ODbL).'},
           {p:'Öffnungszeiten, Preise, Bestand, Sortiment, Geöffnetsein und Adressgenauigkeit können wir nicht garantieren. Wir empfehlen, dies vor der Fahrt eigenständig zu prüfen.'},
           {p:'Bewertungen sind persönliche Meinungen ihrer Verfassenden. Boşa Gezme! macht sie sich nicht zu eigen und garantiert ihre Richtigkeit nicht.'},
           {p:'Ranglisten und Empfehlungen sind informative Hilfen zum Entdecken, keine Beratung und keine Qualitätsgarantie.'},
@@ -347,7 +347,7 @@ export const terms:LegalDoc={
           {p:'Наличие модерации не означает, что любой незаконный или недостоверный контент всегда будет выявлен. Неудалённый контент не считается одобренным.'},
         ]},
         {id:'ucuncu-taraf',heading:'7. Данные магазинов и сторонние источники',blocks:[
-          {p:'Названия, адреса и координаты собираются из списков магазинов, которые публикуют сами бренды, и могут быть устаревшими, неполными или неверными: магазин мог переехать или закрыться.'},
+          {p:'Названия, адреса и координаты собираются из списков магазинов, которые публикуют сами бренды, и могут быть устаревшими, неполными или неверными: магазин мог переехать или закрыться. Записи о независимых магазинах, не входящих в сети, берутся из открытой карты OpenStreetMap (© участники OpenStreetMap, ODbL).'},
           {p:'Мы не гарантируем часы работы, цены, наличие товара, ассортимент, факт работы магазина и точность адреса. Рекомендуем проверять это самостоятельно перед поездкой.'},
           {p:'Отзывы — личные мнения их авторов. Boşa Gezme! не разделяет их и не гарантирует достоверность.'},
           {p:'Рейтинги и рекомендации — информационные средства для поиска, а не совет и не гарантия качества.'},
