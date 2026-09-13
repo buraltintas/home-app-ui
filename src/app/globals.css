@@ -167,7 +167,7 @@
 .empty-state h1,.empty-state h2{font-size:clamp(26px,3vw,34px);font-weight:600;letter-spacing:-.035em;margin:0}
 .empty-state p{margin:0;color:var(--ink-muted);line-height:1.55;max-width:520px}
 @media(max-width:600px){}
-.create-page h1{font-size:clamp(26px,6.5vw,32px);overflow-wrap:anywhere;margin:10px 0 14px}
+.create-page h1{font-size:clamp(32px,8vw,42px);line-height:1.1;letter-spacing:-.02em;overflow-wrap:anywhere;margin:10px 0 14px}
 .review-store-address{margin:0;color:var(--ink-muted);display:flex;align-items:flex-start;gap:8px;line-height:1.5}
 .review-store-address svg{width:18px;height:18px;margin-top:5px;flex:none}
 .create-page-loading span{display:block;background:var(--muted);border-radius:5px}
@@ -621,7 +621,11 @@ body>main{flex:1 0 auto;min-width:0;width:100%}
 .criteria-list .criterion{display:block;margin:0;padding:14px 16px;border:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
 .criteria-list .criterion:nth-child(2n){border-right:0}
 .criteria-list .criterion:nth-last-child(-n+2){border-bottom:0}
-.criteria-list .criterion legend{float:left;width:100%;margin-bottom:6px;padding:0;font-size:13px;line-height:1.35;font-weight:500;color:var(--ink-muted)}
+/* The label begins where the first star begins. A star's touch target is 44 px wide and the
+   star inside it is 22, so the glyph starts 11 px in; the label is nudged by the same 11 so
+   the two line up on the eye rather than on the box. The number sits in front of it. */
+.criteria-list .criterion legend{float:left;display:flex;align-items:baseline;gap:7px;width:100%;margin-bottom:6px;padding:0 0 0 11px;font-size:13px;line-height:1.35;font-weight:500;color:var(--ink-muted)}
+.criterion-number{flex:none;font-variant-numeric:tabular-nums;font-weight:700;color:var(--clay)}
 .criteria-list .criterion-stars{clear:both}
 .criteria-list .criterion label{display:inline-grid;place-items:center}
 .criteria-hint{margin:0 0 18px;color:var(--ink-muted);font-size:14px}

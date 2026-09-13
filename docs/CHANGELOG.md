@@ -22,6 +22,27 @@ row it is opened from is the one that survives, and the confirmation says so in 
 
 ---
 
+## The review flow keeps the page that says the visit was verified
+
+Verifying in the background is right -- Discover has already been given permission, so asking
+for another tap is asking twice. Walking straight on to the scores was not: the page that
+says "your visit is verified, and it is good for thirty days" was drawn and left behind in
+the same instant, so nobody ever read the one thing that step exists to tell them. The check
+still runs on its own; the step now waits for "Devam et".
+
+**And the review is published from a third page, not the second.** Eight scores given one
+after another are easy to get wrong by a star and impossible to check while giving them. The
+second page's button is "Değerlendirmeyi onayla" and it opens a summary of all eight with
+their names; only that page publishes, and the "saved" dock appears only after it.
+
+Smaller, from the same card: the two lines about how scoring works are marked and framed as a
+note rather than reading like the next instruction; the eight criteria are numbered 1-8; each
+label starts where its first star starts (a star's touch target is 44 px and the glyph inside
+it 22, so the label is nudged the same 11 px, lining the two up on the eye rather than on the
+box); and the shop being reviewed is the size of a page title.
+
+---
+
 ## The save dock is the width of the dock it was asked to match
 
 It was made edge-to-edge to line up with the navigation bar beneath it. What the card asked

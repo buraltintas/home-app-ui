@@ -1,9 +1,10 @@
 'use client';
 
-import {Check,MapPin,Star,Store,TriangleAlert} from 'lucide-react';
+import {Check,Info,MapPin,Star,Store,TriangleAlert} from 'lucide-react';
 import {useRouter,useSearchParams} from 'next/navigation';
 import {Suspense,useCallback,useEffect,useLayoutEffect,useRef,useState} from 'react';
 import {AuthDialog} from '@/components/AuthDialog';
+import {RatingStars} from '@/components/Rating';
 import {useI18n} from '@/i18n/I18nProvider';
 import { localePath } from '@/lib/site';
 import {apiFetch} from '@/lib/api-client';
@@ -71,7 +72,7 @@ function ReviewWizard({storeId}:{storeId:string}){
   // and takes the half-written review with it. The step therefore lives in the URL, and
   // every forward move pushes an entry, so the browser's own back walks the wizard
   // backwards one step at a time.
-  const requestedStep=Math.min(Math.max(Math.trunc(Number(searchParams.get('step')))||1,1),2);
+  const requestedStep=Math.min(Math.max(Math.trunc(Number(searchParams.get('step')))||1,1),3);
   // Evidence of the visit is what unlocks the rest of the flow, so a step claimed by the
   // URL is only honoured once that evidence exists.
   const step=verification?requestedStep:1;
@@ -133,9 +134,12 @@ function ReviewWizard({storeId}:{storeId:string}){
       if(body?.error?.code==='LOCATION_ACCURACY_TOO_LOW'){setVerifyError(t('verifyAccuracy'));return;}
       throw new Error();
     }
+    // Verified, and that is where this stops. It used to walk straight on to the scores,
+    // which meant the page that says "your visit is verified" was drawn and left behind in
+    // the same instant -- the reader never saw the one thing this step exists to tell them.
+    // The background check saves a button press; it does not get to skip the answer.
     setVerification(await response.json() as VisitVerification);
-    advance(2);
-  },[advance,locale,reviewRadiusMeters,storeId,t]);
+  },[locale,reviewRadiusMeters,storeId,t]);
 
   const verify=useCallback(async()=>{
     setVerifying(true);setVerifyError('');
@@ -206,7 +210,7 @@ function ReviewWizard({storeId}:{storeId:string}){
   // The first step renames itself once it is done. "Konumu doğrula" is an instruction and
   // it stops being true the moment the location is verified; leaving it there asks for
   // something already given.
-  const steps=[[verification?t('verifyLocationDone'):t('verifyLocation'),MapPin],[t('criteriaTitle'),Star]] as const;
+  const steps=[[verification?t('verifyLocationDone'):t('verifyLocation'),MapPin],[t('criteriaTitle'),Star],[t('reviewSummaryTitle'),Check]] as const;
   return <main className="create-page">
     <div>
       <p className="eyebrow">{t('reviewFor')}</p>
@@ -234,18 +238,35 @@ function ReviewWizard({storeId}:{storeId:string}){
     </section>}
 
     {step===2&&<section className="review-step">
-      <p className="criteria-intro">{criteriaIntroCopy[locale][0]}<span>{criteriaIntroCopy[locale][1]}</span></p>
+      {/* A note about how the scoring works, not an instruction competing with the scores
+          themselves: marked as one, and inside its own frame. */}
+      <aside className="criteria-intro" role="note"><Info aria-hidden="true"/><p>{criteriaIntroCopy[locale][0]}<span>{criteriaIntroCopy[locale][1]}</span></p></aside>
       {/* Eight fieldsets rather than one, because each line is its own question and a
           screen reader has to be able to say which one it is reading. The overall rating is
           not among them: it is the average of these, worked out by the server. */}
-      <div className="criteria-list">{criterionKeys.map(key=>
+      <div className="criteria-list">{criterionKeys.map((key,index)=>
         <fieldset key={key} className="rating-picker criterion">
-          <legend>{t(criterionLabels[key])}</legend>
+          <legend><span className="criterion-number" aria-hidden="true">{index+1}</span>{t(criterionLabels[key])}</legend>
           <div className="criterion-stars">{[1,2,3,4,5].map(value=>
             <label key={value}><input type="radio" name={key} value={value} aria-label={`${value} / 5`} checked={criteria[key]===value} onChange={()=>setCriteria(current=>({...current,[key]:value}))}/><Star aria-hidden="true" className={value<=(criteria[key]??0)?'is-on':undefined}/></label>)}</div>
         </fieldset>)}
       </div>
       {!scored&&<p className="criteria-hint">{t('criteriaIncomplete')}</p>}
+      {submitError&&<p className="form-error" role="alert">{submitError}</p>}
+      <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>advance(3)} disabled={!scored||!verification}>{t('confirmReview')}</button></div>
+    </section>}
+
+    {/* Nothing is written until this page. Eight scores given one after another are easy to
+        get wrong by a star and impossible to check while giving them; this is where they are
+        all visible at once, and the only place the review is actually published from. */}
+    {step===3&&<section className="review-step">
+      <p className="criteria-intro-plain">{t('reviewSummaryIntro')}</p>
+      <dl className="review-summary">{criterionKeys.map((key,index)=>
+        <div key={key}>
+          <dt><span className="criterion-number" aria-hidden="true">{index+1}</span>{t(criterionLabels[key])}</dt>
+          <dd><RatingStars value={criteria[key]??0} showValue={false}/><span>{criteria[key]}</span></dd>
+        </div>)}
+      </dl>
       {submitError&&<p className="form-error" role="alert">{submitError}</p>}
       <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>void submit()} disabled={submitting||!scored||!verification}>{submitting?t('loading'):t('submitReview')}</button></div>
     </section>}
