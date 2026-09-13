@@ -31,15 +31,14 @@ export function ContributorLevelsDialog({locale}:{locale:Locale}){
   const [leaving,setLeaving]=useState(false);
   const section=about.content[locale].sections.find(entry=>entry.id==='katki');
 
-  // It arrives and leaves at the speed the docks do, which is the only other thing on this
-  // product that slides up from the bottom edge. It used to appear and vanish in the same
-  // frame -- nothing about that said which direction it came from or that it had gone.
+  // It arrives and leaves at one speed, 0.52s either way on the docks' own curve. Leaving
+  // faster than arriving read as the sheet being snatched away rather than put back.
   //
   // Closing waits for the animation before it unmounts, because an element removed from the
   // page cannot animate its way off it.
   const close=()=>{
     setLeaving(true);
-    window.setTimeout(()=>{setOpen(false);setLeaving(false);},420);
+    window.setTimeout(()=>{setOpen(false);setLeaving(false);},520);
   };
 
   // Escape closes it, as it does every other dialog here.

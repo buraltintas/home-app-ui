@@ -154,8 +154,8 @@ svg{stroke-width:2}
    arrives from the bottom edge. */
 .dialog-backdrop[data-state] .level-dialog{animation:level-in .52s cubic-bezier(.16,1,.3,1) both}
 .dialog-backdrop[data-state]{animation:level-fade .52s ease both}
-.dialog-backdrop[data-state=leaving] .level-dialog{animation:level-out .42s cubic-bezier(.4,0,.75,.3) both}
-.dialog-backdrop[data-state=leaving]{animation:level-fade .42s ease reverse both}
+.dialog-backdrop[data-state=leaving] .level-dialog{animation:level-out .52s cubic-bezier(.16,1,.3,1) both}
+.dialog-backdrop[data-state=leaving]{animation:level-fade .52s ease reverse both}
 @keyframes level-fade{from{opacity:0}to{opacity:1}}
 @keyframes level-in{from{opacity:0;transform:translateY(calc(100% + 24px))}to{opacity:1;transform:none}}
 @keyframes level-out{from{opacity:1;transform:none}to{opacity:0;transform:translateY(calc(100% + 24px))}}
@@ -179,7 +179,13 @@ svg{stroke-width:2}
 .store-save-status{position:fixed;z-index:23;left:50%;bottom:108px;transform:translateX(-50%);margin:0;padding:9px 14px;border:1px solid var(--line);border-radius:var(--r-pill);background:var(--surface);color:var(--ink);box-shadow:var(--lift);font-weight:650}
 .page-back-button{position:fixed;z-index:21;top:86px;left:max(18px,calc((100vw - 1480px)/2));width:46px;height:46px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:color-mix(in srgb,var(--surface) 92%,transparent);color:var(--ink);box-shadow:0 8px 24px rgba(22,20,15,.09);backdrop-filter:blur(16px);cursor:pointer}.page-back-button:hover{background:var(--muted)}.page-back-button svg{width:20px;height:20px}
 .timed-nudge{position:fixed;z-index:23;left:50%;bottom:22px;transform:translateX(-50%);width:min(316px,calc(100% - 56px));min-height:74px;padding:12px 18px 12px 12px;display:flex;align-items:center;gap:12px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--lift);font-size:15px;font-weight:650;line-height:1.35;animation:nudge-in .52s cubic-bezier(.16,1,.3,1) both;pointer-events:none}
-.timed-nudge-icon{width:48px;height:48px;flex:none;display:grid;place-items:center;border-radius:50%;background:var(--accent-wash);color:var(--clay);overflow:hidden;animation:nudge-icon-shake .32s ease-in-out .26s both}
+.timed-nudge-icon{position:relative;width:48px;height:48px;flex:none;display:grid;place-items:center;border-radius:50%;background:var(--accent-wash);color:var(--clay);overflow:hidden;animation:nudge-icon-shake .32s ease-in-out .26s both}
+/* One band of light across the drawing as the dock arrives, and then it is done. A mark that
+   keeps glinting is a mark somebody learns to look away from. */
+.timed-nudge-icon[data-shine]::after{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;
+  background:linear-gradient(100deg,transparent 38%,rgba(255,255,255,.72) 50%,transparent 62%) 0 0/260% 100%;
+  animation:nudge-icon-shine 1.5s ease-in-out .55s 1 both}
+@keyframes nudge-icon-shine{from{background-position:120% 0}to{background-position:-40% 0}}
 /* The mascot file is a square with its own cream ground, fully opaque to the corners, and it
    was drawn at 42px inside a 48px circle -- so its four corners sat outside the circle and
    read as a faint square shadow around the dog. It fills the circle and is clipped by it. */
@@ -205,7 +211,7 @@ svg{stroke-width:2}
 @keyframes nudge-in{from{opacity:0;transform:translate(-50%,calc(100% + 22px))}to{opacity:1;transform:translate(-50%,0)}}
 @keyframes nudge-out{from{opacity:1;transform:translate(-50%,0)}to{opacity:0;transform:translate(-50%,calc(100% + 22px))}}
 @keyframes nudge-icon-shake{0%,100%{transform:rotate(0)}30%{transform:rotate(-7deg)}65%{transform:rotate(7deg)}}
-@media(prefers-reduced-motion:reduce){.timed-nudge,.timed-nudge-icon,.timed-nudge-call{animation:none}.timed-nudge-call{-webkit-text-fill-color:currentColor;background:none}}
+@media(prefers-reduced-motion:reduce){.timed-nudge,.timed-nudge-icon,.timed-nudge-call{animation:none}.timed-nudge-icon[data-shine]::after{animation:none;opacity:0}.timed-nudge-call{-webkit-text-fill-color:currentColor;background:none}}
 .external-note,.guidance-card{background:var(--accent-wash);color:var(--ink)}
 .danger-zone{border-radius:var(--r-md);border-width:2px}
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
@@ -282,8 +288,6 @@ svg{stroke-width:2}
 .store-rating-breakdown header p{margin:0;color:var(--ink-muted);font-size:15px;line-height:1.45}
 /* Not another sentence in the same paragraph: this is the claim the rating rests on, so it
    stands on its own with a mark of its own. */
-/* It sits over the reviews now, where the thing it describes is. */
-.store-reviews p.store-rating-trust{margin:0 0 18px;padding-left:12px;border-left:3px solid var(--accent);color:var(--ink);font-weight:650;line-height:1.5;max-width:64ch}
 /* The score leads its own row and the way to the reviews sits beside it. The label that
    used to open the row said what the number already says. */
 .store-rating-overall{display:flex;align-items:center;gap:16px}
@@ -311,8 +315,8 @@ svg{stroke-width:2}
 /* Narrower than a full column on purpose: the edge of the next review has to be visible or
    nothing says there is one. A rail that ends flush with its container reads as a single
    card somebody could scroll past without knowing. */
-.store-review-rail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(258px,296px);gap:16px;max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scroll-padding-inline:2px;scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent;padding:2px 2px 18px}
-.store-review-rail>.post-card{scroll-snap-align:start;display:flex;flex-direction:column;min-width:0;min-height:270px;padding:22px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface)}
+.store-review-rail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(236px,272px);gap:16px;max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scroll-padding-inline:2px;scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent;padding:2px 2px 18px}
+.store-review-rail>.post-card{scroll-snap-align:start;display:flex;flex-direction:column;min-width:0;padding:22px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface)}
 .store-review-rail .post-number{display:none}
 .store-review-rail .post-heading{display:block;margin:0;padding:0 0 18px;border-bottom:1px solid var(--line)}
 .store-review-rail .post-author{min-width:0;margin:0;padding:0}
@@ -320,7 +324,12 @@ svg{stroke-width:2}
    oval. It is a circle at a fixed size or it is nothing. */
 .post-author>.avatar{flex:none}
 .store-review-rail .post-author>div:nth-child(2){min-width:0}
-.store-review-rail .post-author strong{display:flex;align-items:center;flex-wrap:wrap;gap:7px;min-width:0;font-size:14px;line-height:1.35;overflow-wrap:anywhere}
+/* One line: the name and the level it earned are one statement about one person, and
+   wrapping split them onto two lines of different heights from card to card. The name gives
+   way first, because the level is two short words and the name can be anything. */
+.store-review-rail .post-author strong{display:flex;align-items:center;flex-wrap:nowrap;gap:7px;min-width:0;font-size:14px;line-height:1.35}
+.post-author-name{flex:1 1 auto;min-width:2.5em;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.store-review-rail .post-author strong>.contributor-level,.store-review-rail .post-author strong>.contributor-level-group{flex:none}
 .store-review-rail .post-author strong>.contributor-level{flex:none}
 /* Two controls in a row of their own read as a pair when they are together, and as two
    unrelated corners when they are pushed apart. */
@@ -337,19 +346,22 @@ svg{stroke-width:2}
 .post-criteria[open]>summary::after{transform:translateY(2px) rotate(-135deg)}
 .post-criteria>summary:hover{color:var(--ink)}
 .post-criteria dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;margin:14px 0 0;border-top:1px solid var(--line)}
-.post-criteria dl div{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;padding:10px 0;border-bottom:1px solid var(--line)}
+/* The label and the stars are two columns, not two things pushed apart: with
+   space-between, "Fiyat/performans" pushed its stars further right than "Kasa hızı" did and
+   the five columns of stars never lined up. */
+.post-criteria dl div{display:grid;grid-template-columns:minmax(0,1fr) 124px;align-items:center;gap:12px;min-width:0;padding:10px 0;border-bottom:1px solid var(--line)}
 .post-criteria dl div:nth-child(2n){padding-left:18px}
 .post-criteria dl div:nth-child(odd){padding-right:18px;border-right:1px solid var(--line)}
 .post-criteria dt{font-size:13px;line-height:1.3;color:var(--ink-muted)}
-.post-criteria dd{display:flex;align-items:center;gap:8px;margin:0;font-size:15px;font-weight:750;color:var(--clay);font-variant-numeric:tabular-nums}
+.post-criteria dd{display:flex;align-items:center;justify-content:flex-start;gap:8px;margin:0;font-size:15px;font-weight:750;color:var(--clay);font-variant-numeric:tabular-nums}
 @media(max-width:600px){.post-criteria dl{grid-template-columns:1fr}.post-criteria dl div:nth-child(odd){padding-right:0;border-right:0}.post-criteria dl div:nth-child(2n){padding-left:0}}
 /* The score a person gave a store is the same measure as the store's own score, so it is
    shown in the same colour rather than as ordinary body text. */
 .post-meta .rating{color:var(--clay)}
-.store-review-rail .post-details{display:flex;flex:1;flex-direction:column;width:100%;min-height:0;margin:0;padding:20px 0 0;border:0;border-radius:0;background:transparent;box-shadow:none}
+.store-review-rail .post-details{display:flex;flex-direction:column;width:100%;min-height:0;margin:0;padding:20px 0 0;border:0;border-radius:0;background:transparent;box-shadow:none}
 .store-review-rail .post-meta{justify-content:space-between;gap:12px;margin:0}
 .store-review-rail .post-written{margin:14px 0 18px;color:var(--ink-muted);font-size:13px;font-variant-numeric:tabular-nums}
-.store-review-rail .post-actions{width:100%;margin-top:auto;padding-top:12px}
+.store-review-rail .post-actions{width:100%;padding-top:12px}
 .store-review-rail .post-actions button{padding-inline:0}
 @media(max-width:700px){
   .store-rating-breakdown header{grid-template-columns:1fr;gap:18px}
@@ -360,8 +372,8 @@ svg{stroke-width:2}
   .store-rating-breakdown dl div:nth-last-child(-n+4){border-bottom:1px solid var(--line)}
   .store-rating-breakdown dl div:nth-last-child(-n+2){border-bottom:0}
   .store-reviews .store-section-title{margin-bottom:18px;font-size:24px}
-  .store-review-rail{grid-auto-columns:calc(100vw - 96px);gap:12px;margin-inline:-18px;padding:2px 18px 18px;scroll-padding-inline:18px}
-  .store-review-rail>.post-card{min-height:252px;padding:20px}
+  .store-review-rail{grid-auto-columns:calc(100vw - 132px);gap:12px;margin-inline:-18px;padding:2px 18px 18px;scroll-padding-inline:18px}
+  .store-review-rail>.post-card{padding:20px}
   .guidance-card{padding:18px}
   .guidance-card .category-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
 }
@@ -556,6 +568,10 @@ svg{stroke-width:2}
 /* Said quietly, beside the address it qualifies -- it is a caveat on what is above it, not
    a warning about the shop. */
 .store-location-approximate{margin:6px 0 0;font-size:13px;line-height:1.4;color:var(--ink-muted)}
+/* Score above, what it is made of below, in the muted weight the home page uses for the
+   same number. */
+.favorite-store-score{display:grid;gap:2px;justify-items:start}
+.favorite-store-score>span{color:var(--ink-muted);font-size:13px;font-weight:500}
 @media(max-width:600px){.favorite-review-row{grid-column:1/-1}}
 .profile-sections{display:grid}
 .profile-sections a{display:flex;flex-direction:column;gap:4px;padding:20px 0;border-bottom:1px solid var(--line);min-height:44px}
@@ -721,3 +737,7 @@ svg{stroke-width:2}
 .is-brand-mark img,img.is-brand-mark{object-fit:contain!important;padding:10%;background:var(--surface)}
 .store-hero-photo.is-brand-mark{background:var(--surface)}
 .store-hero-photo.is-brand-mark img{padding:6% 12%}
+/* The frame stops under "puan detayını gör" and moves down when the detail opens, instead of
+   standing at a fixed height with empty card below the last line. */
+.store-review-rail .post-criteria{margin:10px 0 0}
+.store-review-rail .post-criteria[open]{margin-bottom:4px}

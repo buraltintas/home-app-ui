@@ -56,11 +56,11 @@ const contributionCopy:Record<Locale,{title:string;body:string;action:string;pro
 // Two sentences that say different kinds of thing: the first explains how the number is
 // worked out, the second is why it can be trusted. They are held apart because the second
 // is the claim the whole rating rests on, and buried in a paragraph nobody reads it.
-const scoreCopy:Record<Locale,{title:string;intro:string;trust:string;seeReviews:string;empty:string}>={
-  tr:{title:'Değerlendirme',intro:'Mağaza puanı, sekiz değerlendirme puanının ortalamasından oluşur.',trust:'Mağazanın yanındayken yazılan değerlendirmeler “Doğrulanmış ziyaret” rozetiyle işaretlenir ve önce gösterilir.',seeReviews:'Değerlendirmeleri gör',empty:'Henüz ölçüt puanı yok'},
-  en:{title:'Rating',intro:'The store rating is the average of eight review scores.',trust:'A review written next to the store carries a “Verified visit” badge and is shown first.',seeReviews:'See the reviews',empty:'No criteria scores yet'},
-  de:{title:'Bewertung',intro:'Die Ladenbewertung ist der Durchschnitt aus acht Bewertungspunkten.',trust:'Eine Bewertung, die direkt beim Geschäft geschrieben wird, trägt das Abzeichen „Bestätigter Besuch“ und wird zuerst gezeigt.',seeReviews:'Bewertungen ansehen',empty:'Noch keine Kriterienbewertungen'},
-  ru:{title:'Оценка',intro:'Оценка магазина — среднее восьми оценок отзыва.',trust:'Отзыв, написанный рядом с магазином, помечается значком «Подтверждённое посещение» и показывается первым.',seeReviews:'Смотреть отзывы',empty:'Оценок по критериям пока нет'},
+const scoreCopy:Record<Locale,{title:string;intro:string;seeReviews:string;empty:string}>={
+  tr:{title:'Değerlendirme',intro:'Mağaza puanı, sekiz değerlendirme puanının ortalamasından oluşur.',seeReviews:'Değerlendirmeleri gör',empty:'Henüz ölçüt puanı yok'},
+  en:{title:'Rating',intro:'The store rating is the average of eight review scores.',seeReviews:'See the reviews',empty:'No criteria scores yet'},
+  de:{title:'Bewertung',intro:'Die Ladenbewertung ist der Durchschnitt aus acht Bewertungspunkten.',seeReviews:'Bewertungen ansehen',empty:'Noch keine Kriterienbewertungen'},
+  ru:{title:'Оценка',intro:'Оценка магазина — среднее восьми оценок отзыва.',seeReviews:'Смотреть отзывы',empty:'Оценок по критериям пока нет'},
 };
 
 // Everything Google gives us for a store lives in the external source attribution
@@ -161,18 +161,18 @@ export default async function Page({params}:Props){
             either way. A shop whose chain publishes no coordinate stands at the centre of
             the smallest place its address names -- right to a few hundred metres, not to
             the doorway -- and a reader who is not told that reads it as exact. */}
+        {/* The store's own site belongs with the address: both say where the shop is, one on
+            the ground and one online. A link, not a panel -- the frame around it made one
+            line of text look like a section of its own. */}
+        {store.website&&<a className="store-correction-link store-website-link" href={store.website} target="_blank" rel="noopener noreferrer">{t.storeWebsite}</a>}
         {store.location_approximate&&<p className="store-location-approximate">{t.approximateLocation}</p>}
         <Link className="store-correction-link" href={correctionPath}>{contribution.correction}</Link>
-        {/* The store's own site, where it has one: the store speaking for itself, which is
-            the only outside source this page carries now. A link, not a panel -- the frame
-            around it made one line of text look like a section of its own. */}
-        {store.website&&<a className="store-correction-link store-website-link" href={store.website} target="_blank" rel="noopener noreferrer">{t.storeWebsite}</a>}
       </div>
-      <div className="store-reviews" aria-labelledby="store-reviews-title">
-        <h2 className="store-section-title" id="store-reviews-title">{t.community}</h2>
-        {/* The sentence about verified visits belongs here, over the reviews it describes,
-            rather than beside the score it does not explain. */}
-        <p className="store-rating-trust">{scores.trust}</p>
+      <div className="store-reviews" id="store-reviews-title" aria-label={t.community}>
+        {/* No heading of its own. What is under here is plainly a row of reviews, and the
+            score above already says how many there are; the sentence about verified visits
+            that used to sit here went with it. The jump from the score needs something to
+            land on, so the id moved to the section. */}
         {recent_posts.length?<ViewerLikes postIds={recent_posts.map(post=>post.id)}><div className="store-review-rail">{recent_posts.map(post=><PostCard post={post} surface="store" key={post.id}/>)}</div></ViewerLikes>:<div className="empty-state"><h3>{t.noCommunity}</h3><p>{t.noReviewsBody}</p></div>}
       </div>
     </section>

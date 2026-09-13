@@ -53,17 +53,24 @@ export function TimedNudge({kind,requireReviewFlag=false}:{kind:Kind;requireRevi
     return()=>{window.clearTimeout(timer);if(exitTimer!==undefined)window.clearTimeout(exitTimer);if(lifeTimer!==undefined)window.clearTimeout(lifeTimer);window.removeEventListener('scroll',dismiss);};
   },[kind,requireReviewFlag]);
   if(!visible)return null;
-  // The mascot is the brand's own face and belongs on the two docks that invite somebody to
-  // search; the others are receipts and notices, and a mascot on those would be the brand
-  // talking about itself while somebody is being told something.
-  const mark=kind==='discovery'||kind==='search'
-    ?<Image src="/brand/brand-mark.png" width={48} height={48} alt=""/>
-    // Favourites are kept in order to be reviewed, so this dock carries the mark this
-    // product uses for a review everywhere else -- the same one the receipt carries. A heart
-    // said "saved", which is the thing already done rather than the thing being asked for.
-    :<Star/>;
+  // Each dock carries its own drawing rather than a borrowed glyph: the shop seen through a
+  // magnifier where you search, the dog climbing its levels on the profile, the dog holding
+  // a review card where reviews are waiting. A star stood in for the last two and said the
+  // same thing twice.
+  const mark:Record<Kind,string|undefined>={
+    discovery:'/brand/brand-mark.png',
+    search:'/brand/dock-search.png',
+    profile:'/brand/dock-profile.png',
+    favorites:'/brand/dock-favorites.png',
+    review:undefined,
+  };
+  const picture=mark[kind];
   return <aside className="timed-nudge" data-state={leaving?'leaving':'visible'} aria-live="polite">
-    <span className="timed-nudge-icon" aria-hidden="true">{mark}</span>
+    {/* One pass of light across the drawing as it arrives, then nothing. A mark that keeps
+        glinting is a mark somebody learns to look away from. */}
+    <span className="timed-nudge-icon" data-shine={picture?'':undefined} aria-hidden="true">
+      {picture?<Image src={picture} width={48} height={48} alt=""/>:<Star/>}
+    </span>
     {kind==='discovery'
       ?<span className="timed-nudge-copy"><span className="timed-nudge-lead">{lead[locale]}</span><span className="timed-nudge-call">{call[locale]}</span></span>
       :<span>{copy[locale][kind]}</span>}

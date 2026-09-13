@@ -14,7 +14,7 @@ import {apiFetch} from '@/lib/api-client';
 import type {Locale,Store} from '@/lib/types';
 import {isBrandMark,storePhotoURL} from '@/lib/store-photo';
 import {TimedNudge} from '@/components/TimedNudge';
-import {StoreDistance,useReviewRadius,useViewerPosition} from '@/components/StoreDistance';
+import {metresBetween,StoreDistance,useReviewRadius,useViewerPosition} from '@/components/StoreDistance';
 
 // The same wording the store page uses for the same action; one product, one name for it.
 const reviewAction:Record<Locale,string>={tr:'Değerlendirme yap',en:'Write a review',de:'Bewertung abgeben',ru:'Оставить оценку'};
@@ -85,15 +85,25 @@ export default function Page(){
       <Link href={localePath(locale,`/stores/${store.id}`)} prefetch={false}>
         {photo?<Image className={`favorite-store-photo${isBrandMark(store.photo)?' is-brand-mark':''}`} src={photo} width={160} height={120} alt="" unoptimized/>:<div className="favorite-store-photo is-empty" aria-hidden="true">{store.name.trim().charAt(0)}</div>}
         <div><strong>{store.name}</strong><span>{[store.district,store.city].filter(Boolean).join(', ')}</span>
-        {store.platform.review_count?<small><RatingStars value={store.platform.average_rating}/> · {store.platform.review_count} {t('reviewWord')}</small>:<small>{t('noCommunity')}</small>}</div>
+        {/* The count sits under the score rather than beside it: on a phone the two together
+            wrapped onto a second line anyway, and the number of reviews is what the score is
+            made of, not a second fact competing with it. Muted, like the count on the home
+            page. */}
+        {store.platform.review_count
+          ?<small className="favorite-store-score"><RatingStars value={store.platform.average_rating}/><span>{store.platform.review_count} {t('reviewWord')}</span></small>
+          :<small>{t('noCommunity')}</small>}</div>
         <ArrowRight aria-hidden="true"/>
       </Link>
       <div className="favorite-review-row">
         <StoreDistance store={{latitude:store.latitude,longitude:store.longitude}} viewer={viewer} radiusMeters={reviewRadius} locale={locale} isApproximate={store.location_approximate}/>
-        {/* Offered only once the distance is known. A review has to be written from the
-            shop, so inviting somebody to start one before we can tell where they are is an
-            invitation to be turned away at the end of the form. */}
-        {viewer&&<Link className="button store-contribution-action favorite-review-action" href={localePath(locale,`/create?store=${store.id}`)}>{reviewAction[locale]}</Link>}
+        {/* Offered only where the review would actually be accepted. A review has to be
+            written from the shop, so inviting somebody to start one from the other side of
+            the city is an invitation to be turned away at the end of the form. Knowing where
+            the reader is is not enough on its own -- they have to be near this shop -- and a
+            shop we placed ourselves cannot support the claim either. */}
+        {viewer&&!store.location_approximate
+          &&metresBetween(viewer,{latitude:store.latitude,longitude:store.longitude})<=reviewRadius
+          &&<Link className="button store-contribution-action favorite-review-action" href={localePath(locale,`/create?store=${store.id}`)}>{reviewAction[locale]}</Link>}
       </div>
     </li>})}</ul><TimedNudge kind="favorites"/>
   </main>;

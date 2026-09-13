@@ -22,6 +22,38 @@ row it is opened from is the one that survives, and the confirmation says so in 
 
 ---
 
+## A fifth of a star was a fifth of the box, and showed nothing
+
+A shop averaging 3.2 drew three full stars and a fourth that looked empty. The fill was
+right -- 20% -- but 20% of what: a star's silhouette starts two units into a twenty-four unit
+box and ends two before the other side, so a fifth of the *box* is 3.6 px of the corner where
+there is no star. Measured across the ink instead, a fifth of a star is a fifth of the shape
+somebody can see. Every star in the product is drawn by the same component, so this holds on
+the store page, in the review cards and in the saved list at once.
+
+## The review cards, and what the store page stopped saying
+
+Seven changes from the store card. The frame around a review now ends under "Puan detayını
+gör" and moves down when the detail opens, instead of standing at a fixed height with empty
+card under the last line. A reviewer's name and the level they earned stay on one line: the
+name is cut with an ellipsis rather than pushing the badge off the card, and in these narrow
+cards the badge drops its "3. Seviye" caption, which was eating the name and repeating what
+the badge already says. The eight criteria are two columns rather than two things pushed
+apart, so every row's stars begin on the same line -- "Fiyat/performans" used to push its
+stars further right than "Kasa hızı" did. The next review peeks 96 px instead of 60.
+
+**Two things were removed from the page, and this is what that costs.** The "Topluluk
+deneyimleri" heading is gone, and so is the sentence about verified visits that moved under
+it yesterday. The page loses a section heading from its outline and a sentence of unique
+text; the jump from the score still lands, on the section itself. The reviews are still
+there, still in the markup, and still indexed -- what is gone is the words above them. Say
+the word and the heading comes back.
+
+The store's own website sits under the address now, where the rest of "where this shop is"
+lives.
+
+---
+
 ## The store score shows the arithmetic it is made of
 
 A rating is the average of eight scores, so a reader can check it -- and one did: ten stars

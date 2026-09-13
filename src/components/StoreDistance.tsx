@@ -79,9 +79,9 @@ export function formatDistance(metres:number,locale:Locale):string{
 // distance sometimes and nothing at other times leaves the reader guessing which of the two
 // they are looking at; saying "we cannot work this out, and here is why" is an answer, and
 // an empty space is not.
-const distanceLabel:Record<Locale,string>={tr:'Mesafeniz',en:'Your distance',de:'Deine Entfernung',ru:'Ваше расстояние'};
+const distanceLabel:Record<Locale,string>={tr:'Mesafen',en:'Your distance',de:'Deine Entfernung',ru:'Ваше расстояние'};
 const noLocation:Record<Locale,string>={
-  tr:'Mesafeniz hesaplanamıyor. Konum iznini açman gerek.',
+  tr:'Mesafen hesaplanamıyor. Konum iznini açman gerek.',
   en:'Your distance cannot be worked out. Location permission is needed.',
   de:'Deine Entfernung kann nicht ermittelt werden. Standortfreigabe wird benötigt.',
   ru:'Расстояние не определить. Нужно разрешение на доступ к геопозиции.',
