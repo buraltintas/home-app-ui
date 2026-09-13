@@ -22,6 +22,56 @@ row it is opened from is the one that survives, and the confirmation says so in 
 
 ---
 
+## The full-screen search panel was never fixed to the screen
+
+Reported twice, patched once around the edge, and this is the cause. The search header holds
+the last frame of its entrance animation -- `animation-fill-mode: both` -- which keeps the
+element "animated": its transform stays a matrix and its clip-path an inset long after the
+entrance is over. Either of those makes an element the containing block for anything `fixed`
+inside it. The panel is fixed, so it was being fixed to that header: it began at the header's
+top edge, ended at its bottom, and the page it opened from showed underneath.
+
+`backwards` instead of `both` plays the entrance and then lets the header go back to being an
+ordinary box. The `:has()` rule that used to switch the animation off while the panel was
+open stays as belt and braces, but it is no longer what holds this up -- which matters,
+because a browser without `:has()` got no fix at all.
+
+## The bottom navigation, third time, with the actual measurement
+
+The profile mark had no solid layer. The other three tabs are drawn here with two layers, an
+outline and a fill that turns clay when you are on that page; the profile borrowed a
+one-layer icon from the library, so standing on the profile page it was a thin clay outline
+beside three solid clay shapes. Same colour, a quarter of the ink, which is what "different
+colour" looks like. It is drawn here now with the same two layers as its neighbours.
+
+## The search panel's two lists look like two lists
+
+A clock against something you searched before, a shop against something to search for -- they
+sat one above the other and read as one list. The shop marks cycle through four of the
+product's own colours (honey is not among them: DESIGN.md keeps it for areas, not lines). The
+two labels above them are quiet now rather than headings competing with what they label, and
+the rows are left-aligned: with `space-between` doing the spacing, a short suggestion floated
+in the middle of its own row while a long one started at the left.
+
+## Each dock carries its own drawing
+
+The shop seen through a magnifier where you search, the dog climbing its levels on the
+profile, the dog holding a review card where reviews are waiting. A borrowed star stood in
+for the last two and said the same thing twice. One band of light crosses each drawing as the
+dock arrives and then stops.
+
+## Smaller things
+
+The levels sheet closes at the speed it opens -- leaving faster than arriving read as being
+snatched away. The invite block is "Topluluğu güçlendir" and has one way to pass the link on
+rather than two: the share sheet already offers mail among everything else the phone can do.
+"Mesafeniz" is "Mesafen" throughout, and an empty review list says "Henüz değerlendirme yok".
+On the saved list the review count sits under the score in the muted weight the home page
+uses, and the review button appears only where a review would actually be accepted -- near
+the shop, and not for a shop we placed ourselves.
+
+---
+
 ## A fifth of a star was a fifth of the box, and showed nothing
 
 A shop averaging 3.2 drew three full stars and a fourth that looked empty. The fill was

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft, ArrowRight, Check, LocateFixed, MapPin, Search, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, History, LocateFixed, MapPin, Search, Store, X } from 'lucide-react';
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import type { Coordinates, Locale, LocationResult, Me, SearchHistory, SearchResponse, SearchResult } from '@/lib/types';
@@ -689,9 +689,9 @@ export function SearchExperience() {
           it. Each can still be forgotten one at a time -- a search you would rather not be
           offered again is the reason anybody looks at this list twice. */}
       <ul className="search-query-recent-list">{history.slice(0,3).map(entry=><li key={entry.id}>
-        <button type="button" onMouseDown={event=>event.preventDefault()} onClick={()=>{setSuggestionsOpen(false);fill(entry.raw_query);}}>{entry.raw_query}</button>
+        <button type="button" onMouseDown={event=>event.preventDefault()} onClick={()=>{setSuggestionsOpen(false);fill(entry.raw_query);}}><History aria-hidden="true"/>{entry.raw_query}</button>
         <button type="button" className="search-query-recent-delete" onMouseDown={event=>event.preventDefault()} onClick={()=>void removeHistory(entry.id)} disabled={historyBusy} aria-label={t('deleteSearch')}><X aria-hidden="true"/></button>
-      </li>)}</ul></div>}<h2 className="search-query-suggestions-title">{t('suggestedSearches')}</h2><div className="search-query-suggestions-list">{prompts.map(phrase=><button type="button" key={phrase} onClick={()=>{setSuggestionsOpen(false);fill(phrase);}}>{phrase}<ArrowRight aria-hidden="true"/></button>)}</div>{stripPhrases.length>4&&!suggestionsExpanded&&<button type="button" className="search-query-more" onMouseDown={event=>event.preventDefault()} onClick={()=>setSuggestionsExpanded(true)} aria-label={historyCopy[locale].more}>⌄</button>}</div>}</form>}{/* The panel opens above these, it does not replace them. Hiding them while somebody
+      </li>)}</ul></div>}<h2 className="search-query-suggestions-title">{t('suggestedSearches')}</h2><div className="search-query-suggestions-list">{prompts.map((phrase,index)=><button type="button" key={phrase} data-tint={index%4} onClick={()=>{setSuggestionsOpen(false);fill(phrase);}}><Store aria-hidden="true"/>{phrase}<ArrowRight aria-hidden="true"/></button>)}</div>{stripPhrases.length>4&&!suggestionsExpanded&&<button type="button" className="search-query-more" onMouseDown={event=>event.preventDefault()} onClick={()=>setSuggestionsExpanded(true)} aria-label={historyCopy[locale].more}>⌄</button>}</div>}</form>}{/* The panel opens above these, it does not replace them. Hiding them while somebody
         changes their location threw away the recent searches and the categories they were
         about to pick from, and put them back only once the location was settled. */}
     {/* Recent searches used to sit here, on the page. They belong with the field instead:

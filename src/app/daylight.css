@@ -24,7 +24,7 @@ svg{stroke-width:2}
 .eyebrow{font-family:var(--font-sans);font-size:11px;letter-spacing:.13em;color:var(--clay)}
 .feed-layout{max-width:1240px;padding:54px 40px 110px}
 .feed-main{border:0;max-width:none}
-.feed-intro{padding:8px 0 40px;display:grid;grid-template-columns:minmax(0,820px);align-items:end;animation:ink-in .62s cubic-bezier(.16,1,.3,1) both}
+.feed-intro{padding:8px 0 40px;display:grid;grid-template-columns:minmax(0,820px);align-items:end;animation:ink-in .62s cubic-bezier(.16,1,.3,1) backwards}
 .feed-intro h1{font-size:clamp(38px,5.4vw,60px);font-weight:740;line-height:1;letter-spacing:-.04em;margin:0;max-width:760px;text-wrap:balance}
 .search-hero h1,.empty-page h1{font-size:clamp(42px,6.1vw,84px);font-weight:740;line-height:.98;letter-spacing:-.04em;margin:0;max-width:920px;text-wrap:balance}
 .favorites-page h1,.favorites-empty h1{max-width:760px;margin:8px 0 0;font-size:clamp(30px,4vw,48px);font-weight:650;line-height:1.08;letter-spacing:-.035em;text-wrap:balance}
@@ -77,7 +77,14 @@ svg{stroke-width:2}
    covering the whole top of the screen -- the title, the location panel, the suggestions and
    the categories all sat on it -- which is what reads as "the page is yellow". It keeps its
    job as an accent on the things that want attention, not as the floor. */
-.search-hero{max-width:1440px;margin:0 auto;padding:68px 40px 54px;background:var(--canvas);color:var(--ink);animation:ink-in .62s cubic-bezier(.16,1,.3,1) both}
+/* `backwards`, not `both`, and the difference is load-bearing. A held final frame keeps the
+   element "animated": its transform stays a matrix and its clip-path stays an inset even
+   after the entrance is over, and either of those makes it the containing block for anything
+   fixed inside it. The full-screen search panel is fixed, so it was being fixed to this
+   header -- it started at the header's top edge and ended at its bottom, with the page
+   showing underneath. `backwards` plays the entrance and then lets this go back to being an
+   ordinary box. */
+.search-hero{max-width:1440px;margin:0 auto;padding:68px 40px 54px;background:var(--canvas);color:var(--ink);animation:ink-in .62s cubic-bezier(.16,1,.3,1) backwards}
 .search-title{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:24px}/* This is the one page where the line is not decoration: asking us is literally what the
    field below it does. */.search-slogan{margin:0 0 14px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-ink)}
 .search-title span{font-size:clamp(72px,11vw,160px);line-height:.7;color:var(--accent-ink)}
@@ -585,7 +592,8 @@ svg{stroke-width:2}
 .search-query-suggestions-list{max-height:176px;overflow-y:auto;overscroll-behavior:contain}
 .search-query-more{position:absolute;left:50%;bottom:0;transform:translateX(-50%);display:grid!important;place-items:center!important;width:64px!important;min-height:44px!important;padding:0!important;color:var(--ink);font-size:38px!important;line-height:1}
 .search-query-back{display:none}
-.search-query-suggestions-title{margin:2px 4px 10px;font-size:15px;font-weight:800;letter-spacing:.02em;text-transform:none;color:var(--ink)}
+/* A quiet label over a list, not a heading competing with the thing it labels. */
+.search-query-suggestions-title{margin:2px 4px 10px;font-size:13px;font-weight:500;letter-spacing:.01em;text-transform:none;color:var(--ink-muted)}
 .search-query-suggestions button{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;min-height:44px;padding:10px 12px;text-align:left;border:0;background:transparent;border-radius:var(--r-sm)}
 .search-query-suggestions button:hover,.search-query-suggestions button:focus-visible{background:var(--muted)}
 /* Recent searches, inside the panel. One column: the query on the left, the way to forget
@@ -599,9 +607,24 @@ svg{stroke-width:2}
 .search-query-recent>header button:hover{opacity:1}
 .search-query-recent-list{list-style:none;margin:0;padding:0}
 .search-query-recent-list>li{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center}
-.search-query-recent-list>li>button{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .search-query-recent-list>li>.search-query-recent-delete{display:grid;place-items:center;width:44px;min-width:44px;padding:0;color:var(--ink-muted)}
 .search-query-recent-list>li>.search-query-recent-delete svg{width:16px;height:16px}
+/* A clock against something you searched before, a shop against something to search for:
+   the two lists sit one above the other and read as one list without them. */
+.search-query-recent-list>li>button>svg{flex:none;width:17px;height:17px;margin-right:10px;color:var(--ink-muted)}
+.search-query-recent-list>li>button{display:flex;align-items:center;justify-content:flex-start;gap:0;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+/* Icon, then the words, then the arrow pushed to the far edge. With space-between doing the
+   spacing, a short suggestion floated in the middle of its own row while a long one started
+   at the left, and the column of shop marks was the only thing that lined up. */
+.search-query-suggestions-list button{justify-content:flex-start;text-align:left}
+.search-query-suggestions-list button>svg:first-child{flex:none;width:18px;height:18px;margin-right:10px}
+.search-query-suggestions-list button>svg:last-child{flex:none;margin-left:auto}
+/* Four colours, cycled -- the product's own, not four invented ones. Honey is not among
+   them: DESIGN.md keeps it for areas rather than lines. */
+.search-query-suggestions-list button[data-tint="0"]>svg:first-child{color:var(--clay)}
+.search-query-suggestions-list button[data-tint="1"]>svg:first-child{color:var(--accent-ink)}
+.search-query-suggestions-list button[data-tint="2"]>svg:first-child{color:var(--success)}
+.search-query-suggestions-list button[data-tint="3"]>svg:first-child{color:var(--ink-muted)}
 .search-suggestions .recent-search-disclosure>.disclosure-summary{padding:0;align-items:center;font-weight:600}
 /* The heading keeps its line and the clear control sits on the same right edge as the
    per-row delete, so the column reads as one column rather than two ragged ones. */
@@ -630,11 +653,9 @@ svg{stroke-width:2}
 .recent-search-delete:hover{opacity:1}
 .recent-search-more{padding:8px 0}
 @media(max-width:720px){
-  /* The hero's entry animation holds its last frame for good, and a held transform makes
-     the element the frame of reference for anything fixed inside it. So the full-screen
-     panel was fixed to the hero rather than to the screen: it stopped at the hero's lower
-     edge and the results underneath showed through it. The animation has finished playing
-     long before anyone opens the panel; it is dropped while the panel is open. */
+  /* Belt and braces: the header no longer holds its final frame at all (see `backwards`
+     above), and on a browser without `:has()` this rule simply does nothing, which is now
+     harmless rather than the difference between a full-screen panel and a trapped one. */
   .search-hero:has(.search-form.is-query-open){animation:none}
   /* The row is centred when this is a bar; in the full-screen panel every row starts at
      its own top, or the suggestions float in the middle of the space left below them. */

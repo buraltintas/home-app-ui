@@ -1,4 +1,4 @@
-// The three navigation shapes, drawn here rather than taken from the icon library.
+// The four navigation shapes, drawn here rather than taken from the icon library.
 //
 // The destination you are on fills its shape with the accent, and the house has to keep
 // its doorway open while it does. The library draws the house as two paths with the door
@@ -36,5 +36,21 @@ export function NavFavorites(){
   return <svg {...frame} aria-hidden="true">
     <path className="nav-icon-solid" d={HEART}/>
     <path d={HEART}/>
+  </svg>;
+}
+
+// Drawn here for the same reason as the other three, and it is the reason this was reported
+// twice. The library's person has one layer, so it could not fill: standing on the profile
+// page, three tabs were solid clay shapes and this one was a thin clay outline -- the same
+// colour, a quarter of the ink, which reads as a different colour. It has a solid layer now
+// like its neighbours.
+const HEAD='M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8';
+const SHOULDERS='M20 21a8 8 0 0 0-16 0';
+
+export function NavProfile(){
+  return <svg {...frame} aria-hidden="true">
+    <path className="nav-icon-solid" d={`${HEAD} ${SHOULDERS}`}/>
+    <path d={HEAD}/>
+    <path d={SHOULDERS}/>
   </svg>;
 }
