@@ -22,6 +22,15 @@ row it is opened from is the one that survives, and the confirmation says so in 
 
 ---
 
+## The save dock is the width of the dock it was asked to match
+
+It was made edge-to-edge to line up with the navigation bar beneath it. What the card asked
+for, twice, was the width of the dock on the home page, which is a different thing: a
+floating card 316 px wide with 30 px of ground either side. Both are now that, measured at
+375 px -- left 30, width 316, the same two numbers.
+
+---
+
 ## The full-screen search panel was never fixed to the screen
 
 Reported twice, patched once around the edge, and this is the cause. The search header holds

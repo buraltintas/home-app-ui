@@ -176,7 +176,7 @@ svg{stroke-width:2}
 .store-actions svg{width:20px;height:20px;flex:none}
 .store-actions button:disabled{cursor:not-allowed;opacity:.55}
 .store-actions button:hover,.store-actions a:hover{background:var(--muted)}
-.store-save-dock{position:fixed;z-index:22;left:50%;bottom:22px;transform:translateX(-50%);width:min(420px,calc(100% - 28px));min-height:76px;padding:12px 14px 12px 22px;display:flex;align-items:center;justify-content:space-between;gap:24px;background:color-mix(in srgb,var(--surface) 92%,transparent);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--lift);backdrop-filter:blur(20px) saturate(130%)}
+.store-save-dock{position:fixed;z-index:22;left:50%;bottom:22px;transform:translateX(-50%);width:min(316px,calc(100% - 56px));min-height:76px;padding:12px 14px 12px 22px;display:flex;align-items:center;justify-content:space-between;gap:24px;background:color-mix(in srgb,var(--surface) 92%,transparent);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--lift);backdrop-filter:blur(20px) saturate(130%)}
 .store-save-dock>span{font-size:15px;font-weight:650;white-space:nowrap}.store-save-dock .button{min-width:0;white-space:nowrap}
 /* This button exists to get somebody to come back and write a review, so it wears the
    colour the product uses for what it wants you to do. Filled near-black it was the same
@@ -511,7 +511,10 @@ svg{stroke-width:2}
   /* Edge to edge, like the navigation bar it stands on: two floating bars of different
      widths stacked on one another read as two unrelated things, and the one underneath is
      the one the reader already knows. Same width, same edges, so they look like one stack. */
-  .store-save-dock{bottom:calc(68px + env(safe-area-inset-bottom));left:0;right:0;transform:none;width:auto;min-height:68px;padding:10px 16px;gap:12px;border-radius:0;border-left:0;border-right:0}
+  /* The same width as the dock on the home page, which is what was asked for -- twice. It
+     was made edge-to-edge instead, to line up with the navigation bar under it; that is a
+     different thing to match. One number, written once, in both places. */
+  .store-save-dock{bottom:calc(88px + env(safe-area-inset-bottom));left:50%;right:auto;transform:translateX(-50%);width:min(316px,calc(100% - 56px));min-height:68px;padding:10px 12px 10px 16px;gap:12px}
   .store-save-dock>span{font-size:13px}
   .store-save-dock .button{min-width:0;padding-inline:14px;white-space:nowrap}
 }
