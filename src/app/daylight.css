@@ -297,7 +297,14 @@ svg{stroke-width:2}
    stands on its own with a mark of its own. */
 /* The score leads its own row and the way to the reviews sits beside it. The label that
    used to open the row said what the number already says. */
-.store-rating-overall{display:flex;align-items:center;gap:16px}
+/* Score, then what it is made of underneath it, then the way down to the reviews. The count
+   used to sit beside the score; under it, the two read as one statement rather than as two
+   numbers competing on a line. */
+.store-rating-overall{display:grid;grid-template-columns:auto auto;align-items:center;gap:0 20px;justify-content:start}
+.store-rating-overall strong{grid-column:1;grid-row:1}
+.store-rating-overall .store-rating-count{grid-column:1;grid-row:2}
+.store-rating-overall .store-rating-jump{grid-column:2;grid-row:1/3}
+.store-rating-overall small{grid-column:1;grid-row:2}
 .store-rating-overall strong{font-size:38px;line-height:1;color:var(--clay);font-variant-numeric:tabular-nums}
 .store-rating-overall small{font-size:12px;color:var(--ink-muted)}
 /* How many reviews the score is made of, beside the score itself: a 4.7 out of three
@@ -566,15 +573,23 @@ svg{stroke-width:2}
 /* The distance stands to the left of the action it qualifies: how far away the store is,
    and then what you can do about it. */
 .favorite-review-row{grid-column:2/3;display:flex;align-items:center;flex-wrap:wrap;gap:8px 16px}
-/* The label and the number sit on one line; anything explaining them goes under. */
-.store-distance{display:grid;grid-template-columns:auto auto;align-items:baseline;gap:2px 6px;margin:0;justify-content:start}
-.store-distance>span{font-size:13px;color:var(--ink-muted)}
-.store-distance small{grid-column:1/-1}
+/* The label and the number sit on one line; anything explaining them goes under. They are a
+   wrapping row rather than a grid: as a grid the explanation shared the columns, and a long
+   one widened them until the number was sitting in the middle of the row. */
+.store-distance{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 6px;margin:0}
+.store-distance>span{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:var(--ink-muted)}
+.store-distance small{flex:1 0 100%;display:flex;align-items:flex-start;gap:4px}
 .store-distance strong{font-size:15px;font-weight:750;color:var(--clay)}
+/* The mark is the size of the line it belongs to and never shrinks under a long sentence. */
+.store-distance svg{width:14px;height:14px;flex:none;stroke-width:2.1}
+.store-distance>span svg{width:13px;height:13px}
 /* Nothing to point at, so nothing is coloured as though there were. */
 .store-distance.is-unknown small{color:var(--ink-muted)}
 .store-distance small{font-size:12px;line-height:1.3;color:var(--ink-muted)}
 .store-distance.is-eligible small{color:var(--success);font-weight:700}
+/* Out of range is a fact about where the reader is, not a fault: said in the muted voice the
+   rest of the caveats use, not in the colour reserved for what went wrong. */
+.store-distance small.is-too-far{color:var(--ink-muted)}
 /* Said quietly, beside the address it qualifies -- it is a caveat on what is above it, not
    a warning about the shop. */
 .store-location-approximate{margin:6px 0 0;font-size:13px;line-height:1.4;color:var(--ink-muted)}

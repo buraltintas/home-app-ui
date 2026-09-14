@@ -1,5 +1,6 @@
 'use client';
 
+import {CircleAlert,CircleCheck,MapPin,TriangleAlert} from 'lucide-react';
 import {useEffect,useState} from 'react';
 import {LOCATION_LOST_EVENT,LOCATION_UPDATE_EVENT,canUseDeviceLocationWithoutPrompt,requestPosition,type Position} from '@/lib/location';
 import type {Coordinates,Locale} from '@/lib/types';
@@ -15,6 +16,16 @@ const eligible:Record<Locale,string>={
   en:'You are close enough to write a review',
   de:'Du bist nah genug, um zu bewerten',
   ru:'Вы достаточно близко, чтобы оставить отзыв',
+};
+
+// The other half of the same fact. A line that appears only when the answer is yes leaves
+// "no" and "we have not worked it out" looking identical -- both are a blank space -- and the
+// reader cannot tell whether walking closer would change anything.
+const tooFar:Record<Locale,string>={
+  tr:'Değerlendirme yapmak için uygun mesafede değilsiniz',
+  en:'You are not close enough to write a review',
+  de:'Du bist nicht nah genug, um zu bewerten',
+  ru:'Вы недостаточно близко, чтобы оставить отзыв',
 };
 
 // The backend is the authority on the limit and rejects anything beyond it; this value
@@ -98,15 +109,28 @@ const approximate:Record<Locale,string>={
   ru:'Примерно — магазин не указал точное расположение',
 };
 
+// Each line is marked by what it is: a place, a yes, a no, a thing that went wrong. The mark
+// is what the eye finds first in a list of shops, before any of the words are read.
 export function StoreDistance({store,viewer,radiusMeters,locale,isApproximate}:{store:Coordinates;viewer?:Position;radiusMeters:number;locale:Locale;isApproximate?:boolean}){
-  if(!viewer)return <p className="store-distance is-unknown"><span>{distanceLabel[locale]}</span> <small>{noLocation[locale]}</small></p>;
+  if(!viewer)return <p className="store-distance is-unknown">
+    <span><MapPin aria-hidden="true"/>{distanceLabel[locale]}</span>
+    <small><TriangleAlert aria-hidden="true"/>{noLocation[locale]}</small>
+  </p>;
   const metres=metresBetween(viewer,store);
   // Close enough to review is a claim about where the reader is standing, and it cannot be
   // made from a point we invented: the shop could be half a kilometre from where we put it.
   const close=metres<=radiusMeters&&!isApproximate;
   return <p className={`store-distance${close?' is-eligible':''}`}>
-    <span>{distanceLabel[locale]}</span> <strong>{isApproximate?'~':''}{formatDistance(metres,locale)}</strong>
-    {close&&<small>{eligible[locale]}</small>}
-    {isApproximate&&<small>{approximate[locale]}</small>}
+    {/* The label and the number are one thing and stay together, whatever is written
+        underneath them. They used to be two columns of a grid the explanation also sat in,
+        so a long explanation stretched the columns and carried the number into the middle of
+        the row -- which is what a shop with reviews looked like. */}
+    <span><MapPin aria-hidden="true"/>{distanceLabel[locale]}</span>
+    <strong>{isApproximate?'~':''}{formatDistance(metres,locale)}</strong>
+    {close&&<small><CircleCheck aria-hidden="true"/>{eligible[locale]}</small>}
+    {/* A shop we placed ourselves cannot be said to be out of range either: the distance is
+        to the middle of its neighbourhood, and the caveat below says so. */}
+    {!close&&!isApproximate&&<small className="is-too-far"><CircleAlert aria-hidden="true"/>{tooFar[locale]}</small>}
+    {isApproximate&&<small><CircleAlert aria-hidden="true"/>{approximate[locale]}</small>}
   </p>;
 }

@@ -8,6 +8,43 @@ value involved.
 
 ---
 
+## The notch on the right-hand point of every whole star
+
+A star is drawn twice -- an empty one, and a filled one revealed from the left by the fraction
+it is worth -- and the reveal was measured to the edge of the star's outline. The icon is
+stroked, though: two units of stroke centred on a path in a twenty-four unit box, so a full
+unit of ink is painted *outside* the outline on each side. Revealing to the outline therefore
+left the outer half of the right-hand point grey, on every whole star, on every page -- wider
+where the star is drawn larger, which is why it looked like a different defect in each place.
+The reveal now runs to the ink rather than the path, and a whole star reveals the whole box:
+nothing else is painted in that corner, and stopping a hair short is how a rounding error
+becomes a visible sliver at 18 px.
+
+## The distance, the mark beside it, and the answer when it is "no"
+
+Six revisions to the saved-stores row, all of them about the same line.
+
+**The number had drifted into the middle of the row.** The label and the number were two
+columns of a grid that the explanation underneath also sat in, spanning both. A long
+explanation -- the green "you are close enough" line -- widened those columns, and the number
+went with them. It is a wrapping flex row now: label and number are one thing, and what
+explains them takes a line of its own, whatever its length.
+
+**Each line says what kind of line it is.** A pin on the distance, a tick on "close enough", a
+warning triangle on "we cannot work this out". In a list of saved shops the mark is what the
+eye reaches before any of the words.
+
+**And "no" is now written down.** Out of range used to show nothing at all, which looks exactly
+like not having worked it out, so the reader could not tell whether walking closer would change
+anything. It says so, in the muted voice the other caveats use -- being far away is a fact, not
+a fault. A shop whose point we placed ourselves still says only that: we cannot claim it is out
+of range when we do not know where its door is.
+
+**And the count moved under the score on the store page.** It sat beside a 38 px number, which
+read as two figures competing on one line rather than one statement and the evidence for it.
+
+---
+
 ## The open map gets its credit
 
 The independent shops in the catalogue -- the ones that are nobody's branch -- were read from

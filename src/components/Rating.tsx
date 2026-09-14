@@ -10,8 +10,17 @@ export function Rating({value}:{value:number}){return <span className="rating"><
 // the box" showed 3.6 px of mostly empty corner and the star read as not filled at all --
 // which is what was reported for a shop averaging 3.2. Measured across the ink instead, a
 // fifth of a star is a fifth of the shape somebody can see.
-const INK_START=2,INK_WIDTH=20,BOX=24;
-const inked=(fraction:number)=>(INK_START+INK_WIDTH*fraction)/BOX;
+//
+// The ink is wider than the path, and that is what the second report was about. The icon is
+// drawn with a two-unit stroke centred on the path, so half of it -- a full unit -- is
+// painted outside the outline on each side. Revealing to the path's own edge therefore left
+// the outer half of the right-hand point unpainted: a notch on every whole star, wider on
+// pages that draw the star larger.
+const PATH_START=2,PATH_END=22,HALF_STROKE=1,BOX=24;
+const INK_START=PATH_START-HALF_STROKE,INK_END=PATH_END+HALF_STROKE;
+// A whole star reveals the whole box. Nothing else is painted in that corner, and stopping a
+// hair short of the edge is how a rounding error becomes a visible sliver on a small star.
+const inked=(fraction:number)=>fraction>=1?1:(INK_START+(INK_END-INK_START)*fraction)/BOX;
 export function RatingStars({value,showValue=true}:{value:number;showValue?:boolean}){
   const score=Math.max(0,Math.min(5,value));
   return <span className="rating-stars" aria-label={`${value.toFixed(1)} / 5`}>
