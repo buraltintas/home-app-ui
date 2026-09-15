@@ -62,7 +62,7 @@ export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages
   const progression=progressionCopy[locale];
 
   return <main className="profile-page">
-    <h1>{t('profileTitle')}</h1>
+    {!section&&<h1>{t('profileTitle')}</h1>}
     {!section&&<section className="profile-summary">
       <div className="profile-avatar">{me.avatar_url?<Image src={me.avatar_url} width={64} height={64} unoptimized alt=""/>:(me.display_name||me.email).slice(0,1).toLocaleUpperCase(locale)}</div>
       <div className="profile-summary-identity"><strong>{me.display_name||me.email}</strong><span>{me.email}</span></div>

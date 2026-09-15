@@ -8,6 +8,18 @@ value involved.
 
 ---
 
+## The Turkish location fallback pointed in the wrong direction
+
+The timeout message told people to enter their location “below” even though the manual
+location field is above the message. It now points upward and names the location clearly.
+
+## Profile subpages stopped repeating the page they already left
+
+Edit, reviews, messages and account routes now open with their own heading and back action
+instead of repeating the parent “Profile” title above them. A user's review list no longer
+loads store photography into each row, the profile save action uses the product accent,
+and the contributor-level prompt has a lighter, more inviting icon treatment.
+
 ## Contextual docks now make their one useful word visible
 
 Search, favorites, review-complete and profile docks now emphasize the meaningful word in

@@ -101,7 +101,7 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
   // Authored review media remains primary. Without it, the card uses the exact same store
   // cover as search and detail; that fallback opens the store, where Google credit is shown.
   const storePhoto=storePhotoURL(post.store_photo,960);
-  const hasPhoto=Boolean(!onStorePage&&storePhoto);
+  const hasPhoto=Boolean(!onStorePage&&!owned&&storePhoto);
   // A date without its year answers "which day" and not "which year", and a review list
   // that goes back further than twelve months needs both.
   const written=new Intl.DateTimeFormat(locale,{day:'numeric',month:'short',year:'numeric'}).format(new Date(post.created_at));
@@ -122,9 +122,9 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
       {!onStorePage&&<Link href={localePath(locale,`/stores/${post.store_id}`)} className="post-store"><h2>{post.store_name}</h2>{place&&<p>{place}</p>}</Link>}
     </div>
 
-    {storePhoto&&!onStorePage
+    {storePhoto&&!onStorePage&&!owned
       ?<Link href={localePath(locale,`/stores/${post.store_id}`)} className="post-photo"><Image src={storePhoto} fill sizes="(max-width: 760px) 100vw, 760px" alt={post.store_name} unoptimized/></Link>
-      :!onStorePage?<Link href={localePath(locale,`/reviews/${post.id}`)} className="post-photo is-empty"><span aria-hidden="true">{post.store_name.slice(0,2).toLocaleUpperCase(locale)}</span><small>{t('noPhoto')}</small></Link>:null}
+      :!onStorePage&&!owned?<Link href={localePath(locale,`/reviews/${post.id}`)} className="post-photo is-empty"><span aria-hidden="true">{post.store_name.slice(0,2).toLocaleUpperCase(locale)}</span><small>{t('noPhoto')}</small></Link>:null}
 
     <div className="post-details">
       <div className="post-meta"><RatingStars value={post.rating}/><Verified label={t('verified')}/></div>

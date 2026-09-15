@@ -407,6 +407,7 @@ svg{stroke-width:2}
    frame, matching the invitation block underneath it. */
 .level-boost{width:100%;margin:0 0 4px;padding:18px 20px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);display:flex}
 .level-boost-action{width:100%;background:color-mix(in srgb,var(--surface) 72%,transparent)}
+.level-boost .contribution-progress>span:first-child{background:var(--accent-wash);color:var(--clay)}
 /* Shorter than it was, at the same width. It is a table of five rows and two sentences, and
    it was taking most of a phone screen to say that -- the reader had to scroll a sheet that
    has nothing below the fold worth scrolling to. Only the vertical measurements moved. */
@@ -609,6 +610,7 @@ svg{stroke-width:2}
 .profile-sections a:hover{color:var(--clay)}
 .profile-sections span{color:var(--ink-muted);font-size:15px}
 .profile-section-content{margin-top:24px}
+.profile-section-content .profile-form-actions .button.primary{background:var(--clay);color:var(--surface)}
 .account-loading-progress{height:2px;width:72px;background:var(--line-strong);margin-top:24px}
 .location-control.is-device>span,.location-control.is-device>svg{color:var(--success)}
 .search-form{position:relative}
