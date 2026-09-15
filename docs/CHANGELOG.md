@@ -8,6 +8,31 @@ value involved.
 
 ---
 
+## The phone search panel was not a reliable full-screen surface
+
+The search header's entrance animation could become the containing block for its fixed
+query panel in mobile Safari, trapping the supposed overlay inside the header. Mobile
+search now removes that decorative animation so the panel is viewport-sized everywhere.
+The keyboard's Done key dismisses only the keyboard rather than unexpectedly submitting
+the query, and suggested searches no longer carry redundant trailing arrows.
+
+## A desktop hover state was sticking under a phone tap
+
+The yellowish rectangle around a bottom-navigation destination was not a focus ring or the
+browser's tap highlight. It was our own hover background: Safari can keep `:hover` active
+after a touch even when the device has no hovering pointer. The navigation hover treatment
+now exists only on devices that actually support hover, so tapping on a phone leaves the
+target on the same transparent navigation ground.
+
+## The store save dock entered too early and squeezed its own action
+
+The dock appeared during first paint rather than after the reader had reached the store,
+and its flexible button could shrink narrower than its label, leaving the first and last
+letters outside the clay fill on a narrow phone. It now waits one second, enters with the
+same half-second motion as the home prompt, remains fixed while the page scrolls, and gives
+the action its full text width. A very narrow screen stacks it rather than clipping it.
+The invitation is hidden for saved stores and returns after unsaving.
+
 ## A saved store looked unsaved after a reload
 
 The cached store page cannot carry an account-specific favorite flag, so its actions queried

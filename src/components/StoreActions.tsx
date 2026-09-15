@@ -17,12 +17,15 @@ export function StoreActions({storeId,name,latitude,longitude,initialFavorited,p
   const [busy,setBusy]=useState(false);
   const [status,setStatus]=useState('');
   const statusTimer=useRef<number|undefined>(undefined);
-  const dockTimer=useRef<number|undefined>(undefined);
   const changedHere=useRef(false);
-  // The dock invites one thing: saving this store for later. A store already saved has
-  // nothing to be invited to, so the page opens without it. Unsaving brings it back,
-  // because at that point the invitation is true again.
-  const [dockVisible,setDockVisible]=useState(!initialFavorited);
+  // The invitation arrives after the page, not during the first paint. A saved store
+  // has nothing to be invited to; unsaving schedules the invitation again.
+  const [dockVisible,setDockVisible]=useState(false);
+  useEffect(()=>{
+    if(favorited)return;
+    const timer=window.setTimeout(()=>setDockVisible(true),1000);
+    return()=>window.clearTimeout(timer);
+  },[favorited,storeId]);
   // The cached page cannot know this viewer's favorite status. Read this one store
   // directly; the bounded favorites list may omit an older save. Do not let a late
   // answer undo a change the viewer made while the status request was in flight.
@@ -34,7 +37,7 @@ export function StoreActions({storeId,name,latitude,longitude,initialFavorited,p
         if(!response.ok)return;
         const body=await response.json() as {favorited:boolean};
         if(active&&!changedHere.current){
-          setFavorited(body.favorited);setDockVisible(!body.favorited);
+          setFavorited(body.favorited);
         }
       }catch{/* leave the rendered state alone */}
     })();
@@ -45,7 +48,7 @@ export function StoreActions({storeId,name,latitude,longitude,initialFavorited,p
   // resumed afterwards instead of silently dropped.
   const [pending,setPending]=useState(false);
 
-  useEffect(()=>()=>{if(statusTimer.current!==undefined)window.clearTimeout(statusTimer.current);if(dockTimer.current!==undefined)window.clearTimeout(dockTimer.current);},[]);
+  useEffect(()=>()=>{if(statusTimer.current!==undefined)window.clearTimeout(statusTimer.current);},[]);
   const announce=(message:string)=>{
     setStatus(message);
     if(statusTimer.current!==undefined)window.clearTimeout(statusTimer.current);
@@ -55,14 +58,13 @@ export function StoreActions({storeId,name,latitude,longitude,initialFavorited,p
     if(busy)return;
     changedHere.current=true;
     const next=!favorited;
-    setBusy(true);setStatus('');setFavorited(next);
+    setBusy(true);setStatus('');setFavorited(next);setDockVisible(false);
     try{
       const response=await apiFetch(`/api/proxy/stores/${storeId}/favorite`,{method:next?'POST':'DELETE',headers:originSearchHeaders()});
       if(response.status===401){setFavorited(!next);setPending(true);setAuth(true);return;}
       // An optimistic flip is not success. Only a 2xx keeps it.
       if(!response.ok)throw new Error();
-      if(next){announce(savedMessage[locale]);dockTimer.current=window.setTimeout(()=>setDockVisible(false),1000);}
-      else setDockVisible(true);
+      if(next)announce(savedMessage[locale]);
     }catch{setFavorited(!next);announce(t('saveError'));}
     finally{setBusy(false);}
   };
@@ -98,7 +100,7 @@ export function StoreActions({storeId,name,latitude,longitude,initialFavorited,p
     <button onClick={()=>void share()}><Send/>{t('share')}</button>
   </div>
   {status&&<p className="action-status store-save-status" role="status">{status}</p>}
-  {dockVisible&&<aside className="store-save-dock" aria-label={t('saveReason')}>
+  {dockVisible&&!favorited&&<aside className="store-save-dock" aria-label={t('saveReason')}>
     <span>{t('saveReason')}</span>
     <button type="button" className={`button primary${favorited?' is-saved':''}`} onClick={()=>void toggleFavorite()} disabled={busy} aria-pressed={favorited}>
       {t('saveStore')}

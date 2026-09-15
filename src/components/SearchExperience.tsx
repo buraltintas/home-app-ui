@@ -173,6 +173,10 @@ export function SearchExperience() {
   const [historyBusy,setHistoryBusy]=useState(false);
   const [rotation,setRotation]=useState(0);
   const field=useRef<HTMLTextAreaElement>(null);
+  // On a phone the keyboard's Done key is a keyboard control, not a search command.
+  // Blurring the textarea would normally close the full-screen query panel as well, so
+  // remember that one deliberate blur and keep the panel in place.
+  const keepQueryPanelAfterBlur=useRef(false);
   const searchSequence=useRef(0);
   const searchAbort=useRef<AbortController|null>(null);
 
@@ -679,10 +683,13 @@ export function SearchExperience() {
       // is often not named as the blur's destination, so the panel closed under the finger
       // on its way to the control inside it. Asking a tick later, where focus actually
       // landed, is the same question with an answer.
-      window.setTimeout(()=>{if(!panel.contains(document.activeElement))setSuggestionsOpen(false);},0);}} onSubmit={event=>{setSuggestionsOpen(false);submit(event);}} aria-busy={loading}>{!suggestionsOpen&&<Search aria-hidden="true"/>}<div className="search-field">{/* The way out sits inside the field, where the magnifier sits on the page this
+      window.setTimeout(()=>{
+        if(keepQueryPanelAfterBlur.current){keepQueryPanelAfterBlur.current=false;return;}
+        if(!panel.contains(document.activeElement))setSuggestionsOpen(false);
+      },0);}} onSubmit={event=>{setSuggestionsOpen(false);submit(event);}} aria-busy={loading}>{!suggestionsOpen&&<Search aria-hidden="true"/>}<div className="search-field">{/* The way out sits inside the field, where the magnifier sits on the page this
         panel opens from: one control in one place, doing the opposite job. A separate
         corner button was a second way out of a screen that only needs one. */}
-      {suggestionsOpen&&<button type="button" className="search-query-back" onClick={()=>setSuggestionsOpen(false)} aria-label={t('back')}><ArrowLeft aria-hidden="true"/></button>}<textarea ref={field} onFocus={()=>{setSuggestionsOpen(true);setSuggestionsExpanded(false);}} rows={1} value={query} onChange={event=>setQuery(event.target.value)} onKeyDown={event=>{if(event.key==='Escape')setSuggestionsOpen(false);if(event.key==='Enter'){event.preventDefault();void runSearch();}}} placeholder={placeholder} aria-label={t('searchHint')} disabled={loading}/>{query&&!loading&&<button type="button" className="search-clear" onClick={()=>{setQuery('');field.current?.focus();}} aria-label={t('clearSearch')}><X aria-hidden="true"/></button>}</div>{suggestionsOpen&&<button type="submit" disabled={loading}>{loading?t('loading'):t('searchAction')}</button>}{suggestionsOpen&&<div className="search-query-suggestions">{history.length>0&&<div className="search-query-recent">
+      {suggestionsOpen&&<button type="button" className="search-query-back" onClick={()=>setSuggestionsOpen(false)} aria-label={t('back')}><ArrowLeft aria-hidden="true"/></button>}<textarea ref={field} enterKeyHint="done" onFocus={()=>{setSuggestionsOpen(true);setSuggestionsExpanded(false);}} rows={1} value={query} onChange={event=>setQuery(event.target.value)} onKeyDown={event=>{if(event.key==='Escape')setSuggestionsOpen(false);if(event.key==='Enter'){event.preventDefault();if(window.matchMedia('(max-width: 720px)').matches){keepQueryPanelAfterBlur.current=true;event.currentTarget.blur();return;}void runSearch();}}} placeholder={placeholder} aria-label={t('searchHint')} disabled={loading}/>{query&&!loading&&<button type="button" className="search-clear" onClick={()=>{setQuery('');field.current?.focus();}} aria-label={t('clearSearch')}><X aria-hidden="true"/></button>}</div>{suggestionsOpen&&<button type="submit" disabled={loading}>{loading?t('loading'):t('searchAction')}</button>}{suggestionsOpen&&<div className="search-query-suggestions">{history.length>0&&<div className="search-query-recent">
       <header><h2 className="search-query-suggestions-title">{t('showRecentSearches')}</h2><button type="button" onMouseDown={event=>event.preventDefault()} onClick={()=>void clearHistory()} disabled={historyBusy}>{t('clearSearches')}</button></header>
       {/* Three, because this is a shortcut and not a record: the whole history is a page of
           its own, and a list long enough to scan is a list that hides the suggestions under
@@ -691,7 +698,7 @@ export function SearchExperience() {
       <ul className="search-query-recent-list">{history.slice(0,3).map(entry=><li key={entry.id}>
         <button type="button" onMouseDown={event=>event.preventDefault()} onClick={()=>{setSuggestionsOpen(false);fill(entry.raw_query);}}><History aria-hidden="true"/>{entry.raw_query}</button>
         <button type="button" className="search-query-recent-delete" onMouseDown={event=>event.preventDefault()} onClick={()=>void removeHistory(entry.id)} disabled={historyBusy} aria-label={t('deleteSearch')}><X aria-hidden="true"/></button>
-      </li>)}</ul></div>}<h2 className="search-query-suggestions-title">{t('suggestedSearches')}</h2><div className="search-query-suggestions-list">{prompts.map((phrase,index)=><button type="button" key={phrase} data-tint={index%4} onClick={()=>{setSuggestionsOpen(false);fill(phrase);}}><Store aria-hidden="true"/>{phrase}<ArrowRight aria-hidden="true"/></button>)}</div>{stripPhrases.length>4&&!suggestionsExpanded&&<button type="button" className="search-query-more" onMouseDown={event=>event.preventDefault()} onClick={()=>setSuggestionsExpanded(true)} aria-label={historyCopy[locale].more}>⌄</button>}</div>}</form>}{/* The panel opens above these, it does not replace them. Hiding them while somebody
+      </li>)}</ul></div>}<h2 className="search-query-suggestions-title">{t('suggestedSearches')}</h2><div className="search-query-suggestions-list">{prompts.map((phrase,index)=><button type="button" key={phrase} data-tint={index%4} onClick={()=>{setSuggestionsOpen(false);fill(phrase);}}><Store aria-hidden="true"/>{phrase}</button>)}</div>{stripPhrases.length>4&&!suggestionsExpanded&&<button type="button" className="search-query-more" onMouseDown={event=>event.preventDefault()} onClick={()=>setSuggestionsExpanded(true)} aria-label={historyCopy[locale].more}>⌄</button>}</div>}</form>}{/* The panel opens above these, it does not replace them. Hiding them while somebody
         changes their location threw away the recent searches and the categories they were
         about to pick from, and put them back only once the location was settled. */}
     {/* Recent searches used to sit here, on the page. They belong with the field instead:
