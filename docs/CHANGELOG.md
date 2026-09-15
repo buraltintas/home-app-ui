@@ -13,6 +13,9 @@ value involved.
 The timeout message told people to enter their location “below” even though the manual
 location field is above the message. It now points upward and names the location clearly.
 
+Review-criterion numbers also return to ordinary dark ink, keeping the clay accent for
+selected scores and actions rather than spending it on list numbering.
+
 ## Profile subpages stopped repeating the page they already left
 
 Edit, reviews, messages and account routes now open with their own heading and back action

@@ -625,7 +625,7 @@ body>main{flex:1 0 auto;min-width:0;width:100%}
    star inside it is 22, so the glyph starts 11 px in; the label is nudged by the same 11 so
    the two line up on the eye rather than on the box. The number sits in front of it. */
 .criteria-list .criterion legend{float:left;display:flex;align-items:baseline;gap:7px;width:100%;margin-bottom:6px;padding:0 0 0 11px;font-size:13px;line-height:1.35;font-weight:500;color:var(--ink-muted)}
-.criterion-number{flex:none;font-variant-numeric:tabular-nums;font-weight:700;color:var(--clay)}
+.criterion-number{flex:none;font-variant-numeric:tabular-nums;font-weight:700;color:var(--ink)}
 .criteria-list .criterion-stars{clear:both}
 .criteria-list .criterion label{display:inline-grid;place-items:center}
 .criteria-hint{margin:0 0 18px;color:var(--ink-muted);font-size:14px}
