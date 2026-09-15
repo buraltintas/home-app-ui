@@ -21,10 +21,16 @@ const lead:Record<Locale,string>={
 const call:Record<Locale,string>={tr:'Bize sor!',en:'Ask us!',de:'Frag uns!',ru:'Спросите нас!'};
 
 const copy:Record<Locale,Record<Exclude<Kind,'discovery'>,string>>={
-  tr:{search:'İster mağaza ismi, ister kategori ismi ile arama yap',favorites:'Mağazalar değerlendirmeni bekliyor.',review:'Değerlendirmen kaydedildi.',profile:'Güncel seviyeni takip et.'},
-  en:{search:'Search by store name or by category',favorites:'Stores are waiting for your review.',review:'Your review was saved.',profile:'Follow your current level.'},
-  de:{search:'Suche nach Geschäftsname oder nach Kategorie',favorites:'Geschäfte warten auf deine Bewertung.',review:'Deine Bewertung wurde gespeichert.',profile:'Verfolge deine aktuelle Stufe.'},
-  ru:{search:'Ищите по названию магазина или по категории',favorites:'Магазины ждут вашей оценки.',review:'Ваш отзыв сохранён.',profile:'Следите за своим текущим уровнем.'},
+  tr:{search:'İster mağaza ismi ile, ister kategori ile arama yap.',favorites:'Mağazalar değerlendirmeni bekliyor',review:'Değerlendirmen kaydedildi',profile:'Güncel seviyeni takip et'},
+  en:{search:'Search by store name or by category.',favorites:'Stores are waiting for your review',review:'Your review was saved',profile:'Follow your current level'},
+  de:{search:'Suche nach Geschäftsname oder nach Kategorie.',favorites:'Geschäfte warten auf deine Bewertung',review:'Deine Bewertung wurde gespeichert',profile:'Verfolge deine aktuelle Stufe'},
+  ru:{search:'Ищите по названию магазина или по категории.',favorites:'Магазины ждут вашей оценки',review:'Ваш отзыв сохранён',profile:'Следите за своим текущим уровнем'},
+};
+const emphasis:Record<Locale,Record<Exclude<Kind,'discovery'>,string[]>>={
+  tr:{search:['mağaza','kategori'],favorites:['değerlendirmeni'],review:['Değerlendirmen'],profile:['seviyeni']},
+  en:{search:['store','category'],favorites:['review'],review:['review'],profile:['level']},
+  de:{search:['Geschäftsname','Kategorie'],favorites:['Bewertung'],review:['Bewertung'],profile:['Stufe']},
+  ru:{search:['магазина','категории'],favorites:['оценки'],review:['отзыв'],profile:['уровнем']},
 };
 export function TimedNudge({kind,requireReviewFlag=false}:{kind:Kind;requireReviewFlag?:boolean}){
   const {locale}=useI18n();
@@ -65,6 +71,8 @@ export function TimedNudge({kind,requireReviewFlag=false}:{kind:Kind;requireRevi
     review:undefined,
   };
   const picture=mark[kind];
+  const highlighted=kind==='discovery'?[]:emphasis[locale][kind];
+  const parts=kind==='discovery'?[]:copy[locale][kind].split(new RegExp(`(${highlighted.join('|')})`,'gi'));
   return <aside className="timed-nudge" data-state={leaving?'leaving':'visible'} aria-live="polite">
     {/* One pass of light across the drawing as it arrives, then nothing. A mark that keeps
         glinting is a mark somebody learns to look away from. */}
@@ -73,6 +81,8 @@ export function TimedNudge({kind,requireReviewFlag=false}:{kind:Kind;requireRevi
     </span>
     {kind==='discovery'
       ?<span className="timed-nudge-copy"><span className="timed-nudge-lead">{lead[locale]}</span><span className="timed-nudge-call">{call[locale]}</span></span>
-      :<span>{copy[locale][kind]}</span>}
+      :<span>{parts.map((part,index)=>highlighted.some(word=>word.toLocaleLowerCase(locale)===part.toLocaleLowerCase(locale))
+        ?<span className="timed-nudge-emphasis" key={`${part}-${index}`}>{part}</span>
+        :part)}</span>}
   </aside>;
 }

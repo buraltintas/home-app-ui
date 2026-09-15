@@ -116,7 +116,7 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
             rather than pushing the badge it earned off the end of the card; the badge drops
             its "3. Seviye" caption in the store page's narrow cards, where the badge's own
             name already says which level it is and the caption was eating the name. */}
-        <div><strong><span className="post-author-name">{post.display_name}</span><ContributorLevel level={post.author_level} withNumber={!onStorePage}/></strong>{!onStorePage&&<span>{written}</span>}</div>
+        <div><strong><span className="post-author-name">{post.display_name}</span>{!onStorePage&&<ContributorLevel level={post.author_level} withNumber/>}</strong>{onStorePage?<ContributorLevel level={post.author_level} withNumber/>:<span>{written}</span>}</div>
         {!onStorePage&&<button className="icon-button" disabled={busy==='save'} aria-label={t('save')} aria-pressed={saved} onClick={()=>void mutate('save')}><Bookmark className={saved?'active-icon':''}/></button>}
       </header>}
       {!onStorePage&&<Link href={localePath(locale,`/stores/${post.store_id}`)} className="post-store"><h2>{post.store_name}</h2>{place&&<p>{place}</p>}</Link>}

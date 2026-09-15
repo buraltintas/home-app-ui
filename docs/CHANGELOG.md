@@ -8,6 +8,21 @@ value involved.
 
 ---
 
+## Contextual docks now make their one useful word visible
+
+Search, favorites, review-complete and profile docks now emphasize the meaningful word in
+their message with the same restrained two-pass shine as “Bize sor!”. Their illustrations
+are larger, the search instruction is grammatically complete, and confirmation copy no
+longer ends in stray punctuation that competes with the compact dock treatment.
+
+## Review identity and controls now read as one deliberate flow
+
+Store-page review cards now put the contributor badge and its numbered level below the
+author name instead of squeezing all three facts onto one line. In the review wizard, the
+two-line criteria explanation is vertically balanced with its information icon, the store
+context label has more presence, and the active step and primary action use the product's
+accent treatment rather than a pair of heavy black fills.
+
 ## The phone search panel was not a reliable full-screen surface
 
 The search header's entrance animation could become the containing block for its fixed
