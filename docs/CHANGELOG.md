@@ -8,6 +8,25 @@ value involved.
 
 ---
 
+## A saved store looked unsaved after a reload
+
+The cached store page cannot carry an account-specific favorite flag, so its actions queried
+the first 100 saved stores. Worse, they read each item as `item.store.id`, while the API
+returns a flat store item with `item.id`, so even a saved store in that first page was missed.
+An older save was also absent from the bounded page. Both paths made the save action and dock
+claim the store was not saved. The actions
+now read one store's favorite status through the authenticated BFF route. A response arriving
+after the viewer clicks cannot override that newer local choice. The route reads our database,
+never Google Places.
+
+## Saved-store labels stopped fighting their own spacing
+
+The distance pin inherited a different visual color from its label, and the numeric distance
+sat slightly below the label despite belonging to the same fact. Both now use one line-height
+and the icon takes the label color. On narrow screens, the saved-store summary deliberately
+breaks its Turkish label across two lines rather than squeezing it into a wide single line.
+The review count remains immediately below the score, on this page only.
+
 ## The notch on the right-hand point of every whole star
 
 A star is drawn twice -- an empty one, and a filled one revealed from the left by the fraction

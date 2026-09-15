@@ -19,7 +19,7 @@ import {metresBetween,StoreDistance,useReviewRadius,useViewerPosition} from '@/c
 // The same wording the store page uses for the same action; one product, one name for it.
 const reviewAction:Record<Locale,string>={tr:'Değerlendirme yap',en:'Write a review',de:'Bewertung abgeben',ru:'Оставить оценку'};
 const favoriteSummary:Record<Locale,{saved:string;pending:string}>={
-  tr:{saved:'Kaydedilen mağaza',pending:'Değerlendirilmeyi bekleyen mağaza'},
+  tr:{saved:'Kaydedilen\nmağaza',pending:'Değerlendirilmeyi bekleyen mağaza'},
   en:{saved:'Saved stores',pending:'Saved, not yet reviewed'},
   de:{saved:'Gespeicherte Geschäfte',pending:'Geschäfte, die auf deine Bewertung warten'},
   ru:{saved:'Сохранённые магазины',pending:'Магазины, ожидающие вашей оценки'},
