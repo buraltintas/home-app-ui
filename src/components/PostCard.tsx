@@ -135,7 +135,7 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
           have nothing to open, so they show nothing rather than a row of dashes. */}
       {post.criteria&&<details className="post-criteria">
         <summary>{t('seeScoreDetail')}</summary>
-        <dl>{criteriaRows(post.criteria).map(([key,value])=><div key={key}><dt>{t(key)}</dt><dd><RatingStars value={value} showValue={false}/><span>{value}</span></dd></div>)}</dl>
+        <dl>{criteriaRows(post.criteria).map(([key,value])=>{const label=t(key);const split=key==='criterionValue'?label.split('/'):[];return <div key={key}><dt>{split.length===2?<>{split[0]}/<span>{split[1]}</span></>:label}</dt><dd><RatingStars value={value} showValue={false}/><span>{value}</span></dd></div>})}</dl>
       </details>}
       {/* A review is eight scores now. The written text and the photographs people uploaded
           are still in the database, untouched -- they are simply no longer shown. One line

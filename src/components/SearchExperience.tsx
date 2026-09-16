@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft, ArrowRight, Check, History, LocateFixed, MapPin, Search, Store, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, History, LocateFixed, MapPin, Search, X } from 'lucide-react';
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import type { Coordinates, Locale, LocationResult, Me, SearchHistory, SearchResponse, SearchResult } from '@/lib/types';
@@ -34,6 +34,31 @@ const historyCopy:Record<Locale,{more:string}>={
 // These remain valid search and admin categories. Product has only removed them from the
 // discovery shortcuts, so hiding them here must not erase their stores or taxonomy rows.
 const hiddenDiscoveryCategorySlugs=new Set(['tableware','decoration']);
+
+// Suggestions are natural sentences rather than category ids. Match vocabulary used by
+// the trade in every supported language, so new phrases inherit the right illustration
+// without phrase-by-phrase exceptions.
+const suggestionCategoryTerms:[string,string[]][]=[
+  ['garden',['bahçe','balkon','dış mekan','piknik','barbekü','mangal','garden','balcony','outdoor','picnic','barbecue','garten','balkon','draußen','picknick','грил','сад','балкон','улиц','пикник']],
+  ['bathroom',['banyo','havlu','bornoz','bath','towel','bathrobe','bad','handtuch','bademantel','ванн','полотен','халат']],
+  ['major_appliances',['bulaşık makinesi','ankastre','klima','dishwasher','built-in','cooling unit','spülmaschine','einbaugeräte','klimagerät','посудомоеч','встраиваем','кондиционер']],
+  ['small_appliances',['küçük ev alet','ısıtıcı','vantilatör','nemlendirici','hava temizleyici','small appliance','heater','fan','humidifier','air purifier','kleingerät','heizlüfter','ventilator','luftbefeuchter','luftreiniger','мелкая техника','обогреватель','вентилятор','увлажнитель','очиститель']],
+  ['curtain',['perde','tül','sineklik','cibinlik','curtain','blind','voile','screen','vorhang','gardine','rollo','fliegengitter','moskitonetz','штор','тюль','москит']],
+  ['carpet',['halı','kilim','paspas','sentetik çim','rug','kilim','doormat','artificial grass','teppich','fußmatte','kunstrasen','ковёр','коврик','газон']],
+  ['lighting',['lamba','avize','aydınlatma','ışık','abajur','lamp','lighting','light','pendant','leuchte','licht','ламп','свет','освещ']],
+  ['home_textile',['tekstil','örtü','şal','kılıf','textile','throw','cover','plaid','bezug','текстил','плед','чехол']],
+  ['storage',['düzenleyici','saklama','kutu','raf','kitaplık','gardırop','ayakkabılık','organiser','storage','box','shelf','bookcase','wardrobe','shoe rack','ordnung','aufbewahrung','regal','schrank','органайзер','хранен','короб','полк','шкаф','обувниц']],
+  ['bedding',['yatak','nevresim','yorgan','battaniye','pike','bed','bedding','duvet','blanket','bett','bettwäsche','decke','постель','одеял','кровать']],
+  ['kitchenware',['mutfak','tencere','tava','baharat','kavanoz','kitchen','pot','pan','jar','küche','topf','pfanne','glas','кухн','кастрюл','сковород','банки']],
+  ['tableware',['yemek takımı','sofra','bardak','kupa','çay','kahve seti','dinner set','glassware','mug','tea','coffee set','geschirr','gläser','becher','tee','kaffeeservice','сервиз','бокал','кружк','чай','кофе']],
+  ['home_accessories',['ayna','vazo','seramik','mum','difüzör','saksı','bitki','mirror','vase','ceramic','candle','diffuser','plant','spiegel','vase','keramik','kerze','duft','pflanze','зеркал','ваз','керамик','свеч','аромат','растен']],
+  ['decoration',['dekor','tablo','poster','duvar kağıdı','çerçeve','decoration','print','poster','wallpaper','frame','deko','bild','tapete','rahmen','декор','постер','обои','рамк']],
+  ['furniture',['mobilya','koltuk','kanepe','masa','sandalye','sehpa','puf','furniture','sofa','chair','table','pouf','möbel','sofa','stuhl','tisch','sessel','мебел','диван','кресл','стол','стул']],
+];
+function suggestionCategory(phrase:string){
+  const normalized=phrase.toLocaleLowerCase();
+  return suggestionCategoryTerms.find(([,terms])=>terms.some(term=>normalized.includes(term)))?.[0]??'household';
+}
 
 // The field carries a whole sentence, so it has to wrap instead of scrolling a long
 // placeholder out of sight on a phone. Enter still means search; a search query has
@@ -408,6 +433,16 @@ export function SearchExperience() {
   // The grant is acted on where it happens.
   const locateRef=useRef<()=>void>(()=>undefined);
   useEffect(()=>watchLocationGranted(()=>{locateRef.current();}),[]);
+  // Safari does not consistently expose permission change events. Returning from iOS
+  // Settings does reliably focus or reveal the page, so resume the request the visitor
+  // already made instead of requiring a reload and another press.
+  useEffect(()=>{
+    const resume=()=>{if(awaitingGrant.current&&document.visibilityState==='visible')locateRef.current();};
+    window.addEventListener('focus',resume);
+    window.addEventListener('pageshow',resume);
+    document.addEventListener('visibilitychange',resume);
+    return()=>{window.removeEventListener('focus',resume);window.removeEventListener('pageshow',resume);document.removeEventListener('visibilitychange',resume);};
+  },[]);
 
   // A browser that has already been granted permission does not need to be asked again,
   // so the fix is taken as soon as the page settles and the visitor simply arrives with
@@ -554,7 +589,11 @@ export function SearchExperience() {
     // The panel stays open. It used to close the instant the device answered, which meant
     // the confirmation that replaces the button was never on screen long enough to be seen
     // -- reported as "the confirmation was not done". The person closes it themselves.
-    selectLocation(selected);setError('');setErrorReason('');
+    selectLocation(selected);
+    // The first sheet is visible because location is absent, while locationOpen is still
+    // false. Preserve it before the successful answer would otherwise close the sheet and
+    // move the confirmation above the form.
+    setLocationOpen(true);setError('');setErrorReason('');
   };
   // Kept in an effect rather than assigned while rendering: the watcher outlives every
   // render and needs whichever locateMe belongs to the latest one.
@@ -664,7 +703,7 @@ export function SearchExperience() {
   const stripPhrases=Array.from(new Set([...strip.phrases,...seasonalPool(locale)]));
   const promptLimit=suggestionsExpanded?10:4;
   const prompts=stripPhrases.length<=promptLimit?stripPhrases:Array.from({length:promptLimit},(_,step)=>stripPhrases[(rotation+step)%stripPhrases.length]);
-  return <main className="search-page"><header className="search-hero"><div className="search-title"><h1>{t('searchTitle')}</h1><span aria-hidden="true">↗</span></div>{!location&&<p className="location-lead">{t('locationRequired')}</p>}{location&&<div className={`location-control${location.source==='device'?' is-device':''}`}><MapPin aria-hidden="true"/><span>{location.source==='device'?t('currentLocationActive'):location.label}</span><button onClick={()=>setLocationOpen(true)} disabled={loading}>{t('changeLocation')}</button><button className="location-clear" aria-label={t('clearLocation')} onClick={()=>{setLocation(undefined);setData(undefined);}} disabled={loading}><X/></button></div>}{sheetOpen&&<section className="location-sheet" aria-label={t('chooseLocation')}>{location&&<div><p>{t('locationBenefit')}</p></div>}<div className="location-actions">{autoLocating&&<p className="location-working" aria-live="polite"><span className="location-pulse" aria-hidden="true"/>{t('locatingYou')}</p>}{/* One control, two states. It used to be swapped for a separate confirmation line,
+  return <main className="search-page"><header className="search-hero"><div className="search-title"><h1>{t('searchTitle')}</h1><span aria-hidden="true">↗</span></div>{!location&&<p className="location-lead">{t('locationRequired')}</p>}{location&&!sheetOpen&&<div className={`location-control${location.source==='device'?' is-device':''}`}><MapPin aria-hidden="true"/><span>{location.source==='device'?t('currentLocationActive'):location.label}</span><button onClick={()=>setLocationOpen(true)} disabled={loading}>{t('changeLocation')}</button><button className="location-clear" aria-label={t('clearLocation')} onClick={()=>{setLocation(undefined);setData(undefined);}} disabled={loading}><X/></button></div>}{sheetOpen&&<section className="location-sheet" aria-label={t('chooseLocation')}>{location&&<div><p>{t('locationBenefit')}</p></div>}<div className="location-actions">{autoLocating&&<p className="location-working" aria-live="polite"><span className="location-pulse" aria-hidden="true"/>{t('locatingYou')}</p>}{/* One control, two states. It used to be swapped for a separate confirmation line,
           which read as the button disappearing and something else taking its place. The
           same bubble now carries the answer, and pressing it again re-reads the device
           rather than being inert -- a control that looks pressable has to be pressable. */}
@@ -698,7 +737,7 @@ export function SearchExperience() {
       <ul className="search-query-recent-list">{history.slice(0,3).map(entry=><li key={entry.id}>
         <button type="button" onMouseDown={event=>event.preventDefault()} onClick={()=>{setSuggestionsOpen(false);fill(entry.raw_query);}}><History aria-hidden="true"/>{entry.raw_query}</button>
         <button type="button" className="search-query-recent-delete" onMouseDown={event=>event.preventDefault()} onClick={()=>void removeHistory(entry.id)} disabled={historyBusy} aria-label={t('deleteSearch')}><X aria-hidden="true"/></button>
-      </li>)}</ul></div>}<h2 className="search-query-suggestions-title">{t('suggestedSearches')}</h2><div className="search-query-suggestions-list">{prompts.map((phrase,index)=><button type="button" key={phrase} data-tint={index%4} onClick={()=>{setSuggestionsOpen(false);fill(phrase);}}><Store aria-hidden="true"/>{phrase}</button>)}</div>{stripPhrases.length>4&&!suggestionsExpanded&&<button type="button" className="search-query-more" onMouseDown={event=>event.preventDefault()} onClick={()=>setSuggestionsExpanded(true)} aria-label={historyCopy[locale].more}>⌄</button>}</div>}</form>}{/* The panel opens above these, it does not replace them. Hiding them while somebody
+      </li>)}</ul></div>}<h2 className="search-query-suggestions-title">{t('suggestedSearches')}</h2><div className="search-query-suggestions-list">{prompts.map((phrase,index)=><button type="button" key={phrase} data-tint={index%4} onClick={()=>{setSuggestionsOpen(false);fill(phrase);}}><CategoryIcon slug={suggestionCategory(phrase)}/>{phrase}</button>)}</div>{stripPhrases.length>4&&!suggestionsExpanded&&<button type="button" className="search-query-more" onMouseDown={event=>event.preventDefault()} onClick={()=>setSuggestionsExpanded(true)} aria-label={historyCopy[locale].more}>⌄</button>}</div>}</form>}{/* The panel opens above these, it does not replace them. Hiding them while somebody
         changes their location threw away the recent searches and the categories they were
         about to pick from, and put them back only once the location was settled. */}
     {/* Recent searches used to sit here, on the page. They belong with the field instead:

@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import {useEffect,useState} from 'react';
-import {Gift} from 'lucide-react';
+import {Gift,MessageCircle,PenLine,ShieldCheck,Star} from 'lucide-react';
 import {AuthDialog} from '@/components/AuthDialog';
 import {SignOutButton} from '@/components/SignOutButton';
 import {ContributorLevel} from '@/components/ContributorLevel';
@@ -60,6 +60,12 @@ export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages
   </main>;
 
   const progression=progressionCopy[locale];
+  const sectionLinks=[
+    ['edit',t('editProfile'),profileEditorHint[locale],PenLine],
+    ['reviews',reviewCopy[locale].title,reviewCopy[locale].hint,Star],
+    ['messages',messageCopy[locale].title,messageCopy[locale].hint,MessageCircle],
+    ['account',t('accountSection'),t('accountHint'),ShieldCheck],
+  ] as const;
 
   return <main className="profile-page">
     {!section&&<h1>{t('profileTitle')}</h1>}
@@ -72,12 +78,7 @@ export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages
     {!section&&<ContributorLevelsDialog locale={locale}/>}
     {!section&&<ProfileInvite locale={locale}/>}
     {!section?<nav className="profile-sections">
-      {[
-        ['edit',t('editProfile'),profileEditorHint[locale]],
-        ['reviews',reviewCopy[locale].title,reviewCopy[locale].hint],
-        ['messages',messageCopy[locale].title,messageCopy[locale].hint],
-        ['account',t('accountSection'),t('accountHint')],
-      ].map(([path,title,hint])=><Link key={path} href={localePath(locale,`/profile/${path}`)}><strong>{title}</strong><span>{hint}</span></Link>)}
+      {sectionLinks.map(([path,title,hint,Icon])=><Link key={path} href={localePath(locale,`/profile/${path}`)}><span className="profile-section-icon" aria-hidden="true"><Icon/></span><span className="profile-section-copy"><strong>{title}</strong><small>{hint}</small></span></Link>)}
     </nav>:<section className="profile-section-content">
       <PageBackButton/>
       <h2>{section==='edit'?t('editProfile'):section==='reviews'?reviewCopy[locale].title:section==='messages'?messageCopy[locale].title:t('accountSection')}</h2>

@@ -8,6 +8,24 @@ value involved.
 
 ---
 
+## The remaining review, profile, search and iPhone-location regressions were fixed
+
+Store review cards now keep equal viewport gutters at both ends of their horizontal rail,
+reserve enough room for five criterion stars, and deliberately break the long value label
+after its slash. Profile navigation has quiet category marks, while its sharing invitation
+is one framed object with the requested product-specific action and a compact phone preview.
+
+Natural-language search suggestions now choose a category illustration from multilingual
+trade vocabulary instead of repeating a generic shop mark. The recent and suggested groups
+use matching divider rhythm. Search categories no longer inherit the old recent-search
+`space-between` rule that pushed every label to the far edge on phones.
+
+The first successful device-location read used to close its own sheet because the sheet had
+been visible only through the absence of a location. The explicit action now keeps that sheet
+open and turns the same control into its green confirmation before the visitor closes it.
+Returning from iOS Settings also resumes a pending request through page visibility/focus,
+covering Safari versions that do not publish permission-change events.
+
 ## The Turkish location fallback pointed in the wrong direction
 
 The timeout message told people to enter their location “below” even though the manual

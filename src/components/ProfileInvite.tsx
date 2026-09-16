@@ -1,11 +1,12 @@
 'use client';
 
 import {Share2} from 'lucide-react';
+import Image from 'next/image';
 import {useState} from 'react';
 import type {Locale} from '@/lib/types';
 
 const copy:Record<Locale,{title:string;body:string;share:string;shared:string;failed:string}>={
-  tr:{title:'Topluluğu güçlendir',body:'Gerçek ev ve yaşam mağazalarını birlikte keşfedin',share:'Site bağlantısını paylaş',shared:'Bağlantı kopyalandı',failed:'Bağlantı kopyalanamadı'},
+  tr:{title:'Topluluğu güçlendir',body:'Gerçek ev ve yaşam mağazalarını birlikte keşfedin',share:'Boşa Gezme!’yi Paylaş',shared:'Bağlantı kopyalandı',failed:'Bağlantı kopyalanamadı'},
   en:{title:'Strengthen the community',body:'Discover real home and living stores together',share:'Share the website',shared:'Link copied',failed:'Could not copy the link'},
   de:{title:'Die Community stärken',body:'Entdeckt gemeinsam echte Wohn- und Haushaltsgeschäfte',share:'Website teilen',shared:'Link kopiert',failed:'Link konnte nicht kopiert werden'},
   ru:{title:'Укрепите сообщество',body:'Открывайте настоящие магазины для дома вместе',share:'Поделиться сайтом',shared:'Ссылка скопирована',failed:'Не удалось скопировать ссылку'},
@@ -37,6 +38,7 @@ export function ProfileInvite({locale}:{locale:Locale}){
         phone can do with a link, so a second button for mail alone was the same action
         wearing a narrower hat. */}
     <div className="profile-invite-actions"><button className="button primary" onClick={()=>void share()}><Share2 aria-hidden="true"/>{text.share}</button></div>
+    <div className="profile-invite-phone" aria-hidden="true"><div className="profile-invite-phone-screen"><span className="profile-invite-phone-notch"/><Image src="/brand/brand-mark.png" width={44} height={44} alt=""/><span className="profile-invite-phone-message">bosagezme.com</span></div></div>
     {status&&<p className="profile-invite-status" role="status">{status}</p>}
   </section>;
 }
