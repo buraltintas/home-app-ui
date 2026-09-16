@@ -4,12 +4,39 @@
     {
       "name": "web",
       "runtimeExecutable": "npm",
-      "runtimeArgs": [
-        "run",
-        "dev"
-      ],
+      "runtimeArgs": ["run", "dev"],
       "port": 3000,
       "autoPort": true
+    },
+    {
+      "name": "bankaci-web",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/burakaltintas/Documents/kredi-hesaplama",
+        "run",
+        "start"
+      ],
+      "port": 3200,
+      "env": {
+        "BROWSER": "none",
+        "PORT": "3200",
+        "NODE_OPTIONS": "--openssl-legacy-provider"
+      }
+    },
+    {
+      "name": "kredibul",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/burakaltintas/Documents/bankaci-marketplace",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "3300"
+      ],
+      "port": 3300
     }
   ]
 }

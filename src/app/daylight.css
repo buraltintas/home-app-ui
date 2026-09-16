@@ -176,7 +176,11 @@ svg{stroke-width:2}
 .store-actions svg{width:20px;height:20px;flex:none}
 .store-actions button:disabled{cursor:not-allowed;opacity:.55}
 .store-actions button:hover,.store-actions a:hover{background:var(--muted)}
-.store-save-dock{position:fixed;z-index:22;left:50%;bottom:22px;transform:translateX(-50%);width:min(316px,calc(100% - 56px));min-height:76px;padding:12px 14px 12px 22px;display:flex;align-items:center;justify-content:space-between;gap:24px;background:color-mix(in srgb,var(--surface) 92%,transparent);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--lift);backdrop-filter:blur(20px) saturate(130%);animation:nudge-in .52s cubic-bezier(.16,1,.3,1) both}
+/* It wraps rather than overflows. The two halves fit side by side at every size we draw
+   them at, but "fit" was true by one pixel: a reader whose phone renders text a shade wider
+   -- a larger system text size, another font fallback -- pushed the action past the frame.
+   Wrapping costs nothing while they fit and is the only thing that holds when they do not. */
+.store-save-dock{position:fixed;z-index:22;left:50%;bottom:22px;transform:translateX(-50%);width:min(316px,calc(100% - 56px));min-height:76px;padding:12px 14px 12px 22px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px;overflow:hidden;background:color-mix(in srgb,var(--surface) 92%,transparent);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--lift);backdrop-filter:blur(20px) saturate(130%);animation:nudge-in .52s cubic-bezier(.16,1,.3,1) both}
 .store-save-dock>span{font-size:15px;font-weight:650;white-space:nowrap}.store-save-dock .button{min-width:0;white-space:nowrap}
 /* This button exists to get somebody to come back and write a review, so it wears the
    colour the product uses for what it wants you to do. Filled near-black it was the same
@@ -536,13 +540,17 @@ svg{stroke-width:2}
      was made edge-to-edge instead, to line up with the navigation bar under it; that is a
      different thing to match. One number, written once, in both places. */
   .store-save-dock{bottom:calc(88px + env(safe-area-inset-bottom));left:50%;right:auto;transform:translateX(-50%);width:min(316px,calc(100% - 56px));min-height:68px;padding:10px 12px 10px 16px;gap:12px}
-  .store-save-dock>span{flex:1 1 auto;min-width:0;font-size:13px;line-height:1.25;white-space:normal}
-  .store-save-dock .button{flex:0 1 auto;min-width:0;padding-inline:10px;font-size:13px;white-space:nowrap}
+  .store-save-dock>span{flex:1 1 90px;min-width:0;font-size:13px;line-height:1.25;white-space:normal}
+  /* The action keeps its whole name and takes a line of its own when the two cannot share
+     one. Shrinking it was the old answer, and it was the wrong one: a button whose box is
+     narrower than its label paints the label outside the box, which is what was reported --
+     the action appearing to hang off the end of the dock. */
+  .store-save-dock .button{flex:0 1 auto;min-width:0;max-width:100%;padding-inline:10px;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 }
 /* The phone override was still the full width of the screen, which is why narrowing the
    base rule changed nothing on a phone -- the only place anybody looks at it. */
 @media(max-width:720px){.timed-nudge{bottom:calc(88px + env(safe-area-inset-bottom));width:min(316px,calc(100% - 56px))}.store-page .timed-nudge{bottom:calc(164px + env(safe-area-inset-bottom))}}
-@media(max-width:340px){.store-save-dock{flex-wrap:wrap}.store-save-dock .button{width:100%}}
+@media(max-width:340px){.store-save-dock .button{width:100%}}
 @media(prefers-reduced-motion:reduce){.store-save-dock{animation:none}}
 @media(max-width:720px){.store-save-status{bottom:calc(166px + env(safe-area-inset-bottom))}}
 
@@ -588,7 +596,10 @@ svg{stroke-width:2}
 .favorite-review-action{justify-self:start;min-height:38px;padding:0 14px;font-size:14px}
 /* The distance stands to the left of the action it qualifies: how far away the store is,
    and then what you can do about it. */
-.favorite-review-row{grid-column:2/3;display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px}
+/* The action sits the same distance under the sentence about the distance as that sentence
+   sits under the distance itself: one rhythm down the block, rather than two gaps that are
+   nearly the same and read as a mistake. */
+.favorite-review-row{grid-column:2/3;display:flex;align-items:center;flex-wrap:wrap;gap:16px}
 /* The label and the number sit on one line; anything explaining them goes under. They are a
    wrapping row rather than a grid: as a grid the explanation shared the columns, and a long
    one widened them until the number was sitting in the middle of the row. */

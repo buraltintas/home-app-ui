@@ -18,11 +18,11 @@ import {metresBetween,StoreDistance,useReviewRadius,useViewerPosition} from '@/c
 
 // The same wording the store page uses for the same action; one product, one name for it.
 const reviewAction:Record<Locale,string>={tr:'Değerlendirme yap',en:'Write a review',de:'Bewertung abgeben',ru:'Оставить оценку'};
-const favoriteSummary:Record<Locale,{saved:string;pending:string}>={
-  tr:{saved:'Kaydedilen\nmağaza',pending:'Değerlendirilmeyi bekleyen mağaza'},
-  en:{saved:'Saved stores',pending:'Saved, not yet reviewed'},
-  de:{saved:'Gespeicherte Geschäfte',pending:'Geschäfte, die auf deine Bewertung warten'},
-  ru:{saved:'Сохранённые магазины',pending:'Магазины, ожидающие вашей оценки'},
+const favoriteSummary:Record<Locale,{saved:string;pending:string;pendingEmpty:string}>={
+  tr:{saved:'Kaydedilen\nmağaza',pending:'Değerlendirmeni bekleyen mağaza',pendingEmpty:'Kaydettiğin mağazaların hepsini değerlendirmişsin.'},
+  en:{saved:'Saved stores',pending:'Waiting for your review',pendingEmpty:'You have reviewed every store you saved.'},
+  de:{saved:'Gespeicherte Geschäfte',pending:'Wartet auf deine Bewertung',pendingEmpty:'Du hast jedes gespeicherte Geschäft bewertet.'},
+  ru:{saved:'Сохранённые магазины',pending:'Ждут вашей оценки',pendingEmpty:'Вы оценили все сохранённые магазины.'},
 };
 
 export default function Page(){
@@ -36,6 +36,9 @@ export default function Page(){
   const [checking,setChecking]=useState(true);
   const [stores,setStores]=useState<Store[]>([]);
   const [error,setError]=useState('');
+  // Which of the two counts the list is showing. The page opens on the one that holds
+  // everything, which is the list this page has always opened with.
+  const [showing,setShowing]=useState<'saved'|'pending'>('saved');
 
   const load=useCallback(async()=>{
     setError('');
@@ -70,18 +73,27 @@ export default function Page(){
   useScrollTopWhenReady(!checking);
   if(checking)return <AccountPageSkeleton className="favorites-page" eyebrow={t('favorites')} title={t('favoritesTitle')}/>;
 
+  const pending=stores.filter(store=>!store.viewer_has_reviewed);
+  const shown=showing==='pending'?pending:stores;
   if(signedIn&&stores.length)return <main className="favorites-page">
     <p className="eyebrow">{t('favorites')}</p>
     <h1>{t('favoritesTitle')}</h1>
-    <dl className="favorites-summary" aria-label={t('favoritesTitle')}>
-      <div><dt>{favoriteSummary[locale].saved}</dt><dd>{stores.length}</dd></div>
-      <div><dt>{favoriteSummary[locale].pending}</dt><dd>{stores.filter(store=>!store.viewer_has_reviewed).length}</dd></div>
-    </dl>
+    {/* Two counts, and each one opens the list it counts. A number a reader cannot act on is
+        a fact; a number that shows them the shops behind it is a way into the page, and this
+        page only has two questions to ask. */}
+    <div className="favorites-summary" role="group" aria-label={t('favoritesTitle')}>
+      <button type="button" className={showing==='saved'?'is-showing':undefined} aria-pressed={showing==='saved'} onClick={()=>setShowing('saved')}>
+        <span>{favoriteSummary[locale].saved}</span><strong>{stores.length}</strong>
+      </button>
+      <button type="button" className={showing==='pending'?'is-showing':undefined} aria-pressed={showing==='pending'} onClick={()=>setShowing('pending')}>
+        <span>{favoriteSummary[locale].pending}</span><strong>{pending.length}</strong>
+      </button>
+    </div>
     {error&&<p className="form-error" role="alert">{error}</p>}
     {/* The review action sits outside the link, not inside it: an anchor cannot hold
         another anchor, and starting a review is not a step on the way to opening the
         store's page. It is the same control, and the same wording, the store page uses. */}
-    <ul className="favorites-list">{stores.map(store=>{const photo=storePhotoURL(store.photo,320);return <li key={store.id}>
+    {shown.length?<ul className="favorites-list">{shown.map(store=>{const photo=storePhotoURL(store.photo,320);return <li key={store.id}>
       <Link href={localePath(locale,`/stores/${store.id}`)} prefetch={false}>
         {photo?<Image className={`favorite-store-photo${isBrandMark(store.photo)?' is-brand-mark':''}`} src={photo} width={160} height={120} alt="" unoptimized/>:<div className="favorite-store-photo is-empty" aria-hidden="true">{store.name.trim().charAt(0)}</div>}
         <div><strong>{store.name}</strong><span>{[store.district,store.city].filter(Boolean).join(', ')}</span>
@@ -105,7 +117,7 @@ export default function Page(){
           &&metresBetween(viewer,{latitude:store.latitude,longitude:store.longitude})<=reviewRadius
           &&<Link className="button store-contribution-action favorite-review-action" href={localePath(locale,`/create?store=${store.id}`)}>{reviewAction[locale]}</Link>}
       </div>
-    </li>})}</ul><TimedNudge kind="favorites"/>
+    </li>})}</ul>:<p className="favorites-none">{favoriteSummary[locale].pendingEmpty}</p>}<TimedNudge kind="favorites"/>
   </main>;
 
   return <main className="empty-page favorites-empty"><Heart/><p className="eyebrow">{t('favorites')}</p><h1>{t('favoritesTitle')}</h1><p>{signedIn?t('favoritesSignedInEmpty'):t('favoritesEmpty')}</p>{error&&<p className="form-error" role="alert">{error}</p>}{!checking&&!signedIn&&<button className="button primary" onClick={()=>setOpen(true)}>{t('signIn')}</button>}<AuthDialog open={open} onClose={()=>setOpen(false)} onAuthenticated={()=>setSignedIn(true)}/></main>;

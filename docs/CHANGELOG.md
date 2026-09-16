@@ -8,6 +8,44 @@ value involved.
 
 ---
 
+## The save dock fitted by one pixel, which is not fitting
+
+The dock's two halves -- the reason on the left, the action on the right -- were measured to
+sit side by side at 390 px with **one pixel** to spare. A pixel is not a margin: a phone
+rendering text a shade wider (a larger system text size, a different font fallback) pushes the
+action past the frame, which is exactly what was photographed. Worse, the way it failed was
+ugly rather than tight: the button could shrink below its own label, so the words were painted
+outside the coloured box and the action looked like it had come loose from the dock.
+
+It wraps now. While both halves fit they sit as they always did; when they cannot, the action
+takes a line of its own and the dock grows taller. Measured across 320-390 px at text scales
+up to 1.4: nothing crosses the frame, and the action keeps its whole name at every one of
+them. The dock also clips its own contents, so no future change can spill out of it either.
+
+## Every star was indented by four pixels
+
+`.rating-stars > span` set a four-pixel left margin meant for the score that follows the
+stars. Every star is a span too, so the rule hit all of them: the first star sat four pixels
+inside its row -- which is why the row of stars never lined up with the count underneath it --
+and each gap between stars was four wider than the four the row already sets. Now the margin
+applies to the score alone, the stars line up with the count under them, and the spacing
+between stars is the one number the row declares.
+
+## The saved list opens from the number that counts it
+
+The two figures at the top of the saved stores -- how many are saved, how many are still
+waiting for a review -- were facts to read. They are the way into the list now: press either
+and the list below shows the shops behind that number. The page still opens on all of them,
+which is the list it has always opened with, and the count that is in force wears the accent
+so it is clear which of the two you are looking at. Reviewing everything you saved is an
+answer too, so that case says so rather than showing an empty page.
+
+The gap between the distance sentence and the action underneath it now matches the gap above
+it: one rhythm down the block instead of two spacings that are nearly equal, which reads as a
+mistake rather than as a pair.
+
+---
+
 ## Test feedback now survives the last review and dock pass
 
 The review wizard now opens its final check at the top, keeps the location glyph visible
