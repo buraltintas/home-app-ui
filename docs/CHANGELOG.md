@@ -8,6 +8,47 @@ value involved.
 
 ---
 
+## The results list says what it is showing, and what it is made of
+
+Ten changes to the list a search answers with, and three of them are worth explaining.
+
+**A store's mark, or its initial, in the same frame.** The list has carried no picture at all
+since the provider was removed. A chain's mark is what a shop of a known brand looks like to
+somebody scanning, and a shop that is nobody's branch shows its first letter in the same
+frame, so the list keeps one shape all the way down.
+
+**"Detay" opens the eight scores the average is made of** -- the same eight questions the
+review form asks, in the same order, named by the same dictionary keys the store page uses.
+They are read when the reader asks for them and not before: a results page carries up to
+thirty stores, and fetching eight numbers for each to answer a question nobody asked is how a
+list gets slow.
+
+**The end of the list is a question.** A shop nobody can find here is a gap in the catalogue,
+and the person at the empty end of a list is the one who knows about it. They are asked for
+the thing that identifies a shop without ambiguity and that they already have: its place on
+the map. Names and addresses arrive spelled four different ways; a Maps link is a place. It
+goes in as an ordinary suggestion through the feedback the product already has, not into a
+second inbox nobody remembers to read.
+
+The rest: five stars filled by the score rather than one star and a number; "yorum" is
+"değerlendirme"; "Mesafen" before the distance, marked with a pin, the way the saved list
+says it; the "Boşa Gezme!" label above the score removed; the rule across the row under the
+distance removed; "Boşa Gezme!'de yeni" said in the muted voice rather than the accent, which
+is reserved for what a reader should read first; and the bare result count replaced by two
+labelled facts -- how many stores are listed, and that they are ordered by distance from the
+reader.
+
+## English Home's mark has been a broken-image icon everywhere
+
+The file has `y="0px"viewBox=` in its opening tag -- an attribute run straight into the next
+one with no space. A browser parsing a page forgives that; a browser loading the same file as
+an image does not, so the mark failed to decode on every English Home shop in the catalogue,
+in the list, on the shop's page and in saved stores. Fixed in the file, and `cmd/brand-logos`
+now refuses to write an SVG that will not parse: a brand with no usable mark shows its
+initial, which the tool has always said is the right answer.
+
+---
+
 ## The save dock fitted by one pixel, which is not fitting
 
 The dock's two halves -- the reason on the left, the action on the right -- were measured to

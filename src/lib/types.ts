@@ -31,6 +31,9 @@ export type SearchResult = {
   // Named by the server, from the same translations the store's own page reads.
   category_labels?: string[];
   platform?: PlatformStats & { store_id: string }; google?: GoogleExternal; premium?: boolean; catalog_store?: boolean;
+  // The chain this shop belongs to, when it belongs to one. It is what lets a result show
+  // the chain's own mark instead of a letter; the API has always sent it.
+  brand_slug?: string;
 };
 export type SearchGuidance = { code: 'HOME_LIVING_ONLY'; reason: 'out_of_scope' | 'unclear'; message: string; examples: [string, string] };
 export type SearchResponse = { search_id: string; visitor_session_id?: string; intent: SearchIntent; results: SearchResult[]; guidance?: SearchGuidance; fallback_state?: string };

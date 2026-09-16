@@ -6,6 +6,10 @@ import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import type { Coordinates, Locale, LocationResult, Me, SearchHistory, SearchResponse, SearchResult } from '@/lib/types';
 import { SaveStoreButton } from './SaveStoreButton';
+import { ResultCriteria } from './ResultCriteria';
+import { AddStoreSheet } from './AddStoreSheet';
+import { storePhotoURL } from '@/lib/store-photo';
+import Image from 'next/image';
 import { useI18n } from '@/i18n/I18nProvider';
 import { localePath, stripLocale } from '@/lib/site';
 import { apiFetch } from '@/lib/api-client';
@@ -15,7 +19,7 @@ import { seasonalPool } from '@/i18n/search-seasons';
 import { rememberOriginSearch } from '@/lib/search-origin';
 import { clearSearchSnapshot, readSearchSnapshot, writeSearchSnapshot } from '@/lib/search-session';
 import { categoryLabels, searchExamples } from '@/i18n/dictionaries';
-import { Rating } from './Rating';
+import { RatingStars } from './Rating';
 import { SearchOverlay } from './SearchOverlay';
 import { LocationAlert } from './LocationAlert';
 import {CategoryIcon} from './CategoryIcon';
@@ -94,24 +98,26 @@ function Result({item,onSelect,saved}:{item:SearchResult;onSelect:()=>void;saved
   const categoryText=(item.category_labels?.length
     ?item.category_labels
     :(item.categories??[]).map(category=>categoryLabels[locale][category]??category)).join(' · ');
-  const card=<div className="search-result"><div className="result-identity">{item.catalog_store&&<span className="catalog-store-label">{t('catalogStore')}</span>}<p className="result-category">{categoryText}{item.premium&&<span className="promoted-flag">{t('promoted')}</span>}</p><h2>{item.name}</h2><p className="result-address">{item.address}</p>{item.distance_meters!==undefined&&<p className="distance">{(item.distance_meters/1000).toLocaleString(locale,{maximumFractionDigits:1})} km</p>}{/* "Boşa Gezme!'de yeni" used to depend on whether the store was in our catalogue at
-       all, which is our bookkeeping and none of the reader's business. It made the badge
-       move on its own: a store arriving from the provider showed it, and the same store
-       searched again showed "0 reviews · 0 favourites" instead -- because the first search
-       had added it to the catalogue. Nothing about the store had changed.
-       It now depends on the only thing a reader cares about: whether anybody here has
-       reviewed it. The community column keeps its place either way, so the two sources
-       stay side by side and comparable, and the badge stops moving. */}
+  // The mark of the chain this shop belongs to, drawn in a frame of its own. A shop that is
+  // nobody's branch has no mark to show and shows its initial instead -- in the same frame,
+  // so the list keeps one shape whether or not there is a picture to put in it.
+  const mark=item.brand_slug?storePhotoURL({source:'brand',brand_slug:item.brand_slug},320):undefined;
+  const card=<div className="search-result">
+    <div className="result-photo">{mark
+      ?<Image className="result-photo-mark is-brand-mark" src={mark} width={184} height={184} alt="" unoptimized/>
+      :<div className="result-photo-empty" aria-hidden="true"><span>{item.name.trim().charAt(0).toLocaleUpperCase(locale)}</span></div>}</div>
+    <div className="result-identity">{item.catalog_store&&<span className="catalog-store-label">{t('catalogStore')}</span>}<p className="result-category">{categoryText}{item.premium&&<span className="promoted-flag">{t('promoted')}</span>}</p><h2>{item.name}</h2><p className="result-address">{item.address}</p>
+    {/* Named, the way the saved list names it. A number on its own answers "how far from
+        what?" with nothing, and the two pages are looking at the same fact. */}
+    {item.distance_meters!==undefined&&<p className="distance"><MapPin aria-hidden="true"/><span>{t('yourDistance')}</span> <strong>{(item.distance_meters/1000).toLocaleString(locale,{maximumFractionDigits:1})} km</strong></p>}
     </div><ArrowRight aria-hidden="true"/></div>;
-  // The two score columns sit outside the link, not inside it. An anchor cannot hold a
-  // button, and the save control belongs directly under the community figures -- which is
-  // where it was asked for, and where it stops covering the categories at the top of the
-  // row. Nothing here is a step on the way to opening the store, so nothing here needs to
-  // be part of the link.
+  // The score column sits outside the link, not inside it. An anchor cannot hold a button,
+  // and the save control belongs directly under the figures. Nothing here is a step on the
+  // way to opening the store, so nothing here needs to be part of the link.
   const scores=(() => {
       const reviewed=(item.platform?.review_count??0)>0;
-      return <><div className="dual-score"><div><span>{t('communityRating')}</span>{reviewed&&item.platform
-        ?<><strong><Rating value={item.platform.average_rating}/></strong><small>{item.platform.review_count} {t('reviews')} · {item.platform.favorite_count} {t('favoriteCount')}</small></>
+      return <><div className="dual-score"><div>{reviewed&&item.platform
+        ?<><strong><RatingStars value={item.platform.average_rating}/></strong><small>{item.platform.review_count} {t('reviewWord')} · {item.platform.favorite_count} {t('favoriteCount')}</small>{item.id&&<ResultCriteria storeId={item.id}/>}</>
         :<><strong className="new-here">{t('newHere')}</strong><small>{t('firstReview')}</small>{(item.platform?.favorite_count??0)>0&&<small>{item.platform?.favorite_count} {t('favoriteCount')}</small>}</>}
       </div></div>
       {item.id&&<SaveStoreButton storeId={item.id} initialSaved={saved}/>}</>;
@@ -747,6 +753,9 @@ export function SearchExperience() {
     {!data&&!loading&&<div className="search-suggestions"><div><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>fill(category.name)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}{category.search_count>0&&<small title={t('searchCount')}>{category.search_count.toLocaleString(locale)} {t('searchCountShort')}</small>}</span></button>)}</div></div></div>}</header>
     {loading&&<SearchOverlay/>}
     {!loading&&data?.guidance&&<section className="guidance-card" role="alert"><p>{data.guidance.message}</p><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>fill(category.name)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}</span></button>)}</div></section>}
-    {!loading&&data&&!data.guidance&&<section className="results-layout"><div className="result-list"><p className="result-count">{data.results.length} {t('results')}</p>{data.results.length===0?<div className="zero-state"><h2>{t('zeroTitle')}</h2><p>{t('zeroBody')}</p></div>:<>{data.results.slice(0,shown).map(item=><Result item={item} key={item.search_result_impression_id} onSelect={()=>select(item)} saved={savedStores.has(item.id??'')}/>)}{shown<data.results.length&&<button type="button" className="result-more" onClick={()=>setShown(count=>count+PAGE)}>{t('showMoreResults')}</button>}</>}</div></section>}
+    {!loading&&data&&!data.guidance&&<section className="results-layout"><div className="result-list">{/* What the list is and how it is ordered, said as two
+      labelled facts rather than a bare number: "24 results" does not say what decided which
+      twenty-four, and the order is the part a reader is entitled to know. */}
+      <dl className="result-count"><div><dt>{t('listedStores')}</dt><dd>{data.results.length}</dd></div><div><dt>{t('sortedBy')}</dt><dd>{t('sortedByDistance')}</dd></div></dl>{data.results.length===0?<div className="zero-state"><h2>{t('zeroTitle')}</h2><p>{t('zeroBody')}</p></div>:<>{data.results.slice(0,shown).map(item=><Result item={item} key={item.search_result_impression_id} onSelect={()=>select(item)} saved={savedStores.has(item.id??'')}/>)}{shown<data.results.length&&<button type="button" className="result-more" onClick={()=>setShown(count=>count+PAGE)}>{t('showMoreResults')}</button>}<AddStoreSheet query={data.intent?.normalized_query??''}/></>}</div></section>}
     <TimedNudge kind="search"/></main>;
 }
