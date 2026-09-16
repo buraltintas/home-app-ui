@@ -8,6 +8,32 @@ value involved.
 
 ---
 
+## The review is four stops now, and you can see where you are in it
+
+The steps were a column the page scrolled past, which stops answering "where am I" exactly
+when that is asked. They are a row across the top of the page and they stay there: four
+stops, each wearing the mark its step already had. A numbered circle would have named every
+step twice -- once by its position in the row, once by what it is -- and the position is
+already said by where it sits.
+
+**A third stop: what the visit was for.** "Did you buy anything?", and if so, what. Unanswered
+is a real third state and not a silent no -- the step can be walked past and the review is
+still a review. The item is the shopper's own words, because what somebody calls what they
+bought is the vocabulary the next search for it will use; it is stored against the review
+(`posts.purchased`, `posts.purchased_item`), and the column refuses a product name filed
+against "no", as does the service.
+
+**"Seçimleri temizle" under the eighth question,** where somebody who wants to start the
+scores again is looking, and quiet, because starting over is the rarer of the two things to do
+there.
+
+**And the publish button stops saying "Aranıyor…".** It was borrowing the search page's
+loading word, so the last thing a reviewer saw before their review was published was the
+product telling them it was searching for something. It keeps its own name and is simply
+disabled while the review is being written.
+
+---
+
 ## The dock leaves the way it arrived
 
 Saving a shop deleted the dock from the page in the same frame as the press. A thing that

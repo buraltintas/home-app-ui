@@ -1,6 +1,6 @@
 'use client';
 
-import {Check,Info,MapPin,Star,Store,TriangleAlert} from 'lucide-react';
+import {Check,Eraser,Info,MapPin,ShoppingBag,Star,Store,TriangleAlert} from 'lucide-react';
 import {useRouter,useSearchParams} from 'next/navigation';
 import {Suspense,useCallback,useEffect,useLayoutEffect,useRef,useState} from 'react';
 import {AuthDialog} from '@/components/AuthDialog';
@@ -62,6 +62,10 @@ function ReviewWizard({storeId}:{storeId:string}){
   const [verifyError,setVerifyError]=useState('');
   const [reviewRadiusMeters,setReviewRadiusMeters]=useState(2000);
   const [criteria,setCriteria]=useState<Partial<Record<CriterionKey,number>>>({});
+  // Whether the visit ended in a purchase, and what was bought. Unanswered is a third state
+  // and not a silent "no": the step can be walked past, and a review is still a review.
+  const [purchased,setPurchased]=useState<boolean|undefined>(undefined);
+  const [purchasedItem,setPurchasedItem]=useState('');
   const [submitting,setSubmitting]=useState(false);
   const [submitError,setSubmitError]=useState('');
   const autoVerificationAttempted=useRef(false);
@@ -72,7 +76,7 @@ function ReviewWizard({storeId}:{storeId:string}){
   // and takes the half-written review with it. The step therefore lives in the URL, and
   // every forward move pushes an entry, so the browser's own back walks the wizard
   // backwards one step at a time.
-  const requestedStep=Math.min(Math.max(Math.trunc(Number(searchParams.get('step')))||1,1),3);
+  const requestedStep=Math.min(Math.max(Math.trunc(Number(searchParams.get('step')))||1,1),4);
   // Evidence of the visit is what unlocks the rest of the flow, so a step claimed by the
   // URL is only honoured once that evidence exists.
   const step=verification?requestedStep:1;
@@ -185,7 +189,7 @@ function ReviewWizard({storeId}:{storeId:string}){
   // therefore keeps the score sheet's scroll offset unless this step owns the correction.
   // Do it before paint so the final check opens at its heading rather than jumping there.
   useLayoutEffect(()=>{
-    if(step!==3)return;
+    if(step!==4)return;
     const root=document.documentElement;
     const previous=root.style.scrollBehavior;
     root.style.scrollBehavior='auto';
@@ -208,6 +212,7 @@ function ReviewWizard({storeId}:{storeId:string}){
       const response=await apiFetch('/api/proxy/posts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
         store_id:storeId,visit_verification_id:verification.id,content_language:locale,
         criteria:Object.fromEntries(criterionKeys.map(key=>[key,criteria[key]])),
+        ...(purchased===undefined?{}:{purchased,...(purchased&&purchasedItem.trim()?{purchased_item:purchasedItem.trim()}:{})}),
         ...(origin?{origin_search_id:origin.search_id,origin_search_result_id:origin.search_result_id}:{}),
       })});
       if(response.status===401){setSignedIn(false);setAuth(true);return;}
@@ -225,7 +230,7 @@ function ReviewWizard({storeId}:{storeId:string}){
   // The first step renames itself once it is done. "Konumu doğrula" is an instruction and
   // it stops being true the moment the location is verified; leaving it there asks for
   // something already given.
-  const steps=[[verification?t('verifyLocationDone'):t('verifyLocation'),MapPin],[t('criteriaTitle'),Star],[t('reviewSummaryTitle'),Check]] as const;
+  const steps=[[verification?t('verifyLocationDone'):t('verifyLocation'),MapPin],[t('criteriaTitle'),Star],[t('purchaseTitle'),ShoppingBag],[t('reviewSummaryTitle'),Check]] as const;
   return <main className="create-page">
     <div>
       <p className="eyebrow">{t('reviewFor')}</p>
@@ -233,6 +238,10 @@ function ReviewWizard({storeId}:{storeId:string}){
       <p className="review-store-address"><Store aria-hidden="true"/>{store.store.address||[store.store.district,store.store.city].filter(Boolean).join(', ')}</p>
     </div>
 
+    {/* Four stops across the top rather than a column the page scrolls past: the flow is the
+        subject of this page, so where you are in it stays on the screen while you work. The
+        marks are the ones each step already had -- a numbered circle would name the steps
+        twice, once by position and once by what they are. */}
     <ol className="review-steps">{steps.map(([label,Icon],index)=>{
       const position=index+1;
       const verified=position===1&&Boolean(verification);
@@ -266,15 +275,34 @@ function ReviewWizard({storeId}:{storeId:string}){
             <label key={value}><input type="radio" name={key} value={value} aria-label={`${value} / 5`} checked={criteria[key]===value} onChange={()=>setCriteria(current=>({...current,[key]:value}))}/><Star aria-hidden="true" className={value<=(criteria[key]??0)?'is-on':undefined}/></label>)}</div>
         </fieldset>)}
       </div>
+      {/* Under the last question, where somebody who wants to start again is looking. It is
+          not a primary action: starting over is the rarer of the two things to do here. */}
+      <button type="button" className="button quiet criteria-clear" onClick={()=>setCriteria({})} disabled={!Object.keys(criteria).length}><Eraser aria-hidden="true"/>{t('clearScores')}</button>
       {!scored&&<p className="criteria-hint" role="note"><Info aria-hidden="true"/><span>{t('criteriaIncomplete')}</span></p>}
       {submitError&&<p className="form-error" role="alert">{submitError}</p>}
       <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>advance(3)} disabled={!scored||!verification}>{t('confirmReview')}</button></div>
     </section>}
 
+    {step===3&&<section className="review-step">
+      <p className="criteria-intro-plain">{t('purchaseIntro')}</p>
+      <fieldset className="purchase-answer">
+        <legend>{t('purchaseQuestion')}</legend>
+        <label data-selected={purchased===true}><input type="radio" name="purchased" checked={purchased===true} onChange={()=>setPurchased(true)}/><span>{t('yes')}</span></label>
+        <label data-selected={purchased===false}><input type="radio" name="purchased" checked={purchased===false} onChange={()=>{setPurchased(false);setPurchasedItem('');}}/><span>{t('no')}</span></label>
+      </fieldset>
+      {/* Asked only where there is something to name. The words are the shopper's own: what
+          somebody calls what they bought is the vocabulary the next search for it will use. */}
+      {purchased===true&&<label className="purchase-item">
+        <span>{t('purchasedItemLabel')}</span>
+        <input type="text" maxLength={120} value={purchasedItem} placeholder={t('purchasedItemHint')} onChange={event=>setPurchasedItem(event.target.value)}/>
+      </label>}
+      <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>advance(4)}>{t('continue')}</button></div>
+    </section>}
+
     {/* Nothing is written until this page. Eight scores given one after another are easy to
         get wrong by a star and impossible to check while giving them; this is where they are
         all visible at once, and the only place the review is actually published from. */}
-    {step===3&&<section className="review-step">
+    {step===4&&<section className="review-step">
       <p className="criteria-intro-plain">{t('reviewSummaryIntro')}</p>
       <div className="review-summary-average"><span>{t('ratingLabel')}</span><RatingStars value={criteriaAverage}/></div>
       <dl className="review-summary">{criterionKeys.map((key,index)=>
@@ -283,8 +311,11 @@ function ReviewWizard({storeId}:{storeId:string}){
           <dd><RatingStars value={criteria[key]??0} showValue={false}/><span>{criteria[key]}</span></dd>
         </div>)}
       </dl>
+      {purchased!==undefined&&<p className="review-summary-purchase">{purchased?(purchasedItem.trim()?`${t('purchasedYes')} · ${purchasedItem.trim()}`:t('purchasedYes')):t('purchasedNo')}</p>}
       {submitError&&<p className="form-error" role="alert">{submitError}</p>}
-      <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>void submit()} disabled={submitting||!scored||!verification}>{submitting?t('loading'):t('submitReview')}</button></div>
+      {/* The button keeps its own name while it is working. It used to borrow the search
+          page's loading word, so publishing a review said "Aranıyor…". */}
+      <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>void submit()} disabled={submitting||!scored||!verification}>{t('submitReview')}</button></div>
     </section>}
 
     <AuthDialog open={auth} onClose={()=>setAuth(false)} onAuthenticated={()=>{setSignedIn(true);setAuth(false);}}/>

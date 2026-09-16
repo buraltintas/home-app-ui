@@ -773,6 +773,46 @@ svg{stroke-width:2}
 .criterion-stars svg.is-on{fill:var(--clay);color:var(--clay)}
 .criterion-stars label:has(input:focus-visible){outline:3px solid var(--accent);outline-offset:2px;border-radius:var(--r-sm)}
 .create-page>div>.eyebrow{font-size:13px}
+/* Four stops across the top, in the order they are walked, and they stay on the screen while
+   the step under them is being filled in: the flow is what this page is, and a column of
+   steps the page scrolls past stops answering "where am I" exactly when that is asked. Each
+   stop wears the mark its step already had rather than a number -- the position is already
+   said by where it sits in the row. */
+.create-page .review-steps{position:sticky;top:8px;z-index:12;grid-column:1/-1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin:0 0 8px;padding:12px 8px;background:color-mix(in srgb,var(--surface) 92%,transparent);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--lift);backdrop-filter:blur(18px) saturate(130%)}
+.create-page .review-steps li{position:relative;display:grid;grid-template-columns:none;justify-items:center;gap:6px;padding:6px 4px;margin:0;border:0;border-radius:var(--r-md);background:transparent;text-align:center;opacity:.55}
+/* The line between one stop and the next, drawn behind the marks rather than between the
+   boxes, so it does not move when a label wraps. */
+.create-page .review-steps li:not(:first-child)::before{content:'';position:absolute;top:20px;right:50%;width:100%;height:1px;background:var(--line-strong)}
+.create-page .review-steps li>span{position:relative;z-index:1;width:40px;height:40px;border:1px solid var(--line-strong);background:var(--surface)}
+.create-page .review-steps li strong{font-size:12px;font-weight:700;line-height:1.25;letter-spacing:.01em;color:var(--ink-muted);text-wrap:balance}
+/* Where you are, said in the colour this product uses for what it wants read. */
+.create-page .review-steps .current{opacity:1;padding:6px 4px;margin:0;border:0;background:transparent}
+.create-page .review-steps .current>span{background:var(--clay);border-color:var(--clay);color:var(--surface)}
+.create-page .review-steps .current strong{font-size:12px;color:var(--clay)}
+.create-page .review-steps .done{opacity:.85}
+.create-page .review-steps .done>span,.create-page .review-steps li.is-verified>span{background:var(--success);border-color:var(--success);color:var(--surface)}
+@media(max-width:600px){
+  .create-page .review-steps{padding:10px 4px}
+  .create-page .review-steps li strong{font-size:10.5px}
+  .create-page .review-steps li>span{width:34px;height:34px}
+  .create-page .review-steps li>span svg{width:17px;height:17px}
+  .create-page .review-steps li:not(:first-child)::before{top:17px}
+}
+/* Start the eight again. Quiet, because starting over is the rarer of the two things to do
+   under the last question. */
+.criteria-clear{display:inline-flex;align-items:center;gap:8px;min-height:44px;margin-top:14px;padding:0 14px;font-size:14px;color:var(--ink-muted)}
+.criteria-clear svg{width:16px;height:16px}
+.criteria-clear:disabled{opacity:.45}
+/* Did the visit end in a purchase. Two answers, drawn as the two things they are. */
+.purchase-answer{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 0;padding:0;border:0}
+.purchase-answer legend{padding:0;margin-bottom:10px;font-size:17px;font-weight:700;color:var(--ink)}
+.purchase-answer label{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 20px;border:1px solid var(--line-strong);border-radius:var(--r-pill);background:var(--surface);font-weight:700;cursor:pointer}
+.purchase-answer label[data-selected=true]{border-color:var(--clay);background:var(--accent-wash);color:var(--clay)}
+.purchase-answer input{position:absolute;opacity:0;width:1px;height:1px}
+.purchase-item{display:grid;gap:8px;margin-top:20px;max-width:460px}
+.purchase-item span{font-size:14px;color:var(--ink-muted)}
+.purchase-item input{min-height:52px;padding:0 16px;border:1px solid var(--line-strong);border-radius:var(--r-md);background:var(--surface);font-size:16px;color:var(--ink)}
+.review-summary-purchase{margin:16px 0 0;font-size:15px;font-weight:700;color:var(--ink-muted)}
 .create-page .review-steps .current>span{background:var(--accent-wash);color:var(--clay)}
 .create-page .review-step .button.primary{background:var(--clay);color:var(--surface)}
 .profile-review-list .post-card.is-owned .post-meta{flex-wrap:nowrap;align-items:center;margin:0;gap:8px}
