@@ -8,6 +8,52 @@ value involved.
 
 ---
 
+## The dock leaves the way it arrived
+
+Saving a shop deleted the dock from the page in the same frame as the press. A thing that
+slides in over half a second and then disappears between two frames does not read as "done",
+it reads as the screen glitching. It now plays its arrival backwards -- same distance, same
+half-second, same curve -- and is removed when that has finished. A reader who has asked for
+less motion still gets none: the departure rule had to be named inside the reduced-motion
+block too, because on its own it outranked the rule that switches the animation off.
+
+## The saved list: whose review, which count, and no heading to read twice
+
+The heading went off the screen and stayed in the document. The two counts underneath say
+what the page is holding, so the sentence above them was saying it a second time -- but a
+page with no heading at all is a page a screen reader cannot announce, which is a worse loss
+than a repeated line.
+
+A shop you have already written about now says so: "1 tanesi senin" beside the count. The
+count itself is set the way the store page sets the same sentence, so one fact is written one
+way in both places, and the tile the list is answering carries a mark pointing at the list --
+a tile that is merely tinted reads as "this one is nicer", not as "this one is in force".
+
+## The results list, second pass
+
+"Detay" is "Puan detayını gör", which is what this control is called everywhere else in the
+product. The breakdown is ruled between its rows and laid out in two columns, so every row of
+stars starts in the same place: down a list of eight, stars that each begin wherever their
+label happens to end cannot be compared at a glance, and comparing them is the only thing the
+table is for. The notice at the end of the list is drawn as a notice -- its own ground, its
+own colour, a mark before the words -- rather than as one more card in the list.
+
+## Ten chains the catalogue was holding without knowing they were chains
+
+"Why do some chain stores have no picture?" -- İşbir Yatak was the example, and the answer was
+that it was not a chain as far as we were concerned: it was thirteen independent shops that
+happened to share a name. The shops themselves said otherwise, in the one field nobody fills
+in by accident: they all publish the same website.
+
+So ten of them are in the registry now -- Yatsan, İşbir Yatak, İdaş, Lova Yatak, Bambi,
+Modalife, Konfor Yatak, Halsa Yatak, Mutlu Halı, Cam Halı -- and `cmd/adopt-branches` linked
+**165 shops** to them on that same field. Seven have a usable mark and now show it. Three do
+not, and are left showing their initial: İşbir Yatak and Bambi publish no mark on their sites,
+and Modalife's is white on transparent, which on a white frame is a blank square. A missing
+mark is better than an invisible one.
+
+---
+
 ## The results list says what it is showing, and what it is made of
 
 Ten changes to the list a search answers with, and three of them are worth explaining.
