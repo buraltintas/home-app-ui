@@ -9,6 +9,8 @@ import type {Locale} from '@/lib/types';
 import {AuthDialog} from './AuthDialog';
 
 type Props={storeId:string;name:string;latitude:number;longitude:number;initialFavorited:boolean;phone?:string};
+// The same duration the arrival animation runs for, written once and read by both.
+const DOCK_LEAVE_MS=520;
 const savedMessage:Record<Locale,string>={tr:'Mağaza kaydedildi',en:'Store saved',de:'Geschäft gespeichert',ru:'Магазин сохранён'};
 
 export function StoreActions({storeId,name,latitude,longitude,initialFavorited,phone}:Props){
@@ -21,6 +23,17 @@ export function StoreActions({storeId,name,latitude,longitude,initialFavorited,p
   // The invitation arrives after the page, not during the first paint. A saved store
   // has nothing to be invited to; unsaving schedules the invitation again.
   const [dockVisible,setDockVisible]=useState(false);
+  // Leaving takes as long as arriving. Saving used to delete the dock from the page in the
+  // same frame as the press, which reads as the screen glitching rather than as the dock
+  // going away; it now plays the arrival backwards and is removed when that has finished.
+  const [dockLeaving,setDockLeaving]=useState(false);
+  const dockTimer=useRef<number|undefined>(undefined);
+  useEffect(()=>()=>{if(dockTimer.current!==undefined)window.clearTimeout(dockTimer.current);},[]);
+  const dismissDock=()=>{
+    if(!dockVisible||dockLeaving)return;
+    setDockLeaving(true);
+    dockTimer.current=window.setTimeout(()=>{setDockVisible(false);setDockLeaving(false);},DOCK_LEAVE_MS);
+  };
   useEffect(()=>{
     if(favorited)return;
     const timer=window.setTimeout(()=>setDockVisible(true),1000);
@@ -58,7 +71,7 @@ export function StoreActions({storeId,name,latitude,longitude,initialFavorited,p
     if(busy)return;
     changedHere.current=true;
     const next=!favorited;
-    setBusy(true);setStatus('');setFavorited(next);setDockVisible(false);
+    setBusy(true);setStatus('');setFavorited(next);dismissDock();
     try{
       const response=await apiFetch(`/api/proxy/stores/${storeId}/favorite`,{method:next?'POST':'DELETE',headers:originSearchHeaders()});
       if(response.status===401){setFavorited(!next);setPending(true);setAuth(true);return;}
@@ -100,7 +113,7 @@ export function StoreActions({storeId,name,latitude,longitude,initialFavorited,p
     <button onClick={()=>void share()}><Send/>{t('share')}</button>
   </div>
   {status&&<p className="action-status store-save-status" role="status">{status}</p>}
-  {dockVisible&&!favorited&&<aside className="store-save-dock" aria-label={t('saveReason')}>
+  {dockVisible&&(!favorited||dockLeaving)&&<aside className={`store-save-dock${dockLeaving?' is-leaving':''}`} aria-label={t('saveReason')}>
     <span>{t('saveReason')}</span>
     <button type="button" className={`button primary${favorited?' is-saved':''}`} onClick={()=>void toggleFavorite()} disabled={busy} aria-pressed={favorited}>
       {t('saveStore')}

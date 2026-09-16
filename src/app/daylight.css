@@ -181,6 +181,8 @@ svg{stroke-width:2}
    -- a larger system text size, another font fallback -- pushed the action past the frame.
    Wrapping costs nothing while they fit and is the only thing that holds when they do not. */
 .store-save-dock{position:fixed;z-index:22;left:50%;bottom:22px;transform:translateX(-50%);width:min(316px,calc(100% - 56px));min-height:76px;padding:12px 14px 12px 22px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px;overflow:hidden;background:color-mix(in srgb,var(--surface) 92%,transparent);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--lift);backdrop-filter:blur(20px) saturate(130%);animation:nudge-in .52s cubic-bezier(.16,1,.3,1) both}
+/* Out the way it came in: same distance, same duration, same curve reversed. */
+.store-save-dock.is-leaving{animation:nudge-out .52s cubic-bezier(.16,1,.3,1) both;pointer-events:none}
 .store-save-dock>span{font-size:15px;font-weight:650;white-space:nowrap}.store-save-dock .button{min-width:0;white-space:nowrap}
 /* This button exists to get somebody to come back and write a review, so it wears the
    colour the product uses for what it wants you to do. Filled near-black it was the same
@@ -551,7 +553,9 @@ svg{stroke-width:2}
    base rule changed nothing on a phone -- the only place anybody looks at it. */
 @media(max-width:720px){.timed-nudge{bottom:calc(88px + env(safe-area-inset-bottom));width:min(316px,calc(100% - 56px))}.store-page .timed-nudge{bottom:calc(164px + env(safe-area-inset-bottom))}}
 @media(max-width:340px){.store-save-dock .button{width:100%}}
-@media(prefers-reduced-motion:reduce){.store-save-dock{animation:none}}
+/* Nothing moves for a reader who has asked for that, leaving included: without the second
+   selector the departure animation outranked this rule and played anyway. */
+@media(prefers-reduced-motion:reduce){.store-save-dock,.store-save-dock.is-leaving{animation:none}}
 @media(max-width:720px){.store-save-status{bottom:calc(166px + env(safe-area-inset-bottom))}}
 
 
@@ -625,8 +629,14 @@ svg{stroke-width:2}
 .store-location-approximate{margin:6px 0 0;font-size:13px;line-height:1.4;color:var(--ink-muted)}
 /* Score above, what it is made of below, in the muted weight the home page uses for the
    same number. */
-.favorite-store-score{display:grid;gap:2px;justify-items:start;margin-top:6px}
-.favorite-store-score>span{color:var(--ink-muted);font-size:13px;font-weight:500}
+/* The score, then what it is made of, in the same type the store's own page uses for that
+   sentence -- one fact written one way in both places. Underlined there because it is a way
+   down to the reviews; here it leads nowhere, so it is not. */
+.favorite-store-score{display:grid;gap:6px;justify-items:start;margin-top:6px}
+.favorite-store-score>span{color:var(--ink-muted);font-size:13px;font-weight:700;white-space:nowrap;text-decoration:none}
+.favorite-store-score em{font-style:normal;font-weight:700;color:var(--clay)}
+/* A shop nobody has written about yet is a state, not a warning. */
+.favorites-list .favorite-store-photo+div>small{color:var(--ink-muted);font-size:13px}
 @media(max-width:600px){.favorite-review-row{grid-column:1/-1}}
 .profile-sections{display:grid}
 .profile-sections a{display:grid;grid-template-columns:42px minmax(0,1fr);align-items:center;gap:14px;padding:16px 0;border-bottom:1px solid var(--line);min-height:64px}
@@ -809,10 +819,16 @@ svg{stroke-width:2}
 .result-criteria{margin-top:8px}
 .result-criteria>summary{display:inline-flex;align-items:center;min-height:32px;font-size:13px;font-weight:700;color:var(--clay);cursor:pointer;text-transform:none;letter-spacing:0}
 .result-criteria[open]>summary{margin-bottom:6px}
-.result-criteria dl{display:grid;gap:4px;margin:0}
-.result-criteria dl div{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.result-criteria dl{display:grid;margin:0}
+/* Ruled between the rows, like the breakdown on a review card, and in two columns so every
+   row of stars starts at the same place: down a list of eight, stars that each begin
+   wherever their label happens to end cannot be compared at a glance, which is the only
+   thing this table is for. */
+.result-criteria dl div{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6px 12px;padding:7px 0;border-bottom:1px solid var(--line)}
+.result-criteria dl div:last-child{border-bottom:0}
 .result-criteria dt{font-size:12px;color:var(--ink-muted);text-transform:none;letter-spacing:0}
-.result-criteria dd{display:flex;align-items:center;gap:6px;margin:0;font-size:12px;font-weight:700;color:var(--ink)}
+.result-criteria dd{display:grid;grid-template-columns:auto 26px;align-items:center;gap:8px;margin:0;font-size:12px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+.result-criteria dd>span{text-align:right}
 .result-criteria dd .rating-stars svg{width:13px;height:13px}
 .result-criteria-state{margin:0;font-size:12px;color:var(--ink-muted)}
 /* Two labelled facts about the list, not a bare count. */
@@ -821,18 +837,28 @@ svg{stroke-width:2}
 .result-count dt{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-muted)}
 .result-count dd{margin:0;font-size:14px;font-weight:750;color:var(--ink)}
 /* The end of the list is a question too. */
-.add-store{margin:34px 0 0;padding:26px 24px;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface)}
-.add-store h2{margin:0;font-size:20px;letter-spacing:-.02em}
+/* A notice, not a card in the list: its own ground, its own colour, and a mark that says so
+   before the words are read. */
+.add-store{margin:34px 0 0;padding:24px;border:1px solid color-mix(in srgb,var(--warning) 35%,var(--line));border-radius:var(--r-lg);background:var(--accent-wash)}
+.add-store h2{display:flex;align-items:center;gap:8px;margin:0;font-size:17px;font-weight:800;letter-spacing:.01em;color:var(--warning)}
+.add-store h2 svg{width:18px;height:18px;flex:none}
 .add-store p{margin:6px 0 16px;color:var(--ink-muted);font-size:15px}
-.add-store-open{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 18px}
-.add-store-open svg{width:16px;height:16px}
+.add-store-action{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.add-store-action img{width:72px;height:72px;border-radius:var(--r-md);object-fit:cover;flex:none}
+/* Written against the notice as well as the button, because `.button.primary` paints every
+   primary control near-black and outranks a single class on its own. */
+.add-store .button.add-store-open{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 20px;background:var(--clay);color:var(--surface)}
+.add-store .button.add-store-open:hover{background:color-mix(in srgb,var(--clay) 88%,var(--ink))}
+.add-store-open svg{width:18px;height:18px}
 .add-store-backdrop{align-items:flex-end}
 .add-store-sheet{width:min(520px,100%);display:grid;gap:10px;padding:24px;background:var(--surface);border-radius:var(--r-lg) var(--r-lg) 0 0;box-shadow:var(--lift)}
 .add-store-sheet header{display:flex;align-items:center;justify-content:space-between;gap:16px}
 .add-store-sheet h3{margin:0;font-size:22px;letter-spacing:-.02em}
 .add-store-sheet label{font-size:13px;color:var(--ink-muted)}
 .add-store-sheet input{min-height:48px;padding:0 14px;border:1px solid var(--line-strong);border-radius:var(--r-md);background:var(--canvas);font-size:16px;color:var(--ink)}
-.add-store-sheet .button.primary{min-height:48px;margin-top:6px}
+.add-store-sheet .button.primary.button{min-height:48px;margin-top:6px;background:var(--clay);color:var(--surface)}
+.add-store-sheet .button.primary:hover{background:color-mix(in srgb,var(--clay) 88%,var(--ink))}
+.add-store-sheet .button.primary:disabled{background:color-mix(in srgb,var(--clay) 55%,var(--surface))}
 .add-store-done{margin:0;color:var(--success);font-weight:700}
 @media(min-width:701px){.add-store-backdrop{align-items:center}.add-store-sheet{border-radius:var(--r-lg)}}
 

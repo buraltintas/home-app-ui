@@ -1,6 +1,7 @@
 'use client';
 
-import {Plus,X} from 'lucide-react';
+import {CircleAlert,Plus,X} from 'lucide-react';
+import Image from 'next/image';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import {useI18n} from '@/i18n/I18nProvider';
 import {apiFetch} from '@/lib/api-client';
@@ -47,9 +48,15 @@ export function AddStoreSheet({query}:{query:string}){
   };
 
   return <section className="add-store">
-    <h2>{t('notFoundTitle')}</h2>
+    {/* The end of the list is not another result, and it is not decoration either: it is the
+        one place where a reader can tell us the catalogue is missing something. It is marked
+        as a notice so it reads as a different kind of thing from the shops above it. */}
+    <h2><CircleAlert aria-hidden="true"/>{t('notFoundTitle')}</h2>
     <p>{t('notFoundBody')}</p>
-    <button ref={opener} type="button" className="button secondary add-store-open" onClick={()=>setOpen(true)}><Plus aria-hidden="true"/>{t('addStore')}</button>
+    <div className="add-store-action">
+      <Image src="/illustrations/add-store.png" width={72} height={72} alt="" aria-hidden="true"/>
+      <button ref={opener} type="button" className="button primary add-store-open" onClick={()=>setOpen(true)}><Plus aria-hidden="true"/>{t('addStore')}</button>
+    </div>
     {open&&<div className="dialog-backdrop add-store-backdrop" role="presentation" onMouseDown={event=>{if(event.target===event.currentTarget)close();}}>
       <div className="add-store-sheet" role="dialog" aria-modal="true" aria-labelledby="add-store-title">
         <header><h3 id="add-store-title">{t('addStoreTitle')}</h3><button type="button" className="icon-button" aria-label={t('close')} onClick={close}><X aria-hidden="true"/></button></header>

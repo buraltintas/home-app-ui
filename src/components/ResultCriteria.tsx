@@ -49,7 +49,7 @@ export function ResultCriteria({storeId}:{storeId:string}){
     setOpen(isOpen);
     if(isOpen)void load();
   }}>
-    <summary>{t('scoreDetail')}</summary>
+    <summary>{t('seeScoreDetail')}</summary>
     {state==='loading'&&<p className="result-criteria-state">{t('loading')}</p>}
     {state==='failed'&&<p className="result-criteria-state">{t('searchError')}</p>}
     {state==='none'&&<p className="result-criteria-state">{t('noCriteriaYet')}</p>}

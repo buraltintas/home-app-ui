@@ -9,15 +9,19 @@
   "emsan": "emsan.png",
   "english-home": "english-home.svg",
   "enza-home": "enza-home.svg",
+  "idas": "idas.png",
   "ikea": "ikea.png",
   "istikbal": "istikbal.svg",
   "karaca-home": "karaca-home.png",
   "kelebek-mobilya": "kelebek-mobilya.webp",
   "koctas": "koctas.png",
+  "konfor-yatak": "konfor-yatak.webp",
   "korkmaz": "korkmaz.png",
   "linens": "linens.png",
+  "lova-yatak": "lova-yatak.webp",
   "madame-coco": "madame-coco.svg",
   "merinos": "merinos.png",
+  "modalife": "modalife.png",
   "mondi": "mondi.png",
   "mudo-concept": "mudo-concept.png",
   "ozdilek-home": "ozdilek-home.svg",
@@ -27,5 +31,6 @@
   "tepe-home": "tepe-home.svg",
   "vivense": "vivense.svg",
   "weltew": "weltew.jpg",
-  "yatas-bedding": "yatas-bedding.svg"
+  "yatas-bedding": "yatas-bedding.svg",
+  "yatsan": "yatsan.svg"
 }

@@ -227,7 +227,12 @@
    the one wearing the accent. */
 .favorites-summary>button{min-width:220px;padding:16px 18px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface);display:grid;justify-items:start;gap:5px;text-align:left;cursor:pointer;color:inherit;font:inherit;min-height:44px}
 .favorites-summary>button:hover{border-color:var(--line-strong)}
+.favorites-summary>button{position:relative}
 .favorites-summary>button.is-showing{border-color:var(--clay);background:var(--accent-wash)}
+/* Which of the two the list below is answering, said under the button rather than only in
+   its colour: a tile that is merely tinted reads as "this one is nicer", and a mark that
+   points at the list reads as "this one is what you are looking at". */
+.favorites-summary>button.is-showing::after{content:'';position:absolute;left:50%;bottom:-1px;transform:translate(-50%,50%) rotate(45deg);width:14px;height:14px;background:var(--accent-wash);border-right:1px solid var(--clay);border-bottom:1px solid var(--clay)}
 .favorites-summary>button>span{font-size:13px;color:var(--ink-muted);white-space:pre-line}
 .favorites-summary>button>strong{color:var(--clay);font-size:28px;font-weight:750;line-height:1}
 /* Said where the list would have been, in the list's own voice. */

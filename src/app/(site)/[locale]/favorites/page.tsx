@@ -18,11 +18,11 @@ import {metresBetween,StoreDistance,useReviewRadius,useViewerPosition} from '@/c
 
 // The same wording the store page uses for the same action; one product, one name for it.
 const reviewAction:Record<Locale,string>={tr:'Değerlendirme yap',en:'Write a review',de:'Bewertung abgeben',ru:'Оставить оценку'};
-const favoriteSummary:Record<Locale,{saved:string;pending:string;pendingEmpty:string}>={
-  tr:{saved:'Kaydedilen\nmağaza',pending:'Değerlendirmeni bekleyen mağaza',pendingEmpty:'Kaydettiğin mağazaların hepsini değerlendirmişsin.'},
-  en:{saved:'Saved stores',pending:'Waiting for your review',pendingEmpty:'You have reviewed every store you saved.'},
-  de:{saved:'Gespeicherte Geschäfte',pending:'Wartet auf deine Bewertung',pendingEmpty:'Du hast jedes gespeicherte Geschäft bewertet.'},
-  ru:{saved:'Сохранённые магазины',pending:'Ждут вашей оценки',pendingEmpty:'Вы оценили все сохранённые магазины.'},
+const favoriteSummary:Record<Locale,{saved:string;pending:string;pendingEmpty:string;yoursOne:string}>={
+  tr:{saved:'Kaydedilen\nmağaza',pending:'Değerlendirmeni bekleyen mağaza',pendingEmpty:'Kaydettiğin mağazaların hepsini değerlendirmişsin.',yoursOne:'1 tanesi senin'},
+  en:{saved:'Saved stores',pending:'Waiting for your review',pendingEmpty:'You have reviewed every store you saved.',yoursOne:'one of them is yours'},
+  de:{saved:'Gespeicherte Geschäfte',pending:'Wartet auf deine Bewertung',pendingEmpty:'Du hast jedes gespeicherte Geschäft bewertet.',yoursOne:'eine davon ist deine'},
+  ru:{saved:'Сохранённые магазины',pending:'Ждут вашей оценки',pendingEmpty:'Вы оценили все сохранённые магазины.',yoursOne:'одна из них ваша'},
 };
 
 export default function Page(){
@@ -77,7 +77,10 @@ export default function Page(){
   const shown=showing==='pending'?pending:stores;
   if(signedIn&&stores.length)return <main className="favorites-page">
     <p className="eyebrow">{t('favorites')}</p>
-    <h1>{t('favoritesTitle')}</h1>
+    {/* Off the screen, not out of the document. The two counts underneath say what the page
+        is holding, so the sentence above them was repeating them; a page with no heading at
+        all is a page a screen reader cannot announce, which is a different loss. */}
+    <h1 className="visually-hidden">{t('favoritesTitle')}</h1>
     {/* Two counts, and each one opens the list it counts. A number a reader cannot act on is
         a fact; a number that shows them the shops behind it is a way into the page, and this
         page only has two questions to ask. */}
@@ -101,8 +104,10 @@ export default function Page(){
             wrapped onto a second line anyway, and the number of reviews is what the score is
             made of, not a second fact competing with it. Muted, like the count on the home
             page. */}
+        {/* One of these is yours, when it is: the difference between "somebody scored this"
+            and "I scored this". */}
         {store.platform.review_count
-          ?<div className="favorite-store-score"><RatingStars value={store.platform.average_rating}/><span>{store.platform.review_count} {t('reviewWord')}</span></div>
+          ?<div className="favorite-store-score"><RatingStars value={store.platform.average_rating}/><span>{store.platform.review_count} {t('reviewWord')}{store.viewer_has_reviewed&&<em> · {favoriteSummary[locale].yoursOne}</em>}</span></div>
           :<small>{t('noCommunity')}</small>}</div>
         <ArrowRight aria-hidden="true"/>
       </Link>
