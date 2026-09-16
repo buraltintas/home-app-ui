@@ -181,7 +181,22 @@ function ReviewWizard({storeId}:{storeId:string}){
   // left the review flow opening a hundred pixels down, with its own heading cut off.
   useScrollTopWhenReady(Boolean(store)&&signedIn!==undefined);
 
+  // Advancing to the final check changes the URL without remounting the page. The browser
+  // therefore keeps the score sheet's scroll offset unless this step owns the correction.
+  // Do it before paint so the final check opens at its heading rather than jumping there.
+  useLayoutEffect(()=>{
+    if(step!==3)return;
+    const root=document.documentElement;
+    const previous=root.style.scrollBehavior;
+    root.style.scrollBehavior='auto';
+    window.scrollTo(0,0);
+    root.style.scrollBehavior=previous;
+  },[step]);
+
   const scored=criterionKeys.every(key=>(criteria[key]??0)>=1);
+  const criteriaAverage=scored
+    ?criterionKeys.reduce((sum,key)=>sum+(criteria[key]??0),0)/criterionKeys.length
+    :0;
 
   const submit=async()=>{
     if(!verification||!scored)return;
@@ -251,7 +266,7 @@ function ReviewWizard({storeId}:{storeId:string}){
             <label key={value}><input type="radio" name={key} value={value} aria-label={`${value} / 5`} checked={criteria[key]===value} onChange={()=>setCriteria(current=>({...current,[key]:value}))}/><Star aria-hidden="true" className={value<=(criteria[key]??0)?'is-on':undefined}/></label>)}</div>
         </fieldset>)}
       </div>
-      {!scored&&<p className="criteria-hint">{t('criteriaIncomplete')}</p>}
+      {!scored&&<p className="criteria-hint" role="note"><Info aria-hidden="true"/><span>{t('criteriaIncomplete')}</span></p>}
       {submitError&&<p className="form-error" role="alert">{submitError}</p>}
       <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>advance(3)} disabled={!scored||!verification}>{t('confirmReview')}</button></div>
     </section>}
@@ -261,6 +276,7 @@ function ReviewWizard({storeId}:{storeId:string}){
         all visible at once, and the only place the review is actually published from. */}
     {step===3&&<section className="review-step">
       <p className="criteria-intro-plain">{t('reviewSummaryIntro')}</p>
+      <div className="review-summary-average"><span>{t('ratingLabel')}</span><RatingStars value={criteriaAverage}/></div>
       <dl className="review-summary">{criterionKeys.map((key,index)=>
         <div key={key}>
           <dt><span className="criterion-number" aria-hidden="true">{index+1}</span>{t(criterionLabels[key])}</dt>

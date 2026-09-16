@@ -8,6 +8,19 @@ value involved.
 
 ---
 
+## Test feedback now survives the last review and dock pass
+
+The review wizard now opens its final check at the top, keeps the location glyph visible
+inside its completed state, explains the eight-score requirement in a framed note, gives
+the locked confirmation action a genuinely disabled appearance, and shows the calculated
+average before the individual criterion scores.
+
+Favourite rows now stack review counts beneath their score, align the distance label and
+value, keep status glyphs in the status colour, and use even vertical rhythm around the
+review action. Search, favourite and profile hints use larger illustrations without
+changing the home hint; the search hint has the requested two-line copy. The mobile save
+dock also uses a compact action that cannot escape its frame.
+
 ## The remaining review, profile, search and iPhone-location regressions were fixed
 
 Store review cards now keep equal viewport gutters at both ends of their horizontal rail,

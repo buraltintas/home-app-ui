@@ -187,6 +187,7 @@ svg{stroke-width:2}
 .page-back-button{position:fixed;z-index:21;top:86px;left:max(18px,calc((100vw - 1480px)/2));width:46px;height:46px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:color-mix(in srgb,var(--surface) 92%,transparent);color:var(--ink);box-shadow:0 8px 24px rgba(22,20,15,.09);backdrop-filter:blur(16px);cursor:pointer}.page-back-button:hover{background:var(--muted)}.page-back-button svg{width:20px;height:20px}
 .timed-nudge{position:fixed;z-index:23;left:50%;bottom:22px;transform:translateX(-50%);width:min(316px,calc(100% - 56px));min-height:74px;padding:12px 18px 12px 12px;display:flex;align-items:center;gap:12px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--lift);font-size:15px;font-weight:650;line-height:1.35;animation:nudge-in .52s cubic-bezier(.16,1,.3,1) both;pointer-events:none}
 .timed-nudge-icon{position:relative;width:56px;height:56px;flex:none;display:grid;place-items:center;border-radius:50%;background:var(--accent-wash);color:var(--clay);overflow:hidden;animation:nudge-icon-shake .32s ease-in-out .26s both}
+.timed-nudge[data-kind=search] .timed-nudge-icon,.timed-nudge[data-kind=favorites] .timed-nudge-icon,.timed-nudge[data-kind=profile] .timed-nudge-icon{width:64px;height:64px}
 /* One band of light across the drawing as the dock arrives, and then it is done. A mark that
    keeps glinting is a mark somebody learns to look away from. */
 .timed-nudge-icon[data-shine]::after{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;
@@ -208,6 +209,7 @@ svg{stroke-width:2}
   -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
   animation:nudge-shine 2.6s ease-in-out 1.1s 2 both}
 .timed-nudge-emphasis{position:relative;font-weight:750;color:var(--clay);background:linear-gradient(100deg,var(--clay) 0 40%,color-mix(in srgb,var(--accent) 88%,white) 48%,var(--clay) 56% 100%);background-size:240% 100%;background-position:110% 0;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:nudge-shine 2.6s ease-in-out 1.1s 2 both}
+.timed-nudge-search-copy{white-space:pre-line}
 /* A band of light passing across the words rather than the whole dock blinking. It runs
    twice and stops: a shine that never stops is a thing to look away from. */
 @keyframes nudge-shine{from{background-position:110% 0}to{background-position:-30% 0}}
@@ -534,8 +536,8 @@ svg{stroke-width:2}
      was made edge-to-edge instead, to line up with the navigation bar under it; that is a
      different thing to match. One number, written once, in both places. */
   .store-save-dock{bottom:calc(88px + env(safe-area-inset-bottom));left:50%;right:auto;transform:translateX(-50%);width:min(316px,calc(100% - 56px));min-height:68px;padding:10px 12px 10px 16px;gap:12px}
-  .store-save-dock>span{font-size:13px}
-  .store-save-dock .button{flex:0 0 auto;min-width:max-content;padding-inline:18px;white-space:nowrap}
+  .store-save-dock>span{flex:1 1 auto;min-width:0;font-size:13px;line-height:1.25;white-space:normal}
+  .store-save-dock .button{flex:0 1 auto;min-width:0;padding-inline:10px;font-size:13px;white-space:nowrap}
 }
 /* The phone override was still the full width of the screen, which is why narrowing the
    base rule changed nothing on a phone -- the only place anybody looks at it. */
@@ -586,11 +588,11 @@ svg{stroke-width:2}
 .favorite-review-action{justify-self:start;min-height:38px;padding:0 14px;font-size:14px}
 /* The distance stands to the left of the action it qualifies: how far away the store is,
    and then what you can do about it. */
-.favorite-review-row{grid-column:2/3;display:flex;align-items:center;flex-wrap:wrap;gap:8px 16px}
+.favorite-review-row{grid-column:2/3;display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px}
 /* The label and the number sit on one line; anything explaining them goes under. They are a
    wrapping row rather than a grid: as a grid the explanation shared the columns, and a long
    one widened them until the number was sitting in the middle of the row. */
-.store-distance{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 6px;margin:0}
+.store-distance{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px 6px;margin:0}
 .store-distance>span{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:var(--ink-muted)}
 .store-distance>span svg{color:inherit}
 .store-distance small{flex:1 0 100%;display:flex;align-items:flex-start;gap:4px}
@@ -602,6 +604,7 @@ svg{stroke-width:2}
 /* Nothing to point at, so nothing is coloured as though there were. */
 .store-distance.is-unknown small{color:var(--ink-muted)}
 .store-distance small{font-size:12px;line-height:1.3;color:var(--ink-muted)}
+.favorites-list .store-distance small svg{color:currentColor}
 .store-distance.is-eligible small{color:var(--success);font-weight:700}
 /* Out of range is a fact about where the reader is, not a fault: said in the muted voice the
    rest of the caveats use, not in the colour reserved for what went wrong. */
@@ -611,7 +614,7 @@ svg{stroke-width:2}
 .store-location-approximate{margin:6px 0 0;font-size:13px;line-height:1.4;color:var(--ink-muted)}
 /* Score above, what it is made of below, in the muted weight the home page uses for the
    same number. */
-.favorite-store-score{display:grid;gap:2px;justify-items:start}
+.favorite-store-score{display:grid;gap:2px;justify-items:start;margin-top:6px}
 .favorite-store-score>span{color:var(--ink-muted);font-size:13px;font-weight:500}
 @media(max-width:600px){.favorite-review-row{grid-column:1/-1}}
 .profile-sections{display:grid}
@@ -733,12 +736,15 @@ svg{stroke-width:2}
 .criteria-intro-plain{margin:0 0 18px;font-size:14.5px;line-height:1.45;color:var(--ink-muted)}
 /* The eight scores, all visible at once, in the same two-column frame they were given in. */
 .review-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;margin:0 0 22px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.review-summary-average{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 14px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--muted)}
+.review-summary-average>span{font-size:14px;font-weight:700;color:var(--ink)}
 .review-summary>div{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;padding:12px 16px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
 .review-summary>div:nth-child(2n){border-right:0}
 .review-summary>div:nth-last-child(-n+2){border-bottom:0}
 .review-summary dt{display:flex;align-items:baseline;gap:7px;min-width:0;font-size:13px;line-height:1.3;color:var(--ink-muted)}
 .review-summary dd{display:flex;align-items:center;gap:8px;margin:0;font-size:15px;font-weight:750;color:var(--clay);font-variant-numeric:tabular-nums}
 @media(max-width:600px){.review-summary{grid-template-columns:minmax(0,1fr)}.review-summary>div{border-right:0}.review-summary>div:nth-last-child(2){border-bottom:1px solid var(--line)}}
+.create-page .review-step .button.primary:disabled{background:var(--muted);color:var(--ink-muted);border-color:var(--line);opacity:1;cursor:not-allowed}
 .criterion-stars{display:flex;gap:0;flex-wrap:nowrap}
 .criteria-list .criterion-stars label{position:relative;width:44px;height:44px;flex:none;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
 .criterion-stars input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer}

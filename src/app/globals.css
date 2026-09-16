@@ -265,7 +265,7 @@
 .legal-section ul{margin:0 0 18px;padding-left:24px;display:grid;gap:8px;font-size:20px;line-height:1.65}
 .legal-note{padding:18px 20px;background:var(--accent-wash);border-radius:var(--r-md);color:var(--ink);font-size:20px;line-height:1.65}
 .review-steps li.is-verified strong{color:var(--success,#1E5240)}
-.review-steps li.is-verified>span{border-color:var(--success,#1E5240);color:var(--success,#1E5240)}
+.review-steps li.is-verified>span{border-color:var(--success,#1E5240);background:var(--success,#1E5240);color:var(--surface,#fff)}
 .verify-warning{display:flex;gap:12px;align-items:flex-start;margin-top:18px;padding:16px 18px;border:1px solid var(--error);border-radius:var(--r-md);background:color-mix(in srgb,var(--error) 8%,var(--surface));color:var(--ink);font-size:16px;line-height:1.55}
 .verify-warning>svg{flex:0 0 auto;width:20px;height:20px;margin-top:2px;color:var(--error)}
 .legal-table-wrap{overflow-x:auto;margin:0 0 20px}
@@ -628,7 +628,8 @@ body>main{flex:1 0 auto;min-width:0;width:100%}
 .criterion-number{flex:none;font-variant-numeric:tabular-nums;font-weight:700;color:var(--ink)}
 .criteria-list .criterion-stars{clear:both}
 .criteria-list .criterion label{display:inline-grid;place-items:center}
-.criteria-hint{margin:0 0 18px;color:var(--ink-muted);font-size:14px}
+.criteria-hint{display:flex;align-items:flex-start;gap:9px;margin:0 0 18px;padding:12px 14px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--muted);color:var(--ink-muted);font-size:14px;line-height:1.45}
+.criteria-hint svg{width:17px;height:17px;flex:none;margin-top:1px;color:var(--clay)}
 @media(max-width:600px){
   /* Five 44 px targets need the whole width of a phone, so the questions run one to a row
      there; the cells and the type stay the store page's. */

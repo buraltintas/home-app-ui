@@ -90,7 +90,7 @@ export default function Page(){
             made of, not a second fact competing with it. Muted, like the count on the home
             page. */}
         {store.platform.review_count
-          ?<small className="favorite-store-score"><RatingStars value={store.platform.average_rating}/><span>{store.platform.review_count} {t('reviewWord')}</span></small>
+          ?<div className="favorite-store-score"><RatingStars value={store.platform.average_rating}/><span>{store.platform.review_count} {t('reviewWord')}</span></div>
           :<small>{t('noCommunity')}</small>}</div>
         <ArrowRight aria-hidden="true"/>
       </Link>
