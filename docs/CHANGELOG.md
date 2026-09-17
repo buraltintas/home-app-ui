@@ -8,6 +8,31 @@ value involved.
 
 ---
 
+## The search panel is the whole screen, and stays open when the keyboard goes
+
+Three faults with one cause: a phone browser's viewport is not the one `inset: 0` measures
+against. Safari's toolbars grow and shrink, so the panel was sized to a viewport nobody was
+looking at and the search page showed underneath it; when the keyboard opened, the visible
+area shrank again and took the field at the top of the panel off the screen, which is what a
+fresh Safari tab did. The panel is sized by the dynamic viewport now, and where that is not
+understood the script writes the visual viewport's own height into a custom property and
+keeps it up to date as the keyboard comes and goes. The document behind it is held still
+while it is open, so nothing can show through. The panel does not scroll; the list inside it
+does.
+
+**The tick above the keyboard kept closing it.** iOS dismisses the keyboard from that button
+without sending a key at all, so the panel only saw focus leave -- and read that as "the
+reader has gone". On a phone the panel is the whole screen: there is nowhere outside it to
+have tapped, so losing focus now means the keyboard went away and nothing else. The ways out
+are the arrow, the search button and Escape.
+
+**And every suggestion is on the screen.** Four with a chevron under them made the reader
+press to see the rest of a list that fits anyway; a panel whose whole job is to answer "what
+shall I type" should not hold half its answers back. The two headings in it now sit the same
+distance under the rule above them.
+
+---
+
 ## The store page: a badge that was indented, a count that moved back, a link that was a form
 
 The level under a reviewer's name carries a seven-pixel left margin, which is right where it

@@ -31,10 +31,6 @@ type SearchPlace={source?:'device'|'manual';label:string;city?:string;placeID?:s
 // snapshot restored under a different language would put a Turkish answer on an English
 // page -- which is what "this sentence is not translated" turned out to be.
 type SearchSnapshot={query:string;location?:SearchPlace;data?:SearchResponse;locale?:Locale};
-const historyCopy:Record<Locale,{more:string}>={
-  tr:{more:'Daha fazla göster'},en:{more:'Show more'},de:{more:'Mehr anzeigen'},ru:{more:'Показать ещё'},
-};
-
 // These remain valid search and admin categories. Product has only removed them from the
 // discovery shortcuts, so hiding them here must not erase their stores or taxonomy rows.
 const hiddenDiscoveryCategorySlugs=new Set(['tableware','decoration']);
@@ -165,7 +161,32 @@ export function SearchExperience() {
   },[]);
   const [query,setQuery]=useState('');
   const [suggestionsOpen,setSuggestionsOpen]=useState(false);
-  const [suggestionsExpanded,setSuggestionsExpanded]=useState(false);
+  // What a phone browser actually leaves visible. `100dvh` covers the toolbars; it does not
+  // cover the keyboard, which takes half the screen and is the case where the field at the
+  // top of the panel went out of sight. The visual viewport knows both, so while the panel
+  // is open its height is written into a custom property the panel is sized by, and the
+  // document behind it is held still so it cannot show through underneath.
+  useEffect(()=>{
+    const root=document.documentElement;
+    if(!suggestionsOpen){root.style.removeProperty('--panel-height');root.removeAttribute('data-search-panel');return;}
+    root.setAttribute('data-search-panel','open');
+    const viewport=window.visualViewport;
+    const measure=()=>{
+      const height=viewport?viewport.height:window.innerHeight;
+      root.style.setProperty('--panel-height',`${Math.round(height)}px`);
+    };
+    measure();
+    viewport?.addEventListener('resize',measure);
+    viewport?.addEventListener('scroll',measure);
+    window.addEventListener('orientationchange',measure);
+    return()=>{
+      viewport?.removeEventListener('resize',measure);
+      viewport?.removeEventListener('scroll',measure);
+      window.removeEventListener('orientationchange',measure);
+      root.style.removeProperty('--panel-height');
+      root.removeAttribute('data-search-panel');
+    };
+  },[suggestionsOpen]);
   const [data,setData]=useState<SearchResponse>();
   // How many of the answer is on screen. The backend returns up to ninety stores in one
   // response, so revealing the next screenful costs nothing -- no request, no wait, and no
@@ -706,9 +727,11 @@ export function SearchExperience() {
   // On its own the neighbourhood can hold five or six phrases, so "show more" had more to
   // show in principle and one extra line to show in practice -- which reads exactly like a
   // control that does nothing. There is always a tenth suggestion now.
+  // All of them, in the panel. Four with a chevron under them made the reader press once to
+  // see the rest of a list that fits on the screen anyway, and a panel whose whole job is to
+  // answer "what shall I type" should not be holding half its answers back.
   const stripPhrases=Array.from(new Set([...strip.phrases,...seasonalPool(locale)]));
-  const promptLimit=suggestionsExpanded?10:4;
-  const prompts=stripPhrases.length<=promptLimit?stripPhrases:Array.from({length:promptLimit},(_,step)=>stripPhrases[(rotation+step)%stripPhrases.length]);
+  const prompts=stripPhrases;
   return <main className="search-page"><header className="search-hero"><div className="search-title"><h1>{t('searchTitle')}</h1><span aria-hidden="true">↗</span></div>{!location&&<p className="location-lead">{t('locationRequired')}</p>}{location&&!sheetOpen&&<div className={`location-control${location.source==='device'?' is-device':''}`}><MapPin aria-hidden="true"/><span>{location.source==='device'?t('currentLocationActive'):location.label}</span><button onClick={()=>setLocationOpen(true)} disabled={loading}>{t('changeLocation')}</button><button className="location-clear" aria-label={t('clearLocation')} onClick={()=>{setLocation(undefined);setData(undefined);}} disabled={loading}><X/></button></div>}{sheetOpen&&<section className="location-sheet" aria-label={t('chooseLocation')}>{location&&<div><p>{t('locationBenefit')}</p></div>}<div className="location-actions">{autoLocating&&<p className="location-working" aria-live="polite"><span className="location-pulse" aria-hidden="true"/>{t('locatingYou')}</p>}{/* One control, two states. It used to be swapped for a separate confirmation line,
           which read as the button disappearing and something else taking its place. The
           same bubble now carries the answer, and pressing it again re-reads the device
@@ -730,11 +753,17 @@ export function SearchExperience() {
       // landed, is the same question with an answer.
       window.setTimeout(()=>{
         if(keepQueryPanelAfterBlur.current){keepQueryPanelAfterBlur.current=false;return;}
+        // On a phone the panel is the whole screen, so there is nowhere outside it to have
+        // tapped: losing focus means the keyboard went away, not that the reader left. The
+        // tick above an iOS keyboard dismisses it without sending a key at all, which is why
+        // pressing it used to close the panel and drop the reader back on the search page.
+        // The way out is the arrow, the search button, or Escape.
+        if(window.matchMedia('(max-width: 720px)').matches)return;
         if(!panel.contains(document.activeElement))setSuggestionsOpen(false);
       },0);}} onSubmit={event=>{setSuggestionsOpen(false);submit(event);}} aria-busy={loading}>{!suggestionsOpen&&<Search aria-hidden="true"/>}<div className="search-field">{/* The way out sits inside the field, where the magnifier sits on the page this
         panel opens from: one control in one place, doing the opposite job. A separate
         corner button was a second way out of a screen that only needs one. */}
-      {suggestionsOpen&&<button type="button" className="search-query-back" onClick={()=>setSuggestionsOpen(false)} aria-label={t('back')}><ArrowLeft aria-hidden="true"/></button>}<textarea ref={field} enterKeyHint="done" onFocus={()=>{setSuggestionsOpen(true);setSuggestionsExpanded(false);}} rows={1} value={query} onChange={event=>setQuery(event.target.value)} onKeyDown={event=>{if(event.key==='Escape')setSuggestionsOpen(false);if(event.key==='Enter'){event.preventDefault();if(window.matchMedia('(max-width: 720px)').matches){keepQueryPanelAfterBlur.current=true;event.currentTarget.blur();return;}void runSearch();}}} placeholder={placeholder} aria-label={t('searchHint')} disabled={loading}/>{query&&!loading&&<button type="button" className="search-clear" onClick={()=>{setQuery('');field.current?.focus();}} aria-label={t('clearSearch')}><X aria-hidden="true"/></button>}</div>{suggestionsOpen&&<button type="submit" disabled={loading}>{loading?t('loading'):t('searchAction')}</button>}{suggestionsOpen&&<div className="search-query-suggestions">{history.length>0&&<div className="search-query-recent">
+      {suggestionsOpen&&<button type="button" className="search-query-back" onClick={()=>setSuggestionsOpen(false)} aria-label={t('back')}><ArrowLeft aria-hidden="true"/></button>}<textarea ref={field} enterKeyHint="done" onFocus={()=>setSuggestionsOpen(true)} rows={1} value={query} onChange={event=>setQuery(event.target.value)} onKeyDown={event=>{if(event.key==='Escape')setSuggestionsOpen(false);if(event.key==='Enter'){event.preventDefault();if(window.matchMedia('(max-width: 720px)').matches){keepQueryPanelAfterBlur.current=true;event.currentTarget.blur();return;}void runSearch();}}} placeholder={placeholder} aria-label={t('searchHint')} disabled={loading}/>{query&&!loading&&<button type="button" className="search-clear" onClick={()=>{setQuery('');field.current?.focus();}} aria-label={t('clearSearch')}><X aria-hidden="true"/></button>}</div>{suggestionsOpen&&<button type="submit" disabled={loading}>{loading?t('loading'):t('searchAction')}</button>}{suggestionsOpen&&<div className="search-query-suggestions">{history.length>0&&<div className="search-query-recent">
       <header><h2 className="search-query-suggestions-title">{t('showRecentSearches')}</h2><button type="button" onMouseDown={event=>event.preventDefault()} onClick={()=>void clearHistory()} disabled={historyBusy}>{t('clearSearches')}</button></header>
       {/* Three, because this is a shortcut and not a record: the whole history is a page of
           its own, and a list long enough to scan is a list that hides the suggestions under
@@ -743,7 +772,7 @@ export function SearchExperience() {
       <ul className="search-query-recent-list">{history.slice(0,3).map(entry=><li key={entry.id}>
         <button type="button" onMouseDown={event=>event.preventDefault()} onClick={()=>{setSuggestionsOpen(false);fill(entry.raw_query);}}><History aria-hidden="true"/>{entry.raw_query}</button>
         <button type="button" className="search-query-recent-delete" onMouseDown={event=>event.preventDefault()} onClick={()=>void removeHistory(entry.id)} disabled={historyBusy} aria-label={t('deleteSearch')}><X aria-hidden="true"/></button>
-      </li>)}</ul></div>}<h2 className="search-query-suggestions-title">{t('suggestedSearches')}</h2><div className="search-query-suggestions-list">{prompts.map((phrase,index)=><button type="button" key={phrase} data-tint={index%4} onClick={()=>{setSuggestionsOpen(false);fill(phrase);}}><CategoryIcon slug={suggestionCategory(phrase)}/>{phrase}</button>)}</div>{stripPhrases.length>4&&!suggestionsExpanded&&<button type="button" className="search-query-more" onMouseDown={event=>event.preventDefault()} onClick={()=>setSuggestionsExpanded(true)} aria-label={historyCopy[locale].more}>⌄</button>}</div>}</form>}{/* The panel opens above these, it does not replace them. Hiding them while somebody
+      </li>)}</ul></div>}<h2 className="search-query-suggestions-title">{t('suggestedSearches')}</h2><div className="search-query-suggestions-list">{prompts.map((phrase,index)=><button type="button" key={phrase} data-tint={index%4} onClick={()=>{setSuggestionsOpen(false);fill(phrase);}}><CategoryIcon slug={suggestionCategory(phrase)}/>{phrase}</button>)}</div></div>}</form>}{/* The panel opens above these, it does not replace them. Hiding them while somebody
         changes their location threw away the recent searches and the categories they were
         about to pick from, and put them back only once the location was settled. */}
     {/* Recent searches used to sit here, on the page. They belong with the field instead:
