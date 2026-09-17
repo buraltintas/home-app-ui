@@ -7,6 +7,7 @@ import {ReviewsJump} from '@/components/ReviewsJump';
 import {Rating,RatingStars} from '@/components/Rating';
 import {StoreActions} from '@/components/StoreActions';
 import {JsonLd} from '@/components/JsonLd';
+import {PencilLine} from 'lucide-react';
 import {ScrollTop} from '@/components/ScrollTop';
 import {getPublicStore} from '@/lib/server-api';
 import {getDictionary} from '@/i18n/dictionaries';
@@ -170,7 +171,10 @@ export default async function Page({params}:Props){
             may be shown only where OpenStreetMap is credited. Attribution sits on the store
             itself, beside the address it describes, so it travels with the data. */}
         {store.external_sources?.some(source=>source.provider==='osm')&&<p className="store-location-approximate">{t.openMapCredit} <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">{t.openMapCreditLink}</a></p>}
-        <Link className="store-correction-link" href={correctionPath}>{contribution.correction}</Link>
+        {/* Not the same kind of thing as the shop's own website above it: that opens a page to
+            read, this opens a form to fill in. Drawn as the action it is, with the mark of
+            editing on it. */}
+        <Link className="store-correction-link" href={correctionPath}><PencilLine aria-hidden="true"/>{contribution.correction}</Link>
       </div>
       <div className="store-reviews" id="store-reviews-title" aria-label={t.community}>
         {/* No heading of its own. What is under here is plainly a row of reviews, and the

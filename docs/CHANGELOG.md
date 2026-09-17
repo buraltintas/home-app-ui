@@ -8,6 +8,26 @@ value involved.
 
 ---
 
+## The store page: a badge that was indented, a count that moved back, a link that was a form
+
+The level under a reviewer's name carries a seven-pixel left margin, which is right where it
+follows a name on one line and wrong under it: the badge sat stepped in from the person it
+belongs to. It starts on the name's own edge in that card now.
+
+The review count is beside the score again rather than under it. It was moved under on this
+page a few days ago; asked for the other way round, it goes back -- "4,6 out of four reviews"
+is one reading, and the way down to those reviews follows it.
+
+"Mağaza bilgilerinde düzenleme öner" was an underlined line of text, which on this page means
+"something to read" -- and it is not: it opens a form. It is drawn as a control now, a
+bordered pill with the mark of editing on it, and the shop's own website above it keeps the
+underline, so the two stop looking like the same kind of thing.
+
+And that form opened where the store page had been left -- its own title above the fold. It
+starts at the top.
+
+---
+
 ## A sheet that left at the right speed and still looked snatched away
 
 The levels sheet already spent the same half-second leaving as arriving, and it still read as

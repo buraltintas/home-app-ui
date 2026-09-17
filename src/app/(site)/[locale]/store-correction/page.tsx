@@ -1,5 +1,6 @@
 import type {Metadata} from 'next';
 import {redirect} from 'next/navigation';
+import {ScrollTop} from '@/components/ScrollTop';
 import {StoreCorrectionForm} from '@/components/StoreCorrectionForm';
 import {getServerI18n} from '@/i18n/server';
 import {canonicalFor,localePath} from '@/lib/site';
@@ -24,7 +25,9 @@ export default async function Page({params,searchParams}:{params:Promise<{locale
   const storeName=(query.name??'').trim().slice(0,160);
   if(!storeId||!storeName)redirect(localePath(locale,'/feedback'));
   const t=copy[locale];
-  return <main className="feedback-page store-correction-page">
+  // Opened from low down a store page, it used to start where that page had been left --
+  // with its own title above the fold and out of sight.
+  return <main className="feedback-page store-correction-page"><ScrollTop/>
     <p className="eyebrow">Boşa Gezme!</p>
     <h1>{t.title}</h1>
     <p className="feedback-intro">{t.intro}</p>

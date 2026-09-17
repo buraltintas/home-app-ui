@@ -316,14 +316,12 @@ svg{stroke-width:2}
    stands on its own with a mark of its own. */
 /* The score leads its own row and the way to the reviews sits beside it. The label that
    used to open the row said what the number already says. */
-/* Score, then what it is made of underneath it, then the way down to the reviews. The count
-   used to sit beside the score; under it, the two read as one statement rather than as two
-   numbers competing on a line. */
-.store-rating-overall{display:grid;grid-template-columns:auto auto;align-items:center;gap:0 20px;justify-content:start}
-.store-rating-overall strong{grid-column:1;grid-row:1}
-.store-rating-overall .store-rating-count{grid-column:1;grid-row:2}
-.store-rating-overall .store-rating-jump{grid-column:2;grid-row:1/3}
-.store-rating-overall small{grid-column:1;grid-row:2}
+/* The count beside the score, which is where it was asked to go back to: the two are one
+   reading -- "4,6 out of four reviews" -- and the way down to those reviews follows them. */
+.store-rating-overall{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px}
+.store-rating-overall strong{line-height:1}
+.store-rating-overall .store-rating-count,.store-rating-overall small{align-self:baseline}
+.store-rating-overall .store-rating-jump{align-self:center}
 .store-rating-overall strong{font-size:38px;line-height:1;color:var(--clay);font-variant-numeric:tabular-nums}
 .store-rating-overall small{font-size:12px;color:var(--ink-muted)}
 /* How many reviews the score is made of, beside the score itself: a 4.7 out of three
@@ -357,7 +355,11 @@ svg{stroke-width:2}
    oval. It is a circle at a fixed size or it is nothing. */
 .post-author>.avatar{flex:none}
 .store-review-rail .post-author>div:nth-child(2){min-width:0}
+/* The badge sits on the name's own left edge. It carries a seven-pixel margin for the case
+   it was designed for -- following a name on one line -- and under the name that margin is
+   an indent, so the level read as stepped in from the person it belongs to. */
 .store-review-rail .post-author>div:nth-child(2)>.contributor-level-group{align-self:flex-start;margin-top:3px}
+.store-review-rail .post-author>div:nth-child(2)>.contributor-level-group>.contributor-level{margin-left:0}
 /* One line: the name and the level it earned are one statement about one person, and
    wrapping split them onto two lines of different heights from card to card. The name gives
    way first, because the level is two short words and the name can be anything. */
@@ -529,8 +531,14 @@ svg{stroke-width:2}
 .category-links button:hover small{color:inherit}
 @media(max-width:1100px) and (min-width:701px){.category-links{grid-template-columns:1fr}}
 @media(max-width:600px){.category-links{grid-template-columns:minmax(0,1fr);gap:0}.category-links button{grid-template-columns:24px minmax(0,1fr);gap:12px;min-height:56px;padding:10px 0}.category-icon{width:24px;height:24px}.category-icon svg{width:20px;height:20px}.category-links button>span:last-child{font-size:16px}}
-.store-correction-link{display:inline-flex;align-items:center;min-height:44px;margin-top:12px;color:var(--ink-muted);font-size:15px;text-decoration:underline;text-underline-offset:4px}
-.store-website-link{display:flex;margin-top:0}
+/* An underlined line of text is what this page uses for "here is something to read". This
+   opens a form, so it is drawn as a control: a bordered pill with the mark of editing on it,
+   and no underline to confuse it with the shop's own website directly above. */
+.store-correction-link{display:inline-flex;align-items:center;gap:8px;min-height:44px;margin-top:14px;padding:0 16px;border:1px solid var(--line-strong);border-radius:var(--r-pill);background:var(--surface);color:var(--ink);font-size:14px;font-weight:700;text-decoration:none}
+.store-correction-link:hover{border-color:var(--clay);color:var(--clay)}
+.store-correction-link svg{width:16px;height:16px}
+.store-website-link{display:flex;margin-top:0;padding:0;border:0;background:transparent;color:var(--ink-muted);font-size:15px;font-weight:400;text-decoration:underline;text-underline-offset:4px}
+.store-website-link:hover{border:0;color:var(--ink)}
 .store-correction-link:hover{color:var(--ink)}
 .store-contribution{max-width:1320px;margin:0 auto;padding:28px 32px 0}
 .review-invitation{min-width:0;margin:0;padding:28px 30px;background:var(--accent-wash);border:1px solid color-mix(in srgb,var(--clay) 22%,var(--line));border-radius:var(--r-lg);display:grid;grid-template-columns:minmax(0,1fr) minmax(230px,320px);align-items:center;gap:28px}
