@@ -710,6 +710,11 @@ svg{stroke-width:2}
 .search-query-suggestions-list button{justify-content:flex-start;text-align:left}
 .search-query-suggestions-list button>.category-icon{flex:none;width:30px;height:30px;margin-right:4px}
 .search-query-suggestions-list button>.category-icon svg{width:18px;height:18px}
+/* A picture fills its circle: it was drawn with its own pale ground, so a tint behind it
+   would be a second ground showing round the edge. */
+.category-icon.is-picture{padding:0;background:transparent!important;overflow:hidden;border-radius:50%}
+.category-icon.is-picture img{width:100%;height:100%;object-fit:cover;display:block}
+.search-query-suggestions-list button>.category-icon.is-picture{width:34px;height:34px}
 /* Four colours, cycled -- the product's own, not four invented ones. Honey is not among
    them: DESIGN.md keeps it for areas rather than lines. */
 .search-query-suggestions-list button[data-tint="0"]>.category-icon{color:var(--clay);background:var(--accent-wash)}

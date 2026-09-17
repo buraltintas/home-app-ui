@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import {
   Archive,
   Armchair,
@@ -37,7 +38,16 @@ const icons:Record<string,LucideIcon>={
   small_appliances:Blender,
 };
 
+// Thirteen of the sixteen categories have a picture of their own -- the set that was drawn
+// for this product, one per category, a thing rather than a symbol. The three without one
+// (decoration, tableware, storage) keep the line icon they had; a picture invented for them
+// would be a different set, and a mixed set is worse than a mixed medium.
+const pictures=new Set(['bedding','furniture','home_textile','kitchenware','curtain','carpet','bathroom','lighting','home_accessories','small_appliances','major_appliances','household','garden']);
+
 export function CategoryIcon({slug}:{slug:string}){
+  if(pictures.has(slug))return <span className="category-icon is-picture" aria-hidden="true">
+    <Image src={`/categories/${slug}.png`} width={96} height={96} alt=""/>
+  </span>;
   const Icon=icons[slug]??House;
   return <span className="category-icon" aria-hidden="true"><Icon strokeWidth={1.8}/></span>;
 }

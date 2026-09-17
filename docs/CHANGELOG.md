@@ -8,6 +8,18 @@ value involved.
 
 ---
 
+## The categories have pictures of their own
+
+Thirteen of the sixteen categories now carry the illustration drawn for them -- a bed, a sofa,
+a stack of towels -- instead of a line icon standing in for the idea. They sit in the same
+circle the icons sat in, filling it, because each was drawn with its own pale ground.
+
+The three without a picture (decoration, tableware, storage) keep their line icon. Inventing
+one for them would mean a different hand in the same set, and a set that is half one thing and
+half another reads worse than a set that is openly two media.
+
+---
+
 ## The search panel is the whole screen, and stays open when the keyboard goes
 
 Three faults with one cause: a phone browser's viewport is not the one `inset: 0` measures
