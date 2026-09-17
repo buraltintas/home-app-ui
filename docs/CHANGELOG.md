@@ -8,6 +8,19 @@ value involved.
 
 ---
 
+## Six of eight shop names were cut off on a phone
+
+Measured on the live page at 375px: in the new recently-reviewed list, the score column --
+five stars and a count -- took 135px of a 339px row, which is as much as the name beside it.
+Six of eight names ended in an ellipsis. The name is the whole point of the row.
+
+The score drops under the name on narrow screens and the name takes the full width, wrapping
+to a second line where it needs one. Six cut before, none after, and the page still does not
+scroll sideways. The neighbours list on a store page already stacked its score, so there it
+was only the wrap that was missing: two of six cut before, none now.
+
+---
+
 ## Eleven thousand pages nothing linked to
 
 Counted on the live site: the home page carried **no** link to any store page, a store page

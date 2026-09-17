@@ -1047,3 +1047,19 @@ svg{stroke-width:2}
 .home-recent-score{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex:none}
 .home-recent-score small{color:var(--ink-muted);font-size:12px;white-space:nowrap}
 @media(max-width:600px){.home-signal-recent li>a{gap:11px}.home-recent-copy small{font-size:12px}}
+
+/* On a phone the score column is as wide as the name it sits beside -- five stars and a
+   count come to 135px of a 339px row -- so six of eight shop names were cut off with an
+   ellipsis. The name is the whole point of the row, so the score drops under it and the
+   name gets the full width, wrapping to a second line where it needs one. Measured at
+   375px: names cut 6 of 8 before, none after, and the page still does not scroll sideways. */
+@media(max-width:600px){
+  .home-signal-recent li>a{grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto;gap:4px 11px;padding:12px 4px}
+  .home-recent-mark{grid-row:1/3;align-self:start}
+  .home-recent-copy{grid-column:2;grid-row:1}
+  .home-recent-copy strong{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .home-recent-score{grid-column:2;grid-row:2;flex-direction:row;align-items:center;justify-content:flex-start;gap:8px}
+  /* The neighbours list already stacks its score, so the name only needed room to wrap;
+     two of six were cut, none are now. */
+  .store-neighbour-copy strong{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+}
