@@ -26,7 +26,7 @@ export default async function Page({params}:{params:Promise<{locale:string}>}){
     <main className="feed-layout"><section className="feed-main">
       <HomeIntro locale={locale}/>
       <HomeDiscoveryBanner locale={locale}/>
-      <HomeDiscoverySignals/>
+      <HomeDiscoverySignals locale={locale}/>
       <HomeQuestions locale={locale}/>
     </section></main>
     <TimedNudge kind="discovery"/>

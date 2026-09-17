@@ -1,4 +1,4 @@
-import 'server-only'; import { cache } from 'react'; import { cookies,headers } from 'next/headers'; import { notFound } from 'next/navigation'; import type { Comment,Locale,Post,PublicProfile,StoreDetail } from './types';
+import 'server-only'; import { cache } from 'react'; import { cookies,headers } from 'next/headers'; import { notFound } from 'next/navigation'; import type { Comment,Locale,MonthlyStoreHighlights,Post,PublicProfile,StoreDetail,StoredPhoto } from './types';
 const API_ORIGIN=process.env.API_ORIGIN??'http://localhost:8080';
 export async function serverApi<T>(path:string,init:RequestInit={}):Promise<T>{
   const cookieStore=await cookies();const requestHeaders=await headers();
@@ -19,6 +19,25 @@ export async function serverApi<T>(path:string,init:RequestInit={}):Promise<T>{
     const body=await response.json().catch(()=>undefined);
     throw new ApiError(response.status,body);
   }
+  return response.status===204?undefined as T:response.json();
+}
+
+// The same backend, asked as nobody in particular.
+//
+// serverApi reads cookies and request headers, which is right for anything that depends on
+// who is asking -- and which also marks the route dynamic, so a page that declares
+// `revalidate` silently never gets it. The sitemap was built from scratch on every single
+// request for that reason: five megabytes of XML, per hit, because it wanted the visitor's
+// language and never used it.
+//
+// This asks for the public version of a thing and lets Next cache the answer. No cookie is
+// read, so nothing here can vary by reader.
+export async function publicApi<T>(path:string,{locale='tr',revalidate=3600}:{locale?:Locale;revalidate?:number}={}):Promise<T>{
+  const response=await fetch(`${API_ORIGIN}${path}`,{
+    next:{revalidate},
+    headers:{'Content-Type':'application/json','X-BFF-Secret':process.env.BFF_SECRET??'','X-Locale':locale,'Accept-Language':locale},
+  });
+  if(!response.ok)throw new ApiError(response.status,await response.json().catch(()=>undefined));
   return response.status===204?undefined as T:response.json();
 }
 
@@ -92,6 +111,60 @@ export async function getUserPosts(id:string):Promise<Post[]>{try{return (await 
 // Every published store, for the sitemap. Enumerating the catalogue is a separate
 // backend concern from searching it, so this is the one endpoint that can answer it.
 export type StoreIndexEntry={id:string;slug:string;name:string;city:string;updated_at:string;review_count:number};
-export async function getStoreIndex(limit=2000):Promise<StoreIndexEntry[]>{try{return (await serverApi<{items:StoreIndexEntry[]}>(`/v1/stores/index?limit=${limit}`)).items??[]}catch{return []}}
+export async function getStoreIndex(limit=2000,offset=0):Promise<StoreIndexEntry[]>{try{return (await publicApi<{items:StoreIndexEntry[]}>(`/v1/stores/index?limit=${limit}&offset=${offset}`)).items??[]}catch{return []}}
+
+// The backend answers at most five thousand rows per call, and the catalogue passed that
+// some time ago. The old single call asked for two thousand and stopped there -- a number
+// chosen when the catalogue held 838 shops, which became a silent ceiling: 9,252 store
+// pages existed and were offered to no crawler at all.
+const INDEX_PAGE=5000;
+// A ceiling that is an alarm, not a policy. Paging stops when a short page comes back; this
+// only catches a backend that has started answering full pages forever, and 60,000 rows is
+// far enough above the catalogue that reaching it means something is wrong rather than big.
+const INDEX_CEILING=60000;
+
+// Every published store, for the sitemap, however many there are. Ordering is stable by id
+// on the backend, so paging cannot skip or repeat a row while stores are being written.
+export const getAllStores=cache(async():Promise<StoreIndexEntry[]>=>{
+  const all:StoreIndexEntry[]=[];
+  for(let offset=0;offset<INDEX_CEILING;offset+=INDEX_PAGE){
+    const page=await getStoreIndex(INDEX_PAGE,offset);
+    all.push(...page);
+    if(page.length<INDEX_PAGE)break;
+  }
+  return all;
+});
+
+// A neighbouring shop as the store page lists it. The backend decides what "nearby" and
+// "similar" mean; this is only the shape it answers in.
+export type NearbyStore={id:string;slug:string;name:string;district?:string;city:string;distance_meters:number;average_rating:number;review_count:number;brand_slug?:string;photo?:StoredPhoto};
+export async function getNearbyStores(ref:string,limit=6):Promise<NearbyStore[]>{
+  if(!UUID.test(ref)&&!STORE_REF.test(ref))return [];
+  // Read as nobody in particular: which shops are near this one does not depend on who is
+  // asking, so the answer is shared and cached rather than rebuilt per reader.
+  //
+  // A store page is worth rendering without its neighbours; it is not worth failing over
+  // them. Anything that goes wrong here leaves the block out and the page stands.
+  try{return (await publicApi<{items:NearbyStore[]}>(`/v1/stores/${ref}/nearby?limit=${limit}`)).items??[]}catch{return []}
+}
 
 export const backendOrigin=API_ORIGIN;
+
+
+// What the home page says about the community, read on the server so it is in the document
+// a crawler is given rather than fetched by a browser afterwards. It was a client effect,
+// which is why the home page linked to no store page at all: the links existed, and nothing
+// without JavaScript ever saw them.
+export type PopularCity={name:string;search_count:number};
+export type PopularCategory={slug:string;name:string;search_count:number};
+export type HomeSignals={highlights:MonthlyStoreHighlights;cities:PopularCity[];categories:PopularCategory[]};
+export async function getHomeSignals(locale:Locale):Promise<HomeSignals>{
+  // Three independent reads, and any one of them may be missing without the other two
+  // becoming untrue. A home page is worth rendering with two of its three lists.
+  const [highlights,cities,categories]=await Promise.all([
+    publicApi<MonthlyStoreHighlights>('/v1/search/highlights',{locale}).catch(()=>({} as MonthlyStoreHighlights)),
+    publicApi<{items:PopularCity[]}>('/v1/search/popular-cities?limit=5',{locale}).then(r=>r.items??[]).catch(()=>[]),
+    publicApi<{items:PopularCategory[]}>('/v1/categories',{locale}).then(r=>r.items??[]).catch(()=>[]),
+  ]);
+  return {highlights,cities,categories:categories.filter(item=>item.search_count>0).slice(0,5)};
+}

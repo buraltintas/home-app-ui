@@ -7,7 +7,10 @@ import {siteUrl} from '@/lib/site';
 export default function robots():MetadataRoute.Robots {
   return {
     rules:{userAgent:'*',allow:'/',disallow:['/api/','/admin','/profile','/favorites','/create']},
-    sitemap:`${siteUrl}/sitemap.xml`,
+    // One address, which happens to be an index over several files. Naming the index rather
+    // than every part means adding stores never needs this file touched. The old
+    // /sitemap.xml redirects here, so nothing that already holds that address breaks.
+    sitemap:`${siteUrl}/sitemap-index.xml`,
     host:siteUrl,
   };
 }

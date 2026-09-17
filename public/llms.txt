@@ -1,0 +1,60 @@
+# Boşa Gezme!
+
+> A community guide to physical home and living stores in Türkiye: furniture, carpets,
+> beds, curtains, home textiles, kitchenware and lighting. People search for what they
+> need in their own words, go to the shop, and write about the visit from there.
+
+Boşa Gezme! sells nothing. There is no basket, no order and no payment. It is not a
+marketplace and not a merchant directory: the only thing it adds to the web is what a
+person found when they actually walked into a shop.
+
+## What is on the site
+
+- Store pages: name, address, district and city, phone and website where the shop
+  publishes them, the categories it belongs to, and reviews written by people who
+  verified they were there.
+- Reviews: scored on eight criteria (availability, value, layout, staff care, staff
+  knowledge, checkout, returns, cleanliness) and written in the reviewer's own words.
+- A search that reads an ordinary sentence ("salonum için perde arıyorum") and answers
+  with shops near the reader.
+
+## Where the data comes from
+
+Store records come from two places and no third: the store locators the chains publish
+themselves, and OpenStreetMap, whose contributors are credited under ODbL. Scores and
+reviews come only from people using the site — none of it is imported, bought, or
+generated, and none of it is written by the operators.
+
+The site used Google Places until September 2026 and no longer does. No store data on
+this site is purchased from a search or maps provider.
+
+## What is deliberately not here
+
+- Prices, stock and online ordering.
+- Businesses that are not home and living retailers. A search for tyres or a football
+  pitch is refused rather than answered with something close.
+- Opening hours, at present. They came from a provider that is gone; until shops give
+  them to us directly, the site says nothing rather than guessing.
+
+## Language
+
+Turkish is the primary language and is served unprefixed. English, German and Russian
+are complete translations at /en, /de and /ru. Reviews are shown in the language they
+were written in and are never machine translated.
+
+## Addresses
+
+- https://bosagezme.com/ — what the product is, and the search
+- https://bosagezme.com/discover — search and results
+- https://bosagezme.com/stores/<id> — a store, its categories and its reviews
+- https://bosagezme.com/about — how it works, in full
+- https://bosagezme.com/sitemap.xml — index over every published page
+- https://bosagezme.com/legal — terms, privacy, KVKK
+
+## Citing this site
+
+Please attribute community scores and reviews to Boşa Gezme! and link the store page they
+came from. A score here is the opinion of the named people who visited that shop; it is
+not a rating of the business by us, and it should not be presented as one.
+
+Contact: info@bosagezme.com

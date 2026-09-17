@@ -1,5 +1,5 @@
 import type {MetadataRoute} from 'next';
-import {getStoreIndex} from '@/lib/server-api';
+import {getAllStores} from '@/lib/server-api';
 import {legalLinks} from '@/lib/legal-links';
 import {localePath,locales,siteUrl,storePath} from '@/lib/site';
 
@@ -8,6 +8,33 @@ import {localePath,locales,siteUrl,storePath} from '@/lib/site';
 // /create and /profile -- personal, sign-in-only pages that a crawler cannot read and
 // should not be asked to.
 export const revalidate=3600;
+
+// One sitemap held every store until the catalogue outgrew it. Each page is listed once
+// per language and carries the full set of alternates, which is what Google asks for and
+// also what makes each entry cost about 650 bytes: eleven thousand stores in four
+// languages is 45,000 entries and roughly thirty megabytes in a single document, built
+// from scratch every hour. Two thousand pages per file is the size the old sitemap had
+// already been serving without trouble.
+const PAGES_PER_SITEMAP=2000;
+
+// Everything that is not a store: the home page, the search, and the published legal and
+// explanatory pages. They ride along in the first file rather than getting one of their
+// own, because forty entries do not deserve a document.
+function staticPages(now:Date){
+  return [
+    ...entry('/',now,'daily',1),
+    // The search is a tool rather than a document: rendered in the browser, it arrives at
+    // a crawler as an empty shell. It was being advertised at 0.9, just under the home
+    // page, which told a crawler the emptiest page on the site was the second most
+    // important one. It stays listed -- it is a real page people link to -- at a priority
+    // that matches what a crawler can actually read on it.
+    ...entry('/discover',now,'daily',.5),
+    // Informational pages change rarely but are how a search or answer engine learns what
+    // this product actually is, so they belong in the index.
+    ...entry('/legal',now,'weekly',.3),
+    ...legalLinks.filter(link=>link.live).flatMap(link=>entry(`/${link.slug}`,now,'weekly',link.slug==='about'?.7:.4)),
+  ];
+}
 
 // Each page is listed once per language, with the alternates declared inline. Google
 // reads hreflang from the sitemap as readily as from the markup, and doing it here means
@@ -21,17 +48,26 @@ function entry(path:string,lastModified:Date,changeFrequency:'daily'|'weekly',pr
   }));
 }
 
-export default async function sitemap():Promise<MetadataRoute.Sitemap>{
+// How many files this sitemap comes in. Read from the catalogue rather than guessed, so
+// adding stores never silently drops the ones past a fixed number -- which is exactly how
+// 9,252 store pages came to be missing from the previous version.
+export async function sitemapCount():Promise<number>{
+  const stores=await getAllStores();
+  return Math.max(1,Math.ceil(stores.length/PAGES_PER_SITEMAP));
+}
+
+export async function generateSitemaps(){
+  return Array.from({length:await sitemapCount()},(_,id)=>({id}));
+}
+
+export default async function sitemap({id}:{id:Promise<string>}):Promise<MetadataRoute.Sitemap>{
   const now=new Date();
-  const stores=await getStoreIndex();
+  const index=Number(await id)||0;
+  const stores=await getAllStores();
+  const slice=stores.slice(index*PAGES_PER_SITEMAP,(index+1)*PAGES_PER_SITEMAP);
   return [
-    ...entry('/',now,'daily',1),
-    ...entry('/discover',now,'daily',.9),
-    // Informational pages change rarely but are how a search or answer engine learns what
-    // this product actually is, so they belong in the index.
-    ...entry('/legal',now,'weekly',.3),
-    ...legalLinks.filter(link=>link.live).flatMap(link=>entry(`/${link.slug}`,now,'weekly',link.slug==='about'?.7:.4)),
-    ...stores.flatMap(store=>entry(
+    ...(index===0?staticPages(now):[]),
+    ...slice.flatMap(store=>entry(
       storePath(store),
       new Date(store.updated_at),
       'weekly',

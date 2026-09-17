@@ -8,6 +8,70 @@ value involved.
 
 ---
 
+## Eleven thousand pages nothing linked to
+
+Counted on the live site: the home page carried **no** link to any store page, a store page
+carried **no** link to another store page, and /discover -- rendered in the browser -- carried
+none either. The only route to any of the 11,252 store pages was the sitemap, which gets a page
+crawled without passing it any standing. Every store page was an island.
+
+Three separate causes, fixed separately.
+
+**The sitemap stopped at 2,000 stores.** `getStoreIndex` asked for 2,000 and stopped, a number
+chosen when the catalogue held 838 shops. It became a ceiling nobody could see: 9,252 store
+pages existed and were offered to no crawler at all. It now pages through the whole catalogue.
+
+That made one document of about thirty megabytes, so the sitemap is split: 2,000 pages per
+file -- the size the old one had already been serving -- with an index at `/sitemap-index.xml`
+naming the parts. Next reserves the name `/sitemap.xml` and generates nothing there when a
+sitemap is split, so that address redirects to the index rather than becoming a 404; it is
+what Search Console holds and what robots.txt has advertised since launch.
+
+**The sitemap was also rebuilt on every single request.** It declared `revalidate` and never
+got it, because it read the visitor's cookies to decide a language it then never used, and
+reading cookies marks a route dynamic. Five megabytes of XML, per hit. Public reads now go
+through `publicApi`, which asks the backend as nobody in particular and lets the answer be
+cached. The store index, the store's neighbours and the home page's signals all use it.
+
+**The home page's links existed but were never in the document.** The block that shows
+standout stores was a client component fetching in an effect: the links were written and
+nothing without JavaScript ever saw them. It renders on the server now, which is also why the
+skeleton flicker under the heading is gone.
+
+**And store pages now link to their neighbours.** A new block under the reviews lists the six
+nearest shops sharing a category. It is for a reader as much as a crawler -- deciding a shop
+is not the one used to leave you with the back button and nothing else.
+
+Two smaller things in the same pass. `/discover` was advertised at priority 0.9, just under the
+home page, while being the emptiest document on the site to anything that does not run
+JavaScript; it stays listed at 0.5, which is what a crawler can actually read on it. And
+`llms.txt` now exists: what the product is, where store data comes from, and what is
+deliberately not here. It also fixes a small lie -- `/llms.txt` was answering 200 with the home
+page, because the proxy skips paths containing a dot and `[locale]` then matched the filename.
+
+**Worth knowing:** this makes 11,252 pages reachable and connected. It does not make them
+rank. A store page carries about 1,700 characters and nearly all of it is template; the only
+thing on this site that exists nowhere else is a review, and reviews exist on eleven shops.
+
+---
+
+## The home page stopped calling one person a crowd
+
+The home page's standout block said "most reviewed this month" over a shop with fourteen
+reviews, all of them by the same person. The backend now requires three different reviewers
+before anything is called a standout, which empties that block entirely today -- every
+reviewed store in the catalogue has exactly one reviewer.
+
+So the block gained a list that makes no such claim: **recently reviewed stores**, up to
+eight, newest first, with no threshold. It says who wrote rather than how many reviews there
+are -- "1 kişi", not "14 değerlendirme" -- because those stopped being the same number the
+moment somebody visited twice.
+
+This is a visible change to the home page, and it is the honest version of one: the page used
+to point at a single shop and imply a crowd; it now points at eight and implies nothing.
+
+---
+
 ## The categories have pictures of their own
 
 Thirteen of the sixteen categories now carry the illustration drawn for them -- a bed, a sofa,

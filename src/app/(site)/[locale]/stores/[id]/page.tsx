@@ -4,12 +4,13 @@ import Link from 'next/link';
 import {permanentRedirect} from 'next/navigation';
 import {PostCard} from '@/components/PostCard';
 import {ReviewsJump} from '@/components/ReviewsJump';
+import {StoreNeighbours} from '@/components/StoreNeighbours';
 import {Rating,RatingStars} from '@/components/Rating';
 import {StoreActions} from '@/components/StoreActions';
 import {JsonLd} from '@/components/JsonLd';
 import {PencilLine} from 'lucide-react';
 import {ScrollTop} from '@/components/ScrollTop';
-import {getPublicStore} from '@/lib/server-api';
+import {getNearbyStores,getPublicStore} from '@/lib/server-api';
 import {getDictionary} from '@/i18n/dictionaries';
 import {asLocale} from '@/lib/site';
 import {canonicalFor,localePath,storePath} from '@/lib/site';
@@ -89,6 +90,10 @@ export default async function Page({params}:Props){
   const locale=asLocale(raw);
   const t=getDictionary(locale);
   const {store,recent_posts}=await getPublicStore(id,locale,revalidate);
+  // Fetched after the store rather than beside it: the id in the URL can be a slug, and
+  // asking for neighbours of a slug that turns out not to exist is a wasted round trip on
+  // a page that is about to be a 404 anyway.
+  const neighbours=await getNearbyStores(store.id);
   // One store, one address. Links created before slugs existed still resolve, they just
   // do not stay on a second URL competing with the canonical one.
   if(store.slug&&id!==store.slug)permanentRedirect(storePath(store));
@@ -184,6 +189,7 @@ export default async function Page({params}:Props){
         {recent_posts.length?<ViewerLikes postIds={recent_posts.map(post=>post.id)}><div className="store-review-rail">{recent_posts.map(post=><PostCard post={post} surface="store" key={post.id}/>)}</div></ViewerLikes>:<div className="empty-state"><h3>{t.noCommunity}</h3><p>{t.noReviewsBody}</p></div>}
       </div>
     </section>
+    <StoreNeighbours stores={neighbours} locale={locale} reviewWord={t.reviewWord}/>
     <TimedNudge kind="review" requireReviewFlag/>
   </main>;
 }
