@@ -60,7 +60,8 @@
       "Bash(rm -rf ~/Library/Developer/Xcode/DerivedData)",
       "Bash(rm -rf ~/Library/Caches/Homebrew)",
       "Bash(rm -rf ~/Library/Caches/com.todesktop.230313mzl4w4u92.ShipIt)",
-      "Bash(rm -rf ~/Library/Caches/com.anthropic.claudefordesktop.ShipIt)"
+      "Bash(rm -rf ~/Library/Caches/com.anthropic.claudefordesktop.ShipIt)",
+      "mcp__claude-in-chrome__navigate"
     ]
   }
 }

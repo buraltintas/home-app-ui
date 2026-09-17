@@ -38,7 +38,10 @@ export function ProfileInvite({locale}:{locale:Locale}){
         phone can do with a link, so a second button for mail alone was the same action
         wearing a narrower hat. */}
     <div className="profile-invite-actions"><button className="button primary" onClick={()=>void share()}><Share2 aria-hidden="true"/>{text.share}</button></div>
-    <div className="profile-invite-phone" aria-hidden="true"><div className="profile-invite-phone-screen"><span className="profile-invite-phone-notch"/><Image src="/brand/brand-mark.png" width={44} height={44} alt=""/><span className="profile-invite-phone-message">bosagezme.com</span></div></div>
+    {/* The picture that was asked for, used as it was given: a phone in somebody's hand with
+        the site passed on in a message, which is exactly what the button under it does. It
+        replaces a phone drawn in CSS -- a drawing of the idea rather than the thing. */}
+    <Image className="profile-invite-phone" src="/illustrations/share-phone.png" width={256} height={320} alt="" aria-hidden="true"/>
     {status&&<p className="profile-invite-status" role="status">{status}</p>}
   </section>;
 }

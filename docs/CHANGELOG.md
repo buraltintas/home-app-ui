@@ -8,6 +8,37 @@ value involved.
 
 ---
 
+## A sheet that left at the right speed and still looked snatched away
+
+The levels sheet already spent the same half-second leaving as arriving, and it still read as
+vanishing. The duration was equal; the *shape* was not. Both the sheet and its backdrop were
+leaving on the arrival's curve -- fast first, slow last -- which on the way out throws the
+sheet off the screen inside a sixth of a second and then spends the rest of the half-second
+finishing a movement nobody can see. It leaves on that curve mirrored now: gently at first,
+quickest at the end, and the ground under it holds its colour until the sheet is most of the
+way gone rather than clearing first and leaving the sheet sliding over the live page.
+
+## The back control was sitting on four headings
+
+It is fixed to the top-left corner of the window, which is right on a store page -- the photo
+is behind it -- and wrong on the four profile subpages, because each of them begins with its
+title exactly there. Edit, reviews, messages, account: the arrow landed on the heading of all
+four. It joins the flow on those pages, above the title, the way the legal and feedback pages
+already did it.
+
+The eight scores inside a review card are anchored to the right edge of their own column
+rather than the left. The column is a fixed width, so a row whose stars and number came out
+wider than it -- a larger system text size will do that -- used to spill past the card's
+padding and sit against the frame. Anchored this way it can only spill inwards.
+
+## The picture that was asked for
+
+"Katkı seviyeni yükselt" carried a phone drawn in CSS -- a drawing of the idea. It carries the
+photograph that was attached to the card: a phone in somebody's hand with the site being
+passed on in a message, which is what the button under it does.
+
+---
+
 ## The review is four stops now, and you can see where you are in it
 
 The steps were a column the page scrolled past, which stops answering "where am I" exactly
