@@ -174,6 +174,15 @@ export function SearchExperience() {
     const measure=()=>{
       const height=viewport?viewport.height:window.innerHeight;
       root.style.setProperty('--panel-height',`${Math.round(height)}px`);
+      // The piece that was missing, and the reason the bar kept ending up off the top of
+      // the screen however carefully the height was measured.
+      //
+      // A fixed element is placed against the LAYOUT viewport. When the keyboard opens,
+      // iOS does not shrink that viewport -- it scrolls the VISUAL viewport down inside it.
+      // So `top:0` keeps pointing at a line that is now above everything anybody can see,
+      // and the field at the top of the panel goes with it. offsetTop is exactly how far
+      // the two have come apart, and nothing else on the page reports it.
+      root.style.setProperty('--panel-top',`${Math.round(viewport?viewport.offsetTop:0)}px`);
     };
     measure();
     viewport?.addEventListener('resize',measure);
@@ -184,6 +193,7 @@ export function SearchExperience() {
       viewport?.removeEventListener('scroll',measure);
       window.removeEventListener('orientationchange',measure);
       root.style.removeProperty('--panel-height');
+      root.style.removeProperty('--panel-top');
       root.removeAttribute('data-search-panel');
     };
   },[suggestionsOpen]);
@@ -387,7 +397,16 @@ export function SearchExperience() {
     const previous=body.style.overflow;
     window.scrollTo(0,0);
     body.style.overflow='hidden';
-    return ()=>{body.style.overflow=previous;};
+    // Holding the page still is not enough on iOS: focusing a field scrolls the page anyway,
+    // to bring the field above the keyboard, and it does it after this runs. The keyboard
+    // arriving and leaving are the two moments it happens, and both resize the visual
+    // viewport, so that is when the page is put back.
+    const settle=()=>window.scrollTo(0,0);
+    window.visualViewport?.addEventListener('resize',settle);
+    return ()=>{
+      window.visualViewport?.removeEventListener('resize',settle);
+      body.style.overflow=previous;
+    };
   },[suggestionsOpen]);
 
   // The panel is open either because it was asked for or because there is no location
@@ -741,7 +760,7 @@ export function SearchExperience() {
       </button><label><span>{t('chooseLocation')}</span><span className="location-field"><input value={manual} onChange={event=>setManual(event.target.value)} placeholder={t('locationHint')} disabled={loading}/>{manual&&<button type="button" className="location-clear-text" onClick={()=>{setManual('');}} aria-label={t('clearSearch')}><X aria-hidden="true"/></button>}</span></label>{/* Directly under the box it is about. At the top of the panel it read as a warning
       about the whole screen; here it is plainly an answer to what was just typed or
       pressed. */}
-      {error&&<LocationAlert message={error} reason={errorReason} onDismiss={()=>{setError('');setErrorReason('');}}/>}{location&&<button className="button quiet" onClick={()=>setLocationOpen(false)}>{location.source==='device'?t('close'):t('later')}</button>}</div>{/* The list is not thrown away to say "searching". Every keystroke starts another
+      {error&&<LocationAlert message={error} reason={errorReason} onRetry={()=>void locateMe()} onDismiss={()=>{setError('');setErrorReason('');}}/>}{location&&<button className="button quiet" onClick={()=>setLocationOpen(false)}>{location.source==='device'?t('close'):t('later')}</button>}</div>{/* The list is not thrown away to say "searching". Every keystroke starts another
             lookup, and replacing the results with a status line each time is the flicker
             that was reported: list, searching, list, searching. The previous answers stay
             on screen while the next ones are fetched, and the status line appears only when
@@ -772,14 +791,20 @@ export function SearchExperience() {
       <ul className="search-query-recent-list">{history.slice(0,3).map(entry=><li key={entry.id}>
         <button type="button" onMouseDown={event=>event.preventDefault()} onClick={()=>{setSuggestionsOpen(false);fill(entry.raw_query);}}><History aria-hidden="true"/>{entry.raw_query}</button>
         <button type="button" className="search-query-recent-delete" onMouseDown={event=>event.preventDefault()} onClick={()=>void removeHistory(entry.id)} disabled={historyBusy} aria-label={t('deleteSearch')}><X aria-hidden="true"/></button>
-      </li>)}</ul></div>}<h2 className="search-query-suggestions-title">{t('suggestedSearches')}</h2><div className="search-query-suggestions-list">{prompts.map((phrase,index)=><button type="button" key={phrase} data-tint={index%4} onClick={()=>{setSuggestionsOpen(false);fill(phrase);}}><CategoryIcon slug={suggestionCategory(phrase)}/>{phrase}</button>)}</div></div>}</form>}{/* The panel opens above these, it does not replace them. Hiding them while somebody
+      </li>)}</ul></div>}<h2 className="search-query-suggestions-title">{t('suggestedSearches')}</h2><div className="search-query-suggestions-list">{prompts.map((phrase,index)=><button type="button" key={phrase} data-tint={index%4} onClick={()=>{setSuggestionsOpen(false);fill(phrase);}}><CategoryIcon slug={suggestionCategory(phrase)}/>{phrase}</button>)}</div></div>}</form>}
+    {/* A way back out of an answer. Once a search has run, the page is a list of shops and
+        the only route back to the categories was the browser's own back button -- which on a
+        phone leaves the site entirely as often as not. It sits directly under the field it
+        undoes, and it clears the answer rather than navigating: the question stays in the
+        bar, so changing one word is still one tap away. */}
+    {data&&!loading&&<button type="button" className="clear-results" onClick={()=>{setData(undefined);setSuggestionsOpen(false);}}>{t('clearResults')}</button>}{/* The panel opens above these, it does not replace them. Hiding them while somebody
         changes their location threw away the recent searches and the categories they were
         about to pick from, and put them back only once the location was settled. */}
     {/* Recent searches used to sit here, on the page. They belong with the field instead:
         they are the answer to "what shall I type", which is a question somebody only has
         once they have opened the panel to type in. The categories stay -- they are a way
         to browse rather than a way to repeat yourself. */}
-    {!data&&!loading&&<div className="search-suggestions"><div><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>fill(category.name)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}{category.search_count>0&&<small title={t('searchCount')}>{category.search_count.toLocaleString(locale)} {t('searchCountShort')}</small>}</span></button>)}</div></div></div>}</header>
+    {!data&&!loading&&<div className="search-suggestions"><div><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>fill(category.name)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}</span></button>)}</div></div></div>}</header>
     {loading&&<SearchOverlay/>}
     {!loading&&data?.guidance&&<section className="guidance-card" role="alert"><p>{data.guidance.message}</p><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>fill(category.name)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}</span></button>)}</div></section>}
     {!loading&&data&&!data.guidance&&<section className="results-layout"><div className="result-list">{/* What the list is and how it is ordered, said as two

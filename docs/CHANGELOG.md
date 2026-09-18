@@ -8,6 +8,62 @@ value involved.
 
 ---
 
+## The search panel was fixed to a viewport nobody was looking at
+
+Reported five times and fixed four: on iPhone the search bar at the top of the full-screen
+panel sits above the visible area once the keyboard opens, and has to be dragged down.
+
+Every previous attempt measured the *height* of the visual viewport, which was right and was
+not the problem. A fixed element is placed against the **layout** viewport, and iOS does not
+shrink that when the keyboard opens -- it scrolls the visual viewport down inside it. So
+`top:0` kept pointing at a line that was now above everything anybody could see, and the
+field went with it. `visualViewport.offsetTop` is exactly how far the two have come apart,
+nothing else on the page reports it, and the code never read it. The panel is positioned from
+it now. iOS also scrolls the page itself to lift a focused field above the keyboard, after the
+page has been held still, so the page is put back each time the keyboard arrives or leaves.
+
+Said plainly: this cannot be reproduced here. The browser used for checking has no iOS
+keyboard, so `offsetTop` is always zero. What can be said is that the mechanism the symptom
+describes was missing from the code and now is not.
+
+---
+
+## A location failure is a dialog, and a refusal offers the reload it actually needs
+
+The warning under the location field said the right thing where nobody read it -- below the
+fold of a panel somebody was already typing in, looking like a caption rather than the answer
+to what they had just pressed. It is a dialog now, and it carries its own actions, because it
+covers the control that failed.
+
+Which action leads depends on what failed, and this is the part that matters. A refusal will
+be refused again: the request never reaches the device. And on iOS a permission changed in
+Settings does not reach a page that is already open -- WebKit binds the decision at load.
+That is the "the button does nothing, I have to refresh the page myself" that had been
+reported four times against a button that was working correctly. A refusal now leads with the
+reload, so the app says the thing the person was having to work out for themselves.
+
+Measured while looking into it: with a device that answers, the button does what it was asked
+to do -- same control, same place, text to "Mevcut konum kullanılıyor", background to the
+success green, white text. The earlier reports were of the case where the answer never comes.
+
+The blocked message lost its paragraph about iPhone menus; it now says that location is
+blocked and to allow it and try again. The drawing of the address bar stays for that case.
+
+---
+
+## Smaller things on the search page
+
+Category rows no longer carry their search counts -- a number nobody could act on, beside the
+one thing they could. The category pictures are shown at 44px instead of 26px, the size of the
+line icons they replaced, and the three categories still on line icons keep the same column.
+
+A search result list gained a way out of itself: **Listelemeyi temizle**, directly under the
+field it undoes. Until now the only route back to the categories was the browser's own back
+button, which on a phone leaves the site as often as not. It clears the answer rather than
+navigating, so the question stays in the bar and changing one word is still one tap.
+
+---
+
 ## Six of eight shop names were cut off on a phone
 
 Measured on the live page at 375px: in the new recently-reviewed list, the score column --

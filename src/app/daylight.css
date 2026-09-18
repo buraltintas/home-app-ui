@@ -491,9 +491,8 @@ svg{stroke-width:2}
 @media(max-width:600px){.search-hero .location-control{margin-top:16px}}
 /* The reason a location attempt failed sits with the control that failed, not at the foot
    of the page where the person who pressed it will never scroll. */
-.location-alert{position:static;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:start;width:100%;padding:16px;background:color-mix(in srgb,var(--error) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--error) 34%,var(--line));border-radius:var(--r-md);box-shadow:none}
-.location-alert>svg{color:var(--error);margin-top:2px}
-.location-alert p{margin:0;font-size:16px;line-height:1.5;color:var(--ink)}
+.location-alert-mark{display:grid;place-items:center;width:40px;height:40px;flex:none;border-radius:50%;background:color-mix(in srgb,var(--error) 12%,var(--surface));color:var(--error)}.location-alert-mark svg{width:22px;height:22px}
+.location-alert-dialog p{margin:0;font-size:16px;line-height:1.5;color:var(--ink)}
 .location-alert-close{display:grid;place-items:center;width:32px;height:32px;margin:-7px -7px 0 0;padding:0;border:0;border-radius:50%;background:transparent;color:var(--ink);cursor:pointer}.location-alert-close:hover{background:var(--muted)}.location-alert-close:focus-visible{outline:3px solid var(--accent);outline-offset:2px}.location-alert-close svg{width:18px;height:18px}
 .location-hint-art{display:block;width:100%;max-width:240px;height:auto;margin:0 0 14px}
 @media(max-width:600px){.location-alert{padding:14px;gap:10px}}
@@ -771,7 +770,7 @@ svg{stroke-width:2}
      in --panel-height. The panel itself does not scroll: only the list inside it does. */
   /* Nothing behind the panel moves or shows. */
   html[data-search-panel=open],html[data-search-panel=open] body{overflow:hidden;overscroll-behavior:none}
-  .search-form.is-query-open{position:fixed;z-index:80;top:0;left:0;right:0;bottom:auto;height:var(--panel-height,100dvh);max-height:var(--panel-height,100dvh);overflow:hidden;margin:0;padding:calc(18px + env(safe-area-inset-top)) 18px 0;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr);align-content:start;align-items:start;gap:10px;background:var(--canvas);border:0}
+  .search-form.is-query-open{position:fixed;z-index:80;top:var(--panel-top,0px);left:0;right:0;bottom:auto;height:var(--panel-height,100dvh);max-height:var(--panel-height,100dvh);overflow:hidden;margin:0;padding:calc(18px + env(safe-area-inset-top)) 18px 0;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr);align-content:start;align-items:start;gap:10px;background:var(--canvas);border:0}
   /* In the panel the magnifier is not decoration, it is the way back. */
   .search-form.is-query-open>svg{display:none}
   .search-form.is-query-open .search-query-back{flex:none;display:grid;place-items:center;width:36px;height:44px;margin-left:-6px;padding:0;border:0;background:transparent;color:var(--ink)}
@@ -1063,3 +1062,30 @@ svg{stroke-width:2}
      two of six were cut, none are now. */
   .store-neighbour-copy strong{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 }
+
+/* A location failure is a dialog now, not a strip of text under the field. The strip said
+   the right thing and arrived below the fold of a panel somebody was already typing in, so
+   it read as a caption rather than as the answer to what they had just pressed. Because the
+   dialog covers the control that failed, it carries its own way of trying again. */
+.location-alert-backdrop{z-index:90}
+.location-alert-dialog{width:min(460px,100%);display:grid;gap:14px;padding:26px;background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--lift)}
+.location-alert-dialog header{display:flex;align-items:center;gap:14px}
+.location-alert-dialog h2{flex:1;min-width:0;margin:0;font-size:21px;line-height:1.2;letter-spacing:-.02em}
+.location-alert-dialog header .icon-button{margin-right:-10px}
+.location-alert-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:2px}
+.location-alert-actions .button{flex:1 1 140px;min-height:48px}
+.location-alert-actions .button.primary{background:var(--clay);color:var(--surface)}
+.location-alert-actions .button.primary:hover{background:color-mix(in srgb,var(--clay) 88%,var(--ink))}
+.location-alert-dialog .location-hint-art{width:100%;height:auto}
+@media(max-width:600px){.location-alert-dialog{padding:22px;border-radius:var(--r-lg) var(--r-lg) 0 0;align-self:end}.location-alert-backdrop{align-items:end;padding:0}}
+
+/* The category pictures were drawn to be looked at and were being shown at 26px, the size
+   of the line icons they replaced. The slot goes to 44 for every row so the pictures have
+   room and the three categories still on line icons stay on the same column. */
+.category-links button>.category-icon{width:44px;height:44px}
+.category-links button>.category-icon.is-picture{width:44px;height:44px}
+.category-links button>.category-icon svg{width:24px;height:24px}
+/* Under the field it undoes, and quiet: it is a way back, not the thing to press. */
+.clear-results{display:inline-flex;align-items:center;justify-content:center;min-height:44px;margin-top:14px;padding:0 16px;border:1px solid var(--line-strong);border-radius:var(--r-pill);background:var(--surface);color:var(--ink-muted);font-size:15px;transition:background-color .16s ease,color .16s ease}
+.clear-results:hover{background:var(--muted);color:var(--ink)}
+@media(max-width:600px){.clear-results{width:100%;margin-top:12px}}

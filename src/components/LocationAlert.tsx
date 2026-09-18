@@ -1,6 +1,7 @@
 'use client';
 
 import {TriangleAlert,X} from 'lucide-react';
+import {useCallback,useEffect,useRef} from 'react';
 import {useI18n} from '@/i18n/I18nProvider';
 import type {LocationFailure} from '@/lib/location';
 
@@ -18,20 +19,58 @@ function AddressBarHint({label}:{label:string}){
   </svg>;
 }
 
-// The alert sits directly under the box it is about, and says only what went wrong. It
-// carried its own retry button for a while; the control that failed is one line above it,
-// so the second one was a second way to press the same thing.
-export function LocationAlert({message,reason,onDismiss}:{message:string;reason:LocationFailure|'';onDismiss:()=>void}){
+// A failed location used to be a strip of text under the field. It said the right thing and
+// nobody read it: on a phone it arrived below the fold of a panel somebody was already
+// typing in, looking like a caption rather than like an answer to what they just pressed.
+//
+// It is a dialog now. Not for drama -- for sequence: the reader pressed something, it did
+// not work, and the next thing they do should be either trying again or typing where they
+// are. Both are in here, so the dialog is the whole answer rather than a note about it.
+//
+// It carries its own retry precisely because it covers the control that failed. The earlier
+// version dropped the retry on the grounds that the button was one line above; once the
+// message is in front of that button, that reasoning stops holding.
+export function LocationAlert({message,reason,onRetry,onDismiss}:{message:string;reason:LocationFailure|'';onRetry?:()=>void;onDismiss:()=>void}){
   const {t}=useI18n();
+  const close=useRef<HTMLButtonElement>(null);
+  const dismiss=useCallback(()=>onDismiss(),[onDismiss]);
+
+  useEffect(()=>{
+    close.current?.focus();
+    const escape=(event:KeyboardEvent)=>{if(event.key==='Escape')dismiss();};
+    window.addEventListener('keydown',escape);
+    return()=>window.removeEventListener('keydown',escape);
+  },[dismiss]);
+
   // The drawing only helps in the one case it describes. Offered when the browser has
   // simply not asked yet, it sends somebody hunting for a lock that will do nothing.
   const showHint=reason==='blocked';
-  return <div className="location-alert" role="alert">
-    <TriangleAlert aria-hidden="true"/>
-    <div>
-      <p>{message}</p>
+  // Both states mean the same thing to the person in front of it: the browser is not going
+  // to ask, so pressing the button again cannot help.
+  const blocked=reason==='blocked'||reason==='denied';
+  return <div className="dialog-backdrop location-alert-backdrop" role="presentation" onMouseDown={event=>{if(event.target===event.currentTarget)dismiss();}}>
+    <div className="location-alert-dialog" role="alertdialog" aria-modal="true" aria-labelledby="location-alert-title" aria-describedby="location-alert-body">
+      <header>
+        <span className="location-alert-mark" aria-hidden="true"><TriangleAlert/></span>
+        <h2 id="location-alert-title">{t('locationAlertTitle')}</h2>
+        <button ref={close} type="button" className="icon-button" onClick={dismiss} aria-label={t('close')}><X aria-hidden="true"/></button>
+      </header>
+      <p id="location-alert-body">{message}</p>
       {showHint&&<AddressBarHint label={t('locationLockHint')}/>}
+      <div className="location-alert-actions">
+        {/* Which action leads the dialog depends on what actually failed, because the two
+            cases have different answers and offering the wrong one wastes somebody's time.
+            A refusal will be refused again -- the request never reaches the device -- and on
+            iOS a permission changed in Settings does not reach a page that is already open:
+            WebKit binds the decision at load, which is exactly the "I have to refresh it
+            myself" that kept being reported. So a refusal leads with the reload it needs.
+            A timeout or a device that could not answer is worth simply asking again. */}
+        {blocked
+          ?<><button type="button" className="button primary" onClick={()=>window.location.reload()}>{t('locationReload')}</button>
+            {onRetry&&<button type="button" className="button secondary" onClick={()=>{onDismiss();onRetry();}}>{t('locationRetry')}</button>}</>
+          :<>{onRetry&&<button type="button" className="button primary" onClick={()=>{onDismiss();onRetry();}}>{t('locationRetry')}</button>}</>}
+        <button type="button" className="button quiet" onClick={dismiss}>{t('close')}</button>
+      </div>
     </div>
-    <button type="button" className="location-alert-close" onClick={onDismiss} aria-label={t('close')}><X aria-hidden="true"/></button>
   </div>;
 }
