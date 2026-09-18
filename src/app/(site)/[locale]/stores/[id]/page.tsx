@@ -108,8 +108,14 @@ export default async function Page({params}:Props){
   // place -- it told a reader nothing and gave a crawler nowhere to go. The link is only
   // offered where the catalogue can fill the page behind it.
   const pairs=await getCityCategories(locale);
+  // Where several pages could claim a shop, the smallest one wins. A bed shop in Antalya
+  // belongs under "yatak" rather than under "ev aksesuarları", which happens to hold four
+  // hundred shops and says almost nothing about this one; the narrower page is both the
+  // truer description and the one a reader is more likely to have been looking for. It
+  // also spreads these links across many pages instead of piling them on the few largest.
   const belongsTo=store.city
-    ?pairs.find(pair=>pair.city===store.city&&store.categories.includes(pair.category_slug))
+    ?pairs.filter(pair=>pair.city===store.city&&store.categories.includes(pair.category_slug))
+      .sort((a,b)=>a.store_count-b.store_count)[0]
     :undefined;
   const belongsToPath=belongsTo?`/${belongsTo.city_slug}/${belongsTo.category_url_slug}-magazalari`:undefined;
   const belongsToName=belongsTo?cityCategoryName[locale](belongsTo.city,belongsTo.category_name):undefined;

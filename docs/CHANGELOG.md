@@ -8,6 +8,18 @@ value involved.
 
 ---
 
+## A bed shop belongs under beds, not under home accessories
+
+The link from a store page up to its city-and-category page took whichever matching page
+came first, which meant İşbir Yatak in Antalya pointed at "Antalya ev aksesuarları
+mağazaları" -- a page of 436 shops that says almost nothing about this one.
+
+Where several pages can claim a shop, the smallest one wins now. The narrower page is both
+the truer description and the one a reader was more likely looking for, and it spreads these
+links across many pages rather than piling them on the few largest.
+
+---
+
 ## "İzmir'da" was wrong on every page that was not Antalya
 
 The city pages shipped with "'da" written after every city name. That is right for Antalya
