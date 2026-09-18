@@ -111,7 +111,16 @@ export async function getUserPosts(id:string):Promise<Post[]>{try{return (await 
 // Every published store, for the sitemap. Enumerating the catalogue is a separate
 // backend concern from searching it, so this is the one endpoint that can answer it.
 export type StoreIndexEntry={id:string;slug:string;name:string;city:string;updated_at:string;review_count:number};
-export async function getStoreIndex(limit=2000,offset=0):Promise<StoreIndexEntry[]>{try{return (await publicApi<{items:StoreIndexEntry[]}>(`/v1/stores/index?limit=${limit}&offset=${offset}`)).items??[]}catch{return []}}
+// Throws rather than returning an empty page, and the sitemap is the reason.
+//
+// Paging stops when a short page comes back, so a swallowed failure ends the walk early and
+// the sitemap ships truncated -- silently. It happened: a chunk that should have carried
+// 2,000 stores carried none, and the published sitemap fell from 12,589 pages to 9,921 with
+// nothing reporting a fault. A sitemap listing fewer pages than exist tells a search engine
+// those pages are gone, which is worse than not answering at all.
+export async function getStoreIndex(limit=2000,offset=0):Promise<StoreIndexEntry[]>{
+  return (await publicApi<{items:StoreIndexEntry[]}>(`/v1/stores/index?limit=${limit}&offset=${offset}`)).items??[];
+}
 
 // The backend answers at most five thousand rows per call, and the catalogue passed that
 // some time ago. The old single call asked for two thousand and stopped there -- a number

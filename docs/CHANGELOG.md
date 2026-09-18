@@ -8,6 +8,26 @@ value involved.
 
 ---
 
+## The sitemap quietly shipped 2,668 pages short
+
+Caught by the first run of the weekly check, within an hour of the entry below: the published
+sitemap had fallen from **12,589 pages to 9,921**. Nothing had errored. The chunk that should
+have carried the first 2,000 stores carried none of them.
+
+Same root cause as the 404s, in a second place. `getStoreIndex` returned `[]` when a page of
+the catalogue could not be read, and the walk that pages through it stops when a short page
+comes back -- so one failed request ends the enumeration and the sitemap is built from
+whatever arrived before it. Silently, because an empty list is a valid answer.
+
+A sitemap that lists fewer pages than exist is not a smaller sitemap. It tells a search
+engine the missing ones are gone, after a day spent making them reachable. It throws now: a
+failed chunk answers 500, which Google retries and does not act on.
+
+Both of these were the same mistake -- treating "could not find out" as "there is nothing
+there" -- and both were invisible until something checked while nobody was watching.
+
+---
+
 ## A page that could not be looked up answered 404, and the 404 was cached
 
 The weekly check caught it in the wild, minutes after a deploy: `/istanbul/mobilya-magazalari`
