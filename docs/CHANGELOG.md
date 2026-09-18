@@ -8,6 +8,28 @@ value involved.
 
 ---
 
+## A page that could not be looked up answered 404, and the 404 was cached
+
+The weekly check caught it in the wild, minutes after a deploy: `/istanbul/mobilya-magazalari`
+and `/izmir/hali-magazalari` answering **404** while page 2 of the same lists, and every other
+city, answered fine. By the time anyone looked they were 200 again.
+
+The cause is one swallowed error. `getCityCategories` returned `[]` when the lookup failed,
+and an empty list is indistinguishable from "this pair does not exist" to the page built on
+it: it calls `notFound()`. Next then caches that 404 for an hour and serves it to whoever
+asks, including Google, which reads it as the page being gone. A blip of a second becomes an
+hour of absence, on pages that took a day to build.
+
+The lookups throw now. A 500 is the truthful answer — "we could not find out, come back" --
+and it is not cached. Callers that only decorate a page with these links keep a tolerant
+version: a store page without its catalogue links is still the store page.
+
+Worth recording how it was found. This is the defect I noticed while building the pages and
+decided not to chase, because I could not make it happen on demand. A scheduled check that
+runs whether or not anybody is watching made it happen on its own, twice, in one window.
+
+---
+
 ## There was a number printed on every category picture
 
 The drawings came as one contact sheet and were cut out of it. The sheet was numbered, and

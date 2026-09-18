@@ -10,7 +10,7 @@ import {StoreActions} from '@/components/StoreActions';
 import {JsonLd} from '@/components/JsonLd';
 import {PencilLine} from 'lucide-react';
 import {ScrollTop} from '@/components/ScrollTop';
-import {getCityBrands,getCityCategories,getNearbyStores,getPublicStore} from '@/lib/server-api';
+import {getCityBrandsIfKnown,getCityCategoriesIfKnown,getNearbyStores,getPublicStore} from '@/lib/server-api';
 import {getDictionary} from '@/i18n/dictionaries';
 import {asLocale} from '@/lib/site';
 import {canonicalFor,localePath,storePath} from '@/lib/site';
@@ -148,7 +148,8 @@ export default async function Page({params}:Props){
   // The breadcrumb used to point the city at /discover, which is a search box rather than a
   // place -- it told a reader nothing and gave a crawler nowhere to go. The link is only
   // offered where the catalogue can fill the page behind it.
-  const pairs=await getCityCategories(locale);
+  // Tolerant on purpose: a store page without its catalogue links is still the store page.
+  const pairs=await getCityCategoriesIfKnown(locale);
   // Every page this shop belongs to, up to three -- not one page picked as "the" category.
   //
   // Two rules were tried for picking a single one and both were guesses wearing a rule's
@@ -161,7 +162,7 @@ export default async function Page({params}:Props){
   // A shop really does belong to several, so it says several. Largest first, because the
   // broadest name is the one a reader recognises; three, because a row of links stops being
   // a sentence after that.
-  const brandPairs=await getCityBrands(locale);
+  const brandPairs=await getCityBrandsIfKnown(locale);
   // The chain's page in this city comes first when there is one, because it is the page
   // somebody looking for this shop most likely wanted: the queries reaching us are "yataş
   // antalya" and "en yakın yataş bayi", not the trade in the abstract.

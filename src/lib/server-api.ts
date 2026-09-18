@@ -173,8 +173,25 @@ export async function getHomeSignals(locale:Locale):Promise<HomeSignals>{
 // The pages the catalogue can actually fill: one city, one category, at least ten shops.
 // The backend decides which pairs clear that line; this is only the shape it answers in.
 export type CityCategory={city:string;city_slug:string;category_slug:string;category_name:string;category_url_slug:string;store_count:number};
-export const getCityCategories=cache(async(locale:Locale):Promise<CityCategory[]>=>{
-  try{return (await publicApi<{items:CityCategory[]}>('/v1/discovery/city-categories',{locale})).items??[];}catch{return [];}
+// Deliberately not caught.
+//
+// An empty list here does not mean "this pair does not exist", it means "we could not find
+// out" -- and the pages built on it cannot tell those apart: they call notFound(), and the
+// 404 is then cached for an hour and handed to Google, which reads it as the page being
+// gone. This is not hypothetical. The weekly check caught /istanbul/mobilya-magazalari and
+// /izmir/hali-magazalari answering 404 during a deploy while page 2 of the same lists and
+// every other city answered fine.
+//
+// Throwing gives a 500 instead. A crawler treats that as "come back later", which is the
+// truth, and Next does not cache it.
+export const getCityCategories=cache(async(locale:Locale):Promise<CityCategory[]>=>
+  (await publicApi<{items:CityCategory[]}>('/v1/discovery/city-categories',{locale})).items??[]);
+
+// The same list for callers that only decorate a page with it. A store page shows links to
+// the pages its shop belongs to; not knowing them costs a few links and nothing else, so
+// here the failure really is worth swallowing.
+export const getCityCategoriesIfKnown=cache(async(locale:Locale):Promise<CityCategory[]>=>{
+  try{return await getCityCategories(locale);}catch{return [];}
 });
 
 export type CatalogEntry={id:string;slug:string;name:string;address?:string;district?:string;city:string;average_rating:number;review_count:number;brand_name?:string;brand_slug?:string;category_labels:string[];photo?:StoredPhoto};
@@ -186,8 +203,12 @@ export async function getCityCategoryPage(citySlug:string,categorySlug:string,lo
 
 // One chain's branches in one city -- the question Search Console says people actually ask.
 export type CityBrand={city:string;city_slug:string;brand_slug:string;brand_name:string;store_count:number};
-export const getCityBrands=cache(async(locale:Locale):Promise<CityBrand[]>=>{
-  try{return (await publicApi<{items:CityBrand[]}>('/v1/discovery/city-brands',{locale})).items??[];}catch{return [];}
+// Throws, for the same reason getCityCategories throws.
+export const getCityBrands=cache(async(locale:Locale):Promise<CityBrand[]>=>
+  (await publicApi<{items:CityBrand[]}>('/v1/discovery/city-brands',{locale})).items??[]);
+
+export const getCityBrandsIfKnown=cache(async(locale:Locale):Promise<CityBrand[]>=>{
+  try{return await getCityBrands(locale);}catch{return [];}
 });
 
 export type CityBrandPage={city:string;brand_slug:string;brand_name:string;total:number;items:CatalogEntry[]};
