@@ -1140,3 +1140,16 @@ svg{stroke-width:2}
 .store-belongs-to{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:6px;font-size:14px}
 .store-belongs-to a{color:var(--clay);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
 .store-belongs-to a:hover{color:var(--ink)}
+/* Pagination. Numbers rather than an endless "show more": a reader can tell how long the
+   list is and jump, and a crawler gets every page named in one place instead of having to
+   press a button it cannot press. */
+.catalog-page-of{margin-top:8px;color:var(--ink-muted);font-size:14px}
+.catalog-pages{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:26px}
+.catalog-pages ol{display:flex;flex-wrap:wrap;align-items:center;gap:6px;list-style:none;margin:0;padding:0}
+.catalog-pages a,.catalog-pages span,.catalog-page-gap{display:grid;place-items:center;min-width:44px;min-height:44px;padding:0 10px;border-radius:var(--r-sm);font-size:15px}
+.catalog-pages a{border:1px solid var(--line);color:var(--ink);transition:background-color .16s ease,border-color .16s ease}
+.catalog-pages a:hover{background:var(--muted);border-color:var(--line-strong)}
+.catalog-pages [aria-current="page"]{background:var(--ink);color:var(--surface);font-weight:700}
+.catalog-page-gap{min-width:24px;color:var(--ink-muted)}
+.catalog-page-step{font-weight:600}
+@media(max-width:600px){.catalog-pages{gap:6px}.catalog-pages a,.catalog-pages span{min-width:40px;padding:0 8px;font-size:14px}}

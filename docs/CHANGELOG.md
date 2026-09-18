@@ -8,6 +8,51 @@ value involved.
 
 ---
 
+## A list that said "1,373 shops" and linked sixty of them
+
+The city pages shipped without pagination, and the gap was the exact problem they were built
+to close, reintroduced at the bottom of the list: Istanbul furniture named 1,373 shops and
+linked the first sixty. The other 1,313 store pages had nothing pointing at them again.
+
+Pages two and up now live at `/{city}/{category}-magazalari/2`. Of the 427 lists, 349 still
+fit on one page and 78 gain a second; the longest is twenty-three.
+
+The number is a path segment rather than `?sayfa=2`, and that is the whole reason the choice
+took any thought: reading a query parameter makes a route dynamic in this framework, so every
+one of these pages would be rebuilt on every request -- including every crawler's -- instead
+of rendered once and cached for an hour. The address reads the same either way; the cost does
+not.
+
+Each page is self-canonical and carries its number in its title, because twenty-three pages
+claiming the same name is twenty-two of them being discarded. A "/1" is a 404 rather than a
+second address for page one, and a page past the end is a 404 rather than an empty list --
+an address that answers with nothing is worse than one that says it does not exist, because
+a crawler keeps the first and comes back.
+
+The sitemap lists every page, not only the first.
+
+---
+
+## A search result that said nothing, on the most-seen page we have
+
+The store page description read `Pasha Perde Tasarım Stüdyosu, Muratpaşa, Antalya — Topluluk
+deneyimleri`: the title again, then the name of a section heading.
+
+That page is the most-seen thing on the site -- 101 impressions, 2 clicks. Two per cent,
+against a site average of 10.4. Google was showing it and nobody was pressing it.
+
+It now says what we know, in the order it matters: what the shop sells, where it is, what the
+community found, and -- where the community has found nothing yet -- that plainly, rather
+than dressing up the silence. A store's own description still wins when it has one; that is
+the shop speaking for itself.
+
+The count is reviews and is called reviews. The endpoint returns `review_count`, not how many
+people wrote them, and those two stop being the same number the moment somebody visits twice.
+Calling four reviews "four people" in a search result would be the overstatement the home page
+was corrected for two entries ago, printed somewhere it cannot be taken back.
+
+---
+
 ## Two rules for picking a shop's category, both wrong, so it picks none
 
 The link from a store page up to its city-and-category pages was written twice and both

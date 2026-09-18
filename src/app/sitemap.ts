@@ -2,6 +2,8 @@ import type {MetadataRoute} from 'next';
 import {getAllStores,getCityCategories} from '@/lib/server-api';
 import {legalLinks} from '@/lib/legal-links';
 import {localePath,locales,siteUrl,storePath} from '@/lib/site';
+// Kept in step with the list pages themselves: one number, one place.
+import {PER_PAGE as CITY_CATEGORY_PER_PAGE} from '@/components/CityCategoryView';
 
 // The sitemap listed five hard coded URLs and not one store, so the only pages capable
 // of ranking were never offered to a crawler. Three of those five were /favorites,
@@ -37,7 +39,16 @@ async function standingPages(now:Date){
     // this product actually is, so they belong in the index.
     ...entry('/legal',now,'weekly',.3),
     ...legalLinks.filter(link=>link.live).flatMap(link=>entry(`/${link.slug}`,now,'weekly',link.slug==='about'?.7:.4)),
-    ...pairs.flatMap(pair=>entry(`/${pair.city_slug}/${pair.category_url_slug}-magazalari`,now,'weekly',.7)),
+    // Every page of every list, not only the first. Istanbul furniture is 1,373 shops in
+    // twenty-three pages, and listing only page one would leave the other 1,313 store pages
+    // reachable from nothing again -- which is the problem these pages exist to fix.
+    ...pairs.flatMap(pair=>{
+      const pages=Math.max(1,Math.ceil(pair.store_count/CITY_CATEGORY_PER_PAGE));
+      return Array.from({length:pages},(_,index)=>entry(
+        `/${pair.city_slug}/${pair.category_url_slug}-magazalari${index?`/${index+1}`:''}`,
+        now,'weekly',index?.5:.7,
+      )).flat();
+    }),
   ];
 }
 

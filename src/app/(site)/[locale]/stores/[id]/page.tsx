@@ -74,17 +74,49 @@ const scoreCopy:Record<Locale,{title:string;intro:string;seeReviews:string;empty
   ru:{title:'Оценка',intro:'Оценка магазина — среднее восьми оценок отзыва.',seeReviews:'Смотреть отзывы',empty:'Оценок по критериям пока нет'},
 };
 
+// What a search result says under the blue line, and it had been saying nothing.
+//
+// The most-seen page on the site is a store page with 101 impressions and 2 clicks -- 2%,
+// against a site average of 10.4%. Its description read "Pasha Perde Tasarım Stüdyosu,
+// Muratpaşa, Antalya — Topluluk deneyimleri", which repeats the title and then names a
+// section heading. Nothing in it answers the question somebody typing a shop's name has,
+// which is whether it is worth the trip.
+//
+// So it says what we actually know, in the order it matters: what the shop sells, where it
+// is, and what the community found -- and where the community has found nothing yet, it
+// says that plainly rather than dressing up the silence. A store's own description, when it
+// has one, still wins: that is the shop speaking for itself.
+//
+// The count here is reviews, and it is called reviews. The store endpoint returns
+// review_count, not how many different people wrote them -- and those stop being the same
+// number the moment somebody visits twice. Calling four reviews "four people" in a search
+// result would be the same overstatement the home page was just corrected for, printed
+// somewhere it cannot be taken back.
+const snippetCopy:Record<Locale,{scored:(score:string,reviews:number)=>string;unscored:string;visit:string}>={
+  tr:{scored:(score,reviews)=>`Topluluk puanı ${score}/5 (${reviews} değerlendirme).`,unscored:'Henüz değerlendirilmemiş.',visit:'Adres, kategoriler ve gerçek ziyaretçi deneyimleri.'},
+  en:{scored:(score,reviews)=>`Community rating ${score}/5 from ${reviews} ${reviews===1?'review':'reviews'}.`,unscored:'No reviews yet.',visit:'Address, categories and experiences from real visits.'},
+  de:{scored:(score,reviews)=>`Community-Bewertung ${score}/5 aus ${reviews} ${reviews===1?'Bewertung':'Bewertungen'}.`,unscored:'Noch nicht bewertet.',visit:'Adresse, Kategorien und Erfahrungen aus echten Besuchen.'},
+  ru:{scored:(score,reviews)=>`Оценка сообщества ${score}/5 (${reviews} оценок).`,unscored:'Пока без оценок.',visit:'Адрес, категории и впечатления от реальных визитов.'},
+};
+
 // Everything Google gives us for a store lives in the external source attribution
 // jsonb. Nothing here is invented: a missing field is simply not rendered.
 
 export async function generateMetadata({params}:Props):Promise<Metadata>{
   const {id,locale:raw}=await params;
   const locale=asLocale(raw);
-  const t=getDictionary(locale);
   const {store}=await getPublicStore(id,locale,revalidate);
   const place=[store.district,store.city].filter(Boolean).join(', ');
   const title=place?`${store.name} — ${place}`:store.name;
-  const description=store.localized_description??`${store.name}${place?`, ${place}`:''} — ${t.community}`;
+  const snippet=snippetCopy[locale];
+  const categories=store.category_labels.slice(0,3).join(', ');
+  const description=store.localized_description??[
+    categories?`${store.name} — ${categories}${place?`, ${place}`:''}.`:`${store.name}${place?`, ${place}`:''}.`,
+    store.platform.review_count
+      ?snippet.scored(store.platform.average_rating.toLocaleString(locale,{minimumFractionDigits:1,maximumFractionDigits:1}),store.platform.review_count)
+      :snippet.unscored,
+    snippet.visit,
+  ].join(' ');
   // Every store link shared anywhere previewed as the generic homepage card, because
   // this page set no openGraph of its own and inherited the root layout's.
   const image=storePhotoURL(store.photo,1200);

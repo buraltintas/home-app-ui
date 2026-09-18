@@ -179,6 +179,6 @@ export const getCityCategories=cache(async(locale:Locale):Promise<CityCategory[]
 
 export type CatalogEntry={id:string;slug:string;name:string;address?:string;district?:string;city:string;average_rating:number;review_count:number;brand_name?:string;brand_slug?:string;category_labels:string[];photo?:StoredPhoto};
 export type CityCategoryPage={city:string;category_slug:string;category_name:string;total:number;items:CatalogEntry[]};
-export async function getCityCategoryPage(citySlug:string,categorySlug:string,locale:Locale):Promise<CityCategoryPage|undefined>{
-  try{return await publicApi<CityCategoryPage>(`/v1/discovery/stores?city=${encodeURIComponent(citySlug)}&category=${encodeURIComponent(categorySlug)}&limit=60`,{locale});}catch{return undefined;}
+export async function getCityCategoryPage(citySlug:string,categorySlug:string,locale:Locale,limit=60,offset=0):Promise<CityCategoryPage|undefined>{
+  try{return await publicApi<CityCategoryPage>(`/v1/discovery/stores?city=${encodeURIComponent(citySlug)}&category=${encodeURIComponent(categorySlug)}&limit=${limit}&offset=${offset}`,{locale});}catch{return undefined;}
 }
