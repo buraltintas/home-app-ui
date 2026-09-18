@@ -8,6 +8,23 @@ value involved.
 
 ---
 
+## "İzmir'da" was wrong on every page that was not Antalya
+
+The city pages shipped with "'da" written after every city name. That is right for Antalya
+and wrong for İzmir, Kayseri, Denizli, Eskişehir, Edirne, Gaziantep, Uşak and most of the
+other eighty.
+
+The fix is not a list of cities. This product covers every city in Türkiye and a list would be
+wrong the first time a name nobody thought of turned up. Turkish already has the rule and it
+is three lines: the suffix takes its vowel from the last vowel of the word, hardens its
+consonant after a voiceless one, and a proper noun is separated from it by an apostrophe.
+
+Checked against eighteen cities picked for being awkward -- İzmir'de, İstanbul'da,
+Gaziantep'te, Sinop'ta, Uşak'ta, Tekirdağ'da, Elazığ'da, Bilecik'te, Şanlıurfa'da, Bartın'da,
+Balıkesir'de -- all correct.
+
+---
+
 ## A page for "carpet shops in Izmir", which the site did not have
 
 `/{city}/{category}-magazalari` -- `/izmir/hali-magazalari`, `/istanbul/mobilya-magazalari`.

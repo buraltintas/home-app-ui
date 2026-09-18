@@ -11,6 +11,7 @@ import {type CityCategory,getCityCategories,getCityCategoryPage} from '@/lib/ser
 import {getDictionary} from '@/i18n/dictionaries';
 import {asLocale,canonicalFor,localePath,siteUrl,storePath} from '@/lib/site';
 import {breadcrumbJsonLd} from '@/lib/structured-data';
+import {locative} from '@/lib/turkish-locative';
 import {isBrandMark,storePhotoURL} from '@/lib/store-photo';
 import type {Locale} from '@/lib/types';
 
@@ -49,7 +50,7 @@ async function resolve(params:Params,locale:Locale):Promise<CityCategory|undefin
 const copy:Record<Locale,{title:(city:string,category:string)=>string;intro:(count:number,city:string,category:string)=>string;others:string;elsewhere:string;reviews:string;none:string;all:string}>={
   tr:{
     title:(city,category)=>`${city} ${category.toLocaleLowerCase('tr')} mağazaları`,
-    intro:(count,city,category)=>`${city}'da kataloğumuzda ${count.toLocaleString('tr')} ${category.toLocaleLowerCase('tr')} mağazası var. Topluluğun değerlendirdiği mağazalar önce geliyor.`,
+    intro:(count,city,category)=>`${locative(city)} kataloğumuzda ${count.toLocaleString('tr')} ${category.toLocaleLowerCase('tr')} mağazası var. Topluluğun değerlendirdiği mağazalar önce geliyor.`,
     others:'Bu şehirdeki diğer kategoriler',elsewhere:'Diğer şehirlerde',reviews:'değerlendirme',
     none:'Henüz değerlendirilmemiş',all:'mağaza',
   },
