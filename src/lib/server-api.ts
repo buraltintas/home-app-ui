@@ -168,3 +168,17 @@ export async function getHomeSignals(locale:Locale):Promise<HomeSignals>{
   ]);
   return {highlights,cities,categories:categories.filter(item=>item.search_count>0).slice(0,5)};
 }
+
+
+// The pages the catalogue can actually fill: one city, one category, at least ten shops.
+// The backend decides which pairs clear that line; this is only the shape it answers in.
+export type CityCategory={city:string;city_slug:string;category_slug:string;category_name:string;category_url_slug:string;store_count:number};
+export const getCityCategories=cache(async(locale:Locale):Promise<CityCategory[]>=>{
+  try{return (await publicApi<{items:CityCategory[]}>('/v1/discovery/city-categories',{locale})).items??[];}catch{return [];}
+});
+
+export type CatalogEntry={id:string;slug:string;name:string;address?:string;district?:string;city:string;average_rating:number;review_count:number;brand_name?:string;brand_slug?:string;category_labels:string[];photo?:StoredPhoto};
+export type CityCategoryPage={city:string;category_slug:string;category_name:string;total:number;items:CatalogEntry[]};
+export async function getCityCategoryPage(citySlug:string,categorySlug:string,locale:Locale):Promise<CityCategoryPage|undefined>{
+  try{return await publicApi<CityCategoryPage>(`/v1/discovery/stores?city=${encodeURIComponent(citySlug)}&category=${encodeURIComponent(categorySlug)}&limit=60`,{locale});}catch{return undefined;}
+}

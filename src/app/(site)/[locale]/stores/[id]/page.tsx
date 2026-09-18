@@ -10,7 +10,7 @@ import {StoreActions} from '@/components/StoreActions';
 import {JsonLd} from '@/components/JsonLd';
 import {PencilLine} from 'lucide-react';
 import {ScrollTop} from '@/components/ScrollTop';
-import {getNearbyStores,getPublicStore} from '@/lib/server-api';
+import {getCityCategories,getNearbyStores,getPublicStore} from '@/lib/server-api';
 import {getDictionary} from '@/i18n/dictionaries';
 import {asLocale} from '@/lib/site';
 import {canonicalFor,localePath,storePath} from '@/lib/site';
@@ -48,6 +48,15 @@ export const revalidate=3600;
 // declares is that the route may be cached at all -- the first visitor to a shop pays for
 // rendering it and everybody after them, for the next hour, does not.
 export function generateStaticParams(){return [] as {id:string}[];}
+
+// The page's own name, said the same way here as on the page itself: a link that renames
+// where it goes is a link somebody does not recognise when they arrive.
+const cityCategoryName:Record<Locale,(city:string,category:string)=>string>={
+  tr:(city,category)=>`${city} ${category.toLocaleLowerCase('tr')} mağazaları`,
+  en:(city,category)=>`${category} stores in ${city}`,
+  de:(city,category)=>`${category}-Geschäfte in ${city}`,
+  ru:(city,category)=>`${category}: магазины в городе ${city}`,
+};
 
 const contributionCopy:Record<Locale,{title:string;body:string;action:string;progress:string;levels:string;correction:string}>={
   tr:{title:'Bu mağazaya gittin mi?',body:'Deneyimin bir sonraki kişinin doğru mağazayı seçmesine yardım eder. Doğrulanmış her değerlendirme katkı seviyeni de yükseltir.',action:'Değerlendirme yap',progress:'Katkı seviyeni yükselt',levels:'Katkı seviyeleri ne işe yarar?',correction:'Mağaza bilgilerinde düzenleme öner.'},
@@ -94,6 +103,16 @@ export default async function Page({params}:Props){
   // asking for neighbours of a slug that turns out not to exist is a wasted round trip on
   // a page that is about to be a 404 anyway.
   const neighbours=await getNearbyStores(store.id);
+  // The page this shop belongs to, when there is one: its city and one of its categories.
+  // The breadcrumb used to point the city at /discover, which is a search box rather than a
+  // place -- it told a reader nothing and gave a crawler nowhere to go. The link is only
+  // offered where the catalogue can fill the page behind it.
+  const pairs=await getCityCategories(locale);
+  const belongsTo=store.city
+    ?pairs.find(pair=>pair.city===store.city&&store.categories.includes(pair.category_slug))
+    :undefined;
+  const belongsToPath=belongsTo?`/${belongsTo.city_slug}/${belongsTo.category_url_slug}-magazalari`:undefined;
+  const belongsToName=belongsTo?cityCategoryName[locale](belongsTo.city,belongsTo.category_name):undefined;
   // One store, one address. Links created before slugs existed still resolve, they just
   // do not stay on a second URL competing with the canonical one.
   if(store.slug&&id!==store.slug)permanentRedirect(storePath(store));
@@ -115,7 +134,7 @@ export default async function Page({params}:Props){
   // round 4.5 is still shown as 4.5, not 4.50.
   const formatScore=(value:number|undefined)=>value===undefined?'—':value.toLocaleString(locale,{minimumFractionDigits:1,maximumFractionDigits:2});
   const correctionPath=localePath(locale,`/store-correction?store=${encodeURIComponent(store.id)}&name=${encodeURIComponent(store.name)}`);
-  const trail=[{name:t.discover??'',path:'/discover'},...(store.city?[{name:store.city,path:'/discover'}]:[]),{name:store.name,path:storePath(store)}].filter(entry=>entry.name);
+  const trail=[{name:t.discover??'',path:'/discover'},...(belongsToPath&&belongsToName?[{name:belongsToName,path:belongsToPath}]:store.city?[{name:store.city,path:'/discover'}]:[]),{name:store.name,path:storePath(store)}].filter(entry=>entry.name);
   return <main className="store-page">
     <ScrollTop/>
     <PageBackButton/>
@@ -136,6 +155,7 @@ export default async function Page({params}:Props){
         <p className="eyebrow">{store.category_labels.join(' · ')}</p>
         <h1>{store.name}</h1>
         <p>{[store.district,store.city].filter(Boolean).join(', ')}{store.distance_meters!==undefined&&` · ${(store.distance_meters/1000).toLocaleString(locale,{maximumFractionDigits:1})} km`}</p>
+        {belongsToPath&&belongsToName&&<p className="store-belongs-to"><Link href={localePath(locale,belongsToPath)}>{belongsToName}</Link></p>}
       </div>
       <div className="store-score"><span>{t.communityRating}</span><strong>{store.platform.review_count?<Rating value={store.platform.average_rating}/>:'—'}</strong><small>{store.platform.review_count} {t.profileRatings.toLocaleLowerCase(locale)}</small></div>
       <div className="store-score"><span>{t.savedBy}</span><strong>{store.platform.favorite_count}</strong><small>{t.people}</small></div>

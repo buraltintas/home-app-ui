@@ -1,5 +1,5 @@
 import type {MetadataRoute} from 'next';
-import {getAllStores} from '@/lib/server-api';
+import {getAllStores,getCityCategories} from '@/lib/server-api';
 import {legalLinks} from '@/lib/legal-links';
 import {localePath,locales,siteUrl,storePath} from '@/lib/site';
 
@@ -17,10 +17,14 @@ export const revalidate=3600;
 // already been serving without trouble.
 const PAGES_PER_SITEMAP=2000;
 
-// Everything that is not a store: the home page, the search, and the published legal and
-// explanatory pages. They ride along in the first file rather than getting one of their
-// own, because forty entries do not deserve a document.
-function staticPages(now:Date){
+// Everything that is not a store: the home page, the search, the city-and-category pages,
+// and the published legal and explanatory pages. They ride along in the first file rather
+// than getting one of their own.
+async function standingPages(now:Date){
+  // A city-and-category page carries ten shops or more and links to every one of them, so
+  // it is worth more of a crawl than a store page with nothing written on it yet. The
+  // backend decides which pairs exist; listing any others here would advertise 404s.
+  const pairs=await getCityCategories('tr');
   return [
     ...entry('/',now,'daily',1),
     // The search is a tool rather than a document: rendered in the browser, it arrives at
@@ -33,6 +37,7 @@ function staticPages(now:Date){
     // this product actually is, so they belong in the index.
     ...entry('/legal',now,'weekly',.3),
     ...legalLinks.filter(link=>link.live).flatMap(link=>entry(`/${link.slug}`,now,'weekly',link.slug==='about'?.7:.4)),
+    ...pairs.flatMap(pair=>entry(`/${pair.city_slug}/${pair.category_url_slug}-magazalari`,now,'weekly',.7)),
   ];
 }
 
@@ -66,7 +71,7 @@ export default async function sitemap({id}:{id:Promise<string>}):Promise<Metadat
   const stores=await getAllStores();
   const slice=stores.slice(index*PAGES_PER_SITEMAP,(index+1)*PAGES_PER_SITEMAP);
   return [
-    ...(index===0?staticPages(now):[]),
+    ...(index===0?await standingPages(now):[]),
     ...slice.flatMap(store=>entry(
       storePath(store),
       new Date(store.updated_at),

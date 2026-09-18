@@ -8,6 +8,42 @@ value involved.
 
 ---
 
+## A page for "carpet shops in Izmir", which the site did not have
+
+`/{city}/{category}-magazalari` -- `/izmir/hali-magazalari`, `/istanbul/mobilya-magazalari`.
+427 of them, one for every city-and-category pair the catalogue can fill with at least ten
+shops. Istanbul furniture alone holds 1,373.
+
+Until now the only way to that question was to know to type it into the search. There was no
+page with that name, nothing linked to one, and a crawler had nothing to follow at all: store
+pages were reachable from the sitemap and from nowhere else, and a sitemap gets a page crawled
+without passing it any standing.
+
+**The cross-links are the point, more than the pages.** Each page links to the same city's
+other categories and to the same category in other cities -- around twenty links -- and down
+to its own ten-plus shops. Store pages now link back up: under the address there is a real
+link to the page the shop belongs to, where before the breadcrumb pointed the city at
+/discover, which is a search box rather than a place and told a reader nothing.
+
+**One address per page, in Turkish, in every language.** A shop in Izmir is in the same place
+whichever language you read about it in, and four translated addresses for one page would be
+four pages competing to be the one that ranks. The suffix stays `-magazalari` in English too.
+
+**The floor is ten shops and it is enforced by the data, not by a list.** The backend decides
+which pairs exist; the page, the link and the sitemap all read the same answer, so none of
+them can advertise a page the others do not believe in. An address that is not in that set is
+a 404 however well formed it looks.
+
+Reviewed shops lead each list. Distance cannot order a page built before anybody opens it,
+and alphabetical order would nail the same shop to the top of every city forever.
+
+**Worth saying plainly:** this is still plumbing. These pages carry real shops and real
+counts, but the only sentence on any of them that exists nowhere else is a review, and
+reviews exist on eleven shops. The pages make the catalogue reachable; they do not make it
+worth reading. That part is not a technical problem.
+
+---
+
 ## Fifty-two of the fifty-six suggestions were being clipped, not scrolled
 
 Measured in the open panel on a 375px screen: the suggestions list was **3,573px tall inside
