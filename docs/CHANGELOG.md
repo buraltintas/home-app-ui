@@ -8,6 +8,27 @@ value involved.
 
 ---
 
+## Two rules for picking a shop's category, both wrong, so it picks none
+
+The link from a store page up to its city-and-category pages was written twice and both
+versions were a guess wearing a rule's clothes.
+
+First match gave İşbir Yatak "Antalya ev aksesuarları mağazaları" -- 436 shops, saying
+nothing about this one. Smallest match was meant to fix that and made it worse: measured on
+the live site, İşbir Yatak went to **ev gereçleri** and English Home to **banyo**. Smallest is
+a fact about that city's stock, not about the shop standing in it.
+
+There is no field in the catalogue that says which category a shop is mainly in. Choosing one
+means inventing the answer, so it stops choosing: a shop links to every page it belongs to,
+up to three, largest first. That is what the data actually says, it gives the reader the
+choice we were making for them, and it triples these links rather than betting them all on
+one guess.
+
+The entry below it, and the one below that, are the two guesses. They are left in the log
+because the reasoning in them looks sound and was not.
+
+---
+
 ## A bed shop belongs under beds, not under home accessories
 
 The link from a store page up to its city-and-category page took whichever matching page

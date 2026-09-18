@@ -1137,6 +1137,6 @@ svg{stroke-width:2}
 /* Where this shop sits in the catalogue. Quiet, under the address, because it is context
    rather than the reason anybody opened the page -- but it is a real link, which the
    breadcrumb's city never was. */
-.store-belongs-to{margin-top:6px;font-size:14px}
+.store-belongs-to{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:6px;font-size:14px}
 .store-belongs-to a{color:var(--clay);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
 .store-belongs-to a:hover{color:var(--ink)}

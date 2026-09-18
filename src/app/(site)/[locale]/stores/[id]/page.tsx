@@ -108,17 +108,25 @@ export default async function Page({params}:Props){
   // place -- it told a reader nothing and gave a crawler nowhere to go. The link is only
   // offered where the catalogue can fill the page behind it.
   const pairs=await getCityCategories(locale);
-  // Where several pages could claim a shop, the smallest one wins. A bed shop in Antalya
-  // belongs under "yatak" rather than under "ev aksesuarları", which happens to hold four
-  // hundred shops and says almost nothing about this one; the narrower page is both the
-  // truer description and the one a reader is more likely to have been looking for. It
-  // also spreads these links across many pages instead of piling them on the few largest.
-  const belongsTo=store.city
+  // Every page this shop belongs to, up to three -- not one page picked as "the" category.
+  //
+  // Two rules were tried for picking a single one and both were guesses wearing a rule's
+  // clothes. First match gave a bed shop "ev aksesuarları", a page of 436 shops that says
+  // nothing about it. Smallest match was worse: İşbir Yatak went to "ev gereçleri" and
+  // English Home to "banyo", because smallest is a fact about that city's stock rather than
+  // about this shop. There is no field in the catalogue that says which category a shop is
+  // mainly in, so choosing one means inventing the answer.
+  //
+  // A shop really does belong to several, so it says several. Largest first, because the
+  // broadest name is the one a reader recognises; three, because a row of links stops being
+  // a sentence after that.
+  const belongsTo=(store.city
     ?pairs.filter(pair=>pair.city===store.city&&store.categories.includes(pair.category_slug))
-      .sort((a,b)=>a.store_count-b.store_count)[0]
-    :undefined;
-  const belongsToPath=belongsTo?`/${belongsTo.city_slug}/${belongsTo.category_url_slug}-magazalari`:undefined;
-  const belongsToName=belongsTo?cityCategoryName[locale](belongsTo.city,belongsTo.category_name):undefined;
+      .sort((a,b)=>b.store_count-a.store_count)
+    :[]).slice(0,3).map(pair=>({
+      path:`/${pair.city_slug}/${pair.category_url_slug}-magazalari`,
+      name:cityCategoryName[locale](pair.city,pair.category_name),
+    }));
   // One store, one address. Links created before slugs existed still resolve, they just
   // do not stay on a second URL competing with the canonical one.
   if(store.slug&&id!==store.slug)permanentRedirect(storePath(store));
@@ -140,7 +148,7 @@ export default async function Page({params}:Props){
   // round 4.5 is still shown as 4.5, not 4.50.
   const formatScore=(value:number|undefined)=>value===undefined?'—':value.toLocaleString(locale,{minimumFractionDigits:1,maximumFractionDigits:2});
   const correctionPath=localePath(locale,`/store-correction?store=${encodeURIComponent(store.id)}&name=${encodeURIComponent(store.name)}`);
-  const trail=[{name:t.discover??'',path:'/discover'},...(belongsToPath&&belongsToName?[{name:belongsToName,path:belongsToPath}]:store.city?[{name:store.city,path:'/discover'}]:[]),{name:store.name,path:storePath(store)}].filter(entry=>entry.name);
+  const trail=[{name:t.discover??'',path:'/discover'},...(belongsTo.length?[belongsTo[0]]:store.city?[{name:store.city,path:'/discover'}]:[]),{name:store.name,path:storePath(store)}].filter(entry=>entry.name);
   return <main className="store-page">
     <ScrollTop/>
     <PageBackButton/>
@@ -161,7 +169,7 @@ export default async function Page({params}:Props){
         <p className="eyebrow">{store.category_labels.join(' · ')}</p>
         <h1>{store.name}</h1>
         <p>{[store.district,store.city].filter(Boolean).join(', ')}{store.distance_meters!==undefined&&` · ${(store.distance_meters/1000).toLocaleString(locale,{maximumFractionDigits:1})} km`}</p>
-        {belongsToPath&&belongsToName&&<p className="store-belongs-to"><Link href={localePath(locale,belongsToPath)}>{belongsToName}</Link></p>}
+        {belongsTo.length>0&&<p className="store-belongs-to">{belongsTo.map(page=><Link key={page.path} href={localePath(locale,page.path)}>{page.name}</Link>)}</p>}
       </div>
       <div className="store-score"><span>{t.communityRating}</span><strong>{store.platform.review_count?<Rating value={store.platform.average_rating}/>:'—'}</strong><small>{store.platform.review_count} {t.profileRatings.toLocaleLowerCase(locale)}</small></div>
       <div className="store-score"><span>{t.savedBy}</span><strong>{store.platform.favorite_count}</strong><small>{t.people}</small></div>
