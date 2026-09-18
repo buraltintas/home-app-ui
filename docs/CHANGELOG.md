@@ -8,6 +8,28 @@ value involved.
 
 ---
 
+## Google read one shop as two
+
+Every store page declared the shop twice. The `aggregateRating` on the Store carried an
+`itemReviewed` naming the same shop again -- a bare `{"@type":"Store","name":"Yataş"}` with
+no address, no telephone, no url and no image, because it was never a shop, only a label.
+
+Google's Rich Results Test is what said so, run against a live store page rather than
+guessed at: **two local businesses detected**, one complete and one with four missing
+recommended fields. A rating that is a property of the thing it rates does not need to name
+that thing again, and Google's own examples do not.
+
+The same test cleared the worry that sent me looking. Search Console reports "review
+snippets: 0", which read like broken markup; the test reports **one valid review snippet**,
+along with valid breadcrumbs and organisation data. Enhancements are only counted for indexed
+pages, and none of these are indexed yet. The markup was fine.
+
+What is not fine is upstream of any markup: of 34 reviews, 7 carry any text at all and the
+average length of those is **two characters**. The `review` array is empty on most pages for
+that reason, not for a technical one.
+
+---
+
 ## robots.txt covered one address in four
 
 Turkish is served unprefixed, so `Disallow: /create` protected `/create` and left

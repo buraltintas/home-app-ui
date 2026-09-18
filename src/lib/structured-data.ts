@@ -82,12 +82,18 @@ export function storeJsonLd(store:Store,posts:Post[]):JsonLd{
 
   // Community reviews only, and only once at least one exists.
   if(store.platform.review_count>0&&store.platform.average_rating>0){
+    // No itemReviewed here, and that is the point rather than an omission. This rating is
+    // a property of the store above it, so naming the reviewed thing again -- as a bare
+    // Store carrying a name and nothing else -- declares a second shop on the page.
+    //
+    // Google's own test said so: it read this page as two "Yataş" businesses, one complete
+    // and one with four missing recommended fields, because the phantom had no address, no
+    // telephone, no url and no image. It could not have had them; it was never a shop.
     data.aggregateRating={
       '@type':'AggregateRating',
       ratingValue:store.platform.average_rating,
       reviewCount:store.platform.review_count,
       bestRating:BEST_RATING,worstRating:1,
-      itemReviewed:{'@type':'Store',name:store.name},
     };
   }
   const written=posts.filter(post=>post.text.trim().length>0);
