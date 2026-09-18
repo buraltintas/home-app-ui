@@ -111,7 +111,10 @@ export async function generateMetadata({params}:Props):Promise<Metadata>{
   const snippet=snippetCopy[locale];
   const categories=store.category_labels.slice(0,3).join(', ');
   const description=store.localized_description??[
-    categories?`${store.name} — ${categories}${place?`, ${place}`:''}.`:`${store.name}${place?`, ${place}`:''}.`,
+    // Categories and place are separated by a middot rather than another comma. Written as
+    // "Perde, Ev Tekstili, Muratpaşa, Antalya" it is four comma-separated things and a
+    // reader cannot see where the trade ends and the address begins.
+    categories?`${store.name} — ${categories}${place?` · ${place}`:''}.`:`${store.name}${place?` — ${place}`:''}.`,
     store.platform.review_count
       ?snippet.scored(store.platform.average_rating.toLocaleString(locale,{minimumFractionDigits:1,maximumFractionDigits:1}),store.platform.review_count)
       :snippet.unscored,
