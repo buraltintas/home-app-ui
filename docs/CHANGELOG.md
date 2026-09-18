@@ -8,6 +8,30 @@ value involved.
 
 ---
 
+## robots.txt covered one address in four
+
+Turkish is served unprefixed, so `Disallow: /create` protected `/create` and left
+`/en/create`, `/de/create` and `/ru/create` open. The same for `/profile` and `/favorites`.
+
+That is not cosmetic. Every store page links to `/create?store=<id>` to start a review, so
+with eleven thousand stores it is up to thirty-three thousand crawlable addresses that exist
+only to be refused -- each carrying noindex, each costing a fetch that the eight thousand
+store pages sitting in "discovered, not indexed" are not getting.
+
+Found by reading Search Console rather than the code: the index report's "excluded by
+noindex" bucket was twenty-two pages and every one of them was `/en/create?store=…`,
+`/de/create?store=…`, `/ru/favorites`.
+
+A wildcard rather than three more lines naming each language, so a fourth language does not
+have to remember to come back here.
+
+The rest of that report checked out, which is worth writing down too: "blocked by robots.txt"
+is personal pages plus the dead Google photo endpoint, "404" is five stale font hashes from
+old builds, "redirect" is the /tr → / consolidation, and "alternate with canonical" is the
+language versions. Nothing broken. The only number that means anything is the eight thousand.
+
+---
+
 ## A list that said "1,373 shops" and linked sixty of them
 
 The city pages shipped without pagination, and the gap was the exact problem they were built
