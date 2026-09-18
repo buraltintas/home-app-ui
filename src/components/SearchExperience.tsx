@@ -831,7 +831,16 @@ export function SearchExperience() {
         names are a glance apart from each other. */}
     {openCategory&&<CategorySheet slug={openCategory.slug} name={openCategory.name} locale={locale}
       onClose={()=>setOpenCategory(undefined)}
-      onSearch={()=>{const chosen=openCategory;setOpenCategory(undefined);fill(chosen.name);}}/>}</header>
+      onSearch={()=>{
+        const chosen=openCategory;
+        setOpenCategory(undefined);
+        // "Find the nearest store to me" cannot be answered without knowing where "me" is.
+        // Pressed with no location the search simply did not run: the sheet closed and
+        // nothing happened, which is the worst answer a button can give. It asks for the
+        // location instead, which is the step the reader was going to have to take anyway.
+        if(!location){setLocationOpen(true);return;}
+        fill(chosen.name);
+      }}/>}</header>
     {loading&&<SearchOverlay/>}
     {!loading&&data?.guidance&&<section className="guidance-card" role="alert"><p>{data.guidance.message}</p><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>fill(category.name)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}</span></button>)}</div></section>}
     {!loading&&data&&!data.guidance&&<section className="results-layout"><div className="result-list">{/* What the list is and how it is ordered, said as two

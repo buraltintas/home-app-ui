@@ -63,6 +63,17 @@ no per-image measurement to keep in step.
 
 ---
 
+## "Find the nearest store to me", pressed with no location, did nothing
+
+Found while checking the new category sheet on the live site: with no location set, its
+button closed the sheet and nothing happened. No search, no message, no next step.
+
+It cannot answer without knowing where "me" is, which is fair -- but silence is the worst
+answer a button can give. It opens the location panel instead, which is the step the reader
+was going to have to take anyway.
+
+---
+
 ## A category opens before it searches
 
 Tapping a category name ran the search on the spot -- one tap for a decision the reader had
