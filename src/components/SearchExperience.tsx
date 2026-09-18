@@ -23,6 +23,7 @@ import { RatingStars } from './Rating';
 import { SearchOverlay } from './SearchOverlay';
 import { LocationAlert } from './LocationAlert';
 import {CategoryIcon} from './CategoryIcon';
+import {CategorySheet} from '@/components/CategorySheet';
 import {TimedNudge} from './TimedNudge';
 
 type SearchPlace={source?:'device'|'manual';label:string;city?:string;placeID?:string;address?:string;accuracyMeters?:number;coordinates:Coordinates};
@@ -716,6 +717,9 @@ export function SearchExperience() {
   const nearbyPhrases=nearbyKey?nearby.items:[];
 
   const [categories,setCategories]=useState<{slug:string;name:string;search_count:number}[]>([]);
+  // Which category the reader opened, if any. Holding the whole row rather than its slug
+  // keeps the sheet from having to look the name up again in a list it does not own.
+  const [openCategory,setOpenCategory]=useState<{slug:string;name:string}>();
   // Built inside the effect so it is recomputed with the locale it belongs to, rather than
   // becoming a dependency that changes on every render.
   useEffect(()=>{
@@ -821,7 +825,13 @@ export function SearchExperience() {
         they are the answer to "what shall I type", which is a question somebody only has
         once they have opened the panel to type in. The categories stay -- they are a way
         to browse rather than a way to repeat yourself. */}
-    {!data&&!loading&&<div className="search-suggestions"><div><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>fill(category.name)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}</span></button>)}</div></div></div>}</header>
+    {!data&&!loading&&<div className="search-suggestions"><div><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>setOpenCategory(category)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}</span></button>)}</div></div></div>}
+    {/* The category opens before it searches. Tapping a name used to run the search on the
+        spot, which answered a question the reader had not finished asking -- several of these
+        names are a glance apart from each other. */}
+    {openCategory&&<CategorySheet slug={openCategory.slug} name={openCategory.name} locale={locale}
+      onClose={()=>setOpenCategory(undefined)}
+      onSearch={()=>{const chosen=openCategory;setOpenCategory(undefined);fill(chosen.name);}}/>}</header>
     {loading&&<SearchOverlay/>}
     {!loading&&data?.guidance&&<section className="guidance-card" role="alert"><p>{data.guidance.message}</p><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>fill(category.name)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}</span></button>)}</div></section>}
     {!loading&&data&&!data.guidance&&<section className="results-layout"><div className="result-list">{/* What the list is and how it is ordered, said as two

@@ -8,6 +8,35 @@ value involved.
 
 ---
 
+## There was a number printed on every category picture
+
+The drawings came as one contact sheet and were cut out of it. The sheet was numbered, and
+the numbers came with them: a navy "7" sitting above the bathtub, a "3" above the carpet.
+Shown at 26px in the list nobody could read them, which is why they survived a week.
+
+Cut out again, this time by finding the disc rather than by guessing the grid. A row that is
+part of the drawing spans most of the width; a row that is part of a number spans about a
+tenth. Taking only the wide rows leaves the disc and drops the number, in all thirteen, with
+no per-image measurement to keep in step.
+
+---
+
+## A category opens before it searches
+
+Tapping a category name ran the search on the spot -- one tap for a decision the reader had
+not finished making. Several of these names are a glance apart: "Ev Gereçleri" and "Ev
+Aksesuarları" are not the same shelf and do not read as different words at speed.
+
+It opens the category now: the drawing at the size it was drawn for, and the search behind
+its own button. The picture is the point, and it had been shown at 26px out of 192 -- most of
+a drawing thrown away. Three categories still on line icons get the same circle, drawn rather
+than filled, rather than an empty frame that would read as a fault.
+
+Same motion as the location dialog and the nudge, because it is the same gesture: a panel
+arriving over the page.
+
+---
+
 ## One frame of the page showing through the panel
 
 Reported twice as two things -- "the top of the page flashes before the search panel takes
