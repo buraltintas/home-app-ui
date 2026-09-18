@@ -8,6 +8,56 @@ value involved.
 
 ---
 
+## One frame of the page showing through the panel
+
+Reported twice as two things -- "the top of the page flashes before the search panel takes
+over" and "part of the category list is visible behind it" -- and it was one thing: a single
+frame.
+
+Everything that makes the panel cover the screen (its height, its offset against the visual
+viewport, and the lock that holds the page behind it still) was applied in an ordinary
+effect, which runs *after* the browser paints. So for exactly one frame the panel existed and
+none of that had happened, and what showed through was the top of the search page: the dog,
+the language button, a slice of the categories. Too fast to debug and not too fast to see,
+which is the worst speed a defect can have.
+
+`useLayoutEffect` runs between the render and the paint, so the first frame anybody sees is
+the finished one. It falls back to `useEffect` on the server, where there is no paint and
+React warns about it.
+
+---
+
+## The category pictures were touching their own names
+
+The icon slot went from 26px to 44px when the drawn categories arrived; the grid track it
+sits in stayed at 26 on desktop and 24 on a phone. A 44px picture in a 24px column spills
+into the word beside it, which is what "birbirine dokunuyorlar" was.
+
+One number in one place now, and a gap wide enough to read as one.
+
+---
+
+## The location dialog lost a button and gained the product's own timing
+
+Three changes asked for on the card, and the reasoning behind two of them is worth keeping.
+
+It has one action now, always called "Tekrar dene". What trying again *means* still differs
+underneath -- a refusal reloads the page, because on iOS a permission changed in Settings
+never reaches a page that is already open; anything else simply asks the device again -- but
+the reader should not have to know which case they are in to press the only button. The
+second "Kapat" underneath went with it: the cross in the corner was already the way out.
+
+It arrives and leaves at the nudge's speed, on the nudge's curve: .52s, cubic-bezier(.16,1,
+.3,1). Its own keyframes, though. The nudge's carry a `translate(-50%)` because it is pinned
+to the middle by `left:50%`, and reusing them here would have shoved the dialog half its own
+width to the left of a backdrop that already centres it.
+
+And the cross beside "Mevcut konum kullanılıyor" is gone. It cleared the location outright --
+rarely wanted, easily hit by accident -- and "Konumu değiştir" already opens the place to
+change it.
+
+---
+
 ## The page the search queries were already asking for
 
 `/antalya/yatas-bedding-magazalari` -- one chain's branches in one city, listed by district.

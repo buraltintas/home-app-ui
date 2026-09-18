@@ -1153,3 +1153,36 @@ svg{stroke-width:2}
 .catalog-page-gap{min-width:24px;color:var(--ink-muted)}
 .catalog-page-step{font-weight:600}
 @media(max-width:600px){.catalog-pages{gap:6px}.catalog-pages a,.catalog-pages span{min-width:40px;padding:0 8px;font-size:14px}}
+
+/* The location dialog arrives and leaves at the same speed as the nudge, on the same curve.
+   Two panels sliding onto one screen at different speeds read as two different products, so
+   the figure is borrowed rather than chosen: .52s on cubic-bezier(.16,1,.3,1).
+   Its own keyframes, though: the nudge carries a translate(-50%) because it is pinned to the
+   middle by `left:50%`, and reusing them here would shove the dialog half its width to the
+   left of a backdrop that already centres it. */
+.location-alert-backdrop{animation:backdrop-in .52s cubic-bezier(.16,1,.3,1) both}
+.location-alert-dialog{animation:alert-in .52s cubic-bezier(.16,1,.3,1) both}
+.location-alert-backdrop.is-leaving{animation:backdrop-out .52s cubic-bezier(.16,1,.3,1) both;pointer-events:none}
+.location-alert-backdrop.is-leaving .location-alert-dialog{animation:alert-out .52s cubic-bezier(.16,1,.3,1) both}
+@keyframes backdrop-in{from{opacity:0}to{opacity:1}}
+@keyframes backdrop-out{from{opacity:1}to{opacity:0}}
+@keyframes alert-in{from{opacity:0;transform:translateY(calc(100% + 22px))}to{opacity:1;transform:translateY(0)}}
+@keyframes alert-out{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(calc(100% + 22px))}}
+@media(prefers-reduced-motion:reduce){
+  .location-alert-backdrop,.location-alert-dialog,
+  .location-alert-backdrop.is-leaving,.location-alert-backdrop.is-leaving .location-alert-dialog{animation:none}
+}
+
+/* The picture and the name were touching, and the reason was a column that never grew with
+   its contents: the icon slot went from 26px to 44px when the drawn categories arrived, and
+   the grid track it sits in stayed at 26 on desktop and 24 on a phone. A 44px picture in a
+   24px column spills into the word beside it. One number in one place now, and a gap wide
+   enough to read as a gap. */
+.category-links button,
+.search-suggestions>div:first-child .category-links button{grid-template-columns:44px minmax(0,1fr);gap:16px;min-height:68px}
+@media(max-width:600px){
+  .category-links button{grid-template-columns:44px minmax(0,1fr);gap:14px;min-height:64px}
+  .category-links button>.category-icon,
+  .category-links button>.category-icon.is-picture{width:44px;height:44px}
+  .category-links button>.category-icon svg{width:24px;height:24px}
+}

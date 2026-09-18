@@ -1,7 +1,7 @@
 'use client';
 
 import {TriangleAlert,X} from 'lucide-react';
-import {useCallback,useEffect,useRef} from 'react';
+import {useCallback,useEffect,useRef,useState} from 'react';
 import {useI18n} from '@/i18n/I18nProvider';
 import type {LocationFailure} from '@/lib/location';
 
@@ -30,10 +30,23 @@ function AddressBarHint({label}:{label:string}){
 // It carries its own retry precisely because it covers the control that failed. The earlier
 // version dropped the retry on the grounds that the button was one line above; once the
 // message is in front of that button, that reasoning stops holding.
+// How long the panel takes to arrive and to leave. It is the figure the nudge already uses,
+// not a new one: two things that slide onto the same screen at different speeds read as two
+// different products.
+const MOTION_MS=520;
+
 export function LocationAlert({message,reason,onRetry,onDismiss}:{message:string;reason:LocationFailure|'';onRetry?:()=>void;onDismiss:()=>void}){
   const {t}=useI18n();
   const close=useRef<HTMLButtonElement>(null);
-  const dismiss=useCallback(()=>onDismiss(),[onDismiss]);
+  const [leaving,setLeaving]=useState(false);
+  // Leaving is a state rather than an immediate unmount, because an element removed from the
+  // document cannot animate out of it. Reduced motion skips the wait rather than sitting
+  // through a delay for a movement that is not going to happen.
+  const dismiss=useCallback(()=>{
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){onDismiss();return;}
+    setLeaving(true);
+    window.setTimeout(onDismiss,MOTION_MS);
+  },[onDismiss]);
 
   useEffect(()=>{
     close.current?.focus();
@@ -48,7 +61,7 @@ export function LocationAlert({message,reason,onRetry,onDismiss}:{message:string
   // Both states mean the same thing to the person in front of it: the browser is not going
   // to ask, so pressing the button again cannot help.
   const blocked=reason==='blocked'||reason==='denied';
-  return <div className="dialog-backdrop location-alert-backdrop" role="presentation" onMouseDown={event=>{if(event.target===event.currentTarget)dismiss();}}>
+  return <div className={`dialog-backdrop location-alert-backdrop${leaving?' is-leaving':''}`} role="presentation" onMouseDown={event=>{if(event.target===event.currentTarget)dismiss();}}>
     <div className="location-alert-dialog" role="alertdialog" aria-modal="true" aria-labelledby="location-alert-title" aria-describedby="location-alert-body">
       <header>
         <span className="location-alert-mark" aria-hidden="true"><TriangleAlert/></span>
@@ -57,19 +70,19 @@ export function LocationAlert({message,reason,onRetry,onDismiss}:{message:string
       </header>
       <p id="location-alert-body">{message}</p>
       {showHint&&<AddressBarHint label={t('locationLockHint')}/>}
+      {/* One button, and it is always called "try again", because that is the only thing
+          anybody wants from this dialog. What trying again means differs underneath: a
+          refusal will be refused again -- the request never reaches the device, and on iOS a
+          permission changed in Settings does not reach a page that is already open, because
+          WebKit binds the decision at load -- so there it reloads. A timeout or a device that
+          could not answer just asks again. The reader should not have to know the difference.
+          The way out is the cross in the corner; a second "close" underneath was a second
+          control for something the dialog already had. */}
       <div className="location-alert-actions">
-        {/* Which action leads the dialog depends on what actually failed, because the two
-            cases have different answers and offering the wrong one wastes somebody's time.
-            A refusal will be refused again -- the request never reaches the device -- and on
-            iOS a permission changed in Settings does not reach a page that is already open:
-            WebKit binds the decision at load, which is exactly the "I have to refresh it
-            myself" that kept being reported. So a refusal leads with the reload it needs.
-            A timeout or a device that could not answer is worth simply asking again. */}
-        {blocked
-          ?<><button type="button" className="button primary" onClick={()=>window.location.reload()}>{t('locationReload')}</button>
-            {onRetry&&<button type="button" className="button secondary" onClick={()=>{onDismiss();onRetry();}}>{t('locationRetry')}</button>}</>
-          :<>{onRetry&&<button type="button" className="button primary" onClick={()=>{onDismiss();onRetry();}}>{t('locationRetry')}</button>}</>}
-        <button type="button" className="button quiet" onClick={dismiss}>{t('close')}</button>
+        <button type="button" className="button primary" onClick={()=>{
+          if(blocked){window.location.reload();return;}
+          dismiss();onRetry?.();
+        }}>{t('locationRetry')}</button>
       </div>
     </div>
   </div>;

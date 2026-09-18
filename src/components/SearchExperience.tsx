@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight, Check, History, LocateFixed, MapPin, Search, X } from 'lucide-react';
-import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import type { Coordinates, Locale, LocationResult, Me, SearchHistory, SearchResponse, SearchResult } from '@/lib/types';
 import { SaveStoreButton } from './SaveStoreButton';
@@ -134,6 +134,20 @@ function Result({item,onSelect,saved}:{item:SearchResult;onSelect:()=>void;saved
 
 // One screenful of results. The search answers with up to ninety; this is how many are on
 // screen before somebody asks for more.
+// Before the browser paints, not after.
+//
+// The panel opening is not a change that can wait a frame. Everything that makes it cover
+// the screen -- its height, its offset, and the lock that stops the page behind it moving --
+// used to be applied in an ordinary effect, which runs after the paint. So for exactly one
+// frame the panel existed and none of that had happened yet, and the top of the search page
+// showed through: the dog, the language button, a slice of the category list. It was gone
+// too fast to debug and not too fast to see, which is the worst speed for a defect.
+//
+// useLayoutEffect runs between the render and the paint, so the first frame anybody sees is
+// already the finished one. It has no meaning on the server, where there is no paint, and
+// React warns if it is called there -- hence the switch.
+const useBeforePaint=typeof window==='undefined'?useEffect:useLayoutEffect;
+
 const PAGE=30;
 
 export function SearchExperience() {
@@ -166,7 +180,7 @@ export function SearchExperience() {
   // top of the panel went out of sight. The visual viewport knows both, so while the panel
   // is open its height is written into a custom property the panel is sized by, and the
   // document behind it is held still so it cannot show through underneath.
-  useEffect(()=>{
+  useBeforePaint(()=>{
     const root=document.documentElement;
     if(!suggestionsOpen){root.style.removeProperty('--panel-height');root.removeAttribute('data-search-panel');return;}
     root.setAttribute('data-search-panel','open');
@@ -391,7 +405,7 @@ export function SearchExperience() {
   // scroll that page to bring the field into view -- and the panel, being fixed to the
   // layout viewport, travels with it: the bar ends up above the top edge and has to be
   // dragged back down. With the page behind held still there is nothing to travel.
-  useEffect(()=>{
+  useBeforePaint(()=>{
     if(!suggestionsOpen)return;
     const body=document.body;
     const previous=body.style.overflow;
@@ -751,7 +765,10 @@ export function SearchExperience() {
   // answer "what shall I type" should not be holding half its answers back.
   const stripPhrases=Array.from(new Set([...strip.phrases,...seasonalPool(locale)]));
   const prompts=stripPhrases;
-  return <main className="search-page"><header className="search-hero"><div className="search-title"><h1>{t('searchTitle')}</h1><span aria-hidden="true">↗</span></div>{!location&&<p className="location-lead">{t('locationRequired')}</p>}{location&&!sheetOpen&&<div className={`location-control${location.source==='device'?' is-device':''}`}><MapPin aria-hidden="true"/><span>{location.source==='device'?t('currentLocationActive'):location.label}</span><button onClick={()=>setLocationOpen(true)} disabled={loading}>{t('changeLocation')}</button><button className="location-clear" aria-label={t('clearLocation')} onClick={()=>{setLocation(undefined);setData(undefined);}} disabled={loading}><X/></button></div>}{sheetOpen&&<section className="location-sheet" aria-label={t('chooseLocation')}>{location&&<div><p>{t('locationBenefit')}</p></div>}<div className="location-actions">{autoLocating&&<p className="location-working" aria-live="polite"><span className="location-pulse" aria-hidden="true"/>{t('locatingYou')}</p>}{/* One control, two states. It used to be swapped for a separate confirmation line,
+  return <main className="search-page"><header className="search-hero"><div className="search-title"><h1>{t('searchTitle')}</h1><span aria-hidden="true">↗</span></div>{!location&&<p className="location-lead">{t('locationRequired')}</p>}{location&&!sheetOpen&&<div className={`location-control${location.source==='device'?' is-device':''}`}><MapPin aria-hidden="true"/><span>{location.source==='device'?t('currentLocationActive'):location.label}</span>{/* One control, not two. The cross beside it cleared the location outright, which is a
+          thing almost nobody wants and everybody could hit by accident -- and "Konumu
+          değiştir" already opens the place to change it, including to somewhere else. */}
+        <button onClick={()=>setLocationOpen(true)} disabled={loading}>{t('changeLocation')}</button></div>}{sheetOpen&&<section className="location-sheet" aria-label={t('chooseLocation')}>{location&&<div><p>{t('locationBenefit')}</p></div>}<div className="location-actions">{autoLocating&&<p className="location-working" aria-live="polite"><span className="location-pulse" aria-hidden="true"/>{t('locatingYou')}</p>}{/* One control, two states. It used to be swapped for a separate confirmation line,
           which read as the button disappearing and something else taking its place. The
           same bubble now carries the answer, and pressing it again re-reads the device
           rather than being inert -- a control that looks pressable has to be pressable. */}
