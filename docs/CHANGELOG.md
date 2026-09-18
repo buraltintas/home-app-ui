@@ -8,6 +8,34 @@ value involved.
 
 ---
 
+## The page the search queries were already asking for
+
+`/antalya/yatas-bedding-magazalari` -- one chain's branches in one city, listed by district.
+621 of them.
+
+The city-and-category pages went out this morning and then Search Console said what people
+actually type. Not "Antalya yatak mağazaları". **"yataş antalya", "antalya yataş mağazaları",
+"yataş konyaaltı", "en yakın yataş bayi".** Every branded query reaching this site in
+twenty-nine days is brand-and-city, and there was no page with that name to answer one.
+
+The address shape is the same as the category pages, and the route resolves both: a trade
+first, then a chain. There is no collision today -- forty-five brand slugs, fifteen category
+slugs, no overlap -- and if one ever appears the trade wins, because it is the more general
+answer and the chain can still be reached by its own name.
+
+Three branches is the floor rather than ten, and the difference is the point. "Antalya carpet
+shops" with three shops is a thin list of a large subject; "Yataş in Antalya" with three
+branches is a complete answer to which one is nearest -- and one the chain's own store finder
+gives badly, listing a country and leaving the reader to work out the district.
+
+Ordered by district then name, not by rating: somebody who named a chain has chosen it and is
+deciding which branch. A ranking would answer a question they did not ask.
+
+Store pages link up to the chain's page first and the trade's pages after it, for the same
+reason: it is the page somebody looking for this shop most likely wanted.
+
+---
+
 ## Google read one shop as two
 
 Every store page declared the shop twice. The `aggregateRating` on the Store carried an

@@ -1,9 +1,10 @@
 import type {MetadataRoute} from 'next';
-import {getAllStores,getCityCategories} from '@/lib/server-api';
+import {getAllStores,getCityBrands,getCityCategories} from '@/lib/server-api';
 import {legalLinks} from '@/lib/legal-links';
 import {localePath,locales,siteUrl,storePath} from '@/lib/site';
 // Kept in step with the list pages themselves: one number, one place.
 import {PER_PAGE as CITY_CATEGORY_PER_PAGE} from '@/components/CityCategoryView';
+import {BRAND_PER_PAGE} from '@/components/CityBrandView';
 
 // The sitemap listed five hard coded URLs and not one store, so the only pages capable
 // of ranking were never offered to a crawler. Three of those five were /favorites,
@@ -27,6 +28,10 @@ async function standingPages(now:Date){
   // it is worth more of a crawl than a store page with nothing written on it yet. The
   // backend decides which pairs exist; listing any others here would advertise 404s.
   const pairs=await getCityCategories('tr');
+  // The chain pages as well. They answer the queries actually arriving -- brand and city --
+  // and there are 621 of them; leaving them out of the sitemap would mean the pages built
+  // for the demand we can see are the ones nothing points a crawler at.
+  const brands=await getCityBrands('tr');
   return [
     ...entry('/',now,'daily',1),
     // The search is a tool rather than a document: rendered in the browser, it arrives at
@@ -46,6 +51,13 @@ async function standingPages(now:Date){
       const pages=Math.max(1,Math.ceil(pair.store_count/CITY_CATEGORY_PER_PAGE));
       return Array.from({length:pages},(_,index)=>entry(
         `/${pair.city_slug}/${pair.category_url_slug}-magazalari${index?`/${index+1}`:''}`,
+        now,'weekly',index?.5:.7,
+      )).flat();
+    }),
+    ...brands.flatMap(brand=>{
+      const pages=Math.max(1,Math.ceil(brand.store_count/BRAND_PER_PAGE));
+      return Array.from({length:pages},(_,index)=>entry(
+        `/${brand.city_slug}/${brand.brand_slug}-magazalari${index?`/${index+1}`:''}`,
         now,'weekly',index?.5:.7,
       )).flat();
     }),

@@ -1,16 +1,13 @@
-import Image from 'next/image';
 import Link from 'next/link';
-import {ArrowRight} from 'lucide-react';
 import {JsonLd} from './JsonLd';
 import {PageBackButton} from './PageBackButton';
-import {RatingStars} from './Rating';
 import {ScrollTop} from './ScrollTop';
+import {CatalogList,CatalogPagination} from './CatalogList';
 import {type CityCategory,getCityCategories,getCityCategoryPage} from '@/lib/server-api';
 import {getDictionary} from '@/i18n/dictionaries';
 import {localePath,siteUrl,storePath} from '@/lib/site';
 import {breadcrumbJsonLd} from '@/lib/structured-data';
 import {locative} from '@/lib/turkish-locative';
-import {isBrandMark,storePhotoURL} from '@/lib/store-photo';
 import type {Locale} from '@/lib/types';
 
 // The suffix is Turkish in every language, and so is the rest of the address. A shop in
@@ -81,21 +78,6 @@ export const cityCategoryCopy:Record<Locale,Copy>={
   },
 };
 
-// Which page numbers to draw. Twenty-three links in a row is a wall; the first, the last,
-// and a window around where the reader is says the same thing and can be read. The ellipsis
-// is a gap in the numbers, not a control -- there is nothing to press, because everything
-// worth pressing is already named.
-function window_(current:number,total:number):(number|'gap')[]{
-  if(total<=7)return Array.from({length:total},(_,i)=>i+1);
-  const near=[current-1,current,current+1].filter(n=>n>1&&n<total);
-  const out:(number|'gap')[]=[1];
-  if(near[0]>2)out.push('gap');
-  out.push(...near);
-  if(near[near.length-1]<total-1)out.push('gap');
-  out.push(total);
-  return out;
-}
-
 // One city, one category, one page of it.
 //
 // Paginated because the first version was not, and the gap was measurable: Istanbul
@@ -135,34 +117,8 @@ export async function CityCategoryView({pair,locale,page}:{pair:CityCategory;loc
       <p>{words.intro(data.total,pair.city,pair.category_name)}</p>
       {pages>1&&<p className="catalog-page-of">{words.page(page,pages)}</p>}
     </header>
-    <ul className="catalog-list">{data.items.map(store=>{
-      const photo=storePhotoURL(store.photo,160);
-      return <li key={store.id}><Link href={localePath(locale,storePath(store))}>
-        {photo
-          ?<Image className={`catalog-mark${isBrandMark(store.photo)?' is-brand-mark':''}`} src={photo} width={56} height={56} alt="" unoptimized/>
-          :<span className="catalog-mark is-empty" aria-hidden="true">{store.name.trim().charAt(0)}</span>}
-        <span className="catalog-copy">
-          <strong>{store.name}</strong>
-          <small>{[store.district,store.city].filter(Boolean).join(', ')}</small>
-          {store.category_labels.length>0&&<small className="catalog-categories">{store.category_labels.join(' · ')}</small>}
-        </span>
-        <span className="catalog-score">
-          {store.review_count
-            ?<><RatingStars value={store.average_rating}/><small>{store.review_count} {words.reviews}</small></>
-            :<small className="catalog-none">{words.none}</small>}
-        </span>
-        <ArrowRight aria-hidden="true"/>
-      </Link></li>;
-    })}</ul>
-    {pages>1&&<nav className="catalog-pages" aria-label={words.pagination}>
-      {page>1&&<Link className="catalog-page-step" rel="prev" href={localePath(locale,cityCategoryPath(pair,page-1))}>{words.previous}</Link>}
-      <ol>{window_(page,pages).map((entry,index)=>entry==='gap'
-        ?<li key={`gap-${index}`} className="catalog-page-gap" aria-hidden="true">…</li>
-        :<li key={entry}>{entry===page
-          ?<span aria-current="page">{entry}</span>
-          :<Link href={localePath(locale,cityCategoryPath(pair,entry))}>{entry}</Link>}</li>)}</ol>
-      {page<pages&&<Link className="catalog-page-step" rel="next" href={localePath(locale,cityCategoryPath(pair,page+1))}>{words.next}</Link>}
-    </nav>}
+    <CatalogList items={data.items} locale={locale} reviews={words.reviews} none={words.none}/>
+    <CatalogPagination page={page} pages={pages} locale={locale} words={words} pathFor={n=>cityCategoryPath(pair,n)}/>
     {(sameCity.length>0||sameCategory.length>0)&&<nav className="catalog-links" aria-label={words.others}>
       {sameCity.length>0&&<section>
         <h2>{words.others}</h2>

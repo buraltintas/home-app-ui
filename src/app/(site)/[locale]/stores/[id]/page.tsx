@@ -10,7 +10,7 @@ import {StoreActions} from '@/components/StoreActions';
 import {JsonLd} from '@/components/JsonLd';
 import {PencilLine} from 'lucide-react';
 import {ScrollTop} from '@/components/ScrollTop';
-import {getCityCategories,getNearbyStores,getPublicStore} from '@/lib/server-api';
+import {getCityBrands,getCityCategories,getNearbyStores,getPublicStore} from '@/lib/server-api';
 import {getDictionary} from '@/i18n/dictionaries';
 import {asLocale} from '@/lib/site';
 import {canonicalFor,localePath,storePath} from '@/lib/site';
@@ -51,6 +51,12 @@ export function generateStaticParams(){return [] as {id:string}[];}
 
 // The page's own name, said the same way here as on the page itself: a link that renames
 // where it goes is a link somebody does not recognise when they arrive.
+const cityBrandName:Record<Locale,(city:string,brand:string)=>string>={
+  tr:(city,brand)=>`${brand} ${city} mağazaları`,
+  en:(city,brand)=>`${brand} stores in ${city}`,
+  de:(city,brand)=>`${brand}-Filialen in ${city}`,
+  ru:(city,brand)=>`${brand}: магазины в городе ${city}`,
+};
 const cityCategoryName:Record<Locale,(city:string,category:string)=>string>={
   tr:(city,category)=>`${city} ${category.toLocaleLowerCase('tr')} mağazaları`,
   en:(city,category)=>`${category} stores in ${city}`,
@@ -155,13 +161,26 @@ export default async function Page({params}:Props){
   // A shop really does belong to several, so it says several. Largest first, because the
   // broadest name is the one a reader recognises; three, because a row of links stops being
   // a sentence after that.
-  const belongsTo=(store.city
-    ?pairs.filter(pair=>pair.city===store.city&&store.categories.includes(pair.category_slug))
-      .sort((a,b)=>b.store_count-a.store_count)
-    :[]).slice(0,3).map(pair=>({
-      path:`/${pair.city_slug}/${pair.category_url_slug}-magazalari`,
-      name:cityCategoryName[locale](pair.city,pair.category_name),
-    }));
+  const brandPairs=await getCityBrands(locale);
+  // The chain's page in this city comes first when there is one, because it is the page
+  // somebody looking for this shop most likely wanted: the queries reaching us are "yataş
+  // antalya" and "en yakın yataş bayi", not the trade in the abstract.
+  const brandPage=store.city&&store.brand_slug
+    ?brandPairs.find(pair=>pair.city===store.city&&pair.brand_slug===store.brand_slug)
+    :undefined;
+  const belongsTo=[
+    ...(brandPage?[{
+      path:`/${brandPage.city_slug}/${brandPage.brand_slug}-magazalari`,
+      name:cityBrandName[locale](brandPage.city,brandPage.brand_name),
+    }]:[]),
+    ...(store.city
+      ?pairs.filter(pair=>pair.city===store.city&&store.categories.includes(pair.category_slug))
+        .sort((a,b)=>b.store_count-a.store_count)
+      :[]).slice(0,brandPage?2:3).map(pair=>({
+        path:`/${pair.city_slug}/${pair.category_url_slug}-magazalari`,
+        name:cityCategoryName[locale](pair.city,pair.category_name),
+      })),
+  ];
   // One store, one address. Links created before slugs existed still resolve, they just
   // do not stay on a second URL competing with the canonical one.
   if(store.slug&&id!==store.slug)permanentRedirect(storePath(store));

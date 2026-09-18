@@ -182,3 +182,15 @@ export type CityCategoryPage={city:string;category_slug:string;category_name:str
 export async function getCityCategoryPage(citySlug:string,categorySlug:string,locale:Locale,limit=60,offset=0):Promise<CityCategoryPage|undefined>{
   try{return await publicApi<CityCategoryPage>(`/v1/discovery/stores?city=${encodeURIComponent(citySlug)}&category=${encodeURIComponent(categorySlug)}&limit=${limit}&offset=${offset}`,{locale});}catch{return undefined;}
 }
+
+
+// One chain's branches in one city -- the question Search Console says people actually ask.
+export type CityBrand={city:string;city_slug:string;brand_slug:string;brand_name:string;store_count:number};
+export const getCityBrands=cache(async(locale:Locale):Promise<CityBrand[]>=>{
+  try{return (await publicApi<{items:CityBrand[]}>('/v1/discovery/city-brands',{locale})).items??[];}catch{return [];}
+});
+
+export type CityBrandPage={city:string;brand_slug:string;brand_name:string;total:number;items:CatalogEntry[]};
+export async function getCityBrandPage(citySlug:string,brandSlug:string,locale:Locale,limit=60,offset=0):Promise<CityBrandPage|undefined>{
+  try{return await publicApi<CityBrandPage>(`/v1/discovery/brand-stores?city=${encodeURIComponent(citySlug)}&brand=${encodeURIComponent(brandSlug)}&limit=${limit}&offset=${offset}`,{locale});}catch{return undefined;}
+}
