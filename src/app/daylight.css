@@ -789,7 +789,12 @@ svg{stroke-width:2}
      nearby button, the distance, the category label -- so the panel borrows it rather than
      inventing a colour of its own, and white on it clears AA at 5:1. */
   .search-form.is-query-open>button[type=submit]{grid-column:1/-1;grid-row:2;background:var(--clay)}
-  .search-form.is-query-open .search-query-suggestions{position:relative;grid-column:1/-1;grid-row:3;min-height:0;top:auto;left:auto;right:auto;overflow-y:auto;-webkit-overflow-scrolling:touch;box-shadow:none;border-top:1px solid var(--line);border-radius:0;padding:8px 0 calc(24px + env(safe-area-inset-bottom));background:transparent}
+  /* align-self, because the panel aligns its rows to the start and an item that starts is
+     an item that sizes to its own content. The list was 3,573px tall inside an 812px panel:
+     the row was the right height, the list ignored it, and everything past the fold was
+     clipped by the panel's overflow rather than scrolled to. It fit while there were four
+     suggestions; showing all fifty-six is what made the loss visible. */
+  .search-form.is-query-open .search-query-suggestions{position:relative;grid-column:1/-1;grid-row:3;align-self:stretch;min-height:0;top:auto;left:auto;right:auto;overflow-y:auto;-webkit-overflow-scrolling:touch;box-shadow:none;border-top:1px solid var(--line);border-radius:0;padding:8px 0 calc(24px + env(safe-area-inset-bottom));background:transparent}
   /* The list is as long as it is; the panel around it is what scrolls. A second scrolling
      box inside the first one is how a list ends up with its own private bottom edge. */
   .search-form.is-query-open .search-query-suggestions-list{max-height:none}

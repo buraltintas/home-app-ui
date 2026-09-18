@@ -8,6 +8,25 @@ value involved.
 
 ---
 
+## Fifty-two of the fifty-six suggestions were being clipped, not scrolled
+
+Measured in the open panel on a 375px screen: the suggestions list was **3,573px tall inside
+an 812px panel**, and it was not scrollable. The row it sits in was the right height (676px).
+The list ignored it.
+
+The panel aligns its rows to the start, and an item that starts is an item that sizes to its
+own content rather than to its row, so `overflow-y:auto` had nothing to overflow. Everything
+past the fold was clipped by the panel's own `overflow:hidden` -- reachable by nothing, not
+even a scroll. `align-self:stretch` is the whole fix.
+
+This had been invisible while the panel showed four suggestions and a "show more" control.
+Showing all fifty-six is what made it a defect, which is why it arrives as "the suggestions
+are not there" rather than as "the list does not scroll": with the keyboard open the panel is
+shorter still, so less of the clipped list shows, and closing the keyboard reveals more of it.
+That is exactly the shape of the report.
+
+---
+
 ## The search panel was fixed to a viewport nobody was looking at
 
 Reported five times and fixed four: on iPhone the search bar at the top of the full-screen
