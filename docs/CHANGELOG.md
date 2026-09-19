@@ -8,6 +8,40 @@ value involved.
 
 ---
 
+## The search panel left a strip of the page showing, six times
+
+Reported six times, fixed five times, and every one of those fixes was an attempt to make
+the panel's own box exact: measure the dynamic viewport, then the visual viewport, then its
+`offsetTop`, then run the measurement before paint. The symptom kept coming back in the same
+shape -- the site header visible above the panel for a moment, a slice of the category list
+below it -- because the box is not the kind of thing that can be made exact.
+
+A phone has two viewports. `position: fixed` places an element against the layout viewport;
+the panel is sized and offset from the visual viewport, which is smaller and can sit lower
+inside the other one. While the keyboard animates, the two disagree, and whatever the panel
+does not reach is the page underneath. Correcting the panel's `top` by `offsetTop` does not
+close that gap -- it *opens* it, by pushing the panel down and leaving the header exposed
+above it.
+
+Two changes, neither of which depends on winning a race:
+
+- An opaque sheet across the whole layout viewport, at `z-index: 79`, under the panel and
+  over everything else (`html[data-search-panel=open] body::before`). Anything the panel
+  does not cover is now plain canvas instead of the page. The measurement can be as wrong as
+  the browser makes it and nothing readable shows through.
+- The panel opens on `pointerdown` rather than on the `focus` that follows it. A phone
+  decides how far to scroll to lift a field above the keyboard using the position the field
+  is in when it is touched. On focus that is still a bar in the middle of the page, so the
+  browser scrolls to a field that has since moved to the top of a fixed panel -- and drags
+  the panel with it. Opening on the press puts the field where it will end up before
+  anything is measured.
+
+Not verified on a real iOS device: the browser used for checking has no iOS keyboard, so
+`offsetTop` is always zero here. What was verified is that with the panel open nothing of
+the page is reachable at any point of the viewport.
+
+---
+
 ## The category pictures were never the pictures
 
 Tapping a category opened a sheet showing a small circular line drawing. The drawings had

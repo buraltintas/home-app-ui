@@ -770,6 +770,16 @@ svg{stroke-width:2}
      in --panel-height. The panel itself does not scroll: only the list inside it does. */
   /* Nothing behind the panel moves or shows. */
   html[data-search-panel=open],html[data-search-panel=open] body{overflow:hidden;overscroll-behavior:none}
+  /* An opaque sheet over the whole layout viewport, under the panel and over everything else.
+     The panel is sized and placed from the VISUAL viewport, which on a phone is smaller than
+     the layout viewport and can sit lower inside it. Whatever the panel does not reach was
+     the page underneath -- the header at the top, a strip of the category list at the bottom
+     -- and it showed for as long as the two viewports disagreed, which is the length of a
+     keyboard animation. Every attempt so far tried to make the panel's own box exact enough
+     that this could not happen. It is not a box that can be made exact: the browser is
+     moving one of the two viewports while the measurement is being taken. So the gap is
+     covered instead of being chased. */
+  html[data-search-panel=open] body::before{content:"";position:fixed;z-index:79;inset:0;background:var(--canvas);pointer-events:none}
   .search-form.is-query-open{position:fixed;z-index:80;top:var(--panel-top,0px);left:0;right:0;bottom:auto;height:var(--panel-height,100dvh);max-height:var(--panel-height,100dvh);overflow:hidden;margin:0;padding:calc(18px + env(safe-area-inset-top)) 18px 0;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr);align-content:start;align-items:start;gap:10px;background:var(--canvas);border:0}
   /* In the panel the magnifier is not decoration, it is the way back. */
   .search-form.is-query-open>svg{display:none}
