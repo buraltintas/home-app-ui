@@ -8,6 +8,34 @@ value involved.
 
 ---
 
+## Four chains were wearing somebody else's logo
+
+Reported as "why do these have no logo", and the answer was two different faults. Some shops
+carry no brand at all, so there is nothing to look up. And of the marks we did hold, four
+were not the chain's mark:
+
+- **Bellona** was a teal hand icon scraped off its own site -- a UI glyph, not a logo. Fixed:
+  it is the BELLONA wordmark now.
+- **Merinos** was "Erdemoğlu Holding". Its site uses the parent company's logo in its header;
+  the file is even called `meri-erd-logo.png`.
+- **Mutlu Halı** was "Küçükmutlu", a different company. This one is not a bad pick -- the
+  website recorded for that brand is Küçükmutlu's, so the registry entry is wrong.
+- **Vivense** was an empty circle.
+- **Modalife**, newly collected, is white text on transparency -- invisible on this site's
+  ground -- and its strapline reads "Türkiye'nin Düğün Paketçisi".
+
+The four wrong ones are removed rather than replaced. Their shops show their initial, which
+is what the collector's own documentation says is correct: a wrong-but-plausible mark is
+worse than none, because nothing about it says it is wrong.
+
+**Still open, and not fixed here because they are catalogue data rather than code:** a shop
+named just "Yataş" is attached to no chain, and the adoption rule cannot attach it -- it asks
+that the shop's name *start with* the chain's, and "Yataş" does not start with "Yataş
+Bedding". The same dry run refuses 39 more rows whose name matches a chain but whose trade
+does not overlap it. Bambi and İşbir Yatak publish no usable mark on their own sites.
+
+---
+
 ## The results list was broken on every wide screen, and had been for a fortnight
 
 A store's name and address were squeezed into a 20px column, one word per line, with the
