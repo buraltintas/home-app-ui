@@ -8,6 +8,35 @@ value involved.
 
 ---
 
+## A field that ate the tail of its own last line
+
+"Küçük daireler için kompakt mobilya", typed into the search bar, came back as "mobilua": the
+descender of the y was cut off by the bottom of the field.
+
+The bar grows to fit what is in it, and the height it grows to is `scrollHeight`, which is a
+whole number -- the fractional part of a line box is lost on every measurement. A two-pixel
+buffer covered that at the size the bar is usually read at, and stopped covering it at larger
+ones, which is where the report came from. The buffer is a share of the line now rather than
+a constant, because the rounding it exists to absorb grows with the line. Measured at three
+text sizes: 5px, 6px and 8px of headroom where it used to be a flat 2.
+
+The rest of the same card:
+
+- **The breakdown no longer says "Aranıyor…".** It borrowed the search page's loading word, so
+  opening a score table announced a search that was not happening. It says nothing and fills.
+- **The breakdown's control is marked at both ends:** what it opens on the left, and that it
+  opens at all on the right -- the same chevron the review cards already use for the same
+  table, so one control is met in two places rather than two that happen to agree.
+- **"Listelemeyi temizle" is centred.** An inline-flex box does not take an auto margin, which
+  is why the first attempt at this did nothing.
+- **"Aradığın mağazayı bulamadıysan"** carries the mark of looking rather than of alarm, and
+  its second sentence -- the one that asks the reader for something -- is the one set in ink.
+- **Closing the "add a store" dialog puts the reader back where they opened it.** Focus returns
+  to the button that opened it, which is right; but focusing an element scrolls it into view,
+  and that button sits at the bottom of a list thirty shops long.
+
+---
+
 ## Four chains were wearing somebody else's logo
 
 Reported as "why do these have no logo", and the answer was two different faults. Some shops

@@ -1,6 +1,6 @@
 'use client';
 
-import {CircleAlert,Plus,X} from 'lucide-react';
+import {SearchCheck,Plus,X} from 'lucide-react';
 import Image from 'next/image';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import {useI18n} from '@/i18n/I18nProvider';
@@ -23,10 +23,20 @@ export function AddStoreSheet({query}:{query:string}){
   const field=useRef<HTMLInputElement>(null);
   const opener=useRef<HTMLButtonElement>(null);
 
-  const close=useCallback(()=>{setOpen(false);setState('idle');opener.current?.focus();},[]);
+  // Where the page was when the dialog opened. Focus moves back to the button that opened it,
+  // which is right -- but focusing an element scrolls it into view, and that button sits at
+  // the bottom of a list thirty shops long. Closing the dialog therefore threw the reader to
+  // the end of the page. The focus is given without the scroll, and the page is put back.
+  const restoreTo=useRef(0);
+  const close=useCallback(()=>{
+    setOpen(false);setState('idle');
+    opener.current?.focus({preventScroll:true});
+    window.scrollTo(0,restoreTo.current);
+  },[]);
 
   useEffect(()=>{
     if(!open)return;
+    restoreTo.current=window.scrollY;
     field.current?.focus();
     const escape=(event:KeyboardEvent)=>{if(event.key==='Escape')close();};
     window.addEventListener('keydown',escape);
@@ -51,8 +61,10 @@ export function AddStoreSheet({query}:{query:string}){
     {/* The end of the list is not another result, and it is not decoration either: it is the
         one place where a reader can tell us the catalogue is missing something. It is marked
         as a notice so it reads as a different kind of thing from the shops above it. */}
-    <h2><CircleAlert aria-hidden="true"/>{t('notFoundTitle')}</h2>
-    <p>{t('notFoundBody')}</p>
+    <h2><SearchCheck aria-hidden="true"/>{t('notFoundTitle')}</h2>
+    {/* Two sentences doing two jobs: what may have happened, and what the reader can do
+        about it. The second is the one being asked for, so it is the one set in ink. */}
+    <p>{t('notFoundBody')} <strong>{t('notFoundInvite')}</strong></p>
     <div className="add-store-action">
       <Image src="/illustrations/add-store.png" width={72} height={72} alt="" aria-hidden="true"/>
       <button ref={opener} type="button" className="button primary add-store-open" onClick={()=>setOpen(true)}><Plus aria-hidden="true"/>{t('addStore')}</button>

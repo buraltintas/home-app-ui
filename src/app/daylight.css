@@ -989,7 +989,14 @@ svg{stroke-width:2}
 .result-row .distance strong{font-size:15px;font-weight:750;color:var(--clay)}
 /* The breakdown behind the score, opened by the reader who wants it. */
 .result-criteria{margin-top:8px}
-.result-criteria>summary{display:inline-flex;align-items:center;min-height:32px;font-size:13px;font-weight:700;color:var(--clay);cursor:pointer;text-transform:none;letter-spacing:0}
+/* Marked at both ends: what it opens on the left, and that it opens at all on the right.
+   The chevron is the one the review cards already use for the same table, drawn rather than
+   set, so the two disclosures are one control the reader meets in two places. */
+.result-criteria>summary{display:inline-flex;align-items:center;gap:7px;min-height:32px;font-size:13px;font-weight:700;color:var(--clay);cursor:pointer;text-transform:none;letter-spacing:0;list-style:none}
+.result-criteria>summary::-webkit-details-marker{display:none}
+.result-criteria>summary>svg{width:15px;height:15px;flex:none}
+.result-criteria>summary::after{content:"";width:7px;height:7px;margin-left:1px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg);transition:transform .18s ease}
+.result-criteria[open]>summary::after{transform:translateY(2px) rotate(-135deg)}
 .result-criteria[open]>summary{margin-bottom:6px}
 .result-criteria dl{display:grid;margin:0}
 /* Ruled between the rows, like the breakdown on a review card, and in two columns so every
@@ -1080,7 +1087,10 @@ svg{stroke-width:2}
 /* The heading is read first and it is a question, not a warning. In amber it was the
    loudest thing on a page of results and read as something having gone wrong. */
 .add-store h2{display:flex;align-items:center;gap:10px;margin:0;font-size:17px;font-weight:800;letter-spacing:.01em;color:var(--ink)}
-.add-store h2 svg{color:var(--clay)}
+.add-store h2 svg{width:22px;height:22px;flex:none;color:var(--clay)}
+/* R28's second sentence. The first says what may have happened; this one is the request, so
+   it is the one in ink while the explanation stays quiet. */
+.add-store p strong{color:var(--ink);font-weight:750}
 .add-store h2 svg{width:18px;height:18px;flex:none}
 .add-store p{margin:6px 0 16px;color:var(--ink-muted);font-size:15px}
 .add-store-action{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
@@ -1246,7 +1256,9 @@ svg{stroke-width:2}
 /* Under the field it undoes, and quiet: it is a way back, not the thing to press. */
 /* As wide as its own words. It was a full-width slab on a phone, which read as the page's
    main action rather than as the way back from a list. */
-.clear-results{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;margin-top:14px;padding:0 18px;border:1px solid var(--line-strong);border-radius:var(--r-pill);background:var(--surface);color:var(--ink-muted);font-size:15px;transition:background-color .16s ease,color .16s ease}
+/* Centred. An inline-flex box does not take an auto margin, so it is laid out as a flex item
+   the width of its own words and centred both ways -- whichever kind of container it lands in. */
+.clear-results{display:flex;width:fit-content;align-self:center;align-items:center;justify-content:center;gap:8px;min-height:44px;margin:14px auto 0;padding:0 18px;border:1px solid var(--line-strong);border-radius:var(--r-pill);background:var(--surface);color:var(--ink-muted);font-size:15px;transition:background-color .16s ease,color .16s ease}
 .clear-results:hover{background:var(--muted);color:var(--ink)}
 .clear-results svg{width:17px;height:17px;flex:none}
 @media(max-width:600px){.clear-results{width:auto;margin-top:12px}}

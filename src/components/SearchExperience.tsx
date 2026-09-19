@@ -81,9 +81,17 @@ function growToFit(element:HTMLTextAreaElement|null){
     element.value='';
     element.style.height='auto';
   }
-  // Fractional line-height rounding can leave the last line clipped by a pixel at mobile
-  // widths. A tiny buffer keeps both placeholder and typed copy visible.
-  element.style.height=`${measured+2}px`;
+  // The buffer, and why it is not two pixels any more.
+  //
+  // A textarea clips at its content box, and scrollHeight comes back as a whole number: the
+  // fractional part of a line box is lost every time. Two pixels covered that at the size
+  // this is usually read at, and not at larger ones -- a reader with the system text size
+  // raised, typing two lines, lost the tail of the last one. "mobilya" read as "mobilua".
+  //
+  // So the buffer is a share of the line rather than a constant, because the rounding it is
+  // there to absorb grows with the line.
+  const line=Number.parseFloat(getComputedStyle(element).lineHeight);
+  element.style.height=`${measured+Math.max(4,Math.ceil((Number.isFinite(line)?line:24)*0.2))}px`;
 }
 
 // A result normally carries a store id and links to its detail page. One without an id

@@ -1,6 +1,7 @@
 'use client';
 
 import {useState} from 'react';
+import {ChartColumn} from 'lucide-react';
 import {RatingStars} from './Rating';
 import {useI18n} from '@/i18n/I18nProvider';
 import {apiFetch} from '@/lib/api-client';
@@ -49,8 +50,11 @@ export function ResultCriteria({storeId}:{storeId:string}){
     setOpen(isOpen);
     if(isOpen)void load();
   }}>
-    <summary>{t('seeScoreDetail')}</summary>
-    {state==='loading'&&<p className="result-criteria-state">{t('loading')}</p>}
+    <summary><ChartColumn aria-hidden="true"/>{t('seeScoreDetail')}</summary>
+    {/* Nothing is said while it loads. It used to borrow the search page's word and say
+        "Aranıyor…" for a moment -- the panel was not searching, and a reader who catches that
+        word is told the wrong thing about what the product is doing. The eight numbers are one
+        request away; the panel simply fills. */}
     {state==='failed'&&<p className="result-criteria-state">{t('searchError')}</p>}
     {state==='none'&&<p className="result-criteria-state">{t('noCriteriaYet')}</p>}
     {criteria&&<dl>{rows(criteria).map(([key,value])=><div key={key}>
