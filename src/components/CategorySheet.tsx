@@ -50,12 +50,13 @@ export function CategorySheet({slug,name,locale,onSearch,onClose}:{
         <h2 id="category-sheet-title">{name}</h2>
         <button type="button" className="icon-button" onClick={close} aria-label={words.close}><X aria-hidden="true"/></button>
       </header>
-      {/* Drawn at 192px and shown at 26 in the list. Here it gets the size it was made for.
-          A category without a drawing falls back to its line icon rather than to an empty
-          frame -- three of them have no picture yet and an empty box would read as a fault. */}
+      {/* Shot wide and shown as a 44px circle in the list, which is almost all of a photograph
+          thrown away. Here it runs the full width of the sheet, uncropped. A category without
+          a photograph falls back to its line icon rather than to an empty frame -- three of
+          them have no picture yet and an empty box would read as a fault. */}
       <div className="category-sheet-art">
         {hasCategoryPicture(slug)
-          ?<Image src={`/categories/${slug}.png`} width={192} height={192} alt="" aria-hidden="true"/>
+          ?<Image src={`/categories/${slug}.webp`} width={720} height={400} alt="" aria-hidden="true" sizes="(max-width:600px) 100vw, 372px"/>
           :<CategoryIcon slug={slug}/>}
       </div>
       <button ref={action} type="button" className="button primary category-sheet-search" onClick={onSearch}>

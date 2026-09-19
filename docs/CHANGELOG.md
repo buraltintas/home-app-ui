@@ -8,6 +8,32 @@ value involved.
 
 ---
 
+## The category pictures were never the pictures
+
+Tapping a category opened a sheet showing a small circular line drawing. The drawings had
+been cut out of a numbered contact sheet, which was the wrong source: the set that belongs
+to this product is thirteen photographs, one per category, and the sheet was showing
+something else entirely. Reported as "the pictures in the window are not the right ones".
+
+The thirteen photographs replace the drawings. Two things about how they are stored matter
+later:
+
+- Every file is 720x400 WebP with the photograph centred on transparency. The photographs
+  are all 400 tall but between 594 and 719 wide, and a shared canvas is what makes all
+  thirteen come out at the same height in the sheet without a per-category size in the code.
+- The corners arrived rounded and filled with white, which is invisible on a white sheet and
+  a set of white triangles on anything else. The rounding is cut into the alpha channel
+  instead, so the corner is absent rather than painted over.
+
+The sheet no longer forces the picture into a square. It was `184x184` with `object-fit:
+cover`, which took a wide photograph and threw away everything but its middle -- the garden
+chair lost its garden. It now runs the full width of the sheet at its own proportions. The
+44px circle in the list keeps the crop, because at that size a circle is what keeps the row
+tidy; its `sizes` went from `44px` to `88px`, since a circular crop of a 720x400 picture
+only shows the middle 400 and was being served a 48px source to do it with.
+
+---
+
 ## The sitemap quietly shipped 2,668 pages short
 
 Caught by the first run of the weekly check, within an hour of the entry below: the published
