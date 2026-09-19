@@ -18,9 +18,12 @@ were not the chain's mark:
   it is the BELLONA wordmark now.
 - **Merinos** was "Erdemoğlu Holding". Its site uses the parent company's logo in its header;
   the file is even called `meri-erd-logo.png`.
-- **Mutlu Halı** was "Küçükmutlu", a different company. This one is not a bad pick -- the
-  website recorded for that brand is Küçükmutlu's, so the registry entry is wrong.
-- **Vivense** was an empty circle.
+- **Mutlu Halı** looked like a different company's mark, "Küçükmutlu" -- and it was not. The
+  three shops filed under that brand are named "Küçükmutlu Mutlu Halı - Buca", "Küçükmutlu
+  Mutlu Halı Şirinyer" and "Küçükmutlu Mutlu Halı Karşıyaka". The chain *is* Küçükmutlu; the
+  mark was right and the brand's own name in the registry is what is wrong. Put back.
+- **Vivense** was an empty circle -- a gradient placeholder from the page. Its own monogram
+  is used instead.
 - **Modalife**, newly collected, is white text on transparency -- invisible on this site's
   ground -- and its strapline reads "Türkiye'nin Düğün Paketçisi".
 
