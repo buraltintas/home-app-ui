@@ -32,11 +32,20 @@ The four wrong ones are removed rather than replaced. Their shops show their ini
 is what the collector's own documentation says is correct: a wrong-but-plausible mark is
 worse than none, because nothing about it says it is wrong.
 
-**Still open, and not fixed here because they are catalogue data rather than code:** a shop
-named just "Yataş" is attached to no chain, and the adoption rule cannot attach it -- it asks
-that the shop's name *start with* the chain's, and "Yataş" does not start with "Yataş
-Bedding". The same dry run refuses 39 more rows whose name matches a chain but whose trade
-does not overlap it. Bambi and İşbir Yatak publish no usable mark on their own sites.
+**All 39 brands in the catalogue now have a mark.** The three that were missing were missing
+for a reason worth writing down: the collector reads a page as it is served, and these three
+sites do not serve their logo that way. Merinos renders its header with script, so a plain
+read found nothing; İşbir Yatak's registered site is the *holding's*, whose header says "İşbir
+Holding" while the sub-brand marks sit further down the page; Bambi's header image is named
+after its upload date and says "logo" nowhere. Reading the three pages in a real browser found
+all three in a minute.
+
+**Still open, and not fixed here because it is catalogue data rather than code:** a shop named
+just "Yataş" is attached to no chain, and the adoption rule cannot attach it -- it asks that
+the shop's name *start with* the chain's, and "Yataş" does not start with "Yataş Bedding". The
+same dry run refuses 39 more rows whose name matches a chain but whose trade does not overlap
+it. And the brand filed as `mutlu-hali` is really Küçükmutlu; the name in the registry is
+wrong even though its mark is right.
 
 ---
 
