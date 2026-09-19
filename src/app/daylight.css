@@ -933,7 +933,11 @@ svg{stroke-width:2}
    starting line, which is also what makes eight rows of stars readable as a column. */
 .result-criteria dl div{display:grid;grid-template-columns:minmax(0,1fr) 118px;align-items:center;gap:6px 16px;padding:7px 0;border-bottom:1px solid var(--line)}
 .result-criteria dl div:last-child{border-bottom:0}
-.result-criteria dt{font-size:12px;color:var(--ink-muted);text-transform:none;letter-spacing:0}
+/* A label that cannot fit breaks rather than printing itself over the stars beside it.
+   "Fiyat/performans" is one unbreakable word to a browser -- there is no space in it -- so
+   it overflowed whatever column it was given and no amount of widening the column was going
+   to be enough in every language the dictionary carries. */
+.result-criteria dt{font-size:12px;color:var(--ink-muted);text-transform:none;letter-spacing:0;overflow-wrap:anywhere}
 .result-criteria dd{display:grid;grid-template-columns:auto 26px;justify-content:end;align-items:center;gap:8px;margin:0;font-size:12px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
 .result-criteria dd>span{text-align:right}
 .result-criteria dd .rating-stars svg{width:13px;height:13px}
@@ -1003,6 +1007,12 @@ svg{stroke-width:2}
     gap:12px 16px;
   }
   .result-support .dual-score>div{align-items:flex-start}
+  /* Two things in the first row, and the breakdown across both underneath. Left implicit,
+     the criteria table landed in the second column -- a third of the card -- next to the
+     save button, which is how a label came to be printed over its own stars. */
+  .result-support>.dual-score{grid-column:1;grid-row:1}
+  .result-support>.result-save-row{grid-column:2;grid-row:1}
+  .result-support>.result-criteria{grid-column:1/-1;grid-row:2}
   .result-support .result-save-row{display:block;width:auto}
   .result-support .result-save-reason{display:none}
   .result-support .result-save{width:auto;min-width:132px}

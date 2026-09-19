@@ -8,6 +8,27 @@ value involved.
 
 ---
 
+## A criterion label printed over its own stars
+
+Reported as stars and criteria running into each other, and the first fix made it worse. The
+score breakdown shares a row with the save button, so on a phone the table was living in
+185px of a 339px card: 52px for the label and 118px for five stars and a number. "Fiyat/
+performans" needs 98px and contains no space, so a browser will not break it -- it simply
+overflowed its column and printed itself across the stars. Widening the star column, which
+is what the first fix did, took another 16px off the label and made the overlap bigger.
+
+The breakdown is now a sibling of the score rather than a child of it. The summary keeps its
+place beside the save button; the table spans the whole card underneath, where the empty
+space already was. The label column went from 52px to 205px and every one of the eight fits
+on one line.
+
+The label also breaks now instead of overflowing (`overflow-wrap: anywhere`). That is the
+part that holds in general: no column width is wide enough for every label in four
+languages, and a label that cannot fit should wrap, not print itself over the thing next to
+it.
+
+---
+
 ## Nothing had deployed for sixteen hours, and the sitemap was the reason
 
 Every push since the evening of 18 September failed to build. Not a warning -- `FAILURE` on

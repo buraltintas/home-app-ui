@@ -114,9 +114,15 @@ function Result({item,onSelect,saved}:{item:SearchResult;onSelect:()=>void;saved
   const scores=(() => {
       const reviewed=(item.platform?.review_count??0)>0;
       return <><div className="dual-score"><div>{reviewed&&item.platform
-        ?<><strong><RatingStars value={item.platform.average_rating}/></strong><small>{item.platform.review_count} {t('reviewWord')} · {item.platform.favorite_count} {t('favoriteCount')}</small>{item.id&&<ResultCriteria storeId={item.id}/>}</>
+        ?<><strong><RatingStars value={item.platform.average_rating}/></strong><small>{item.platform.review_count} {t('reviewWord')} · {item.platform.favorite_count} {t('favoriteCount')}</small></>
         :<><strong className="new-here">{t('newHere')}</strong><small>{t('firstReview')}</small>{(item.platform?.favorite_count??0)>0&&<small>{item.platform?.favorite_count} {t('favoriteCount')}</small>}</>}
       </div></div>
+      {/* Beside the score, not inside it. The score and the save button share a row, which
+          leaves the score a third of the card; a table of eight criteria and eight sets of
+          stars was being asked to fit in it, and the labels ran under the stars. The
+          summary keeps its place next to the button and the breakdown gets the whole width
+          underneath, where the empty space already was. */}
+      {reviewed&&item.id&&<ResultCriteria storeId={item.id}/>}
       {item.id&&<SaveStoreButton storeId={item.id} initialSaved={saved}/>}</>;
     })();
   return <article className="result-row" data-catalog-store={item.catalog_store||undefined}>
