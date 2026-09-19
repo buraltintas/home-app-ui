@@ -8,6 +8,37 @@ value involved.
 
 ---
 
+## The store page says what the reviews are, and who may touch them
+
+The row of reviews had no heading and no frame around what it is. It has both now: "Topluluk
+değerlendirmeleri", and under it the policy in plain words -- that a listed store is
+forbidden from interfering with what is written about it, and that the reviews are their
+authors' own opinions and this site publishes them. Only the first sentence is on screen; it
+is the one that answers "can I believe this", and the second opens behind "Devamını oku". A
+`details` element, so it works before any script does.
+
+The rest of the same pass:
+
+- **The correction invitation is a card, not a pill.** Five words in a pill, sitting among
+  the address links, asked the reader to work out what the form behind them wanted. It now
+  says what it is for and where it goes.
+- **"Değerlendirme" is "Mağaza puanı".** The heading named the act; the block underneath is
+  the number.
+- **A rule above "Mağaza hakkında"**, the same one the rating block already carries above it.
+  The page was drawing that boundary in one place out of two.
+- **Five stars beside the store's score**, from the same component the review cards use, so
+  comparing the store with one person's review is comparing two of the same picture.
+- **The review rail says it continues.** It scrolls sideways and, on a phone, the scrollbar
+  is hidden at rest -- so a row that runs past the edge reads as a row that ends there. A
+  small drawing of the rail, shown only when there is something past the edge, and a rule
+  under it where the section ends.
+
+One defect found while placing the card: a pseudo-element on a grid is a grid item like any
+other, and an unplaced one takes the next free cell. The divider took the cell the text was
+supposed to be in, and the chevron printed itself across the words.
+
+---
+
 ## The favourites page says which list a shop is in, on the shop
 
 The page holds two counts -- saved, and waiting for your review -- and each opens the list it

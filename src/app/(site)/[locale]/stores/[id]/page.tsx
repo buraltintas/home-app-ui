@@ -8,7 +8,7 @@ import {StoreNeighbours} from '@/components/StoreNeighbours';
 import {Rating,RatingStars} from '@/components/Rating';
 import {StoreActions} from '@/components/StoreActions';
 import {JsonLd} from '@/components/JsonLd';
-import {PencilLine} from 'lucide-react';
+import {ChevronRight,NotebookPen,ShieldCheck} from 'lucide-react';
 import {ScrollTop} from '@/components/ScrollTop';
 import {getCityBrandsIfKnown,getCityCategoriesIfKnown,getNearbyStores,getPublicStore} from '@/lib/server-api';
 import {getDictionary} from '@/i18n/dictionaries';
@@ -74,10 +74,50 @@ const contributionCopy:Record<Locale,{title:string;body:string;action:string;pro
 // worked out, the second is why it can be trusted. They are held apart because the second
 // is the claim the whole rating rests on, and buried in a paragraph nobody reads it.
 const scoreCopy:Record<Locale,{title:string;intro:string;seeReviews:string;empty:string}>={
-  tr:{title:'Değerlendirme',intro:'Mağaza puanı, sekiz değerlendirme puanının ortalamasından oluşur.',seeReviews:'Değerlendirmeleri gör',empty:'Henüz ölçüt puanı yok'},
-  en:{title:'Rating',intro:'The store rating is the average of eight review scores.',seeReviews:'See the reviews',empty:'No criteria scores yet'},
-  de:{title:'Bewertung',intro:'Die Ladenbewertung ist der Durchschnitt aus acht Bewertungspunkten.',seeReviews:'Bewertungen ansehen',empty:'Noch keine Kriterienbewertungen'},
-  ru:{title:'Оценка',intro:'Оценка магазина — среднее восьми оценок отзыва.',seeReviews:'Смотреть отзывы',empty:'Оценок по критериям пока нет'},
+  tr:{title:'Mağaza puanı',intro:'Mağaza puanı, sekiz değerlendirme puanının ortalamasından oluşur.',seeReviews:'Değerlendirmeleri gör',empty:'Henüz ölçüt puanı yok'},
+  en:{title:'Store rating',intro:'The store rating is the average of eight review scores.',seeReviews:'See the reviews',empty:'No criteria scores yet'},
+  de:{title:'Ladenbewertung',intro:'Die Ladenbewertung ist der Durchschnitt aus acht Bewertungspunkten.',seeReviews:'Bewertungen ansehen',empty:'Noch keine Kriterienbewertungen'},
+  ru:{title:'Оценка магазина',intro:'Оценка магазина — среднее восьми оценок отзыва.',seeReviews:'Смотреть отзывы',empty:'Оценок по критериям пока нет'},
+};
+
+// The correction invitation, as a thing to read rather than a word to press. It used to be a
+// pill the size of its own label, sitting under the address among other links, which asked a
+// reader to work out from five words what the form behind it wanted from them.
+const correctionCopy:Record<Locale,{title:string;body:string}>={
+  tr:{title:'Mağaza bilgilerini düzenlemeye katkıda bulun',body:'Adres, telefon, kategori gibi bilgileri güncellememize yardımcı ol.'},
+  en:{title:'Help us keep this store’s details right',body:'Tell us about the address, phone or categories so we can update them.'},
+  de:{title:'Hilf uns, die Angaben zu diesem Geschäft aktuell zu halten',body:'Melde uns Adresse, Telefon oder Kategorien, damit wir sie aktualisieren können.'},
+  ru:{title:'Помогите нам поддерживать данные магазина в порядке',body:'Сообщите об адресе, телефоне или категориях, чтобы мы их обновили.'},
+};
+
+// What this product will and will not do about what is written here. It is said where the
+// reviews are, because that is where somebody decides whether to believe them -- and the
+// first sentence is the one that answers that, so it is the one always on screen.
+const policyCopy:Record<Locale,{heading:string;first:string;rest:string;more:string}>={
+  tr:{
+    heading:'Topluluk değerlendirmeleri',
+    first:'Boşa Gezme!’de listelenen mağazaların, kendileri hakkındaki yorumları etkileyecek herhangi bir müdahalede bulunmaları site politikası çerçevesinde yasaklanmıştır.',
+    rest:'Değerlendirmeler, kullanıcıların kişisel görüşleridir. Boşa Gezme! sadece bu görüşleri yayınlayan bir platform olarak hizmet sunmaktadır.',
+    more:'Devamını oku',
+  },
+  en:{
+    heading:'Community reviews',
+    first:'Stores listed on Boşa Gezme! are forbidden by site policy from interfering in any way with the reviews written about them.',
+    rest:'Reviews are the personal opinions of the people who wrote them. Boşa Gezme! serves only as the platform that publishes those opinions.',
+    more:'Read more',
+  },
+  de:{
+    heading:'Bewertungen der Community',
+    first:'Geschäften, die auf Boşa Gezme! gelistet sind, ist es nach den Richtlinien der Website untersagt, in irgendeiner Weise auf die Bewertungen über sie einzuwirken.',
+    rest:'Bewertungen sind die persönlichen Meinungen der Personen, die sie verfasst haben. Boşa Gezme! dient allein als Plattform, die diese Meinungen veröffentlicht.',
+    more:'Mehr lesen',
+  },
+  ru:{
+    heading:'Отзывы сообщества',
+    first:'Магазинам, размещённым на Boşa Gezme!, правилами сайта запрещено каким-либо образом влиять на отзывы о себе.',
+    rest:'Отзывы — личные мнения написавших их людей. Boşa Gezme! выступает лишь платформой, публикующей эти мнения.',
+    more:'Читать дальше',
+  },
 };
 
 // What a search result says under the blue line, and it had been saying nothing.
@@ -190,6 +230,8 @@ export default async function Page({params}:Props){
   const photo=storePhotoURL(store.photo,1200);
   const contribution=contributionCopy[locale];
   const scores=scoreCopy[locale];
+  const correction=correctionCopy[locale];
+  const policy=policyCopy[locale];
   const criteria=store.criteria_averages;
   const criteriaRows=[
     [t.criterionAvailability,criteria?.availability],[t.criterionValue,criteria?.value],
@@ -230,7 +272,7 @@ export default async function Page({params}:Props){
       <div className="store-score"><span>{t.savedBy}</span><strong>{store.platform.favorite_count}</strong><small>{t.people}</small></div>
       <StoreActions storeId={store.id} name={store.name} latitude={store.latitude} longitude={store.longitude} initialFavorited={store.viewer_has_favorited} phone={store.phone}/>
       <section className="store-rating-breakdown" aria-labelledby="store-rating-title">
-        <header><div><h2 id="store-rating-title">{scores.title}</h2><p>{scores.intro}</p></div><div className="store-rating-overall"><strong>{store.platform.review_count?formatScore(store.platform.average_rating):'—'}</strong>{store.platform.review_count?<><span className="store-rating-count">{store.platform.review_count} {t.reviewWord}</span><ReviewsJump label={scores.seeReviews}/></>:<small>{scores.empty}</small>}</div></header>
+        <header><div><h2 id="store-rating-title">{scores.title}</h2><p>{scores.intro}</p></div><div className="store-rating-overall"><strong>{store.platform.review_count?formatScore(store.platform.average_rating):'—'}</strong>{store.platform.review_count>0&&<span className="store-rating-stars"><RatingStars value={store.platform.average_rating} showValue={false}/></span>}{store.platform.review_count?<><span className="store-rating-count">{store.platform.review_count} {t.reviewWord}</span><ReviewsJump label={scores.seeReviews}/></>:<small>{scores.empty}</small>}</div></header>
         <dl>{criteriaRows.map(([label,value])=><div key={label}><dt>{label}</dt><dd>{value!==undefined?<RatingStars value={value}/>:'—'}</dd></div>)}</dl>
       </section>
       {/* Directly under save, directions, call and share, because it belongs with them: they
@@ -268,14 +310,31 @@ export default async function Page({params}:Props){
         {/* Not the same kind of thing as the shop's own website above it: that opens a page to
             read, this opens a form to fill in. Drawn as the action it is, with the mark of
             editing on it. */}
-        <Link className="store-correction-link" href={correctionPath}><PencilLine aria-hidden="true"/>{contribution.correction}</Link>
+        <Link className="store-correction-card" href={correctionPath}>
+          <span className="store-correction-mark" aria-hidden="true"><NotebookPen/></span>
+          <span className="store-correction-copy"><strong>{correction.title}</strong><span>{correction.body}</span></span>
+          <ChevronRight className="store-correction-go" aria-hidden="true"/>
+        </Link>
       </div>
-      <div className="store-reviews" id="store-reviews-title" aria-label={t.community}>
-        {/* No heading of its own. What is under here is plainly a row of reviews, and the
-            score above already says how many there are; the sentence about verified visits
-            that used to sit here went with it. The jump from the score needs something to
-            land on, so the id moved to the section. */}
+      <div className="store-reviews" id="store-reviews-title" aria-label={policy.heading}>
+        <h2 className="eyebrow store-section-title">{policy.heading}</h2>
+        {/* Said where somebody decides whether to believe what is under it. The first
+            sentence is the one that answers that question, so it is the one always on
+            screen; the second is the disclaimer, and it opens. A details element, so it
+            works before any script does. */}
+        <aside className="store-review-policy" role="note">
+          <ShieldCheck aria-hidden="true"/>
+          <div>
+            <p>{policy.first}</p>
+            <details><summary>{policy.more}</summary><p>{policy.rest}</p></details>
+          </div>
+        </aside>
         {recent_posts.length?<ViewerLikes postIds={recent_posts.map(post=>post.id)}><div className="store-review-rail">{recent_posts.map(post=><PostCard post={post} surface="store" key={post.id}/>)}</div></ViewerLikes>:<div className="empty-state"><h3>{t.noCommunity}</h3><p>{t.noReviewsBody}</p></div>}
+        {/* The rail scrolls sideways and, on a phone, says so only while it is moving: the
+            scrollbar is hidden at rest, so a row of reviews reads as however many happen to
+            fit. This is the rail drawn small -- an affordance, not a live readout -- and it
+            appears only when there is in fact something past the edge. */}
+        {recent_posts.length>1&&<span className="store-review-more" aria-hidden="true"><span/></span>}
       </div>
     </section>
     <StoreNeighbours stores={neighbours} locale={locale} reviewWord={t.reviewWord}/>

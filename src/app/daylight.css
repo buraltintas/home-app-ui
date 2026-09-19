@@ -323,6 +323,10 @@ svg{stroke-width:2}
 .store-rating-overall .store-rating-count,.store-rating-overall small{align-self:baseline}
 .store-rating-overall .store-rating-jump{align-self:center}
 .store-rating-overall strong{font-size:38px;line-height:1;color:var(--clay);font-variant-numeric:tabular-nums}
+/* The same five stars the review cards draw, from the same component, so a reader comparing
+   the store's score with one person's is comparing two of the same picture. */
+.store-rating-stars{display:inline-flex;align-self:center}
+.store-rating-stars .rating-stars svg{width:18px;height:18px}
 .store-rating-overall small{font-size:12px;color:var(--ink-muted)}
 /* How many reviews the score is made of, beside the score itself: a 4.7 out of three
    visits and a 4.7 out of ninety are not the same claim. */
@@ -341,11 +345,34 @@ svg{stroke-width:2}
 .store-rating-breakdown dd{display:flex;align-items:center;margin:0;font-size:18px;font-weight:750;font-variant-numeric:tabular-nums;white-space:nowrap}
 .store-rating-breakdown dd .rating svg{width:17px;height:17px}
 .store-rating-breakdown dd span{font-size:11px;color:var(--ink-muted);font-weight:500}
+/* The same line the rating block carries above it, for the same reason: this is where one
+   section of the page ends and another begins, and the page was drawing that boundary in
+   one place out of two. */
+.store-description{padding-top:28px;border-top:1px solid var(--line)}
 .store-reviews{min-width:0}
-.store-reviews .store-section-title{margin:0 0 24px;font-size:28px;line-height:1.15;letter-spacing:-.025em}
+/* The same small label "Mağaza hakkında" carries in the column beside it. It used to be set
+   as a 28px heading, which was invisible while there was no heading here to set. */
+.store-reviews .store-section-title{margin:0 0 16px;font-size:15px;line-height:1.3}
 /* Narrower than a full column on purpose: the edge of the next review has to be visible or
    nothing says there is one. A rail that ends flush with its container reads as a single
    card somebody could scroll past without knowing. */
+/* Quiet, because it is a condition rather than a claim: the page is not arguing, it is
+   stating what it does and does not do. */
+.store-review-policy{
+  display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;margin:0 0 22px;padding:14px 16px;
+  background:var(--muted);border-radius:var(--r-md);color:var(--ink-muted);font-size:13px;line-height:1.5;
+}
+.store-review-policy>svg{width:20px;height:20px;color:var(--ink-muted);margin-top:1px}
+.store-review-policy p{margin:0}
+.store-review-policy details{margin-top:6px}
+.store-review-policy summary{display:inline-flex;min-height:32px;align-items:center;color:var(--clay);font-weight:700;cursor:pointer}
+.store-review-policy details[open] summary{margin-bottom:6px}
+/* The rail drawn small. The scrollbar is hidden at rest on a phone, so a row that continues
+   past the edge looks like a row that ends there. */
+.store-review-more{display:block;width:100%;margin:14px 0 0;padding-bottom:22px;border-bottom:1px solid var(--line)}
+.store-review-more>span{display:block;margin-left:auto;width:56px;height:4px;border-radius:var(--r-pill);background:var(--line-strong);position:relative;overflow:hidden}
+.store-review-more>span::before{content:'';position:absolute;inset:0 auto 0 0;width:22px;border-radius:var(--r-pill);background:var(--clay)}
+
 .store-review-rail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(236px,272px);gap:16px;max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scroll-padding-inline:2px;scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent;padding:2px 2px 18px}
 .store-review-rail>.post-card{scroll-snap-align:start;display:flex;flex-direction:column;min-width:0;padding:22px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface)}
 .store-review-rail .post-number{display:none}
@@ -413,7 +440,7 @@ svg{stroke-width:2}
   .store-rating-breakdown dl div:nth-child(2n){border-right:0}
   .store-rating-breakdown dl div:nth-last-child(-n+4){border-bottom:1px solid var(--line)}
   .store-rating-breakdown dl div:nth-last-child(-n+2){border-bottom:0}
-  .store-reviews .store-section-title{margin-bottom:18px;font-size:24px}
+  .store-reviews .store-section-title{margin-bottom:14px;font-size:14px}
   .store-review-rail{width:calc(100% + 36px);max-width:none;box-sizing:border-box;grid-auto-columns:calc(100vw - 132px);gap:12px;margin-inline:-18px;padding:2px 18px 18px;scroll-padding-inline:18px}
   .store-review-rail>.post-card{padding:20px}
   .guidance-card{padding:18px}
@@ -533,6 +560,34 @@ svg{stroke-width:2}
 /* An underlined line of text is what this page uses for "here is something to read". This
    opens a form, so it is drawn as a control: a bordered pill with the mark of editing on it,
    and no underline to confuse it with the shop's own website directly above. */
+/* A thing to read, not a word to press. Five words in a pill, sitting among the address
+   links, asked the reader to work out what the form behind them wanted. Three parts now: the
+   mark, what it is for, and where it goes. */
+.store-correction-card{
+  display:grid;grid-template-columns:auto 1px minmax(0,1fr) auto;align-items:center;gap:0 14px;
+  margin-top:18px;padding:14px 16px;text-decoration:none;color:var(--ink);
+  background:color-mix(in srgb,var(--success) 6%,var(--surface));
+  border:1px solid color-mix(in srgb,var(--success) 26%,var(--line));border-radius:var(--r-lg);
+}
+.store-correction-card:hover{border-color:color-mix(in srgb,var(--success) 48%,var(--line));background:color-mix(in srgb,var(--success) 10%,var(--surface))}
+.store-correction-mark{grid-column:1;display:grid;place-items:center;width:44px;height:44px;color:var(--success)}
+.store-correction-mark svg{width:28px;height:28px}
+/* Placed, not left to fall where it lands. A pseudo-element on a grid is a grid item like
+   any other, so an unplaced one takes the next free cell -- which was the one the text was
+   supposed to be in, and the chevron then printed itself across the words. */
+.store-correction-card::after{content:'';grid-column:2;grid-row:1;align-self:stretch;width:1px;background:color-mix(in srgb,var(--success) 26%,var(--line))}
+.store-correction-copy{grid-column:3;display:grid;gap:3px;min-width:0}
+.store-correction-copy strong{font-size:15px;font-weight:700;line-height:1.25;letter-spacing:-.01em}
+.store-correction-copy>span{font-size:14px;line-height:1.4;color:var(--ink-muted)}
+.store-correction-go{grid-column:4;width:22px;height:22px;color:var(--clay);flex:none}
+@media(max-width:600px){
+  .store-correction-card{padding:12px 12px;gap:0 10px}
+  .store-correction-mark{width:38px;height:38px}
+  .store-correction-mark svg{width:24px;height:24px}
+  .store-correction-copy strong{font-size:14px}
+  .store-correction-copy>span{font-size:13px}
+}
+
 .store-correction-link{display:inline-flex;align-items:center;gap:8px;min-height:44px;margin-top:14px;padding:0 16px;border:1px solid var(--line-strong);border-radius:var(--r-pill);background:var(--surface);color:var(--ink);font-size:14px;font-weight:700;text-decoration:none}
 .store-correction-link:hover{border-color:var(--clay);color:var(--clay)}
 .store-correction-link svg{width:16px;height:16px}
