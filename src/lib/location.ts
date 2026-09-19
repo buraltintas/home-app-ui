@@ -49,6 +49,22 @@ function toPosition(fix:GeolocationPosition):Position{
   return {latitude:fix.coords.latitude,longitude:fix.coords.longitude,accuracy_meters:fix.coords.accuracy,captured_at:Date.now()};
 }
 
+// The browser may be asking a person, and a person is not a timeout.
+//
+// The first call to watchPosition is what raises the permission dialog, and that dialog waits
+// for somebody to read it and decide. Our own deadline was running the whole time: ten seconds
+// is less than it takes to read two sentences and tap, so the request was abandoned before it
+// had been answered, the reader was told "your location could not be found in time", and the
+// Allow they tapped a moment later arrived at a watch that no longer existed. Reported four
+// times as "the button does not work" -- and invisible in a desktop browser, where the
+// permission is already granted and no dialog ever appears.
+//
+// So there are two clocks. Nothing is timed until the browser answers for the first time,
+// because until then there is nothing to wait for but a decision. Once an answer arrives, the
+// short deadline below applies -- that one exists to stop waiting for a *sharper* fix, which
+// is a different question and a real one.
+const DECISION_LIMIT=90000;
+
 // Resolves with the sharpest fix seen before the deadline. Rejects only when the deadline
 // passes with nothing at all, or the device reports an error before any fix arrives.
 function acquire({options,deadline,target}:Attempt):Promise<GeolocationPosition>{
@@ -56,8 +72,9 @@ function acquire({options,deadline,target}:Attempt):Promise<GeolocationPosition>
     let best:GeolocationPosition|undefined;
     let last:GeolocationPositionError|undefined;
     let settled=false;
+    let timer=0;
     const stop=()=>{settled=true;window.clearTimeout(timer);navigator.geolocation.clearWatch(watch);};
-    const timer=window.setTimeout(()=>{
+    const expire=()=>{
       if(settled)return;
       stop();
       if(best)resolve(best);
@@ -65,13 +82,25 @@ function acquire({options,deadline,target}:Attempt):Promise<GeolocationPosition>
       // timed out on us; it has answered. Reporting that as a timeout would send the
       // visitor advice meant for a slow fix rather than for one that is not coming.
       else reject(last??({code:3,message:'timeout'} as GeolocationPositionError));
-    },deadline);
+    };
+    timer=window.setTimeout(expire,DECISION_LIMIT);
+    // The browser has spoken. From here the short deadline is the right one: it is measuring
+    // how long to keep waiting for a better reading, not how long a person takes to decide.
+    let answered=false;
+    const startDeadline=()=>{
+      if(answered)return;
+      answered=true;
+      window.clearTimeout(timer);
+      timer=window.setTimeout(expire,deadline);
+    };
     const watch=navigator.geolocation.watchPosition(fix=>{
       if(settled)return;
+      startDeadline();
       if(!best||fix.coords.accuracy<best.coords.accuracy)best=fix;
       if(best.coords.accuracy<=target){const found=best;stop();resolve(found);}
     },error=>{
       if(settled)return;
+      startDeadline();
       // A late error after a usable fix is not a failure; we already have an answer.
       if(best){const found=best;stop();resolve(found);return;}
       // Only a refusal is final. Everything else is the system saying "not yet": macOS

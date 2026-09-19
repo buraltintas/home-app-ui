@@ -8,6 +8,38 @@ value involved.
 
 ---
 
+## The location button did work. We just stopped listening before the answer came.
+
+Reported five times as "the button does not work", and measured five times as working. Both
+were true, and the difference was the browser doing the measuring.
+
+`acquire()` started its ten-second deadline the moment it called `watchPosition`. On iOS
+Safari that same call raises the permission dialog -- and a dialog waits for a person. Ten
+seconds is less than it takes to read two sentences and decide, so the clock ran out on a
+request nobody had answered yet: the reader was told "Konumun zamanında bulunamadı", the
+watch was torn down, and the Allow they tapped a moment later arrived at nothing. The button
+stayed black because it had never been told where they were.
+
+None of this can happen in a desktop browser with the permission already granted, which is
+where every one of my measurements was made. There was no dialog there, so there was nothing
+for the clock to outrun.
+
+There are two clocks now. Nothing is timed until the browser answers for the first time,
+because until then the only thing being waited on is a decision. Once an answer arrives the
+short deadline applies -- that one exists to stop waiting for a *sharper* fix, which is a
+different question and a real one.
+
+Reproduced and verified in real Mobile Safari, in the iOS simulator, with the location set
+from outside: before, "Konumun alınamadı" appeared behind the permission dialog while it was
+still open; after, twenty-eight seconds at the dialog and then the button turns green,
+"Mevcut konum kullanılıyor".
+
+**Worth keeping:** a report that survives five fixes is usually not five mistakes. It is a
+sign that the thing being measured is not the thing being reported -- here, a browser without
+the dialog cannot show the defect the dialog causes. Reproduce it where it happens.
+
+---
+
 ## A field that ate the tail of its own last line
 
 "Küçük daireler için kompakt mobilya", typed into the search bar, came back as "mobilua": the

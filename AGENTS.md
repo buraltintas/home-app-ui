@@ -70,6 +70,20 @@ in the same breath as delivering it -- on the task, in plain language, with what
 and what would restore it. The person who asked for the change is entitled to weigh that
 before it ships, and they cannot weigh what they are not told.
 
+## Reproduce it where it happens, or you are measuring something else
+
+A location button was reported broken five times and measured working five times. Both were
+true. The defect only exists in a browser that raises a permission dialog, and every
+measurement was made in one where the permission was already granted -- so the dialog never
+appeared, and the ten-second deadline that was expiring while a person read it never expired.
+
+A report that survives several fixes is rarely several mistakes. It is a sign that what is
+being measured is not what is being reported. Phone browsers, permission prompts, keyboards
+and system text sizes are all things a desktop browser cannot show you; when a report involves
+one of them, reproduce it on a device that has it. The iOS simulator runs real Mobile Safari
+and takes a simulated location (`xcrun simctl location <udid> set <lat>,<lon>`), which is
+enough for most of them.
+
 ## Check both breakpoints, or you are checking one
 
 The results list spent a fortnight broken on every wide screen: a store's name squeezed into
