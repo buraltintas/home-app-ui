@@ -1203,7 +1203,12 @@ svg{stroke-width:2}
 .category-sheet h2{margin:0;font-size:24px;line-height:1.15;letter-spacing:-.02em}
 .category-sheet header .icon-button{margin-right:-10px}
 .category-sheet-art{display:grid;place-items:center;padding:10px 0}
-.category-sheet-art img{width:184px;height:184px;border-radius:50%;object-fit:cover}
+/* Shown whole, not masked into a circle and not cropped to fill one.
+   The drawings already are discs; putting a circular mask over a disc and telling it to
+   cover the frame trims the drawing's own edge -- which is why the picture in the sheet did
+   not look like the picture that was drawn. In the list, at 44px, the mask is what keeps the
+   row tidy. Here there is room for the thing itself. */
+.category-sheet-art img{width:184px;height:184px;border-radius:0;object-fit:contain}
 /* The three categories still on a line icon get the same circle, drawn rather than filled. */
 .category-sheet-art .category-icon{width:184px;height:184px;border-radius:50%;background:var(--accent-wash);color:var(--clay)}
 .category-sheet-art .category-icon svg{width:76px;height:76px}
@@ -1213,6 +1218,6 @@ svg{stroke-width:2}
 @media(max-width:600px){
   .category-sheet-backdrop{align-items:end;padding:0}
   .category-sheet{border-radius:var(--r-lg) var(--r-lg) 0 0;align-self:end;padding:22px 20px calc(22px + env(safe-area-inset-bottom))}
-  .category-sheet-art img,.category-sheet-art .category-icon{width:156px;height:156px}
+  .category-sheet-art img,.category-sheet-art .category-icon{width:160px;height:160px}
 }
 @media(prefers-reduced-motion:reduce){.category-sheet-backdrop,.category-sheet,.category-sheet-backdrop.is-leaving,.category-sheet-backdrop.is-leaving .category-sheet{animation:none}}
