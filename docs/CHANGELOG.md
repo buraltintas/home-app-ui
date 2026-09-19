@@ -24,8 +24,9 @@ were not the chain's mark:
   mark was right and the brand's own name in the registry is what is wrong. Put back.
 - **Vivense** was an empty circle -- a gradient placeholder from the page. Its own monogram
   is used instead.
-- **Modalife**, newly collected, is white text on transparency -- invisible on this site's
-  ground -- and its strapline reads "Türkiye'nin Düğün Paketçisi".
+- **Modalife** publishes its mark as white on transparency, which is invisible on this
+  site's ground. It is composited onto the brand's own red (`#ed1c24`, taken from their
+  site) -- which is how they show it themselves.
 
 The four wrong ones are removed rather than replaced. Their shops show their initial, which
 is what the collector's own documentation says is correct: a wrong-but-plausible mark is
