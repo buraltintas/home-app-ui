@@ -8,6 +8,22 @@ value involved.
 
 ---
 
+## The results list was broken on every wide screen, and had been for a fortnight
+
+A store's name and address were squeezed into a 20px column, one word per line, with the
+chain's mark taking the rest of the row and the arrow dropped onto a line of its own.
+
+`.result-row .search-result` was written when a result carried no picture at all: two
+children, two columns, `minmax(0,1fr) 20px` for the shop and the arrow. The chain's mark was
+added as a third child later and the template was never changed, so the mark took the 1fr and
+the shop took the 20px meant for the arrow. Three tracks now.
+
+**Why it survived two weeks of review:** the phone breakpoint has a template of its own, and
+every check -- mine and the ones being reported back -- was made at phone width. A rule that
+only one breakpoint gets wrong is invisible to anyone testing at the other.
+
+---
+
 ## A half star was two thirds of a star
 
 Reported as a fill-maths error and it was one, but not in the maths. Each star is drawn

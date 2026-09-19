@@ -955,8 +955,14 @@ svg{stroke-width:2}
   align-items:stretch;gap:32px;padding:30px 0;
 }
 .result-row>a:first-child{display:block;min-width:0}
+/* Three tracks, because there are three things in the row: the chain's mark, the shop, and
+   the arrow. The template was written when results carried no picture at all -- two children,
+   two columns -- and the mark was added later without it being changed. The mark then took
+   the whole 1fr, the shop's name and address were squeezed into the 20px meant for the
+   arrow, and the arrow dropped onto a line of its own. Only on a wide screen: the phone
+   breakpoint has its own template, which is why this survived a fortnight of review. */
 .result-row .search-result{
-  height:100%;grid-template-columns:minmax(0,1fr) 20px;
+  height:100%;grid-template-columns:auto minmax(0,1fr) 20px;
   gap:24px;padding:0;align-items:start;
 }
 .result-identity{min-width:0}

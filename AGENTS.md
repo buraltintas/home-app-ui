@@ -70,6 +70,18 @@ in the same breath as delivering it -- on the task, in plain language, with what
 and what would restore it. The person who asked for the change is entitled to weigh that
 before it ships, and they cannot weigh what they are not told.
 
+## Check both breakpoints, or you are checking one
+
+The results list spent a fortnight broken on every wide screen: a store's name squeezed into
+a 20px column while the chain's mark took the whole row. A third child had been added to a
+two-column grid, and the phone breakpoint -- which has a template of its own -- was fine.
+Every check made during those two weeks, including the ones reported back, was made at phone
+width.
+
+A layout rule that only one breakpoint gets wrong is invisible to anyone testing at the
+other. When a change touches a grid, a flex row or anything that a media query redefines,
+look at it at both sizes before calling it done.
+
 ## A failing build looks exactly like a fix that did not work
 
 The site stays up on the last image that built, so a broken deploy has no symptom of its
