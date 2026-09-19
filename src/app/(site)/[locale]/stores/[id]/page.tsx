@@ -5,10 +5,11 @@ import {permanentRedirect} from 'next/navigation';
 import {PostCard} from '@/components/PostCard';
 import {ReviewsJump} from '@/components/ReviewsJump';
 import {StoreNeighbours} from '@/components/StoreNeighbours';
+import {ReviewPolicy} from '@/components/ReviewPolicy';
 import {Rating,RatingStars} from '@/components/Rating';
 import {StoreActions} from '@/components/StoreActions';
 import {JsonLd} from '@/components/JsonLd';
-import {ChevronRight,NotebookPen,ShieldCheck} from 'lucide-react';
+import {ChevronRight,NotebookPen} from 'lucide-react';
 import {ScrollTop} from '@/components/ScrollTop';
 import {getCityBrandsIfKnown,getCityCategoriesIfKnown,getNearbyStores,getPublicStore} from '@/lib/server-api';
 import {getDictionary} from '@/i18n/dictionaries';
@@ -93,30 +94,30 @@ const correctionCopy:Record<Locale,{title:string;body:string}>={
 // What this product will and will not do about what is written here. It is said where the
 // reviews are, because that is where somebody decides whether to believe them -- and the
 // first sentence is the one that answers that, so it is the one always on screen.
-const policyCopy:Record<Locale,{heading:string;first:string;rest:string;more:string}>={
+const policyCopy:Record<Locale,{heading:string;first:string;rest:string;more:string;title:string;close:string}>={
   tr:{
     heading:'Topluluk değerlendirmeleri',
     first:'Boşa Gezme!’de listelenen mağazaların, kendileri hakkındaki yorumları etkileyecek herhangi bir müdahalede bulunmaları site politikası çerçevesinde yasaklanmıştır.',
     rest:'Değerlendirmeler, kullanıcıların kişisel görüşleridir. Boşa Gezme! sadece bu görüşleri yayınlayan bir platform olarak hizmet sunmaktadır.',
-    more:'Devamını oku',
+    more:'Devamını oku',title:'Topluluk değerlendirmeleri',close:'Kapat',
   },
   en:{
     heading:'Community reviews',
     first:'Stores listed on Boşa Gezme! are forbidden by site policy from interfering in any way with the reviews written about them.',
     rest:'Reviews are the personal opinions of the people who wrote them. Boşa Gezme! serves only as the platform that publishes those opinions.',
-    more:'Read more',
+    more:'Read more',title:'Community reviews',close:'Close',
   },
   de:{
     heading:'Bewertungen der Community',
     first:'Geschäften, die auf Boşa Gezme! gelistet sind, ist es nach den Richtlinien der Website untersagt, in irgendeiner Weise auf die Bewertungen über sie einzuwirken.',
     rest:'Bewertungen sind die persönlichen Meinungen der Personen, die sie verfasst haben. Boşa Gezme! dient allein als Plattform, die diese Meinungen veröffentlicht.',
-    more:'Mehr lesen',
+    more:'Mehr lesen',title:'Bewertungen der Community',close:'Schließen',
   },
   ru:{
     heading:'Отзывы сообщества',
     first:'Магазинам, размещённым на Boşa Gezme!, правилами сайта запрещено каким-либо образом влиять на отзывы о себе.',
     rest:'Отзывы — личные мнения написавших их людей. Boşa Gezme! выступает лишь платформой, публикующей эти мнения.',
-    more:'Читать дальше',
+    more:'Читать дальше',title:'Отзывы сообщества',close:'Закрыть',
   },
 };
 
@@ -322,19 +323,9 @@ export default async function Page({params}:Props){
             there is something under it to believe. The first sentence is the one that answers
             that question and is always on screen; the second is the disclaimer, and it opens.
             A details element, so it works before any script does. */}
-        {recent_posts.length>0&&<aside className="store-review-policy" role="note">
-          <ShieldCheck aria-hidden="true"/>
-          <div>
-            <p>{policy.first}</p>
-            <details><summary>{policy.more}</summary><p>{policy.rest}</p></details>
-          </div>
-        </aside>}
+        {recent_posts.length>0&&<ReviewPolicy locale={locale} copy={policy}/>}
         {recent_posts.length?<ViewerLikes postIds={recent_posts.map(post=>post.id)}><div className="store-review-rail">{recent_posts.map(post=><PostCard post={post} surface="store" key={post.id}/>)}</div></ViewerLikes>:<div className="empty-state"><h3>{t.noCommunity}</h3><p>{t.noReviewsBody}</p></div>}
-        {/* The rail scrolls sideways and, on a phone, says so only while it is moving: the
-            scrollbar is hidden at rest, so a row of reviews reads as however many happen to
-            fit. This is the rail drawn small -- an affordance, not a live readout -- and it
-            appears only when there is in fact something past the edge. */}
-        {recent_posts.length>1&&<span className="store-review-more" aria-hidden="true"><span/></span>}
+
       </div>
     </section>
     <StoreNeighbours stores={neighbours} locale={locale} reviewWord={t.reviewWord}/>

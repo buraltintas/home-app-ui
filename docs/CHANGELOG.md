@@ -8,6 +8,27 @@ value involved.
 
 ---
 
+## The review policy opens a panel, and the rail shows its own rail
+
+Four corrections to the store page, and two of them undo a decision I made yesterday:
+
+- **The policy opens in a panel.** It was a `details` that unfolded in place, which pushed the
+  reviews down the page -- moving the thing the reader was looking at in order to explain the
+  thing they were not. It arrives on the same 0.52s and the same curve as the category sheet
+  and the location panel; three panels in one product that open at three speeds read as three
+  products. The panel holds both sentences, not just the half the note was not showing.
+- **The rail draws its own scrollbar, at rest.** A phone hides the scrollbar until something
+  moves, so a row that continues past the edge reads as a row that ends there -- which is what
+  yesterday's little drawn bar was standing in for. Giving WebKit's own scrollbar a height and
+  a track colour stops it disappearing, and it is the honest version: it also says how far
+  along the row you are. The drawn bar is gone.
+- **A rule under the correction card**, which is where what the page says about the shop itself
+  ends.
+- **The gap before "Yakındaki benzer mağazalar" closes from 90px to 36px.** The rule above it
+  does not move; only the space after it does.
+
+---
+
 ## The location button did work. We just stopped listening before the answer came.
 
 Reported five times as "the button does not work", and measured five times as working. Both

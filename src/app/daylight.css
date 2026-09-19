@@ -259,7 +259,7 @@ svg{stroke-width:2}
 @keyframes ink-in{from{opacity:.01;transform:translateY(18px);clip-path:inset(0 0 12% 0)}to{opacity:1;transform:none;clip-path:inset(0)}}
 @media(max-width:900px){body{padding-bottom:calc(86px + env(safe-area-inset-bottom))}.site-header{backdrop-filter:none}.nav-wrap{height:66px;padding:0 20px}.brand-link{font-size:15px}.brand-mark,.brand-link img{width:52px;height:52px}.site-header nav{position:fixed;z-index:24;left:50%;right:auto;bottom:calc(10px + env(safe-area-inset-bottom));width:min(420px,calc(100% - 28px));height:66px;transform:translateX(-50%);display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:0;padding:0 8px;background:color-mix(in srgb,var(--surface) 82%,transparent);border:1px solid var(--line);border-radius:22px;box-shadow:0 12px 32px rgba(22,20,15,.12);backdrop-filter:blur(24px) saturate(150%);overflow:visible}.site-header nav a{min-height:54px;height:54px;align-self:center;justify-content:center;padding:0;border-radius:15px}.site-header nav a span{display:none}.site-header nav a svg{display:block;width:24px;height:24px}.site-header nav a.is-active{background:var(--accent-wash);color:var(--ink);transform:translateY(-2px)}.site-header nav a.is-active::after{display:none}.feed-layout{padding:38px 22px 40px}.feed-intro{grid-template-columns:minmax(0,820px)}.post-card{grid-template-columns:46px minmax(0,1fr);column-gap:14px}.post-number{grid-column:1}.post-heading{grid-column:2;display:block}.post-author{margin-bottom:22px}.post-store h2{font-size:30px}.post-photo{grid-column:2;grid-row:2}.post-details{grid-column:2;grid-row:3}.results-layout{grid-template-columns:1fr}.map-panel{display:none}.store-overview{grid-template-columns:1fr 1fr}.store-copy,.store-actions{grid-column:1/-1}.store-body{gap:50px}.create-page{grid-template-columns:1fr}.create-page>.button{grid-column:auto}.public-profile{grid-template-columns:auto 1fr}.public-profile dl{grid-column:1/-1}}
 @media(max-width:600px){.nav-wrap{height:62px;padding:0 16px}.brand-name{font-size:14px}.brand-mark,.brand-link img{width:48px;height:48px}.feed-layout{padding:26px 0 24px}.feed-intro{padding:10px 18px 18px;grid-template-columns:minmax(0,1fr);gap:14px;align-items:center}.feed-intro h1{font-size:clamp(23px,6.2vw,29px);line-height:1.1;letter-spacing:-.03em}.search-hero h1{font-size:clamp(24px,6.4vw,30px);line-height:1.1;letter-spacing:-.03em}.search-title{grid-template-columns:1fr}.search-title>span{display:none}.search-form{margin-top:20px;padding:6px 6px 6px 14px;gap:8px}.search-form textarea{font-size:16px}.location-control{margin-top:14px}.search-suggestions{margin-top:26px}.feed-intro>div>p{font-size:14px;line-height:1.45;margin-top:8px}
-.feed-rule{margin:0 18px}.post-card{display:block;padding:34px 0}.post-heading{margin:0 18px 18px}.post-author{padding-right:0}.post-store{margin-top:20px}.post-store h2{font-size:24px;line-height:1.12}.post-photo{width:100%;aspect-ratio:4/3;clip-path:none}.post-details{margin:0 18px;padding:20px;border-top-width:6px}.post-copy{font-size:15px}.post-actions{gap:6px}.feed-state{margin:0 18px;padding:32px 24px;grid-template-columns:1fr}.feed-more{padding:28px 18px 40px}.feed-more button{width:100%;min-width:0}.feed-end{padding:32px 18px 60px}.feed-state>img{grid-row:auto}.feed-skeleton{aspect-ratio:4/1}.search-hero{padding:20px 18px 26px}.search-slogan{margin-bottom:10px;font-size:12px}.brand-tagline{font-size:11px}.search-title span{font-size:70px}.search-form{grid-template-columns:auto 1fr;margin-top:28px}.search-form>button{grid-column:1/-1}.search-suggestions{grid-template-columns:1fr;gap:24px}.location-sheet{grid-template-columns:1fr;padding:20px}.location-results{grid-column:1}.result-list{padding:0 18px 100px}.search-result{grid-template-columns:110px 1fr;gap:14px}.result-call{margin:0 0 12px;width:100%;justify-content:center}.result-google{margin:0 0 18px;width:100%;justify-content:center}.search-result>img{width:110px;height:145px}.search-result>svg{display:none}.search-result h2{font-size:19px}.store-hero-grid{height:76vw;grid-template-columns:1fr}.store-side-image{display:none}.store-overview{padding:30px 18px;gap:24px}.store-body{display:block;margin:44px auto 90px;padding:0 18px}.public-profile{grid-template-columns:1fr}.auth-dialog{box-shadow:none;border-top-width:8px}.dialog-backdrop{padding:0}.auth-dialog{align-self:end}.empty-page{padding-bottom:110px}.create-page{margin:40px auto 110px;padding:0 18px}}
+.feed-rule{margin:0 18px}.post-card{display:block;padding:34px 0}.post-heading{margin:0 18px 18px}.post-author{padding-right:0}.post-store{margin-top:20px}.post-store h2{font-size:24px;line-height:1.12}.post-photo{width:100%;aspect-ratio:4/3;clip-path:none}.post-details{margin:0 18px;padding:20px;border-top-width:6px}.post-copy{font-size:15px}.post-actions{gap:6px}.feed-state{margin:0 18px;padding:32px 24px;grid-template-columns:1fr}.feed-more{padding:28px 18px 40px}.feed-more button{width:100%;min-width:0}.feed-end{padding:32px 18px 60px}.feed-state>img{grid-row:auto}.feed-skeleton{aspect-ratio:4/1}.search-hero{padding:20px 18px 26px}.search-slogan{margin-bottom:10px;font-size:12px}.brand-tagline{font-size:11px}.search-title span{font-size:70px}.search-form{grid-template-columns:auto 1fr;margin-top:28px}.search-form>button{grid-column:1/-1}.search-suggestions{grid-template-columns:1fr;gap:24px}.location-sheet{grid-template-columns:1fr;padding:20px}.location-results{grid-column:1}.result-list{padding:0 18px 100px}.search-result{grid-template-columns:110px 1fr;gap:14px}.result-call{margin:0 0 12px;width:100%;justify-content:center}.result-google{margin:0 0 18px;width:100%;justify-content:center}.search-result>img{width:110px;height:145px}.search-result>svg{display:none}.search-result h2{font-size:19px}.store-hero-grid{height:76vw;grid-template-columns:1fr}.store-side-image{display:none}.store-overview{padding:30px 18px;gap:24px}.store-body{display:block;margin:44px auto 36px;padding:0 18px}.public-profile{grid-template-columns:1fr}.auth-dialog{box-shadow:none;border-top-width:8px}.dialog-backdrop{padding:0}.auth-dialog{align-self:end}.empty-page{padding-bottom:110px}.create-page{margin:40px auto 110px;padding:0 18px}}
 @media(prefers-reduced-motion:reduce){.feed-intro,.search-hero{animation:none}.post-photo,.post-photo img,.brand-mark{transition:none}}
 
 /* Returned navigation destinations use one visual language. Search and Profile were
@@ -359,6 +359,25 @@ svg{stroke-width:2}
 /* Narrower than a full column on purpose: the edge of the next review has to be visible or
    nothing says there is one. A rail that ends flush with its container reads as a single
    card somebody could scroll past without knowing. */
+/* The panel the note opens into. Same 0.52s and same curve as the category sheet and the
+   location panel: three panels in one product that open at three speeds read as three
+   products. */
+.review-policy-backdrop{z-index:88;animation:backdrop-in .52s cubic-bezier(.16,1,.3,1) both}
+.review-policy-backdrop.is-leaving{animation:backdrop-out .52s cubic-bezier(.16,1,.3,1) both;pointer-events:none}
+.review-policy-sheet{width:min(520px,100%);display:grid;gap:14px;padding:24px;background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--lift);animation:alert-in .52s cubic-bezier(.16,1,.3,1) both}
+.review-policy-backdrop.is-leaving .review-policy-sheet{animation:alert-out .52s cubic-bezier(.16,1,.3,1) both}
+.review-policy-sheet header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.review-policy-sheet h2{margin:0;font-size:22px;line-height:1.15;letter-spacing:-.02em}
+.review-policy-sheet header .icon-button{margin-right:-10px}
+.review-policy-sheet p{margin:0;color:var(--ink-muted);font-size:14px;line-height:1.55}
+.store-review-policy-more{display:inline-flex;min-height:36px;align-items:center;margin-top:4px;padding:0;border:0;background:transparent;color:var(--clay);font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.store-review-policy-more:hover{color:var(--ink)}
+@media(max-width:600px){
+  .review-policy-backdrop{align-items:end;padding:0}
+  .review-policy-sheet{border-radius:var(--r-lg) var(--r-lg) 0 0;align-self:end;padding:22px 20px calc(22px + env(safe-area-inset-bottom))}
+}
+@media(prefers-reduced-motion:reduce){.review-policy-backdrop,.review-policy-sheet,.review-policy-backdrop.is-leaving,.review-policy-backdrop.is-leaving .review-policy-sheet{animation:none}}
+
 /* Quiet, because it is a condition rather than a claim: the page is not arguing, it is
    stating what it does and does not do. */
 .store-review-policy{
@@ -370,13 +389,20 @@ svg{stroke-width:2}
 .store-review-policy details{margin-top:6px}
 .store-review-policy summary{display:inline-flex;min-height:32px;align-items:center;color:var(--clay);font-weight:700;cursor:pointer}
 .store-review-policy details[open] summary{margin-bottom:6px}
-/* The rail drawn small. The scrollbar is hidden at rest on a phone, so a row that continues
-   past the edge looks like a row that ends there. */
-.store-review-more{display:block;width:100%;margin:14px 0 0;padding-bottom:22px;border-bottom:1px solid var(--line)}
-.store-review-more>span{display:block;margin-left:auto;width:56px;height:4px;border-radius:var(--r-pill);background:var(--line-strong);position:relative;overflow:hidden}
-.store-review-more>span::before{content:'';position:absolute;inset:0 auto 0 0;width:22px;border-radius:var(--r-pill);background:var(--clay)}
+/* Where the reviews end. It used to be carried by the drawn marker that sat above it; the
+   marker is gone and the rule belongs to the section either way. */
+.store-reviews{padding-bottom:20px;border-bottom:1px solid var(--line)}
 
-.store-review-rail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(236px,272px);gap:16px;max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scroll-padding-inline:2px;scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent;padding:2px 2px 18px}
+/* The scrollbar is drawn, and drawn at rest.
+   A phone hides it until something moves, so a row that continues past the edge reads as a
+   row that ends there -- which is what a drawn marker was standing in for. The rail can say
+   it itself: WebKit's own scrollbar, given a size and a colour, stops disappearing. It is
+   also the honest version of the marker, because it shows how far along the row you are. */
+.store-review-rail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(236px,272px);gap:16px;max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scroll-padding-inline:2px;scrollbar-width:thin;scrollbar-color:var(--line-strong) var(--muted);padding:2px 2px 14px}
+.store-review-rail::-webkit-scrollbar{height:6px;-webkit-appearance:none;appearance:none}
+.store-review-rail::-webkit-scrollbar-track{background:var(--muted);border-radius:var(--r-pill)}
+.store-review-rail::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:var(--r-pill)}
+.store-review-rail::-webkit-scrollbar-thumb:hover{background:var(--ink-muted)}
 .store-review-rail>.post-card{scroll-snap-align:start;display:flex;flex-direction:column;min-width:0;padding:22px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface)}
 .store-review-rail .post-number{display:none}
 .store-review-rail .post-heading{display:block;margin:0;padding:0 0 18px;border-bottom:1px solid var(--line)}
@@ -572,6 +598,10 @@ svg{stroke-width:2}
   background:color-mix(in srgb,var(--success) 6%,var(--surface));
   border:1px solid color-mix(in srgb,var(--success) 26%,var(--line));border-radius:var(--r-lg);
 }
+.store-correction-card+*{margin-top:0}
+/* R46: the frame is the end of what the page says about the shop itself, so the boundary is
+   drawn under it -- the same line the rating block and "Mağaza hakkında" already carry. */
+.store-description{padding-bottom:26px;border-bottom:1px solid var(--line)}
 .store-correction-card:hover{border-color:color-mix(in srgb,var(--success) 48%,var(--line));background:color-mix(in srgb,var(--success) 10%,var(--surface))}
 .store-correction-mark{grid-column:1;display:grid;place-items:center;width:44px;height:44px;color:var(--success)}
 .store-correction-mark svg{width:28px;height:28px}
