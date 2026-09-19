@@ -6,6 +6,7 @@ import {PostCard} from '@/components/PostCard';
 import {ReviewsJump} from '@/components/ReviewsJump';
 import {StoreNeighbours} from '@/components/StoreNeighbours';
 import {ReviewPolicy} from '@/components/ReviewPolicy';
+import {ReviewRail} from '@/components/ReviewRail';
 import {Rating,RatingStars} from '@/components/Rating';
 import {StoreActions} from '@/components/StoreActions';
 import {JsonLd} from '@/components/JsonLd';
@@ -324,7 +325,7 @@ export default async function Page({params}:Props){
             that question and is always on screen; the second is the disclaimer, and it opens.
             A details element, so it works before any script does. */}
         {recent_posts.length>0&&<ReviewPolicy locale={locale} copy={policy}/>}
-        {recent_posts.length?<ViewerLikes postIds={recent_posts.map(post=>post.id)}><div className="store-review-rail">{recent_posts.map(post=><PostCard post={post} surface="store" key={post.id}/>)}</div></ViewerLikes>:<div className="empty-state"><h3>{t.noCommunity}</h3><p>{t.noReviewsBody}</p></div>}
+        {recent_posts.length?<ViewerLikes postIds={recent_posts.map(post=>post.id)}><ReviewRail label={policy.heading}>{recent_posts.map(post=><PostCard post={post} surface="store" key={post.id}/>)}</ReviewRail></ViewerLikes>:<div className="empty-state"><h3>{t.noCommunity}</h3><p>{t.noReviewsBody}</p></div>}
 
       </div>
     </section>

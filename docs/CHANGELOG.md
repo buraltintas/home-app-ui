@@ -8,6 +8,27 @@ value involved.
 
 ---
 
+## The scrollbar a phone will not hide
+
+The bar under the reviews had to be always visible, and the browser's own cannot be: on iOS
+it is an overlay owned by the operating system, it fades the moment you stop moving, and
+`::-webkit-scrollbar` does not reach it. Yesterday's answer was a small drawn marker, which
+was rightly rejected -- it said "there is more" without saying how much.
+
+It is a drawn scrollbar now, and a real one: the thumb's width is the share of the row that
+fits on screen and its position is where in the row you are. Measured: a rail 1,299px wide in
+a 375px window gives a 28.9% thumb, and scrolling to the end moves it to 71.1%.
+
+Alongside it: "Devamını oku" is set in ink and underlined rather than clay, because it opens
+something to read; "Aradığın mağazayı bulamadıysan" and the mark beside it are both in the
+product's gold, and the mark is drawn rather than picked from the icon set, since the set has
+no magnifier with rays and the nearest thing to it is a different idea; the sentence asking
+the reader to add the shop stays bold but steps back from ink, because two weights of the same
+near-black read as one shout in two sizes; and the add button sits further in from the
+picture.
+
+---
+
 ## The review policy opens a panel, and the rail shows its own rail
 
 Four corrections to the store page, and two of them undo a decision I made yesterday:

@@ -1,6 +1,6 @@
 'use client';
 
-import {SearchCheck,Plus,X} from 'lucide-react';
+import {Plus,X} from 'lucide-react';
 import Image from 'next/image';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import {useI18n} from '@/i18n/I18nProvider';
@@ -61,7 +61,14 @@ export function AddStoreSheet({query}:{query:string}){
     {/* The end of the list is not another result, and it is not decoration either: it is the
         one place where a reader can tell us the catalogue is missing something. It is marked
         as a notice so it reads as a different kind of thing from the shops above it. */}
-    <h2><SearchCheck aria-hidden="true"/>{t('notFoundTitle')}</h2>
+    {/* Drawn rather than picked from the icon set, because the set has no magnifier with rays
+        and the nearest thing to it is a different idea. Three strokes and a lens, in the gold
+        the heading is set in. */}
+    <h2><svg className="add-store-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+      <circle cx="9.5" cy="12" r="5.5"/><path d="M13.6 15.9 18 20.3"/>
+      <path d="M7.4 10.2a3.2 3.2 0 0 1 2.4-1.6"/>
+      <path d="M16.6 4.6 15.4 7"/><path d="M21.3 7.4 19 8.8"/><path d="M22 13.2h-2.6"/>
+    </svg>{t('notFoundTitle')}</h2>
     {/* Two sentences doing two jobs: what may have happened, and what the reader can do
         about it. The second is the one being asked for, so it is the one set in ink. */}
     <p>{t('notFoundBody')} <strong>{t('notFoundInvite')}</strong></p>
