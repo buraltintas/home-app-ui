@@ -31,7 +31,7 @@ const criterionLabels={
 // Two sentences that do two different jobs -- what to do, and what it produces -- so they
 // are given a line each rather than run together.
 const criteriaIntroCopy:Record<Locale,[string,string]>={
-  tr:['Sekiz başlığın hepsini puanla.','Mağaza puanı bunların ortalamasıdır.'],
+  tr:['Sekiz başlığın hepsini puanla.','Mağaza puanı bunların ortalamasından oluşur.'],
   en:['Score all eight headings.','The store rating is their average.'],
   de:['Bewerte alle acht Bereiche.','Die Ladenbewertung ist ihr Durchschnitt.'],
   ru:['Оцените все восемь пунктов.','Оценка магазина — их среднее.'],
@@ -85,6 +85,11 @@ function ReviewWizard({storeId}:{storeId:string}){
   // A reload or a shared link can claim progress this session does not have. The address
   // is repaired once on entry so the flow always starts where the evidence starts.
   useEffect(()=>{window.history.replaceState(null,'',stepUrl(1));},[stepUrl]);
+  // Each step starts where the last one started. Moving between them is a history entry, not
+  // a navigation, so nothing resets the scroll: after eight scoring questions the page was
+  // already near its bottom, and the purchase step -- three lines long -- opened there,
+  // showing its footer with its question off the top of the screen.
+  useLayoutEffect(()=>{window.scrollTo(0,0);},[step]);
 
   const checkSession=useCallback(async()=>{
     try{const response=await apiFetch('/api/proxy/me',{cache:'no-store'});return response.ok;}catch{return false;}
@@ -254,10 +259,13 @@ function ReviewWizard({storeId}:{storeId:string}){
     {verifyError&&<p className="verify-warning" role="alert"><TriangleAlert aria-hidden="true"/><span>{verifyError}</span></p>}
 
     {step===1&&<section className="review-step">
-      <p>{t('verifyValidity')}</p>
-      {verification
-        ?<p className="review-ok" role="status"><Check aria-hidden="true"/>{t('verifyDone')}</p>
-        :<button className="button primary" onClick={()=>void verify()} disabled={verifying||!signedIn}>{verifying?t('verifying'):verifyError?t('locationRetry'):t('verifyNow')}</button>}
+      {/* The sentence changes when the thing it describes does. Before the check it explains
+          what the check buys you; after it, it says what you now have and how long you have
+          it for. The green "visit verified" line that used to sit under it said the same
+          thing a second time -- and the step itself is already marked done, in green, at the
+          top of the page. */}
+      <p>{verification?t('verifyValidityDone'):t('verifyValidity')}</p>
+      {!verification&&<button className="button primary" onClick={()=>void verify()} disabled={verifying||!signedIn}>{verifying?t('verifying'):verifyError?t('locationRetry'):t('verifyNow')}</button>}
       {verification&&<div className="review-nav"><button className="button primary" onClick={()=>advance(2)}>{t('continue')}</button></div>}
     </section>}
 

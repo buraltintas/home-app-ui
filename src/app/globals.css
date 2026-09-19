@@ -641,7 +641,7 @@ body>main{flex:1 0 auto;min-width:0;width:100%}
    375px without shrinking the targets below the size a thumb can hit. */
 /* Reverted at the reviewer's request: framing the eight questions like the store's score
    table turned the form into a panel and broke the screen. A ruled list is what it was. */
-.criteria-list{display:grid;width:100%;justify-self:stretch;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;margin:0 0 22px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.criteria-list{display:grid;width:100%;justify-self:stretch;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;margin:0 0 6px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .criteria-list .criterion{display:block;margin:0;padding:14px 16px;border:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
 .criteria-list .criterion:nth-child(2n){border-right:0}
 .criteria-list .criterion:nth-last-child(-n+2){border-bottom:0}

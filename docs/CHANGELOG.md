@@ -8,6 +8,27 @@ value involved.
 
 ---
 
+## The review flow: a step that opened at its own bottom
+
+Moving between the four steps is a history entry rather than a navigation, so nothing reset
+the scroll. After eight scoring questions the page is near its bottom, and the purchase step
+-- three lines long -- opened there: its footer on screen, its question above the top edge.
+Each step starts at its own top now.
+
+In the same pass: the connecting line between the four stops is gone (the stops are already
+read left to right, and the rule drawn behind them made a sticky bar look like a divider);
+"Seçimleri temizle" sits 22px under the last question instead of 52px; the scoring note says
+the store rating "bunların ortalamasından oluşur"; and the first step now says one thing
+rather than two. Before the check it explains what the check buys you, after it says what
+you have and for how long -- the green "Ziyaretin doğrulandı" line under it was the same
+sentence again, and the step is already marked done in green at the top of the page.
+
+Not walked end to end: steps 2 to 4 need a signed-in account and a verified visit. The
+stepper, the removed rule and the button's new position were measured on the live step one;
+the rest is a string change and a scroll on step change.
+
+---
+
 ## The contribution level is a ladder, so it is drawn as one
 
 The profile showed a badge and a count. A badge says where somebody is; it does not say
