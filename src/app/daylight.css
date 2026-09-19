@@ -917,10 +917,14 @@ svg{stroke-width:2}
    row of stars starts at the same place: down a list of eight, stars that each begin
    wherever their label happens to end cannot be compared at a glance, which is the only
    thing this table is for. */
-.result-criteria dl div{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6px 12px;padding:7px 0;border-bottom:1px solid var(--line)}
+/* The stars had nowhere of their own to start: the criterion took all the room it wanted
+   and the row of stars began wherever that left off, so a long name -- "Ürün
+   bulunabilirliği" -- ran into them. A fixed right-hand column gives every row the same
+   starting line, which is also what makes eight rows of stars readable as a column. */
+.result-criteria dl div{display:grid;grid-template-columns:minmax(0,1fr) 118px;align-items:center;gap:6px 16px;padding:7px 0;border-bottom:1px solid var(--line)}
 .result-criteria dl div:last-child{border-bottom:0}
 .result-criteria dt{font-size:12px;color:var(--ink-muted);text-transform:none;letter-spacing:0}
-.result-criteria dd{display:grid;grid-template-columns:auto 26px;align-items:center;gap:8px;margin:0;font-size:12px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+.result-criteria dd{display:grid;grid-template-columns:auto 26px;justify-content:end;align-items:center;gap:8px;margin:0;font-size:12px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
 .result-criteria dd>span{text-align:right}
 .result-criteria dd .rating-stars svg{width:13px;height:13px}
 .result-criteria-state{margin:0;font-size:12px;color:var(--ink-muted)}

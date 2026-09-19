@@ -63,6 +63,50 @@ no per-image measurement to keep in step.
 
 ---
 
+## The search page opened with a refusal in front of it
+
+Reported as "the warning appears the moment the search page opens". It did, and it was my
+own change from yesterday turning a quiet note into a blocking one.
+
+The page tries for a location on load when the browser has already granted one. When that
+attempt failed it set the error message, and that was right while the message was a line of
+text under the field: a silent failure made the button look dead when it was pressed next.
+The message became a dialog yesterday, and a dialog raised by an attempt nobody asked for is
+not an explanation -- it is the page opening with a refusal in front of it.
+
+The automatic attempt is silent again. It still records why it failed, so a later deliberate
+press resumes from it; only a press raises the dialog.
+
+That also answers the other half of the report -- "it appears both on opening and on
+pressing". It was one dialog, twice.
+
+---
+
+## Removing a button squashed the one next to it
+
+"Konumu değiştir" went from a text button to a 44px square. Taking the cross away made the
+change-location button the last child of its row, and the rule that made the cross a 44px
+icon box was written as `:last-child`.
+
+It now names the cross. The row's grid dropped to three columns on desktop and two on a
+phone, which is what it actually holds.
+
+A positional selector describes the layout at the moment it is written, not the thing it is
+about, and it keeps that description after the thing moves.
+
+---
+
+## Eight rows of stars with nowhere to start
+
+In the score breakdown on a result, the criterion took all the width it wanted and the stars
+began wherever that left off -- so "Ürün bulunabilirliği" ran into them, and no two rows of
+stars lined up with each other.
+
+The right-hand column is fixed now. Every row of stars starts on the same line, which is also
+what makes eight of them readable as a column rather than as eight separate rows.
+
+---
+
 ## "Find the nearest store to me", pressed with no location, did nothing
 
 Found while checking the new category sheet on the live site: with no location set, its

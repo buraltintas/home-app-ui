@@ -525,10 +525,18 @@ export function SearchExperience() {
         setLocationOpen(false);
         setError('');setErrorReason('');
       }else{
-        // A silent automatic attempt is still an attempt the visitor can see. Leaving the
-        // progress line with no explanation made the same browser failure look like a dead
-        // button when they pressed it next.
-        setError(t(locationMessage(outcome.reason)));setErrorReason(outcome.reason);
+        // Nothing is said here, and that is a reversal of what this used to do.
+        //
+        // The reasoning before was sound while the message was a line of text under the
+        // field: a silent failure made the button look dead when it was pressed next, so the
+        // attempt explained itself. The message is a dialog now, and a dialog raised by an
+        // attempt nobody asked for is not an explanation -- it is the page opening with a
+        // refusal in front of it, before the reader has pressed anything. Reported as
+        // exactly that: "the warning appears the moment the search page opens".
+        //
+        // The reason is still recorded, so a later deliberate press can resume from it. Only
+        // a press raises the dialog.
+        setErrorReason(outcome.reason);
       }
     })();
     return()=>{active=false;};
