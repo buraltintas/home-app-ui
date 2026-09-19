@@ -225,7 +225,13 @@
 /* Each tile opens the list it counts, so it is drawn as something to press: a real button,
    full width of its tile, left-aligned like the figures it holds, and the one in force is
    the one wearing the accent. */
-.favorites-summary>button{min-width:220px;padding:16px 18px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface);display:grid;justify-items:start;gap:5px;text-align:left;cursor:pointer;color:inherit;font:inherit;min-height:44px}
+.favorites-summary>button{min-width:220px;padding:16px 18px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface);display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;justify-items:start;gap:5px 14px;text-align:left;cursor:pointer;color:inherit;font:inherit;min-height:44px}
+/* A mark for each of the two, because they are two questions and not two numbers: a heart
+   for what has been kept, a clock for what is still owed. */
+.favorites-summary-mark{display:grid;place-items:center;width:48px;height:48px;border-radius:var(--r-pill);background:var(--muted);color:var(--ink-muted);flex:none}
+.favorites-summary-mark svg{width:24px;height:24px;color:inherit}
+.favorites-summary>button.is-showing .favorites-summary-mark{background:color-mix(in srgb,var(--clay) 16%,var(--surface));color:var(--clay)}
+.favorites-summary-copy{display:grid;gap:5px;justify-items:start;min-width:0}
 .favorites-summary>button:hover{border-color:var(--line-strong)}
 .favorites-summary>button{position:relative}
 .favorites-summary>button.is-showing{border-color:var(--clay);background:var(--accent-wash)}
@@ -233,11 +239,28 @@
    its colour: a tile that is merely tinted reads as "this one is nicer", and a mark that
    points at the list reads as "this one is what you are looking at". */
 .favorites-summary>button.is-showing::after{content:'';position:absolute;left:50%;bottom:-1px;transform:translate(-50%,50%) rotate(45deg);width:14px;height:14px;background:var(--accent-wash);border-right:1px solid var(--clay);border-bottom:1px solid var(--clay)}
-.favorites-summary>button>span{font-size:13px;color:var(--ink-muted);white-space:pre-line}
-.favorites-summary>button>strong{color:var(--clay);font-size:28px;font-weight:750;line-height:1}
+/* A long label breaks rather than running past the edge of its card. "Değerlendirmeni" is
+   fifteen characters with nowhere to break in it, and half a card wide on a phone. */
+.favorites-summary-copy>span{font-size:13px;color:var(--ink-muted);white-space:pre-line;overflow-wrap:anywhere}
+.favorites-summary-copy>strong{color:var(--clay);font-size:28px;font-weight:750;line-height:1}
+/* Which of the two lists this shop is in, on the shop. The tabs say how many; this says
+   which, without having to open the other one and look for it. */
+.favorite-store-state{
+  display:inline-flex;align-items:center;gap:7px;margin:0 0 8px;padding:5px 12px 5px 8px;
+  border-radius:var(--r-pill);font-size:13px;font-weight:700;line-height:1.2;
+  background:color-mix(in srgb,var(--accent) 16%,var(--surface));color:var(--ink);
+}
+.favorite-store-state svg{width:18px;height:18px;color:var(--clay)}
+.favorite-store-state.is-done{background:color-mix(in srgb,var(--success) 12%,var(--surface));color:var(--success)}
+.favorite-store-state.is-done svg{color:var(--success)}
 /* Said where the list would have been, in the list's own voice. */
 .favorites-none{margin:22px 0 0;color:var(--ink-muted)}
 @media(max-width:600px){.favorites-list li{grid-template-columns:88px 1fr auto;column-gap:12px}
+  .favorites-summary>button{padding:14px;gap:4px 10px}
+  .favorites-summary-mark{width:40px;height:40px}
+  .favorites-summary-mark svg{width:20px;height:20px}
+  .favorite-store-state{font-size:12px;padding:4px 10px 4px 7px;gap:6px}
+  .favorite-store-state svg{width:16px;height:16px}
   .favorites-list li>a:not(.store-contribution-action){grid-template-columns:88px 1fr auto;gap:12px}.favorite-store-photo{width:88px;height:88px}.favorites-summary{display:grid;grid-template-columns:1fr 1fr}.favorites-summary>button{min-width:0}}
 
 .profile-messages{display:grid;gap:14px}.profile-message{padding:18px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface)}.profile-message header{display:flex;align-items:center;justify-content:space-between;gap:18px}.profile-message header strong,.profile-message-reply>strong{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--clay)}.profile-message time,.profile-message>small{font-size:13px;color:var(--ink-muted)}.profile-message>p{margin:10px 0 14px;white-space:pre-wrap}.profile-message-kind{display:block;margin-bottom:6px;font-size:17px;line-height:1.3;letter-spacing:-.02em;color:var(--ink)}.profile-message-status{display:inline-flex!important;width:fit-content;padding:5px 9px;border:1px solid var(--line-strong);border-radius:var(--r-pill);font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)!important}.profile-message-reply{margin-top:14px;padding:15px 16px;border-radius:var(--r-sm);background:var(--accent-wash)}.profile-message-reply p{margin:7px 0;white-space:pre-wrap}.profile-empty{color:var(--ink-muted)}

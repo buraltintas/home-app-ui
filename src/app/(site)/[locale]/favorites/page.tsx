@@ -1,6 +1,6 @@
 'use client';
 
-import {ArrowRight,Heart} from 'lucide-react';
+import {ArrowRight,ClipboardCheck,Clock,Heart} from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {useCallback,useEffect,useState} from 'react';
@@ -18,11 +18,14 @@ import {metresBetween,StoreDistance,useReviewRadius,useViewerPosition} from '@/c
 
 // The same wording the store page uses for the same action; one product, one name for it.
 const reviewAction:Record<Locale,string>={tr:'Değerlendirme yap',en:'Write a review',de:'Bewertung abgeben',ru:'Оставить оценку'};
-const favoriteSummary:Record<Locale,{saved:string;pending:string;pendingEmpty:string;yoursOne:string}>={
-  tr:{saved:'Kaydedilen\nmağaza',pending:'Değerlendirmeni bekleyen mağaza',pendingEmpty:'Kaydettiğin mağazaların hepsini değerlendirmişsin.',yoursOne:'1 tanesi senin'},
-  en:{saved:'Saved stores',pending:'Waiting for your review',pendingEmpty:'You have reviewed every store you saved.',yoursOne:'one of them is yours'},
-  de:{saved:'Gespeicherte Geschäfte',pending:'Wartet auf deine Bewertung',pendingEmpty:'Du hast jedes gespeicherte Geschäft bewertet.',yoursOne:'eine davon ist deine'},
-  ru:{saved:'Сохранённые магазины',pending:'Ждут вашей оценки',pendingEmpty:'Вы оценили все сохранённые магазины.',yoursOne:'одна из них ваша'},
+// "yours" takes the number, because the number is the point of the sentence. It used to be
+// the word "one" written out, which is right exactly as often as somebody has reviewed a shop
+// once and no more -- and wrong, silently, the rest of the time.
+const favoriteSummary:Record<Locale,{saved:string;pending:string;pendingEmpty:string;yours:(n:number)=>string;awaiting:string;reviewed:string}>={
+  tr:{saved:'Kaydedilen\nmağaza',pending:'Değerlendirmeni bekleyen mağaza',pendingEmpty:'Kaydettiğin mağazaların hepsini değerlendirmişsin.',yours:n=>`${n} tanesi senin`,awaiting:'Değerlendirmeni bekliyor',reviewed:'Değerlendirdin'},
+  en:{saved:'Saved stores',pending:'Waiting for your review',pendingEmpty:'You have reviewed every store you saved.',yours:n=>n===1?'one of them is yours':`${n} of them are yours`,awaiting:'Waiting for your review',reviewed:'You reviewed this'},
+  de:{saved:'Gespeicherte Geschäfte',pending:'Wartet auf deine Bewertung',pendingEmpty:'Du hast jedes gespeicherte Geschäft bewertet.',yours:n=>n===1?'eine davon ist deine':`${n} davon sind deine`,awaiting:'Wartet auf deine Bewertung',reviewed:'Von dir bewertet'},
+  ru:{saved:'Сохранённые магазины',pending:'Ждут вашей оценки',pendingEmpty:'Вы оценили все сохранённые магазины.',yours:n=>n===1?'одна из них ваша':`ваших: ${n}`,awaiting:'Ждёт вашей оценки',reviewed:'Вы оценили'},
 };
 
 export default function Page(){
@@ -86,10 +89,12 @@ export default function Page(){
         page only has two questions to ask. */}
     <div className="favorites-summary" role="group" aria-label={t('favoritesTitle')}>
       <button type="button" className={showing==='saved'?'is-showing':undefined} aria-pressed={showing==='saved'} onClick={()=>setShowing('saved')}>
-        <span>{favoriteSummary[locale].saved}</span><strong>{stores.length}</strong>
+        <span className="favorites-summary-mark" aria-hidden="true"><Heart/></span>
+        <span className="favorites-summary-copy"><span>{favoriteSummary[locale].saved}</span><strong>{stores.length}</strong></span>
       </button>
       <button type="button" className={showing==='pending'?'is-showing':undefined} aria-pressed={showing==='pending'} onClick={()=>setShowing('pending')}>
-        <span>{favoriteSummary[locale].pending}</span><strong>{pending.length}</strong>
+        <span className="favorites-summary-mark" aria-hidden="true"><Clock/></span>
+        <span className="favorites-summary-copy"><span>{favoriteSummary[locale].pending}</span><strong>{pending.length}</strong></span>
       </button>
     </div>
     {error&&<p className="form-error" role="alert">{error}</p>}
@@ -99,7 +104,11 @@ export default function Page(){
     {shown.length?<ul className="favorites-list">{shown.map(store=>{const photo=storePhotoURL(store.photo,320);return <li key={store.id}>
       <Link href={localePath(locale,`/stores/${store.id}`)} prefetch={false}>
         {photo?<Image className={`favorite-store-photo${isBrandMark(store.photo)?' is-brand-mark':''}`} src={photo} width={160} height={120} alt="" unoptimized/>:<div className="favorite-store-photo is-empty" aria-hidden="true">{store.name.trim().charAt(0)}</div>}
-        <div><strong>{store.name}</strong><span>{[store.district,store.city].filter(Boolean).join(', ')}</span>
+        <div>{/* Said before the name, because it is the reason this list is two lists. Which of
+                 the two counts a shop belongs to was only legible by opening the other tab and
+                 seeing whether it was there as well. */}
+        <span className={`favorite-store-state${store.viewer_has_reviewed?' is-done':''}`}>{store.viewer_has_reviewed?<ClipboardCheck aria-hidden="true"/>:<Clock aria-hidden="true"/>}{store.viewer_has_reviewed?favoriteSummary[locale].reviewed:favoriteSummary[locale].awaiting}</span>
+        <strong>{store.name}</strong><span>{[store.district,store.city].filter(Boolean).join(', ')}</span>
         {/* The count sits under the score rather than beside it: on a phone the two together
             wrapped onto a second line anyway, and the number of reviews is what the score is
             made of, not a second fact competing with it. Muted, like the count on the home
@@ -107,7 +116,7 @@ export default function Page(){
         {/* One of these is yours, when it is: the difference between "somebody scored this"
             and "I scored this". */}
         {store.platform.review_count
-          ?<div className="favorite-store-score"><RatingStars value={store.platform.average_rating}/><span>{store.platform.review_count} {t('reviewWord')}{store.viewer_has_reviewed&&<em> · {favoriteSummary[locale].yoursOne}</em>}</span></div>
+          ?<div className="favorite-store-score"><RatingStars value={store.platform.average_rating}/><span>{store.platform.review_count} {t('reviewWord')}{store.viewer_has_reviewed&&<em> · {favoriteSummary[locale].yours(store.viewer_review_count||1)}</em>}</span></div>
           :<small>{t('noCommunity')}</small>}</div>
         <ArrowRight aria-hidden="true"/>
       </Link>

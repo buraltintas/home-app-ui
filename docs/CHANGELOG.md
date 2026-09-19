@@ -8,6 +8,21 @@ value involved.
 
 ---
 
+## The favourites page says which list a shop is in, on the shop
+
+The page holds two counts -- saved, and waiting for your review -- and each opens the list it
+counts. Which of the two a given shop belonged to was only answerable by opening the other
+tab and looking for it there. Each row now carries a small state before its name: a clock and
+"Değerlendirmeni bekliyor", or a check and "Değerlendirdin". The two counts get a mark each
+for the same reason: a heart for what has been kept, a clock for what is still owed.
+
+And "1 tanesi senin" was the number one written out. It sat beside a store's review count and
+was right exactly as often as somebody had reviewed that shop once and no more, silently
+wrong the rest of the time. It takes the real number now, which needed the API to report it
+(`viewer_review_count`) -- a boolean cannot be counted.
+
+---
+
 ## The review flow: a step that opened at its own bottom
 
 Moving between the four steps is a history entry rather than a navigation, so nothing reset
