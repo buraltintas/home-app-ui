@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft, ArrowRight, Check, History, LocateFixed, MapPin, Search, X } from 'lucide-react';
+import { ArrowDownWideNarrow, ArrowLeft, ArrowRight, Check, CircleCheck, History, LocateFixed, MapPin, RotateCcw, Search, Store, X } from 'lucide-react';
 import { FormEvent, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import type { Coordinates, Locale, LocationResult, Me, SearchHistory, SearchResponse, SearchResult } from '@/lib/types';
@@ -13,7 +13,7 @@ import Image from 'next/image';
 import { useI18n } from '@/i18n/I18nProvider';
 import { localePath, stripLocale } from '@/lib/site';
 import { apiFetch } from '@/lib/api-client';
-import type { LocationFailure } from '@/lib/location';
+import type { LocationFailure, Position } from '@/lib/location';
 import { LOCATION_LOST_EVENT, deviceLocationAllowed, forgetDeviceLocation, watchLocationConsent, watchLocationGranted, canUseDeviceLocationWithoutPrompt, clearSearchLocation, LOCATION_UPDATE_EVENT, locationMessage, rememberedPosition, requestPosition, savedSearchLocation, saveSearchLocation } from '@/lib/location';
 import { seasonalPool } from '@/i18n/search-seasons';
 import { rememberOriginSearch } from '@/lib/search-origin';
@@ -24,6 +24,7 @@ import { SearchOverlay } from './SearchOverlay';
 import { LocationAlert } from './LocationAlert';
 import {CategoryIcon} from './CategoryIcon';
 import {CategorySheet} from '@/components/CategorySheet';
+import {eligible as reviewEligible,metresBetween,useReviewRadius,useViewerPosition} from '@/components/StoreDistance';
 import {TimedNudge} from './TimedNudge';
 
 type SearchPlace={source?:'device'|'manual';label:string;city?:string;placeID?:string;address?:string;accuracyMeters?:number;coordinates:Coordinates};
@@ -88,7 +89,7 @@ function growToFit(element:HTMLTextAreaElement|null){
 // A result normally carries a store id and links to its detail page. One without an id
 // cannot be opened, so it stays plain content instead of linking to /stores/undefined.
 
-function Result({item,onSelect,saved}:{item:SearchResult;onSelect:()=>void;saved:boolean}) {
+function Result({item,onSelect,saved,viewerPosition,reviewRadiusMeters}:{item:SearchResult;onSelect:()=>void;saved:boolean;viewerPosition?:Position;reviewRadiusMeters:number}) {
   const {t,locale}=useI18n();
   // The API guarantees an array, but this read path stays defensive: one malformed or
   // cached store result must never replace the whole result page with a global error.
@@ -107,6 +108,15 @@ function Result({item,onSelect,saved}:{item:SearchResult;onSelect:()=>void;saved
     {/* Named, the way the saved list names it. A number on its own answers "how far from
         what?" with nothing, and the two pages are looking at the same fact. */}
     {item.distance_meters!==undefined&&<p className="distance"><MapPin aria-hidden="true"/><span>{t('yourDistance')}</span> <strong>{(item.distance_meters/1000).toLocaleString(locale,{maximumFractionDigits:1})} km</strong></p>}
+    {/* Whether the reader could review this shop from where they are standing -- the same
+        question, the same words and the same mark as the favourites page. The distance above
+        is measured from the place being searched, which may be a city chosen by name; this
+        one is measured from the device, because standing near enough is a fact about the
+        person and not about the search. A shop we placed ourselves cannot support the claim:
+        its point may be half a kilometre from its door. */}
+    {viewerPosition&&!item.location_approximate
+      &&metresBetween(viewerPosition,{latitude:item.latitude,longitude:item.longitude})<=reviewRadiusMeters
+      &&<p className="result-eligible"><CircleCheck aria-hidden="true"/>{reviewEligible[locale]}</p>}
     </div><ArrowRight aria-hidden="true"/></div>;
   // The score column sits outside the link, not inside it. An anchor cannot hold a button,
   // and the save control belongs directly under the figures. Nothing here is a step on the
@@ -165,6 +175,10 @@ export function SearchExperience() {
   // including the ordinary one of not being signed in -- leaves every row unsaved rather
   // than breaking the results.
   const [savedStores,setSavedStores]=useState<Set<string>>(new Set());
+  // Read once for the whole list. Asking per row would start one geolocation request per
+  // shop on a page that shows thirty of them.
+  const viewerPosition=useViewerPosition();
+  const reviewRadiusMeters=useReviewRadius();
   // How many of the answer is on screen. The backend returns up to ninety stores in one
   // response, so revealing the next screenful costs nothing -- no request, no wait, and no
   // second row in the search log for one person's one question.
@@ -838,7 +852,7 @@ export function SearchExperience() {
         phone leaves the site entirely as often as not. It sits directly under the field it
         undoes, and it clears the answer rather than navigating: the question stays in the
         bar, so changing one word is still one tap away. */}
-    {data&&!loading&&<button type="button" className="clear-results" onClick={()=>{setData(undefined);setSuggestionsOpen(false);}}>{t('clearResults')}</button>}{/* The panel opens above these, it does not replace them. Hiding them while somebody
+    {data&&!loading&&<button type="button" className="clear-results" onClick={()=>{setData(undefined);setSuggestionsOpen(false);}}><RotateCcw aria-hidden="true"/>{t('clearResults')}</button>}{/* The panel opens above these, it does not replace them. Hiding them while somebody
         changes their location threw away the recent searches and the categories they were
         about to pick from, and put them back only once the location was settled. */}
     {/* Recent searches used to sit here, on the page. They belong with the field instead:
@@ -866,6 +880,11 @@ export function SearchExperience() {
     {!loading&&data&&!data.guidance&&<section className="results-layout"><div className="result-list">{/* What the list is and how it is ordered, said as two
       labelled facts rather than a bare number: "24 results" does not say what decided which
       twenty-four, and the order is the part a reader is entitled to know. */}
-      <dl className="result-count"><div><dt>{t('listedStores')}</dt><dd>{data.results.length}</dd></div><div><dt>{t('sortedBy')}</dt><dd>{t('sortedByDistance')}</dd></div></dl>{data.results.length===0?<div className="zero-state"><h2>{t('zeroTitle')}</h2><p>{t('zeroBody')}</p></div>:<>{data.results.slice(0,shown).map(item=><Result item={item} key={item.search_result_impression_id} onSelect={()=>select(item)} saved={savedStores.has(item.id??'')}/>)}{shown<data.results.length&&<button type="button" className="result-more" onClick={()=>setShown(count=>count+PAGE)}>{t('showMoreResults')}</button>}<AddStoreSheet query={data.intent?.normalized_query??''}/></>}</div></section>}
+      {/* Two frames rather than two lines of small print. They are the two things the reader
+          needs before they start down the list -- how much of it there is, and what decided
+          the order -- and as bare text above a long list they read as a caption nobody looks
+          at. No chevron on the sort: the order is not something this page lets anybody
+          change, and a control that does nothing is worse than no control. */}
+      <dl className="result-count"><div className="result-count-total"><span className="result-count-mark" aria-hidden="true"><Store/></span><div><dt>{t('listedStores')}</dt><dd>{data.results.length}</dd></div></div><div className="result-count-sort"><span className="result-count-mark" aria-hidden="true"><ArrowDownWideNarrow/></span><div><dt>{t('sortedBy')}</dt><dd>{t('sortedByDistance')}</dd></div></div></dl>{data.results.length===0?<div className="zero-state"><h2>{t('zeroTitle')}</h2><p>{t('zeroBody')}</p></div>:<>{data.results.slice(0,shown).map(item=><Result item={item} key={item.search_result_impression_id} onSelect={()=>select(item)} saved={savedStores.has(item.id??'')} viewerPosition={viewerPosition} reviewRadiusMeters={reviewRadiusMeters}/>)}{shown<data.results.length&&<button type="button" className="result-more" onClick={()=>setShown(count=>count+PAGE)}>{t('showMoreResults')}</button>}<AddStoreSheet query={data.intent?.normalized_query??''}/></>}</div></section>}
     <TimedNudge kind="search"/></main>;
 }

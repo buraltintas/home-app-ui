@@ -139,6 +139,9 @@ svg{stroke-width:2}
 .results-layout{max-width:1440px;border-top:0;grid-template-columns:minmax(600px,820px) 1fr}
 .result-list{padding:20px 40px 80px}
 .result-count{color:var(--clay);font-weight:700}
+/* The same sentence, mark and colour the saved list uses for the same fact. */
+.result-eligible{display:flex;align-items:center;gap:6px;margin:6px 0 0;color:var(--success);font-size:13px;font-weight:700;line-height:1.35}
+.result-eligible svg{width:16px;height:16px;flex:none;color:var(--success)}
 .search-result{grid-template-columns:230px 1fr auto;gap:28px;padding:28px 0;border-bottom:1px solid var(--line)}.external-link{display:inline-flex;align-items:center;min-height:44px;margin-top:12px;font-size:15px;font-weight:600;color:var(--accent-ink);text-decoration:underline;text-underline-offset:3px}
 .store-hero-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:32px}.store-hero-initial{font-size:64px;font-weight:700;line-height:1;color:var(--line-strong)}.store-hero-empty p{margin:0;color:var(--ink-muted);font-size:16px;max-width:34ch}
 .store-highlight{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:14px}.store-highlight-photo{width:72px;height:72px;border-radius:var(--r-md);object-fit:cover;flex:none}.store-highlight-photo-empty{display:grid;place-items:center;background:var(--muted);color:var(--ink-muted);font-size:28px;font-weight:700}.store-highlight-copy{display:flex;flex-direction:column;gap:3px;min-width:0}.store-highlight-copy strong{overflow:hidden;text-overflow:ellipsis}.store-highlight-metric{margin-top:3px;color:var(--clay);font-size:14px;font-weight:700}
@@ -326,7 +329,7 @@ svg{stroke-width:2}
 /* The same five stars the review cards draw, from the same component, so a reader comparing
    the store's score with one person's is comparing two of the same picture. */
 .store-rating-stars{display:inline-flex;align-self:center}
-.store-rating-stars .rating-stars svg{width:18px;height:18px}
+.store-rating-stars .rating-stars{--star-size:18px}
 .store-rating-overall small{font-size:12px;color:var(--ink-muted)}
 /* How many reviews the score is made of, beside the score itself: a 4.7 out of three
    visits and a 4.7 out of ninety are not the same claim. */
@@ -991,7 +994,11 @@ svg{stroke-width:2}
    and the row of stars began wherever that left off, so a long name -- "Ürün
    bulunabilirliği" -- ran into them. A fixed right-hand column gives every row the same
    starting line, which is also what makes eight rows of stars readable as a column. */
-.result-criteria dl div{display:grid;grid-template-columns:minmax(0,1fr) 118px;align-items:center;gap:6px 16px;padding:7px 0;border-bottom:1px solid var(--line)}
+/* The label column is as wide as the longest label needs and no wider, and the row hugs the
+   left: the criteria do not move, the stars come to them. Given the whole card's width the
+   stars had been sitting at the far right of it, with the best part of a hundred pixels of
+   nothing between a short criterion and its score. */
+.result-criteria dl div{display:grid;grid-template-columns:minmax(0,126px) auto;justify-content:start;align-items:center;gap:6px 12px;padding:7px 0;border-bottom:1px solid var(--line)}
 .result-criteria dl div:last-child{border-bottom:0}
 
 /* The contribution ladder, drawn as a ladder rather than a badge.
@@ -1039,20 +1046,35 @@ svg{stroke-width:2}
    it overflowed whatever column it was given and no amount of widening the column was going
    to be enough in every language the dictionary carries. */
 .result-criteria dt{font-size:12px;color:var(--ink-muted);text-transform:none;letter-spacing:0;overflow-wrap:anywhere}
-.result-criteria dd{display:grid;grid-template-columns:auto 26px;justify-content:end;align-items:center;gap:8px;margin:0;font-size:12px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
-.result-criteria dd>span{text-align:right}
-.result-criteria dd .rating-stars svg{width:13px;height:13px}
+.result-criteria dd{display:grid;grid-template-columns:auto 26px;justify-content:start;align-items:center;gap:8px;margin:0;font-size:12px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+.result-criteria dd>span{text-align:left}
+.result-criteria dd .rating-stars{--star-size:13px}
 .result-criteria-state{margin:0;font-size:12px;color:var(--ink-muted)}
 /* Two labelled facts about the list, not a bare count. */
-.result-count{display:flex;flex-wrap:wrap;gap:4px 28px;margin:18px 0 6px}
-.result-count div{display:flex;align-items:baseline;gap:8px}
-.result-count dt{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-muted)}
-.result-count dd{margin:0;font-size:14px;font-weight:750;color:var(--ink)}
+/* The two things somebody needs before they start down a long list: how much of it there
+   is, and what decided the order. As two lines of small print above the list they read as a
+   caption; in frames they read as the answer to a question. */
+.result-count{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0 8px}
+.result-count>div{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:12px;min-width:0;padding:12px 14px;border-radius:var(--r-lg)}
+.result-count>div>div{display:grid;gap:2px;min-width:0}
+.result-count-total{background:color-mix(in srgb,var(--success) 9%,var(--surface))}
+.result-count-sort{background:var(--accent-wash)}
+.result-count-mark{display:grid;place-items:center;width:38px;height:38px;border-radius:var(--r-md);background:color-mix(in srgb,var(--surface) 72%,transparent);flex:none}
+.result-count-mark svg{width:20px;height:20px}
+.result-count-total .result-count-mark{color:var(--success)}
+.result-count-sort .result-count-mark{color:var(--clay)}
+.result-count dt{font-size:11px;text-transform:none;letter-spacing:0;color:var(--ink-muted);line-height:1.25;overflow-wrap:anywhere}
+.result-count dd{margin:0;font-size:14px;font-weight:750;color:var(--ink);overflow-wrap:anywhere}
+.result-count-total dd{font-size:24px;line-height:1.05;color:var(--success)}
+@media(max-width:330px){.result-count{grid-template-columns:minmax(0,1fr)}}
 /* The end of the list is a question too. */
 /* A notice, not a card in the list: its own ground, its own colour, and a mark that says so
    before the words are read. */
-.add-store{margin:34px 0 0;padding:24px;border:1px solid color-mix(in srgb,var(--warning) 35%,var(--line));border-radius:var(--r-lg);background:var(--accent-wash)}
-.add-store h2{display:flex;align-items:center;gap:8px;margin:0;font-size:17px;font-weight:800;letter-spacing:.01em;color:var(--warning)}
+.add-store{margin:34px 0 0;padding:22px;border:1px solid color-mix(in srgb,var(--clay) 16%,var(--line));border-radius:var(--r-lg);background:color-mix(in srgb,var(--accent-wash) 70%,var(--surface))}
+/* The heading is read first and it is a question, not a warning. In amber it was the
+   loudest thing on a page of results and read as something having gone wrong. */
+.add-store h2{display:flex;align-items:center;gap:10px;margin:0;font-size:17px;font-weight:800;letter-spacing:.01em;color:var(--ink)}
+.add-store h2 svg{color:var(--clay)}
 .add-store h2 svg{width:18px;height:18px;flex:none}
 .add-store p{margin:6px 0 16px;color:var(--ink-muted);font-size:15px}
 .add-store-action{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
@@ -1216,9 +1238,12 @@ svg{stroke-width:2}
 .category-links button>.category-icon.is-picture{width:44px;height:44px}
 .category-links button>.category-icon svg{width:24px;height:24px}
 /* Under the field it undoes, and quiet: it is a way back, not the thing to press. */
-.clear-results{display:inline-flex;align-items:center;justify-content:center;min-height:44px;margin-top:14px;padding:0 16px;border:1px solid var(--line-strong);border-radius:var(--r-pill);background:var(--surface);color:var(--ink-muted);font-size:15px;transition:background-color .16s ease,color .16s ease}
+/* As wide as its own words. It was a full-width slab on a phone, which read as the page's
+   main action rather than as the way back from a list. */
+.clear-results{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;margin-top:14px;padding:0 18px;border:1px solid var(--line-strong);border-radius:var(--r-pill);background:var(--surface);color:var(--ink-muted);font-size:15px;transition:background-color .16s ease,color .16s ease}
 .clear-results:hover{background:var(--muted);color:var(--ink)}
-@media(max-width:600px){.clear-results{width:100%;margin-top:12px}}
+.clear-results svg{width:17px;height:17px;flex:none}
+@media(max-width:600px){.clear-results{width:auto;margin-top:12px}}
 
 /* City-and-category pages. The same row the neighbours list uses, one size up, because the
    row is the page here rather than a footnote to one. */

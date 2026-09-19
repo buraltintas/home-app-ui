@@ -182,14 +182,20 @@
 .rating-picker button{min-width:56px;min-height:56px;border:1px solid var(--line);background:var(--surface);border-radius:var(--r-md);font-size:18px;font-weight:700;cursor:pointer;transition:background-color .16s ease}
 .rating-picker button:hover{background:var(--accent-wash)}
 .rating-picker button[aria-pressed=true]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
-.rating-stars{display:inline-flex;align-items:center;gap:4px}
-.rating-stars svg{display:block;width:18px;height:18px;color:var(--line-strong)}
+/* One number sizes the drawing and the box it is clipped in.
+   The fill is a percentage of the box, so the two must be the same size or the percentage
+   lands somewhere else on the star. They were 18px and 13px in the results table: a half
+   star -- 50% of an 18px box -- painted 9px of a 13px drawing, which is 69% of it, and a
+   criterion scoring 3.5 showed well over half its fourth star. Anything wanting smaller
+   stars sets --star-size once. */
+.rating-stars{--star-size:18px;display:inline-flex;align-items:center;gap:4px}
+.rating-stars svg{display:block;width:var(--star-size);height:var(--star-size);color:var(--line-strong)}
 .rating-stars svg.is-filled{fill:var(--clay);color:var(--clay)}
 /* The filled star is clipped from the left, so a half point is half a star rather than a
    whole one rounded up. */
-.rating-star{position:relative;display:block;width:18px;height:18px;flex:none}
+.rating-star{position:relative;display:block;width:var(--star-size);height:var(--star-size);flex:none}
 .rating-star-fill{position:absolute;inset:0;overflow:hidden;display:block}
-.rating-star-fill svg{width:18px;height:18px}
+.rating-star-fill svg{width:var(--star-size);height:var(--star-size)}
 /* The score after the stars, not the stars themselves. Every star is a span too, so this
    was indenting the first one by four pixels -- which is why the row of stars never lined up
    with the count underneath it, and why the gap between stars was four wider than the four

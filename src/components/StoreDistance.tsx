@@ -11,7 +11,7 @@ import type {Coordinates,Locale} from '@/lib/types';
 // the reader is standing now, not which city they are browsing. Nothing is prompted -- a
 // browser that has not already been granted permission is simply not asked, and the row
 // shows no distance at all rather than a guess.
-const eligible:Record<Locale,string>={
+export const eligible:Record<Locale,string>={
   tr:'Değerlendirme yapmak için uygun mesafedesiniz',
   en:'You are close enough to write a review',
   de:'Du bist nah genug, um zu bewerten',

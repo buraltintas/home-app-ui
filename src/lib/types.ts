@@ -31,6 +31,10 @@ export type SearchResult = {
   // Named by the server, from the same translations the store's own page reads.
   category_labels?: string[];
   platform?: PlatformStats & { store_id: string }; google?: GoogleExternal; premium?: boolean; catalog_store?: boolean;
+  // Whether this shop's point was worked out from its address rather than published. A
+  // distance to such a point is right to a few hundred metres, not to the doorway, so it
+  // cannot support "you are close enough to review this".
+  location_approximate?: boolean;
   // The chain this shop belongs to, when it belongs to one. It is what lets a result show
   // the chain's own mark instead of a letter; the API has always sent it.
   brand_slug?: string;

@@ -8,6 +8,39 @@ value involved.
 
 ---
 
+## A half star was two thirds of a star
+
+Reported as a fill-maths error and it was one, but not in the maths. Each star is drawn
+twice -- an outline, and a filled copy revealed from the left by a percentage -- and the
+percentage is of the *box*, so the drawing and the box have to be the same size. In the
+results table they were 13px and 18px: the svg had been shrunk there, the box had not. A
+criterion scoring exactly 3.5 revealed 50% of an 18px box, which is 9px of a 13px star --
+**69% of it**. Measured, before and after.
+
+One number sizes both now (`--star-size`), so anywhere that wants smaller stars sets it once
+and the two cannot drift apart again.
+
+The rest of the same card:
+
+- **The stars come to the criteria**, which stay where they are. Giving the table the whole
+  card (previous entry) left the scores against the far edge, with the best part of a hundred
+  pixels of nothing after a short criterion. The label column is as wide as the longest label
+  needs and the row hugs the left: the scores start at 138px instead of 221px.
+- **"Listelemeyi temizle" is as wide as its own words**, with the mark of going back on it. A
+  full-width slab read as the page's main action rather than as the way out of a list.
+- **The count and the sort are two frames**, not two lines of small print above a long list.
+  No chevron on the sort: the order is not something this page lets anyone change, and a
+  control that does nothing is worse than no control.
+- **"Aradığın mağazayı bulamadıysan" is not a warning.** Its heading was amber, which made it
+  the loudest thing on a page of results and read as something having gone wrong.
+- **The results say when you are close enough to review**, in the words, colour and mark the
+  saved list already uses. It is measured from the device, not from the place being searched,
+  because standing near enough is a fact about the person. Not claimed for a shop whose point
+  we worked out from its address -- that needed `location_approximate` on search results,
+  which the query behind them had always read and never passed on.
+
+---
+
 ## The store page says what the reviews are, and who may touch them
 
 The row of reviews had no heading and no frame around what it is. It has both now: "Topluluk
