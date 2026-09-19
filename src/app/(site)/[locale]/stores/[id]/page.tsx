@@ -318,17 +318,17 @@ export default async function Page({params}:Props){
       </div>
       <div className="store-reviews" id="store-reviews-title" aria-label={policy.heading}>
         <h2 className="eyebrow store-section-title">{policy.heading}</h2>
-        {/* Said where somebody decides whether to believe what is under it. The first
-            sentence is the one that answers that question, so it is the one always on
-            screen; the second is the disclaimer, and it opens. A details element, so it
-            works before any script does. */}
-        <aside className="store-review-policy" role="note">
+        {/* Said where somebody decides whether to believe what is under it -- so only where
+            there is something under it to believe. The first sentence is the one that answers
+            that question and is always on screen; the second is the disclaimer, and it opens.
+            A details element, so it works before any script does. */}
+        {recent_posts.length>0&&<aside className="store-review-policy" role="note">
           <ShieldCheck aria-hidden="true"/>
           <div>
             <p>{policy.first}</p>
             <details><summary>{policy.more}</summary><p>{policy.rest}</p></details>
           </div>
-        </aside>
+        </aside>}
         {recent_posts.length?<ViewerLikes postIds={recent_posts.map(post=>post.id)}><div className="store-review-rail">{recent_posts.map(post=><PostCard post={post} surface="store" key={post.id}/>)}</div></ViewerLikes>:<div className="empty-state"><h3>{t.noCommunity}</h3><p>{t.noReviewsBody}</p></div>}
         {/* The rail scrolls sideways and, on a phone, says so only while it is moving: the
             scrollbar is hidden at rest, so a row of reviews reads as however many happen to
