@@ -2,10 +2,9 @@
 
 import Image from 'next/image';
 import {useEffect,useState} from 'react';
-import {Gift,MessageCircle,PenLine,ShieldCheck,Star} from 'lucide-react';
+import {Gift,Medal,MessageCircle,PenLine,ShieldCheck,Star} from 'lucide-react';
 import {AuthDialog} from '@/components/AuthDialog';
 import {SignOutButton} from '@/components/SignOutButton';
-import {ContributorLevel} from '@/components/ContributorLevel';
 import Link from 'next/link';
 import {localePath} from '@/lib/site';
 import {AccountPageSkeleton} from '@/components/AccountPageSkeleton';
@@ -38,6 +37,28 @@ const progressionCopy:Record<Locale,{next:(level:number,count:number)=>string;re
   ru:{next:(level,count)=>`До уровня ${level} осталось отзывов: ${count}.`,reward:'Награда за следующий уровень',top:'Вы достигли высшего уровня участника.'},
 };
 
+// The ladder, shown as a ladder. A badge on its own says where somebody is; it does not say
+// where they are going or how far off it is, and that is the part that makes a level worth
+// having. Current rung on the left, next rung on the right, the distance between them drawn
+// between them.
+//
+// The two counts under the badges are the only honest scale available here: the API reports
+// how many reviews this person has written and how many are still needed, so the next rung's
+// number is the sum of those two. Nothing here is a threshold table copied into the browser
+// -- a second copy of the ladder would drift from the one the backend actually applies.
+const ladderCopy:Record<Locale,{current:string;next:string;level:(n:number)=>string;reviews:(n:number)=>string}>={
+  tr:{current:'Mevcut Seviye',next:'Sonraki Seviye',level:n=>`${n}. Seviye`,reviews:n=>`${n} değerlendirme`},
+  en:{current:'Current level',next:'Next level',level:n=>`Level ${n}`,reviews:n=>`${n} reviews`},
+  de:{current:'Aktuelle Stufe',next:'Nächste Stufe',level:n=>`Stufe ${n}`,reviews:n=>`${n} Bewertungen`},
+  ru:{current:'Текущий уровень',next:'Следующий уровень',level:n=>`Уровень ${n}`,reviews:n=>`Отзывов: ${n}`},
+};
+const totalReviewsCopy:Record<Locale,(n:number)=>string>={
+  tr:n=>`Toplam ${n} değerlendirme`,
+  en:n=>`${n} reviews in total`,
+  de:n=>`Insgesamt ${n} Bewertungen`,
+  ru:n=>`Всего отзывов: ${n}`,
+};
+
 export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages'|'account'}){
   const {t,locale}=useI18n();const copy=accountCopy[locale];const [open,setOpen]=useState(false);const [signedIn,setSignedIn]=useState(false);const [checking,setChecking]=useState(true);const [deleting,setDeleting]=useState(false);const [me,setMe]=useState<Me|null>(null);
   useEffect(()=>{
@@ -60,6 +81,11 @@ export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages
   </main>;
 
   const progression=progressionCopy[locale];
+  const ladder=ladderCopy[locale];
+  // How many reviews the next rung asks for: what has been written plus what is still owed.
+  // Both numbers come from the backend, so the ladder here can never disagree with the one
+  // being applied there.
+  const nextTarget=me.next_level!==undefined?me.post_count+(me.reviews_to_next_level??0):undefined;
   const sectionLinks=[
     ['edit',t('editProfile'),profileEditorHint[locale],PenLine],
     ['reviews',reviewCopy[locale].title,reviewCopy[locale].hint,Star],
@@ -67,12 +93,32 @@ export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages
     ['account',t('accountSection'),t('accountHint'),ShieldCheck],
   ] as const;
 
-  return <main className="profile-page">
+  // A sub-page has no title of its own above the back arrow, so the page's opening margin
+  // -- sized for a heading -- became empty room at the top of four screens.
+  return <main className={`profile-page${section?' is-section':''}`}>
     {!section&&<h1>{t('profileTitle')}</h1>}
     {!section&&<section className="profile-summary">
       <div className="profile-avatar">{me.avatar_url?<Image src={me.avatar_url} width={64} height={64} unoptimized alt=""/>:(me.display_name||me.email).slice(0,1).toLocaleUpperCase(locale)}</div>
       <div className="profile-summary-identity"><strong>{me.display_name||me.email}</strong><span>{me.email}</span></div>
-      <dl><div><dd><ContributorLevel level={me.level} withNumber/></dd><dt>{t('levelTitle')}</dt></div><div><dd>{me.post_count}</dd><dt>{t('profileRatings')}</dt></div></dl>
+      <div className={`level-ladder${me.next_level===undefined?' is-top':''}`}>
+        <div className="level-ladder-step">
+          <span className="level-ladder-badge" aria-hidden="true"><Medal/></span>
+          <small>{ladder.current}</small>
+          <strong>{ladder.level(Math.min(me.level,5))}</strong>
+          <span className="level-ladder-name">{t(`level${Math.min(Math.max(me.level,1),5)}` as 'level1')}</span>
+          <span className="level-ladder-count">{ladder.reviews(me.post_count)}</span>
+        </div>
+        {/* The rail is the distance, so at the top of the ladder it is simply covered: there
+            is no next rung to travel to and an empty rail would read as one. */}
+        <span className="level-ladder-rail" aria-hidden="true"><span style={{width:`${nextTarget?Math.min(100,Math.round(me.post_count/nextTarget*100)):100}%`}}/></span>
+        {me.next_level!==undefined&&<div className="level-ladder-step is-next">
+          <span className="level-ladder-badge" aria-hidden="true"><Medal/></span>
+          <small>{ladder.next}</small>
+          <strong>{ladder.level(me.next_level)}</strong>
+          <span className="level-ladder-name">{t(`level${Math.min(Math.max(me.next_level,1),5)}` as 'level1')}</span>
+          <span className="level-ladder-count">{ladder.reviews(nextTarget??me.post_count)}</span>
+        </div>}
+      </div>
       {(me.next_level!==undefined||me.level>=5)&&<div className="profile-progression"><p>{me.next_level!==undefined?progression.next(me.next_level,me.reviews_to_next_level??0):progression.top}</p>{me.next_level!==undefined&&<span className="profile-reward"><Gift aria-hidden="true"/>{progression.reward}</span>}</div>}
     </section>}
     {!section&&<ContributorLevelsDialog locale={locale}/>}
@@ -82,6 +128,7 @@ export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages
     </nav>:<section className="profile-section-content">
       <PageBackButton/>
       <h2>{section==='edit'?t('editProfile'):section==='reviews'?reviewCopy[locale].title:section==='messages'?messageCopy[locale].title:t('accountSection')}</h2>
+      {section==='reviews'&&<p className="profile-section-total">{totalReviewsCopy[locale](me.post_count)}</p>}
       {section==='edit'&&<ProfileEditor me={me} onSaved={setMe}/>}
       {section==='reviews'&&<MyReviews userId={me.id} locale={locale}/>}
       {section==='messages'&&<ProfileMessages locale={locale}/>}

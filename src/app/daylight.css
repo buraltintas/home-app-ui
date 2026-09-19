@@ -668,6 +668,11 @@ svg{stroke-width:2}
    the heading of every one of these four pages -- edit, reviews, messages, account -- because
    they all begin with their title at the top of the column. The legal and feedback pages
    solved this the same way; this is that rule applied where it was missing. */
+/* A sub-page has no heading above its back arrow, so the page's own opening margin -- sized
+   for one -- was empty room at the top of four screens. */
+.profile-page.is-section{padding-top:22px}
+.profile-page.is-section .profile-section-content{margin-top:0}
+.profile-section-total{margin:-4px 0 18px;color:var(--ink-muted);font-size:14px;font-weight:650}
 .profile-section-content{margin-top:24px;display:grid;justify-items:start;gap:0}
 .profile-section-content>.page-back-button{position:static;top:auto;left:auto;margin:0 0 16px;box-shadow:none;backdrop-filter:none}
 .profile-section-content>h2{margin-top:0}
@@ -933,6 +938,47 @@ svg{stroke-width:2}
    starting line, which is also what makes eight rows of stars readable as a column. */
 .result-criteria dl div{display:grid;grid-template-columns:minmax(0,1fr) 118px;align-items:center;gap:6px 16px;padding:7px 0;border-bottom:1px solid var(--line)}
 .result-criteria dl div:last-child{border-bottom:0}
+
+/* The contribution ladder, drawn as a ladder rather than a badge.
+   Two rungs and the distance between them: where this person is, where they are going, and
+   how far off it is. A badge on its own answers only the first of those three.
+   The shape is a hexagon, not a star -- a star is the shape this product already spends on
+   ratings, and a second meaning on the same shape makes both of them read as the other. */
+.level-ladder{
+  grid-column:1/-1;margin-top:18px;padding:18px 16px;
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(40px,84px) minmax(0,1fr);
+  align-items:start;gap:0 12px;
+}
+.level-ladder-step{display:grid;justify-items:center;gap:2px;text-align:center;min-width:0}
+.level-ladder-badge{
+  width:52px;height:52px;display:grid;place-items:center;margin-bottom:8px;
+  background:var(--clay);color:var(--surface);
+  clip-path:polygon(50% 0,93.3% 25%,93.3% 75%,50% 100%,6.7% 75%,6.7% 25%);
+}
+.level-ladder-badge svg{width:24px;height:24px}
+/* The rung not yet reached is drawn, not filled: it is a place, not a possession. */
+.level-ladder-step.is-next .level-ladder-badge{background:var(--muted);color:var(--ink-muted)}
+.level-ladder-step small{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-muted)}
+.level-ladder-step strong{font-size:15px;font-weight:700;letter-spacing:-.01em}
+.level-ladder-name{font-size:13px;color:var(--ink-muted);font-weight:650}
+.level-ladder-count{font-size:12px;color:var(--ink-muted);font-variant-numeric:tabular-nums}
+/* At the height of the badges it runs between, not at the height of the words under them:
+   23px is half a 52px hexagon less half a 6px rail. */
+.level-ladder-rail{display:block;height:6px;border-radius:var(--r-pill);background:var(--muted);overflow:hidden;margin-top:23px}
+.level-ladder-rail>span{display:block;height:100%;border-radius:var(--r-pill);background:var(--clay)}
+/* One rung and no distance: the ladder ends here, so there is nothing to draw between.
+   Marked from the markup rather than with :has(), which a browser can simply not implement
+   -- and when it does not, the rule does not degrade, it is absent. That is how an earlier
+   fix on this project appeared to work everywhere except on the phone it was reported from. */
+.level-ladder.is-top{grid-template-columns:minmax(0,1fr)}
+.level-ladder.is-top .level-ladder-rail{display:none}
+@media(max-width:420px){
+  .level-ladder{padding:16px 12px;gap:0 8px;grid-template-columns:minmax(0,1fr) minmax(28px,48px) minmax(0,1fr)}
+  .level-ladder-badge{width:46px;height:46px}
+  .level-ladder-rail{margin-top:20px}
+}
+
 /* A label that cannot fit breaks rather than printing itself over the stars beside it.
    "Fiyat/performans" is one unbreakable word to a browser -- there is no space in it -- so
    it overflowed whatever column it was given and no amount of widening the column was going

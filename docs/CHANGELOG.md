@@ -8,6 +8,32 @@ value involved.
 
 ---
 
+## The contribution level is a ladder, so it is drawn as one
+
+The profile showed a badge and a count. A badge says where somebody is; it does not say
+where they are going or how far off it is, and that second part is what makes a level worth
+having. It is two rungs now -- current on the left, next on the right -- with the distance
+between them drawn between them, and each rung carrying its number, its name and the review
+count that reaches it.
+
+Two decisions worth keeping:
+
+- **The shape is a hexagon, not a star.** A star in this product already means a rating, and
+  the same shape carrying two meanings makes both of them read as the other.
+- **No threshold table in the browser.** The backend reports the level, the next level and
+  how many reviews are still owed; the next rung's number is the sum of the last two. A copy
+  of the ladder living in the client would drift from the one actually being applied, and the
+  drift would be invisible.
+
+Alongside it, on the four profile sub-pages: the page opened with 52px of nothing above the
+back arrow, because the top margin is sized for a heading those pages do not have (22px
+now); "Değerlendirmelerim" carries the total underneath it; and the store's district and
+city are in ink rather than clay -- the colour the listing already uses for the same
+information, where clay means "a thing to press". The feed still shows it in clay, which is
+a separate surface and a separate decision.
+
+---
+
 ## A criterion label printed over its own stars
 
 Reported as stars and criteria running into each other, and the first fix made it worse. The

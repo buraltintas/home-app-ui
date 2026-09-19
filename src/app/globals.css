@@ -487,6 +487,11 @@ body>main{flex:1 0 auto;min-width:0;width:100%}
 .profile-review-list .post-card.is-owned .post-number{display:none}
 .profile-review-list .post-card.is-owned .post-heading{grid-column:1/-1;grid-row:1;display:block;margin:0 0 16px}
 .profile-review-list .post-card.is-owned .post-store h2{font-size:22px}
+/* The same information the listing prints in black. It was clay here, which in this product
+   means "a thing to press" -- the category label, the distance, the search button -- and a
+   district and a city are neither pressable nor a category. The feed still shows it in clay;
+   that is a separate surface and a separate decision. */
+.profile-review-list .post-store p{color:var(--ink)}
 .profile-review-list .post-card.is-owned .post-photo{grid-column:1;grid-row:2;width:120px;height:120px;aspect-ratio:auto;border-radius:var(--r-md);clip-path:none}
 .profile-review-list .post-card.is-owned .post-photo:hover{clip-path:none}
 .profile-review-list .post-card.is-owned .post-details{grid-column:2;grid-row:2;width:auto;min-height:0;box-shadow:none;padding:18px 20px}
