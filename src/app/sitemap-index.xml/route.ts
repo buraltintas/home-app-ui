@@ -10,7 +10,9 @@ import {siteUrl} from '@/lib/site';
 // given and the address robots.txt has always advertised, so it is redirected here in
 // next.config rather than left to 404 -- which would have withdrawn the whole catalogue
 // from the one crawler already watching it.
-export const revalidate=3600;
+// Per request, for the reason written on the sitemap itself: the catalogue is not reachable
+// from the container this is built in, and a count taken there would be zero.
+export const dynamic='force-dynamic';
 
 export async function GET(){
   const count=await sitemapCount();

@@ -8,6 +8,40 @@ value involved.
 
 ---
 
+## Nothing had deployed for sixteen hours, and the sitemap was the reason
+
+Every push since the evening of 18 September failed to build. Not a warning -- `FAILURE` on
+six consecutive Cloud Builds, while the site kept serving the last image that worked. Four
+finished pieces of work sat in the repository looking shipped, and the person testing them
+was looking at a build from the night before and reporting, correctly, that nothing had
+changed.
+
+The cause was the previous entry's own fix. `getStoreIndex` used to answer an unreachable
+backend with an empty list; that produced a sitemap with nothing in it and a green deploy,
+which is how 9,252 store pages went missing without anyone noticing. Making it report the
+failure honestly was right. What it exposed is that the backend is unreachable *from the
+build container* -- `ECONNREFUSED 127.0.0.1:8080` -- and `sitemap.ts` was reading the
+catalogue at build time. So an honest failure, raised in a place that cannot succeed by
+construction, stopped the deploy instead of emptying the sitemap. Both are the same defect
+wearing different clothes: the catalogue was being asked for somewhere it does not exist.
+
+Both sitemap routes are `force-dynamic` now. Nothing asks the backend for anything until a
+request arrives, and by then it is a network hop away. `generateSitemaps` still has to name
+the addresses while the image is built, so it names a ceiling -- thirty files, room for
+sixty thousand shops, matching the catalogue reader's own limit -- rather than a count it
+cannot take. Addresses past the end of the catalogue answer with an empty sitemap and
+nothing links to them, because the index publishes the count measured per request.
+
+Verified by reproducing the exact failure locally (`API_ORIGIN` pointed at a dead port):
+the old code fails with the same message on the same route, the new code builds, and with a
+reachable backend the index lists six files and the first holds 13,348 URLs.
+
+**Worth keeping:** a build that fails is invisible from the outside. The site stays up on the
+previous image, so the only symptom is that shipped work does not appear -- which reads as a
+bug in the work. Check the build status before concluding a fix did not take.
+
+---
+
 ## The search panel left a strip of the page showing, six times
 
 Reported six times, fixed five times, and every one of those fixes was an attempt to make

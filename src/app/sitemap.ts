@@ -10,7 +10,16 @@ import {BRAND_PER_PAGE} from '@/components/CityBrandView';
 // of ranking were never offered to a crawler. Three of those five were /favorites,
 // /create and /profile -- personal, sign-in-only pages that a crawler cannot read and
 // should not be asked to.
-export const revalidate=3600;
+//
+// Built per request, not at deploy time, and that is not a preference -- it is the only
+// place the catalogue exists. The image that runs this site is built in a container with no
+// route to the backend, so every call from a build step answers ECONNREFUSED. While these
+// calls returned an empty list on failure that produced a sitemap with nothing in it and a
+// green deploy; once they started reporting failure honestly, the same unreachable backend
+// stopped the deploy instead. Neither is a sitemap. A dynamic route is not asked for the
+// catalogue until a request arrives, and by then the backend is a network hop away. The
+// fetches underneath carry their own revalidate, so asking again costs nothing.
+export const dynamic='force-dynamic';
 
 // One sitemap held every store until the catalogue outgrew it. Each page is listed once
 // per language and carries the full set of alternates, which is what Google asks for and
@@ -78,14 +87,24 @@ function entry(path:string,lastModified:Date,changeFrequency:'daily'|'weekly',pr
 
 // How many files this sitemap comes in. Read from the catalogue rather than guessed, so
 // adding stores never silently drops the ones past a fixed number -- which is exactly how
-// 9,252 store pages came to be missing from the previous version.
+// 9,252 store pages came to be missing from the previous version. This is what the index
+// publishes, and it runs per request.
 export async function sitemapCount():Promise<number>{
   const stores=await getAllStores();
   return Math.max(1,Math.ceil(stores.length/PAGES_PER_SITEMAP));
 }
 
+// Which addresses exist, which is a different question from how many have anything in them.
+// Next resolves this list while building the image, where the catalogue cannot be reached,
+// so it cannot be the real count -- and a real count taken at that moment would be zero,
+// which is how the catalogue went missing from the sitemap the first time. It is a ceiling
+// instead: room for sixty thousand shops, the same number the catalogue reader stops at.
+// Addresses past the end of the catalogue answer with an empty sitemap and nothing points
+// at them, because the index publishes the count measured at request time.
+const SITEMAP_CEILING=60000;
+
 export async function generateSitemaps(){
-  return Array.from({length:await sitemapCount()},(_,id)=>({id}));
+  return Array.from({length:Math.ceil(SITEMAP_CEILING/PAGES_PER_SITEMAP)},(_,id)=>({id}));
 }
 
 export default async function sitemap({id}:{id:Promise<string>}):Promise<MetadataRoute.Sitemap>{

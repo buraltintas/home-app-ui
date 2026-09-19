@@ -70,6 +70,25 @@ in the same breath as delivering it -- on the task, in plain language, with what
 and what would restore it. The person who asked for the change is entitled to weigh that
 before it ships, and they cannot weigh what they are not told.
 
+## A failing build looks exactly like a fix that did not work
+
+The site stays up on the last image that built, so a broken deploy has no symptom of its
+own. The only thing anybody sees is that shipped work has not appeared -- which reads as a
+bug in the work, and sends the next hour into debugging code that is correct and not
+running. Six consecutive builds failed once and four finished changes were reported back as
+"still broken" while the repository said they were done.
+
+So before concluding that a change did not take, check that it deployed:
+
+```bash
+gcloud builds list --limit=5 --format="value(status,createTime,substitutions.SHORT_SHA)"
+```
+
+And keep the build able to run without the backend. It is built in a container with no route
+to the API, so anything that reads the catalogue at build time -- `generateStaticParams`,
+`generateSitemaps`, a prerendered route -- either fails the build or bakes in an empty
+answer. Read the catalogue per request.
+
 ## Keep the log
 
 Every change that a person would want explained later goes in `docs/CHANGELOG.md`, newest
