@@ -38,6 +38,11 @@ confirmation and a deadline -- and is now a confirmation with a tick and an info
 holding the window. And the purchase step's continue button is disabled until the question is
 actually answered, rather than accepting silence as an answer.
 
+**And the step names stopped landing on top of each other on a phone.** The current step's
+label restated the base type size, which beat the smaller size the four names need to fit
+across 375px -- so the step you were actually on was the one that ran into its neighbour.
+It only ever needed the colour. The names now sit one to a line in all four languages.
+
 **Left open:** whether somebody can review without an account, as a guest. That is a policy
 question about what a review is worth when nothing stands behind it, not a piece of code, and
 it is on the card for Güven.

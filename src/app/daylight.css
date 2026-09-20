@@ -964,7 +964,7 @@ svg{stroke-width:2}
 /* The line between one stop and the next, drawn behind the marks rather than between the
    boxes, so it does not move when a label wraps. */
 .create-page .review-steps li>span{position:relative;z-index:1;width:40px;height:40px;border:1px solid var(--line-strong);background:var(--surface)}
-.create-page .review-steps li strong{font-size:12px;font-weight:700;line-height:1.25;letter-spacing:.01em;color:var(--ink-muted);text-wrap:balance}
+.create-page .review-steps li strong{font-size:12px;font-weight:700;line-height:1.25;letter-spacing:.01em;color:var(--ink-muted);text-wrap:balance;overflow-wrap:anywhere}
 /* Where you are, said in the colour this product uses for what it wants read. */
 .create-page .review-steps .current{opacity:1;padding:6px 4px;margin:0;border:0;background:transparent}
 /* The step you are on keeps the empty circle every step starts with. Filling it made the
@@ -974,7 +974,7 @@ svg{stroke-width:2}
 /* Darker, not a different colour. Clay is what this product uses for a thing to press, and a
    step you are standing on is not one; the circle already had a colour, so it deepens. */
 .create-page .review-steps .current>span{border-color:var(--ink);color:var(--ink)}
-.create-page .review-steps .current strong{font-size:12px;color:var(--ink)}
+.create-page .review-steps .current strong{color:var(--ink)}
 /* A completed step is a way back, so it is a button. It keeps the circle and the name exactly
    as the others draw them -- the only thing it adds is that it can be pressed. */
 .create-page .review-steps .review-step-jump{display:grid;justify-items:center;gap:6px;width:100%;padding:0;border:0;background:transparent;color:inherit;font:inherit;cursor:pointer}
@@ -983,7 +983,8 @@ svg{stroke-width:2}
 .create-page .review-steps .done>span,.create-page .review-steps li.is-verified>span{background:var(--success);border-color:var(--success);color:var(--surface)}
 @media(max-width:600px){
   .create-page .review-steps{padding:10px 4px}
-  .create-page .review-steps li strong{font-size:10.5px}
+  .create-page .review-steps li,.create-page .review-steps .current{padding:6px 1px}
+  .create-page .review-steps li strong{font-size:10px}
   .create-page .review-steps li>span{width:34px;height:34px}
   .create-page .review-steps li>span svg{width:17px;height:17px}
 }
