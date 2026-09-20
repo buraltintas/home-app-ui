@@ -945,7 +945,11 @@ svg{stroke-width:2}
 .create-page .review-steps li strong{font-size:12px;font-weight:700;line-height:1.25;letter-spacing:.01em;color:var(--ink-muted);text-wrap:balance}
 /* Where you are, said in the colour this product uses for what it wants read. */
 .create-page .review-steps .current{opacity:1;padding:6px 4px;margin:0;border:0;background:transparent}
-.create-page .review-steps .current>span{background:var(--clay);border-color:var(--clay);color:var(--surface)}
+/* The step you are on keeps the empty circle every step starts with. Filling it made the
+   current step and the finished ones two solid discs in two colours, and the row then read as
+   two kinds of done. What says where you are is the label under it, in clay; what says what
+   is finished is the green fill. One signal each. */
+.create-page .review-steps .current>span{border-color:var(--clay);color:var(--clay)}
 .create-page .review-steps .current strong{font-size:12px;color:var(--clay)}
 .create-page .review-steps .done{opacity:.85}
 .create-page .review-steps .done>span,.create-page .review-steps li.is-verified>span{background:var(--success);border-color:var(--success);color:var(--surface)}
@@ -972,7 +976,7 @@ svg{stroke-width:2}
 .purchase-item span{font-size:14px;color:var(--ink-muted)}
 .purchase-item input{min-height:52px;padding:0 16px;border:1px solid var(--line-strong);border-radius:var(--r-md);background:var(--surface);font-size:16px;color:var(--ink)}
 .review-summary-purchase{margin:16px 0 0;font-size:15px;font-weight:700;color:var(--ink-muted)}
-.create-page .review-steps .current>span{background:var(--accent-wash);color:var(--clay)}
+.create-page .review-steps .current>span{color:var(--clay)}
 .create-page .review-step .button.primary{background:var(--clay);color:var(--surface)}
 .profile-review-list .post-card.is-owned .post-meta{flex-wrap:nowrap;align-items:center;margin:0;gap:8px}
 .profile-review-list .post-card.is-owned .post-details{border-top:1px solid var(--line);box-shadow:none;padding:12px}

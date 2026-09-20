@@ -8,6 +8,15 @@ value involved.
 
 ---
 
+## Two kinds of done in the review stepper
+
+The step being worked on was a solid clay disc and a finished step is a solid green one, so
+the row read as two kinds of finished rather than as "here" and "done". The current step keeps
+the empty circle every step starts with; its border and its label carry the clay. One signal
+each: clay says where you are, green says what is behind you.
+
+---
+
 ## The profile said 34 and listed 20
 
 "Değerlendirmelerim" asked for the first twenty while the line above it said how many there
