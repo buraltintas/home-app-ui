@@ -1418,3 +1418,13 @@ svg{stroke-width:2}
   .category-sheet-art .category-icon{width:160px;height:160px}
 }
 @media(prefers-reduced-motion:reduce){.category-sheet-backdrop,.category-sheet,.category-sheet-backdrop.is-leaving,.category-sheet-backdrop.is-leaving .category-sheet{animation:none}}
+
+/* R35: the same label the favourites page carries at its top. That page's visible title is an
+   eyebrow -- small, clay, in capitals -- with its real heading kept for screen readers; the
+   profile was setting the same kind of word as a 48px display line, so two pages that do the
+   same job opened differently. */
+.profile-page>h1{font-size:12px;font-weight:800;line-height:1.2;letter-spacing:1.7px;text-transform:uppercase;color:var(--clay);margin:0 0 18px}
+/* R37: a district and a city are not an emphasis. They were bold because the feed sets them
+   that way, where they are the only line under a large store name. */
+.profile-review-list .post-store p{font-weight:500}
+.profile-reviews-capped{margin:0 0 14px;color:var(--ink-muted);font-size:13px}

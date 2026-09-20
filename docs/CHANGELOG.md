@@ -8,6 +8,24 @@ value involved.
 
 ---
 
+## The profile said 34 and listed 20
+
+"Değerlendirmelerim" asked for the first twenty while the line above it said how many there
+were. A page that states a number and then shows fewer is arguing with itself, and the list
+was the half that was wrong. It asks for all of them now, up to the endpoint's ceiling of 200,
+and says so if it ever reaches it rather than showing a prefix without comment.
+
+Two more on the same page:
+
+- **"Profilin" is set the way "Favoriler" is** -- small, clay, in capitals. The favourites page
+  puts an eyebrow at its top and keeps its real heading for screen readers; the profile was
+  setting the same kind of word as a 48px display line, so two pages doing the same job opened
+  differently.
+- **A district and a city are not an emphasis.** They were bold in the review list because the
+  feed sets them that way, where they are the only line under a large store name.
+
+---
+
 ## The scrollbar a phone will not hide
 
 The bar under the reviews had to be always visible, and the browser's own cannot be: on iOS
