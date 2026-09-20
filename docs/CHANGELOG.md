@@ -8,6 +8,34 @@ value involved.
 
 ---
 
+## Two instructions that cancelled each other out
+
+Search Console reports one page "indexed, though blocked by robots.txt": `/profile`.
+
+Disallow stops a crawler reading a page. It does not stop the address being indexed. Google
+found /profile through links, could not fetch it, and so never saw the `noindex` that page has
+carried all along -- the one signal that would have taken it out. It sat in the index as a
+bare URL with no description. One instruction said "do not look"; the other said "look, then
+forget"; the first won and the second was never read.
+
+/profile and /favorites are no longer disallowed, which is what lets their noindex work. It
+costs a handful of fetches -- four fixed addresses per language, not a fan-out. /create stays
+blocked, and the difference is exactly that fan-out: every store page links to
+`/create?store=<id>`, so eleven thousand shops make up to thirty-three thousand crawlable
+addresses that exist only to be refused.
+
+**And the sitemap parts are cached at the edge again.** Making them dynamic on 19 September --
+which was necessary, because the catalogue cannot be reached from the build container -- also
+took away their shared cache, so every read walked eleven thousand shops and a crawler reading
+six parts paid that six times. An hour at the edge, a day stale-while-revalidate. The index
+already had this; the parts lost it without anyone saying so.
+
+**Measured while looking:** the sitemap index answers in 0.28s and lists six parts; part 0 is
+13,348 URLs in 1.6s, part 1 is 8,000. "Discovered – currently not indexed" has gone from about
+8,000 to **0**. Indexed pages: 147.
+
+---
+
 ## A list that rearranged itself by a few pixels of screen
 
 The pages a shop belongs to -- "Bambi Antalya mağazaları", "Antalya mobilya mağazaları",

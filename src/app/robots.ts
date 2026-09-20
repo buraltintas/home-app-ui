@@ -15,7 +15,22 @@ export default function robots():MetadataRoute.Robots {
     //
     // A wildcard rather than three more lines naming each language: a fourth language should
     // not have to remember to come back here.
-    rules:{userAgent:'*',allow:'/',disallow:['/api/','/admin','/profile','/favorites','/create','/*/profile','/*/favorites','/*/create']},
+    // /profile and /favorites are not listed here, and that is deliberate.
+    //
+    // Disallow stops a crawler reading a page; it does not stop the address being indexed.
+    // Google found /profile through links, could not fetch it, and so never saw the noindex
+    // that page has carried all along -- the one signal that would have taken it out. It sat
+    // in the index as a bare URL with no description. The two instructions were cancelling
+    // each other: one said "do not look", the other said "look, then forget".
+    //
+    // Letting them be crawled is what makes the noindex work. It costs a handful of fetches:
+    // these are four fixed addresses per language, not a fan-out.
+    //
+    // /create stays, and the difference is the fan-out. Every store page links to
+    // /create?store=<id>, so eleven thousand shops make up to thirty-three thousand crawlable
+    // addresses across the locales, each one existing only to be refused. That is worth
+    // blocking even at the price of the address itself being indexable.
+    rules:{userAgent:'*',allow:'/',disallow:['/api/','/admin','/create','/*/create']},
     // One address, which happens to be an index over several files. Naming the index rather
     // than every part means adding stores never needs this file touched. The old
     // /sitemap.xml redirects here, so nothing that already holds that address breaks.

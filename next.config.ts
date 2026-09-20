@@ -16,6 +16,18 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [{ source: "/sitemap.xml", destination: "/sitemap-index.xml", permanent: true }];
   },
+  // The sitemap parts are dynamic routes, because the catalogue cannot be reached from the
+  // container the site is built in. Dynamic also means Next sends them with no shared cache,
+  // so every read walks eleven thousand shops again -- and a crawler reading six parts asks
+  // for that six times. The documents change once an hour at most, so they are cached at the
+  // edge for an hour and served stale for a day while the next one is built. The index
+  // already had this; the parts lost it when they were made dynamic.
+  async headers() {
+    return [{
+      source: "/sitemap/:id.xml",
+      headers: [{ key: "Cache-Control", value: "public, max-age=0, s-maxage=3600, stale-while-revalidate=86400" }],
+    }];
+  },
 };
 
 export default nextConfig;
