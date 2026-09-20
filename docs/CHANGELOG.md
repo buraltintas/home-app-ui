@@ -8,6 +8,18 @@ value involved.
 
 ---
 
+## The word and the mark beside it are one thing
+
+On the favourites page, "Değerlendirmeni bekliyor" was set in ink with a clay clock in front
+of it -- which makes the mark read as a decoration stuck on the front of a sentence rather
+than as part of it. Both are clay now.
+
+And "Değerlendirdin" is lighter than the shop that is still waiting. A shop already reviewed
+is a fact being recorded; a shop waiting is something being asked of the reader, and the
+heavier weight belongs to the ask.
+
+---
+
 ## Two kinds of done in the review stepper
 
 The step being worked on was a solid clay disc and a finished step is a solid green one, so

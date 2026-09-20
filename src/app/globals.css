@@ -254,13 +254,18 @@
 .favorites-summary-copy>strong{color:var(--clay);font-size:28px;font-weight:750;line-height:1}
 /* Which of the two lists this shop is in, on the shop. The tabs say how many; this says
    which, without having to open the other one and look for it. */
+/* The word and the mark beside it are one thing, so they are one colour. It was set in ink,
+   which made the mark look like a decoration stuck on the front of a sentence. */
 .favorite-store-state{
   display:inline-flex;align-items:center;gap:7px;margin:0 0 8px;padding:5px 12px 5px 8px;
   border-radius:var(--r-pill);font-size:13px;font-weight:700;line-height:1.2;
-  background:color-mix(in srgb,var(--accent) 16%,var(--surface));color:var(--ink);
+  background:color-mix(in srgb,var(--accent) 16%,var(--surface));color:var(--clay);
 }
 .favorite-store-state svg{width:18px;height:18px;color:var(--clay)}
-.favorite-store-state.is-done{background:color-mix(in srgb,var(--success) 12%,var(--surface));color:var(--success)}
+/* Lighter than the one that is waiting for something. A shop already reviewed is a fact being
+   recorded; a shop waiting is a thing being asked of the reader, and the heavier weight
+   belongs to the ask. */
+.favorite-store-state.is-done{background:color-mix(in srgb,var(--success) 12%,var(--surface));color:var(--success);font-weight:600}
 .favorite-store-state.is-done svg{color:var(--success)}
 /* Said where the list would have been, in the list's own voice. */
 .favorites-none{margin:22px 0 0;color:var(--ink-muted)}
