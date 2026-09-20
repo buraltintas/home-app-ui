@@ -21,8 +21,12 @@ export function ReviewRail({children,label}:{children:ReactNode;label:string}){
     const element=rail.current;
     if(!element)return;
     const {scrollWidth,clientWidth,scrollLeft}=element;
-    // Nothing past the edge is not a scrollbar with a full thumb -- it is no scrollbar.
-    if(scrollWidth<=clientWidth+1){setThumb({width:0,left:0});return;}
+    // A row with nothing past its edge still gets a bar, and the bar fills it. Hiding it was
+    // the more fastidious answer -- a scrollbar that cannot scroll is a control that does
+    // nothing -- but it made the bar appear and disappear from one shop to the next depending
+    // on how many reviews they had, which reads as the bar being broken. Full width says
+    // "this is all of it", which is true and is what a scrollbar is for.
+    if(scrollWidth<=clientWidth+1){setThumb({width:100,left:0});return;}
     const width=Math.max(12,clientWidth/scrollWidth*100);
     const left=scrollLeft/(scrollWidth-clientWidth)*(100-width);
     setThumb({width,left:Math.min(100-width,Math.max(0,left))});
@@ -36,13 +40,17 @@ export function ReviewRail({children,label}:{children:ReactNode;label:string}){
     // The share that fits changes with the width of the window, and with the fonts arriving.
     const observer=new ResizeObserver(measure);
     observer.observe(element);
-    return()=>{element.removeEventListener('scroll',measure);observer.disconnect();};
+    // The cards carry a disclosure that changes their height, not their width -- but the
+    // fonts arriving does change it, and so does a photograph loading. Measure once more
+    // after the page has settled rather than trusting the first frame.
+    const settle=window.setTimeout(measure,600);
+    return()=>{window.clearTimeout(settle);element.removeEventListener('scroll',measure);observer.disconnect();};
   },[measure]);
 
   return <>
     <div className="store-review-rail" ref={rail}>{children}</div>
-    {thumb.width>0&&<div className="store-review-scrollbar" role="presentation" aria-hidden="true" aria-label={label}>
+    <div className="store-review-scrollbar" role="presentation" aria-hidden="true" aria-label={label}>
       <span style={{width:`${thumb.width}%`,left:`${thumb.left}%`}}/>
-    </div>}
+    </div>
   </>;
 }

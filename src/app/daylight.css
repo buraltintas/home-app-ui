@@ -370,8 +370,11 @@ svg{stroke-width:2}
 .review-policy-sheet h2{margin:0;font-size:22px;line-height:1.15;letter-spacing:-.02em}
 .review-policy-sheet header .icon-button{margin-right:-10px}
 .review-policy-sheet p{margin:0;color:var(--ink-muted);font-size:14px;line-height:1.55}
-.store-review-policy-more{display:inline-flex;min-height:36px;align-items:center;margin-top:4px;padding:0;border:0;background:transparent;color:var(--ink);font:inherit;font-size:13px;font-weight:700;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
-.store-review-policy-more:hover{color:var(--clay)}
+/* The colour of the sentence it continues. It is not a separate thing to press -- it is the
+   rest of what is already being read, so it is set in the same ink and only its weight says
+   it can be opened. */
+.store-review-policy-more{display:inline-flex;min-height:36px;align-items:center;margin-top:4px;padding:0;border:0;background:transparent;color:inherit;font:inherit;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer}
+.store-review-policy-more:hover{color:var(--ink)}
 @media(max-width:600px){
   .review-policy-backdrop{align-items:end;padding:0}
   .review-policy-sheet{border-radius:var(--r-lg) var(--r-lg) 0 0;align-self:end;padding:22px 20px calc(22px + env(safe-area-inset-bottom))}
@@ -1117,7 +1120,7 @@ svg{stroke-width:2}
 /* The heading is read first and it is a question, not a warning. In amber it was the
    loudest thing on a page of results and read as something having gone wrong. */
 .add-store h2{display:flex;align-items:center;gap:10px;margin:0;font-size:17px;font-weight:800;letter-spacing:.01em;color:var(--warning)}
-.add-store h2 svg,.add-store-mark{width:24px;height:24px;flex:none;color:var(--warning)}
+.add-store h2 svg,.add-store-mark{width:32px;height:32px;flex:none;color:var(--warning)}
 /* R28's second sentence: still the request, so still bold, but a step back from ink. Two
    weights of the same near-black read as one shout in two sizes. */
 .add-store p strong{color:var(--ink-muted);font-weight:750}
