@@ -8,6 +8,28 @@ value involved.
 
 ---
 
+## The favourites page, when you are not signed in
+
+The page said "Favourites" with an outline heart above it. True, and not the answer to the
+question somebody standing there actually has, which is why the page is empty. It is empty
+because they are not signed in, and nothing on the screen said so.
+
+It now opens on a drawing of a saved list behind a padlock -- the reason, in the one place a
+reader looks first. A reader who *is* signed in and has simply saved nothing keeps the heart:
+they are not locked out of anything, and a padlock would blame the wrong thing.
+
+The title reads "Değerlendirme yapmak için kaydettiğin mağazalar", with the phrase the page
+is about in clay. That emphasis is carried in the string itself, in brackets, because the
+phrase sits in a different place in each language -- Turkish ends on it, English opens on it
+-- so a rule like "colour the last three words" would have been right once and wrong three
+times. Everything that needs the words without the decoration, including the accessible name
+and the heading a screen reader announces, strips the brackets.
+
+And the sign-in button is clay rather than ink. It is the one thing to do on that screen, and
+it was wearing the colour everything else on the page wears.
+
+---
+
 ## The review flow, from ten revisions on card 21
 
 Ten notes on one screen, and most of them say the same thing: the flow tells you where you

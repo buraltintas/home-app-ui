@@ -28,6 +28,22 @@ const favoriteSummary:Record<Locale,{saved:string;pending:string;pendingEmpty:st
   ru:{saved:'Сохранённые магазины',pending:'Ждут вашей оценки',pendingEmpty:'Вы оценили все сохранённые магазины.',yours:n=>n===1?'одна из них ваша':`ваших: ${n}`,awaiting:'Ждёт вашей оценки',reviewed:'Вы оценили'},
 };
 
+// The title is one string per language with the emphasised phrase in brackets. Everything
+// that needs the words without the decoration -- the accessible name, the skeleton, the
+// heading a screen reader announces -- strips them; only the heading that is looked at
+// draws them. Written this way because the phrase is not the last few words in every
+// language, and a rule about position would have been right in Turkish and wrong elsewhere.
+const EMPHASIS=/\[([^\]]+)\]/;
+
+function plainTitle(title:string){return title.replace(/[[\]]/g,'');}
+
+function emphasisedTitle(title:string){
+  const found=title.match(EMPHASIS);
+  if(!found)return title;
+  const [before,after]=title.split(found[0]);
+  return <>{before}<span className="favorites-title-mark">{found[1]}</span>{after}</>;
+}
+
 export default function Page(){
   const {t,locale}=useI18n();
   // How far the reader is from each saved store, and whether that is near enough to
@@ -74,7 +90,7 @@ export default function Page(){
   // signed-out screen first and then swap to the list, so a signed-in visitor was briefly
   // told they had no favourites.
   useScrollTopWhenReady(!checking);
-  if(checking)return <AccountPageSkeleton className="favorites-page" eyebrow={t('favorites')} title={t('favoritesTitle')}/>;
+  if(checking)return <AccountPageSkeleton className="favorites-page" eyebrow={t('favorites')} title={plainTitle(t('favoritesTitle'))}/>;
 
   const pending=stores.filter(store=>!store.viewer_has_reviewed);
   const shown=showing==='pending'?pending:stores;
@@ -83,11 +99,11 @@ export default function Page(){
     {/* Off the screen, not out of the document. The two counts underneath say what the page
         is holding, so the sentence above them was repeating them; a page with no heading at
         all is a page a screen reader cannot announce, which is a different loss. */}
-    <h1 className="visually-hidden">{t('favoritesTitle')}</h1>
+    <h1 className="visually-hidden">{plainTitle(t('favoritesTitle'))}</h1>
     {/* Two counts, and each one opens the list it counts. A number a reader cannot act on is
         a fact; a number that shows them the shops behind it is a way into the page, and this
         page only has two questions to ask. */}
-    <div className="favorites-summary" role="group" aria-label={t('favoritesTitle')}>
+    <div className="favorites-summary" role="group" aria-label={plainTitle(t('favoritesTitle'))}>
       <button type="button" className={showing==='saved'?'is-showing':undefined} aria-pressed={showing==='saved'} onClick={()=>setShowing('saved')}>
         <span className="favorites-summary-mark" aria-hidden="true"><Heart/></span>
         <span className="favorites-summary-copy"><span>{favoriteSummary[locale].saved}</span><strong>{stores.length}</strong></span>
@@ -134,5 +150,21 @@ export default function Page(){
     </li>})}</ul>:<p className="favorites-none">{favoriteSummary[locale].pendingEmpty}</p>}<TimedNudge kind="favorites"/>
   </main>;
 
-  return <main className="empty-page favorites-empty"><Heart/><p className="eyebrow">{t('favorites')}</p><h1>{t('favoritesTitle')}</h1><p>{signedIn?t('favoritesSignedInEmpty'):t('favoritesEmpty')}</p>{error&&<p className="form-error" role="alert">{error}</p>}{!checking&&!signedIn&&<button className="button primary" onClick={()=>setOpen(true)}>{t('signIn')}</button>}<AuthDialog open={open} onClose={()=>setOpen(false)} onAuthenticated={()=>setSignedIn(true)}/></main>;
+  // Two different empty pages share this one return. A reader who is not signed in is
+  // looking at a locked list -- the drawing says exactly that, a saved list behind a
+  // padlock, which is the reason there is nothing to show. A reader who IS signed in and
+  // has saved nothing is not locked out of anything; showing them a padlock would blame
+  // the wrong thing, so they keep the heart, which is the mark this page has always used
+  // for the act of saving.
+  return <main className="empty-page favorites-empty">
+    {signedIn
+      ?<Heart/>
+      :<Image className="favorites-locked" src="/illustrations/favorites-locked.png" width={512} height={512} alt="" aria-hidden="true" priority/>}
+    <p className="eyebrow">{t('favorites')}</p>
+    <h1>{emphasisedTitle(t('favoritesTitle'))}</h1>
+    <p>{signedIn?t('favoritesSignedInEmpty'):t('favoritesEmpty')}</p>
+    {error&&<p className="form-error" role="alert">{error}</p>}
+    {!checking&&!signedIn&&<button className="button primary" onClick={()=>setOpen(true)}>{t('signIn')}</button>}
+    <AuthDialog open={open} onClose={()=>setOpen(false)} onAuthenticated={()=>setSignedIn(true)}/>
+  </main>;
 }
