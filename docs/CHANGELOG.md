@@ -8,6 +8,23 @@ value involved.
 
 ---
 
+## A list that rearranged itself by a few pixels of screen
+
+The pages a shop belongs to -- "Bambi Antalya mağazaları", "Antalya mobilya mağazaları",
+"Antalya yatak mağazaları" -- were laid out as a wrapping row. On a 375px phone all three
+stacked and looked like a list; on a 390px one, two of them fitted side by side and the third
+was stranded out to the right. Whether it looked broken depended on the width of the phone and
+the length of the city's name.
+
+They are a short list of places to go, not a row of tags, so they are one per line at every
+width. Checked at 390, 470 and 1400.
+
+**Worth keeping:** this was on the board for a day before it was moved into In Progress to stop
+it being missed. A defect that only shows on some devices and some shops is exactly the kind
+that sits unreported while everyone assumes somebody else saw it.
+
+---
+
 ## The word and the mark beside it are one thing
 
 On the favourites page, "Değerlendirmeni bekliyor" was set in ink with a clay clock in front

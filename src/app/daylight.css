@@ -1342,7 +1342,12 @@ svg{stroke-width:2}
 /* Where this shop sits in the catalogue. Quiet, under the address, because it is context
    rather than the reason anybody opened the page -- but it is a real link, which the
    breadcrumb's city never was. */
-.store-belongs-to{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:6px;font-size:14px}
+/* One per line. These are the pages this shop belongs to -- a short list of places to go,
+   not a row of tags -- and wrapping them left the last one stranded beside the second
+   whenever two happened to fit, which depends on the width of the phone and the length of the
+   city's name. A list that rearranges itself by a few pixels of screen is a list that looks
+   broken on exactly one device and fine on the next. */
+.store-belongs-to{display:grid;justify-items:start;gap:6px;margin-top:6px;font-size:14px}
 .store-belongs-to a{color:var(--clay);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
 .store-belongs-to a:hover{color:var(--ink)}
 /* Pagination. Numbers rather than an endless "show more": a reader can tell how long the
