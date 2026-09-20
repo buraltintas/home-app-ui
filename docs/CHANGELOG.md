@@ -8,6 +8,42 @@ value involved.
 
 ---
 
+## The review flow, from ten revisions on card 21
+
+Ten notes on one screen, and most of them say the same thing: the flow tells you where you
+are, but it does not let you act on it.
+
+**The stepper is a map you can walk back along.** A completed step is now a button and going
+back to it is one tap; the step you land on darkens the way the current step already did.
+Forward stays shut, because the evidence of the visit is what unlocks the rest -- a stepper
+that let you skip to the end would be offering something the flow would then refuse. The four
+circles also sit on one line again with their names beneath them (`align-content:start`, so a
+two-line name no longer pushes its own circle down), the current one is drawn in ink rather
+than clay, and the whole strip sticks exactly 8px below the header instead of under it.
+
+**The shop is drawn the way the list draws it.** Its picture, name and address now sit in the
+same arrangement and at the same sizes as the row you picked it from -- the same 92px frame,
+the same 25px name, the same address line -- and those sizes are one declaration shared
+between the two screens rather than a copy that can drift. Until now this screen named the
+shop at 42px and showed no picture of it at all, which is the one thing that tells you at a
+glance that you are standing in front of the right door.
+
+**A low score has to say why.** One and two out of five now open a short note under the
+heading, and the review cannot be submitted until every low score has one. The notes are sent
+as the review's text. A single dark figure with nothing behind it is unanswerable by the shop
+and unreadable by the next person; the complaint is the part that is worth anything.
+
+**Two smaller repairs.** The verified-visit line was one paragraph doing two jobs -- a
+confirmation and a deadline -- and is now a confirmation with a tick and an information frame
+holding the window. And the purchase step's continue button is disabled until the question is
+actually answered, rather than accepting silence as an answer.
+
+**Left open:** whether somebody can review without an account, as a guest. That is a policy
+question about what a review is worth when nothing stands behind it, not a piece of code, and
+it is on the card for Güven.
+
+---
+
 ## Two instructions that cancelled each other out
 
 Search Console reports one page "indexed, though blocked by robots.txt": `/profile`.

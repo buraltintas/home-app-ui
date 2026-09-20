@@ -1,6 +1,7 @@
 'use client';
 
-import {Check,Eraser,Info,MapPin,ShoppingBag,Star,Store,TriangleAlert} from 'lucide-react';
+import {Check,CircleCheck,Eraser,Info,MapPin,ShoppingBag,Star,TriangleAlert} from 'lucide-react';
+import Image from 'next/image';
 import {useRouter,useSearchParams} from 'next/navigation';
 import {Suspense,useCallback,useEffect,useLayoutEffect,useRef,useState} from 'react';
 import {AuthDialog} from '@/components/AuthDialog';
@@ -9,6 +10,7 @@ import {useI18n} from '@/i18n/I18nProvider';
 import { localePath } from '@/lib/site';
 import {apiFetch} from '@/lib/api-client';
 import {canUseDeviceLocationWithoutPrompt,locationMessage,requestVisitPosition} from '@/lib/location';
+import {isBrandMark,storePhotoURL} from '@/lib/store-photo';
 import {readOriginSearch} from '@/lib/search-origin';
 import {useScrollTopWhenReady} from '@/lib/scroll-top';
 import type {Locale,StoreDetail,VisitVerification} from '@/lib/types';
@@ -36,6 +38,15 @@ const criteriaIntroCopy:Record<Locale,[string,string]>={
   de:['Bewerte alle acht Bereiche.','Die Ladenbewertung ist ihr Durchschnitt.'],
   ru:['Оцените все восемь пунктов.','Оценка магазина — их среднее.'],
 };
+// A hundred characters. Long enough for the sentence somebody actually wants to write, short
+// enough that nobody is being asked to compose.
+const NOTE_LIMIT=100;
+const lowScoreCopy:Record<Locale,{prompt:string;hint:string}>={
+  tr:{prompt:'1 ve 2 puan için yorum yazman gerek. Memnuniyetsizliğini kısaca buraya yaz.',hint:'Ne olduğunu bir cümleyle anlat'},
+  en:{prompt:'A one or a two needs a reason. Say briefly what was wrong.',hint:'One sentence on what happened'},
+  de:{prompt:'Eine Eins oder Zwei braucht eine Begründung. Schreibe kurz, was nicht gepasst hat.',hint:'Ein Satz dazu, was passiert ist'},
+  ru:{prompt:'Оценке 1 или 2 нужна причина. Коротко напишите, что было не так.',hint:'Одно предложение о том, что случилось'},
+};
 type CriterionKey=keyof typeof criterionLabels;
 const criterionKeys=Object.keys(criterionLabels) as CriterionKey[];
 
@@ -62,6 +73,10 @@ function ReviewWizard({storeId}:{storeId:string}){
   const [verifyError,setVerifyError]=useState('');
   const [reviewRadiusMeters,setReviewRadiusMeters]=useState(2000);
   const [criteria,setCriteria]=useState<Partial<Record<CriterionKey,number>>>({});
+  // Why a criterion was given one or two stars. Kept beside the score it belongs to rather
+  // than as one free-text box at the end, because "the checkout was slow" answers a different
+  // question from "the staff were unhelpful" and a single box loses which is which.
+  const [notes,setNotes]=useState<Partial<Record<CriterionKey,string>>>({});
   // Whether the visit ended in a purchase, and what was bought. Unanswered is a third state
   // and not a silent "no": the step can be walked past, and a review is still a review.
   const [purchased,setPurchased]=useState<boolean|undefined>(undefined);
@@ -202,7 +217,13 @@ function ReviewWizard({storeId}:{storeId:string}){
     root.style.scrollBehavior=previous;
   },[step]);
 
-  const scored=criterionKeys.every(key=>(criteria[key]??0)>=1);
+  // A one or a two is the only score somebody cannot act on. "Kasa hızı: 2" tells the next
+  // reader nothing they can do anything with, and tells the shop nothing it could put right.
+  // So a low mark is asked to say why, in the reader's own words, and the answer becomes the
+  // review's text -- which until now these reviews did not have at all.
+  const lowScores=criterionKeys.filter(key=>criteria[key]===1||criteria[key]===2);
+  const notesGiven=lowScores.every(key=>(notes[key]??'').trim().length>0);
+  const scored=criterionKeys.every(key=>(criteria[key]??0)>=1)&&notesGiven;
   const criteriaAverage=scored
     ?criterionKeys.reduce((sum,key)=>sum+(criteria[key]??0),0)/criterionKeys.length
     :0;
@@ -217,6 +238,9 @@ function ReviewWizard({storeId}:{storeId:string}){
       const response=await apiFetch('/api/proxy/posts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
         store_id:storeId,visit_verification_id:verification.id,content_language:locale,
         criteria:Object.fromEntries(criterionKeys.map(key=>[key,criteria[key]])),
+        // Each low mark's reason, named by the criterion it belongs to. This is the first
+        // written content these reviews have carried.
+        ...(lowScores.length?{text:lowScores.map(key=>`${t(criterionLabels[key])}: ${(notes[key]??'').trim()}`).join('\n')}:{}),
         ...(purchased===undefined?{}:{purchased,...(purchased&&purchasedItem.trim()?{purchased_item:purchasedItem.trim()}:{})}),
         ...(origin?{origin_search_id:origin.search_id,origin_search_result_id:origin.search_result_id}:{}),
       })});
@@ -235,12 +259,29 @@ function ReviewWizard({storeId}:{storeId:string}){
   // The first step renames itself once it is done. "Konumu doğrula" is an instruction and
   // it stops being true the moment the location is verified; leaving it there asks for
   // something already given.
+  // Whatever the store page would show in its frame: an administrator's photograph first,
+  // then the mark of the chain, then nothing -- the backend decides, and this screen only
+  // draws what it decided.
+  const photo=storePhotoURL(store.store.photo,320);
+
   const steps=[[verification?t('verifyLocationDone'):t('verifyLocation'),MapPin],[t('criteriaTitle'),Star],[t('purchaseTitle'),ShoppingBag],[t('reviewSummaryTitle'),Check]] as const;
   return <main className="create-page">
-    <div>
-      <p className="eyebrow">{t('reviewFor')}</p>
-      <h1>{store.store.name}</h1>
-      <p className="review-store-address"><Store aria-hidden="true"/>{store.store.address||[store.store.district,store.store.city].filter(Boolean).join(', ')}</p>
+    {/* The shop, drawn the way the list you came from draws it: the same frame in the same
+        place, the same three lines beside it, at the same sizes. You arrived here by picking
+        this shop out of a row of them, and the thing you picked should still look like the
+        thing you picked -- a name set twice as large on the next screen is a second shop as
+        far as recognising it goes. The picture is the point of the revision: the name and
+        the address were already here, and neither of them tells you that you are standing
+        in front of the right door. */}
+    <div className="review-store">
+      <div className="result-photo">{photo
+        ?<Image className={`result-photo-mark${isBrandMark(store.store.photo)?' is-brand-mark':''}`} src={photo} width={184} height={184} alt="" unoptimized/>
+        :<div className="result-photo-empty" aria-hidden="true"><span>{store.store.name.trim().charAt(0).toLocaleUpperCase(locale)}</span></div>}</div>
+      <div className="result-identity">
+        <p className="eyebrow">{t('reviewFor')}</p>
+        <h1>{store.store.name}</h1>
+        <p className="result-address">{store.store.address||[store.store.district,store.store.city].filter(Boolean).join(', ')}</p>
+      </div>
     </div>
 
     {/* Four stops across the top rather than a column the page scrolls past: the flow is the
@@ -250,7 +291,16 @@ function ReviewWizard({storeId}:{storeId:string}){
     <ol className="review-steps">{steps.map(([label,Icon],index)=>{
       const position=index+1;
       const verified=position===1&&Boolean(verification);
-      return <li key={label} className={[position===step?'current':position<step?'done':'',verified?'is-verified':''].filter(Boolean).join(' ')} aria-current={position===step?'step':undefined}><span><Icon/></span><strong>{label}</strong></li>;
+      // A step behind you can be returned to; one ahead cannot. Going back is how somebody
+      // fixes a score they got wrong, and the stepper is the only thing on the screen that
+      // says where that score was. Forward stays shut, because the steps are not optional --
+      // the evidence of the visit is what unlocks the rest, and a stepper that let you skip
+      // to the end would be offering something the flow would then refuse.
+      const behind=position<step;
+      const mark=<><span><Icon/></span><strong>{label}</strong></>;
+      return <li key={label} className={[position===step?'current':behind?'done':'',verified?'is-verified':''].filter(Boolean).join(' ')} aria-current={position===step?'step':undefined}>
+        {behind?<button type="button" className="review-step-jump" onClick={()=>advance(position)}>{mark}</button>:mark}
+      </li>;
     })}</ol>
 
     {/* Below the whole stepper rather than inside the first step. It is the reason nothing
@@ -264,8 +314,15 @@ function ReviewWizard({storeId}:{storeId:string}){
           it for. The green "visit verified" line that used to sit under it said the same
           thing a second time -- and the step itself is already marked done, in green, at the
           top of the page. */}
-      <p>{verification?t('verifyValidityDone'):t('verifyValidity')}</p>
-      {!verification&&<button className="button primary" onClick={()=>void verify()} disabled={verifying||!signedIn}>{verifying?t('verifying'):verifyError?t('locationRetry'):t('verifyNow')}</button>}
+      {verification
+        // Two facts, two lines, and each one dressed as what it is. The first is the same
+        // verdict the results list gives -- same words, same tick, same green -- so a reader
+        // who has seen it there recognises it here. The second is a condition with a date in
+        // it, which is a notice and not a verdict, so it is framed like every other notice.
+        ?<><p className="review-verified"><CircleCheck aria-hidden="true"/>{t('verifyValidityDone')}</p>
+          <p className="review-window" role="note"><Info aria-hidden="true"/><span>{t('verifyValidityWindow')}</span></p></>
+        :<><p>{t('verifyValidity')}</p>
+          <button className="button primary" onClick={()=>void verify()} disabled={verifying||!signedIn}>{verifying?t('verifying'):verifyError?t('locationRetry'):t('verifyNow')}</button></>}
       {verification&&<div className="review-nav"><button className="button primary" onClick={()=>advance(2)}>{t('continue')}</button></div>}
     </section>}
 
@@ -281,6 +338,12 @@ function ReviewWizard({storeId}:{storeId:string}){
           <legend><span className="criterion-number" aria-hidden="true">{index+1}</span>{t(criterionLabels[key])}</legend>
           <div className="criterion-stars">{[1,2,3,4,5].map(value=>
             <label key={value}><input type="radio" name={key} value={value} aria-label={`${value} / 5`} checked={criteria[key]===value} onChange={()=>setCriteria(current=>({...current,[key]:value}))}/><Star aria-hidden="true" className={value<=(criteria[key]??0)?'is-on':undefined}/></label>)}</div>
+          {(criteria[key]===1||criteria[key]===2)&&<label className="criterion-note">
+            <span>{lowScoreCopy[locale].prompt}</span>
+            <textarea rows={2} maxLength={NOTE_LIMIT} value={notes[key]??''} placeholder={lowScoreCopy[locale].hint}
+              onChange={event=>setNotes(current=>({...current,[key]:event.target.value}))}/>
+            <small>{(notes[key]??'').length}/{NOTE_LIMIT}</small>
+          </label>}
         </fieldset>)}
       </div>
       {/* Under the last question, where somebody who wants to start again is looking. It is
@@ -304,7 +367,10 @@ function ReviewWizard({storeId}:{storeId:string}){
         <span>{t('purchasedItemLabel')}</span>
         <input type="text" maxLength={120} value={purchasedItem} placeholder={t('purchasedItemHint')} onChange={event=>setPurchasedItem(event.target.value)}/>
       </label>}
-      <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>advance(4)}>{t('continue')}</button></div>
+      {/* The step asks a question, so it cannot be left before it is answered. Saying yes and
+          naming nothing is the same as not answering: the name is the whole value of the yes,
+          because it is the word the next person searching for that thing will type. */}
+      <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>advance(4)} disabled={purchased===undefined||(purchased===true&&!purchasedItem.trim())}>{t('continue')}</button></div>
     </section>}
 
     {/* Nothing is written until this page. Eight scores given one after another are easy to

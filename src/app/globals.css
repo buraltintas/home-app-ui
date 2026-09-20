@@ -174,8 +174,6 @@
 .empty-state p{margin:0;color:var(--ink-muted);line-height:1.55;max-width:520px}
 @media(max-width:600px){}
 .create-page h1{font-size:clamp(32px,8vw,42px);line-height:1.1;letter-spacing:-.02em;overflow-wrap:anywhere;margin:10px 0 14px}
-.review-store-address{margin:0;color:var(--ink-muted);display:flex;align-items:flex-start;gap:8px;line-height:1.5}
-.review-store-address svg{width:18px;height:18px;margin-top:5px;flex:none}
 .create-page-loading span{display:block;background:var(--muted);border-radius:5px}
 .review-loading-copy,.review-loading-steps{display:grid;gap:16px}
 .review-loading-copy span:first-child{height:12px;width:34%}.review-loading-copy span:nth-child(2){height:52px;width:88%}.review-loading-copy span:last-child{height:22px;width:70%}
