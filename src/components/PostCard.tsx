@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import {Bookmark,Heart,MessageCircle,Send,Trash2} from 'lucide-react';
+import {Bookmark,Heart,MessageCircle,Send,ShoppingBag,Trash2,TriangleAlert} from 'lucide-react';
 import {useState} from 'react';
 import type {Post,ReviewCriteriaScores} from '@/lib/types';
 import {useI18n} from '@/i18n/I18nProvider';
@@ -23,16 +23,22 @@ import {storePhotoURL} from '@/lib/store-photo';
 // written text. What is left is the judgement: who, what they scored it, when.
 // The eight questions in the order the review form asks them, paired with the dictionary
 // key that names each one. One list, so the review and the form can never disagree.
+// Each row carries the name the API files a note under as well as the name the dictionary
+// reads, because the two are different and the note has to find its own heading.
 const criteriaRows=(c:ReviewCriteriaScores)=>[
-  ['criterionAvailability',c.availability],
-  ['criterionValue',c.value],
-  ['criterionLayout',c.layout],
-  ['criterionStaffCare',c.staff_care],
-  ['criterionStaffKnowledge',c.staff_knowledge],
-  ['criterionCheckout',c.checkout],
-  ['criterionReturns',c.returns],
-  ['criterionCleanliness',c.cleanliness],
+  ['criterionAvailability',c.availability,'availability'],
+  ['criterionValue',c.value,'value'],
+  ['criterionLayout',c.layout,'layout'],
+  ['criterionStaffCare',c.staff_care,'staff_care'],
+  ['criterionStaffKnowledge',c.staff_knowledge,'staff_knowledge'],
+  ['criterionCheckout',c.checkout,'checkout'],
+  ['criterionReturns',c.returns,'returns'],
+  ['criterionCleanliness',c.cleanliness,'cleanliness'],
 ] as const;
+
+// A one or a two is the score the reader most wants explained, so it is marked and its
+// explanation is one tap away rather than folded into a paragraph somewhere else.
+const LOW_SCORE=2;
 
 type PostSurface='feed'|'store';
 type PostCardProps={post:Post;surface?:PostSurface;owned?:boolean;onDeleted?:()=>void};
@@ -54,6 +60,9 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
   const [shared,setShared]=useState(false);
   const [removing,setRemoving]=useState(false);
   const [removeFailed,setRemoveFailed]=useState(false);
+  // Which low score is showing its reason. One at a time: the rows are narrow and a card
+  // with every note open is a wall of text where a table was.
+  const [openNote,setOpenNote]=useState<string|null>(null);
 
   const remove=async()=>{
     if(removing||!window.confirm(t('confirmDeleteReview')))return;
@@ -127,15 +136,46 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
       :!onStorePage&&!owned?<Link href={localePath(locale,`/reviews/${post.id}`)} className="post-photo is-empty"><span aria-hidden="true">{post.store_name.slice(0,2).toLocaleUpperCase(locale)}</span><small>{t('noPhoto')}</small></Link>:null}
 
     <div className="post-details">
-      <div className="post-meta"><RatingStars value={post.rating}/><Verified label={t('verified')}/></div>
-      <p className="post-written">{written}</p>
+      {/* The date rides with the score, and the badges stand under it. They were the other
+          way round, which put a green claim about the visit level with the figure and left
+          the date -- the thing a reader checks first on a review -- on a line of its own
+          below. What the review is worth is a stack of claims; when it was written is not
+          one of them, it is a label on the whole thing. */}
+      <div className="post-meta"><RatingStars value={post.rating}/><span className="post-written">{written}</span></div>
+      <div className="post-claims">
+        <Verified label={t('verified')}/>
+        {/* Only where the shopper answered yes and named what they bought. "Yes" on its own
+            is a claim with nothing behind it, and the product is what makes it checkable --
+            so the badge and the thing bought arrive together or not at all. */}
+        {post.purchased&&post.purchased_item&&<>
+          <span className="post-purchased"><ShoppingBag aria-hidden="true"/>{t('purchaseMade')}</span>
+          <span className="post-purchased-item"><span>{t('productLabel')}:</span> <strong>{post.purchased_item}</strong></span>
+        </>}
+      </div>
       {/* The score is an average of eight answers, and the eight are what somebody reading
           a review actually wants: a four out of five means one thing when the staff carried
           it and another when the prices did. Reviews written before the criteria existed
           have nothing to open, so they show nothing rather than a row of dashes. */}
       {post.criteria&&<details className="post-criteria">
         <summary>{t('seeScoreDetail')}</summary>
-        <dl>{criteriaRows(post.criteria).map(([key,value])=>{const label=t(key);const split=key==='criterionValue'?label.split('/'):[];return <div key={key}><dt>{split.length===2?<>{split[0]}/<span>{split[1]}</span></>:label}</dt><dd><RatingStars value={value} showValue={false}/><span>{value}</span></dd></div>})}</dl>
+        <dl>{criteriaRows(post.criteria).map(([key,value,field])=>{
+          const label=t(key);
+          const split=key==='criterionValue'?label.split('/'):[];
+          const low=value<=LOW_SCORE;
+          // Written at the time, against this heading. Reviews from before the form asked
+          // for one are marked but have nothing to open, which is honest: the score was low
+          // and nobody was asked why.
+          const note=post.criterion_notes?.[field];
+          const shown=openNote===field;
+          return <div key={key} className={low?'is-low':undefined}>
+            <dt>{low&&<TriangleAlert className="criterion-warn" aria-hidden="true"/>}<span className="criterion-name">{split.length===2?<>{split[0]}/<span>{split[1]}</span></>:label}</span></dt>
+            <dd><RatingStars value={value} showValue={false}/><span>{value}</span></dd>
+            {low&&note&&<div className="criterion-detail">
+              <button type="button" className="criterion-detail-open" aria-expanded={shown} onClick={()=>setOpenNote(shown?null:field)}>{shown?t('hideDetail'):t('seeDetail')}</button>
+              {shown&&<p>{note}</p>}
+            </div>}
+          </div>;
+        })}</dl>
       </details>}
       {/* A review is eight scores now. The written text and the photographs people uploaded
           are still in the database, untouched -- they are simply no longer shown. One line

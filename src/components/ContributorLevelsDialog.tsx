@@ -26,7 +26,14 @@ const openHint:Record<Locale,string>={
 };
 const closeLabel:Record<Locale,string>={tr:'Kapat',en:'Close',de:'Schließen',ru:'Закрыть'};
 
-export function ContributorLevelsDialog({locale}:{locale:Locale}){
+// Two places open the same panel, and they ask for it in different words.
+//
+// On somebody's own profile the invitation is the point: a button that says what it gets
+// you, with the question underneath. On a store page the panel is a footnote to a claim --
+// "every verified review raises your level" -- and what the reader wants there is the
+// answer to "so what?", not a second call to action next to the one already on the page.
+// Same panel either way, because two explanations of one thing drift apart.
+export function ContributorLevelsDialog({locale,note}:{locale:Locale;note?:string}){
   const [open,setOpen]=useState(false);
   const [leaving,setLeaving]=useState(false);
   const section=about.content[locale].sections.find(entry=>entry.id==='katki');
@@ -51,11 +58,16 @@ export function ContributorLevelsDialog({locale}:{locale:Locale}){
 
   if(!section)return null;
   return <>
-    <div className="level-boost">
-      <button type="button" className="contribution-progress level-boost-action" onClick={()=>setOpen(true)}>
-        <span aria-hidden="true">↗</span><span><strong>{openLabel[locale]}</strong><small>{openHint[locale]}</small></span>
-      </button>
-    </div>
+    {note
+      ?<aside className="level-note">
+        <p>{note}</p>
+        <button type="button" className="button secondary level-note-action" onClick={()=>setOpen(true)}>{openHint[locale]}</button>
+      </aside>
+      :<div className="level-boost">
+        <button type="button" className="contribution-progress level-boost-action" onClick={()=>setOpen(true)}>
+          <span aria-hidden="true">↗</span><span><strong>{openLabel[locale]}</strong><small>{openHint[locale]}</small></span>
+        </button>
+      </div>}
     {open&&<div className="dialog-backdrop" data-state={leaving?'leaving':'visible'} role="presentation" onMouseDown={close}>
       <section className="auth-dialog level-dialog" role="dialog" aria-modal="true" aria-labelledby="level-dialog-title" onMouseDown={event=>event.stopPropagation()}>
         <button className="icon-button dialog-close" onClick={close} aria-label={closeLabel[locale]}><X/></button>

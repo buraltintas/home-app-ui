@@ -238,9 +238,15 @@ function ReviewWizard({storeId}:{storeId:string}){
       const response=await apiFetch('/api/proxy/posts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
         store_id:storeId,visit_verification_id:verification.id,content_language:locale,
         criteria:Object.fromEntries(criterionKeys.map(key=>[key,criteria[key]])),
-        // Each low mark's reason, named by the criterion it belongs to. This is the first
-        // written content these reviews have carried.
-        ...(lowScores.length?{text:lowScores.map(key=>`${t(criterionLabels[key])}: ${(notes[key]??'').trim()}`).join('\n')}:{}),
+        // Each low mark's reason, keyed by the heading it belongs to, so the store page can
+        // put it beside the score it explains. It also goes into the review's body, where it
+        // is the first written content these reviews have carried -- but the body is a
+        // paragraph in whatever language the reviewer was using, and a heading translated
+        // into it cannot be read back out. The keys can.
+        ...(lowScores.length?{
+          criterion_notes:Object.fromEntries(lowScores.map(key=>[key,(notes[key]??'').trim()])),
+          text:lowScores.map(key=>`${t(criterionLabels[key])}: ${(notes[key]??'').trim()}`).join('\n'),
+        }:{}),
         ...(purchased===undefined?{}:{purchased,...(purchased&&purchasedItem.trim()?{purchased_item:purchasedItem.trim()}:{})}),
         ...(origin?{origin_search_id:origin.search_id,origin_search_result_id:origin.search_result_id}:{}),
       })});

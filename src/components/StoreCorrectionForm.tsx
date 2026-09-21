@@ -11,6 +11,17 @@ const copy:Record<Locale,{topic:string;categories:[string,string,string,string];
   ru:{topic:'Какие данные, по-вашему, указаны неверно?',categories:['Категория','Местоположение','Телефон','Другое'],label:'Как правильно?',hint:'Укажите правильную информацию как можно точнее.',email:'Ваш адрес эл. почты (необязательно)',emailHint:'Только если нам понадобится уточнить детали.',send:'Отправить предложение',sending:'Отправляем…',thanks:'Спасибо. Предложение будет рассмотрено в ближайшее время.',again:'Предложить ещё одно исправление',short:'Напишите, пожалуйста, чуть подробнее.',error:'Не удалось отправить предложение. Попробуйте ещё раз.',privacy:'Предложение увидит только команда Boşa Gezme!.',prefix:'Исправление данных магазина',store:'Название магазина',field:'Поле'},
 };
 
+// The heading and the sentence under it, kept beside the form rather than in the page that
+// happened to hold it first. Two places open this form now -- a page, for a link somebody
+// was sent, and a sheet on the store itself -- and an explanation that lives in one of them
+// is an explanation the other has to copy.
+export const storeCorrectionIntro:Record<Locale,{title:string;intro:string;store:string}>={
+  tr:{title:'Mağaza bilgilerinde hata mı var?',intro:'Yanlış adresi, kategoriyi veya kapanmış bir mağazayı bize bildir. Önerini inceleyip doğruladıktan sonra gerekli düzeltmeyi yapacağız.',store:'Düzenleme önerdiğin mağaza'},
+  en:{title:'Is something wrong with the store information?',intro:'Tell us about an incorrect address, category, or a store that has closed. We will review and verify your suggestion before making the correction.',store:'Store you are suggesting an edit for'},
+  de:{title:'Stimmt etwas mit den Geschäftsinformationen nicht?',intro:'Melde uns eine falsche Adresse, Kategorie oder ein geschlossenes Geschäft. Wir prüfen deinen Hinweis und nehmen die Korrektur nach der Bestätigung vor.',store:'Geschäft, für das du eine Änderung vorschlägst'},
+  ru:{title:'В данных магазина есть ошибка?',intro:'Сообщите о неверном адресе, категории или закрытом магазине. Мы проверим предложение и внесём исправление после подтверждения.',store:'Магазин, данные которого вы предлагаете изменить'},
+};
+
 export function StoreCorrectionForm({locale,storeName}:{locale:Locale;storeId:string;storeName:string}){
   const t=copy[locale];
   const [topic,setTopic]=useState(0);

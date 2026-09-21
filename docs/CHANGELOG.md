@@ -8,6 +8,51 @@ value involved.
 
 ---
 
+## A review card that says what the review is worth
+
+Nine notes on the store page, and most of them are one idea: a review is a stack of claims,
+and the card was drawing them as one row of chrome.
+
+**The date moved to the score, and the claims stack under it.** They were the other way
+round: a green badge about the visit sat level with the figure and the date -- the thing a
+reader checks first -- was alone on the line below. When a review was written is a label on
+the whole thing; what it is worth is the stack.
+
+**A purchase is now one of those claims.** The review form has been asking "did you buy
+anything, and what?" and storing the answer; nothing was showing it. A review that ends in a
+purchase is different evidence from one written by somebody who looked and left. It appears
+only when the shopper answered yes *and* named the thing -- "yes" on its own is a claim with
+nothing behind it, and the product is what makes it checkable.
+
+**A one or a two is marked, and says why.** Low scores were drawn exactly like fives. They
+now carry a warning sign and open the sentence the reviewer wrote at the time, against that
+heading. That last part needed an API change: the sentences were being folded into the review
+body as "Heading: sentence", where the heading is in whatever language the reviewer used and
+cannot be read back out. They travel keyed now.
+
+**Opening one card no longer stretches the ones beside it.** A grid stretches its children,
+so every card grew an empty tail to match the tallest. And the rail no longer snaps: mandatory
+scroll snapping is what made it feel like it was catching, because the same flick either
+glided or jerked depending on where the finger let go. A row of reviews is read, not paged.
+
+**The store's own score is bigger than the eight it is made of**, which it was not, so the
+two rows read as one list; and the review count sits on the stars' line rather than a few
+pixels under it.
+
+**"Suggest an edit" opens where you are.** It was a page, so reporting a wrong phone number
+meant leaving the shop you were reading and finding your way back. It is a sheet now, like
+suggesting a missing shop at the end of a search, with a heading and an intro sized for a
+drawer rather than for an empty page -- and it does not name the store, because the store is
+the thing underneath it. The page stays, for links already sent.
+
+**And "every verified review raises your level" has its own frame and its own answer.** It
+was the second half of the invitation's paragraph, where it read as a reason to write a
+review rather than as a fact about the product; a sentence that mentions contributor levels
+and cannot say what they are raises a question and walks away. The button opens the same
+panel the profile opens, from the same words in the About document.
+
+---
+
 ## Two rules four lines apart, and the later one was winning
 
 The magnifier beside "Aradığın mağazayı bulamadıysan" was asked to be made bigger, was made

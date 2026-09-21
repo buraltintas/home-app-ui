@@ -14,6 +14,10 @@ export type Post = {
   viewer_follows_author: boolean; viewer_has_favorited_store: boolean; author_level: number;
   // Absent on reviews written before the eight criteria existed.
   criteria?: ReviewCriteriaScores;
+  // What the visit was for, and why any heading scored one or two. Both optional: a review
+  // that answered neither question has neither field.
+  purchased?: boolean; purchased_item?: string;
+  criterion_notes?: Partial<Record<keyof ReviewCriteriaScores,string>>;
 };
 export type SearchIntent = {
   scope: 'home_living' | 'out_of_scope' | 'unclear'; query_language: Locale; normalized_query: string;

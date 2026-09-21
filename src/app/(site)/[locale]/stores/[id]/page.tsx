@@ -7,10 +7,11 @@ import {ReviewsJump} from '@/components/ReviewsJump';
 import {StoreNeighbours} from '@/components/StoreNeighbours';
 import {ReviewPolicy} from '@/components/ReviewPolicy';
 import {ReviewRail} from '@/components/ReviewRail';
+import {ContributorLevelsDialog} from '@/components/ContributorLevelsDialog';
+import {StoreCorrectionSheet} from '@/components/StoreCorrectionSheet';
 import {Rating,RatingStars} from '@/components/Rating';
 import {StoreActions} from '@/components/StoreActions';
 import {JsonLd} from '@/components/JsonLd';
-import {ChevronRight,NotebookPen} from 'lucide-react';
 import {ScrollTop} from '@/components/ScrollTop';
 import {getCityBrandsIfKnown,getCityCategoriesIfKnown,getNearbyStores,getPublicStore} from '@/lib/server-api';
 import {getDictionary} from '@/i18n/dictionaries';
@@ -66,11 +67,16 @@ const cityCategoryName:Record<Locale,(city:string,category:string)=>string>={
   ru:(city,category)=>`${category}: магазины в городе ${city}`,
 };
 
-const contributionCopy:Record<Locale,{title:string;body:string;action:string;progress:string;levels:string;correction:string}>={
-  tr:{title:'Bu mağazaya gittin mi?',body:'Deneyimin bir sonraki kişinin doğru mağazayı seçmesine yardım eder. Doğrulanmış her değerlendirme katkı seviyeni de yükseltir.',action:'Değerlendirme yap',progress:'Katkı seviyeni yükselt',levels:'Katkı seviyeleri ne işe yarar?',correction:'Mağaza bilgilerinde düzenleme öner.'},
-  en:{title:'Have you visited this store?',body:'Your experience helps the next person choose the right store. Every verified review also raises your contributor level.',action:'Write a review',progress:'Raise your contributor level',levels:'What are contributor levels for?',correction:'Suggest an edit to store information'},
-  de:{title:'Warst du in diesem Geschäft?',body:'Deine Erfahrung hilft der nächsten Person, das passende Geschäft zu wählen. Jede bestätigte Bewertung erhöht auch deine Beitragsstufe.',action:'Bewertung abgeben',progress:'Beitragsstufe erhöhen',levels:'Wozu dienen Beitragsstufen?',correction:'Änderung der Geschäftsinformationen vorschlagen'},
-  ru:{title:'Вы были в этом магазине?',body:'Ваш опыт поможет следующему человеку выбрать подходящий магазин. Каждый подтверждённый отзыв также повышает ваш уровень участника.',action:'Оставить оценку',progress:'Повысить уровень участника',levels:'Для чего нужны уровни участника?',correction:'Предложить исправление данных магазина'},
+// One paragraph used to carry two different claims: why writing a review is worth the
+// reader's time, and what it earns them. The first is the invitation and stands on its own;
+// the second is a fact about the product, and it now sits in its own frame with the panel
+// that explains it -- because a sentence mentioning contributor levels that cannot answer
+// "what are those?" is a sentence that raises a question and walks away.
+const contributionCopy:Record<Locale,{title:string;body:string;levelNote:string;action:string;correction:string}>={
+  tr:{title:'Bu mağazaya gittin mi?',body:'Deneyimin, bir sonraki kişinin kendine en uygun mağazayı seçmesine yardım eder.',levelNote:'Doğrulanmış her değerlendirme katkı seviyeni de yükseltir.',action:'Değerlendirme yap',correction:'Mağaza bilgilerinde düzenleme öner.'},
+  en:{title:'Have you visited this store?',body:'Your experience helps the next person choose the store that suits them.',levelNote:'Every verified review also raises your contributor level.',action:'Write a review',correction:'Suggest an edit to store information'},
+  de:{title:'Warst du in diesem Geschäft?',body:'Deine Erfahrung hilft der nächsten Person, das für sie passende Geschäft zu wählen.',levelNote:'Jede bestätigte Bewertung erhöht auch deine Beitragsstufe.',action:'Bewertung abgeben',correction:'Änderung der Geschäftsinformationen vorschlagen'},
+  ru:{title:'Вы были в этом магазине?',body:'Ваш опыт поможет следующему человеку выбрать подходящий для него магазин.',levelNote:'Каждый подтверждённый отзыв также повышает ваш уровень участника.',action:'Оставить оценку',correction:'Предложить исправление данных магазина'},
 };
 // Two sentences that say different kinds of thing: the first explains how the number is
 // worked out, the second is why it can be trusted. They are held apart because the second
@@ -246,7 +252,6 @@ export default async function Page({params}:Props){
   // questions is 1.25, and rounding that to 1.3 on the page makes the sum look wrong. A
   // round 4.5 is still shown as 4.5, not 4.50.
   const formatScore=(value:number|undefined)=>value===undefined?'—':value.toLocaleString(locale,{minimumFractionDigits:1,maximumFractionDigits:2});
-  const correctionPath=localePath(locale,`/store-correction?store=${encodeURIComponent(store.id)}&name=${encodeURIComponent(store.name)}`);
   const trail=[{name:t.discover??'',path:'/discover'},...(belongsTo.length?[belongsTo[0]]:store.city?[{name:store.city,path:'/discover'}]:[]),{name:store.name,path:storePath(store)}].filter(entry=>entry.name);
   return <main className="store-page">
     <ScrollTop/>
@@ -287,7 +292,10 @@ export default async function Page({params}:Props){
       <aside className="review-invitation">
         <div className="review-invitation-copy"><h2>{contribution.title}</h2><p>{contribution.body}</p></div>
         <div className="review-invitation-actions">
-          <Link className="contribution-progress" href={localePath(locale,'/about#katki')}><span aria-hidden="true">↗</span><span><strong>{contribution.progress}</strong><small>{contribution.levels}</small></span></Link>
+          {/* The same panel the profile opens, in the same words and at the same speed --
+              one explanation of contributor levels, read from the About document, wherever
+              somebody meets the claim. */}
+          <ContributorLevelsDialog locale={locale} note={contribution.levelNote}/>
         </div>
       </aside>
     </section>
@@ -312,11 +320,7 @@ export default async function Page({params}:Props){
         {/* Not the same kind of thing as the shop's own website above it: that opens a page to
             read, this opens a form to fill in. Drawn as the action it is, with the mark of
             editing on it. */}
-        <Link className="store-correction-card" href={correctionPath}>
-          <span className="store-correction-mark" aria-hidden="true"><NotebookPen/></span>
-          <span className="store-correction-copy"><strong>{correction.title}</strong><span>{correction.body}</span></span>
-          <ChevronRight className="store-correction-go" aria-hidden="true"/>
-        </Link>
+        <StoreCorrectionSheet locale={locale} storeId={store.id} storeName={store.name} title={correction.title} body={correction.body}/>
       </div>
       <div className="store-reviews" id="store-reviews-title" aria-label={policy.heading}>
         <h2 className="eyebrow store-section-title">{policy.heading}</h2>

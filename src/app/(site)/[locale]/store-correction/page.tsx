@@ -1,18 +1,13 @@
 import type {Metadata} from 'next';
 import {redirect} from 'next/navigation';
 import {ScrollTop} from '@/components/ScrollTop';
-import {StoreCorrectionForm} from '@/components/StoreCorrectionForm';
+import {StoreCorrectionForm,storeCorrectionIntro} from '@/components/StoreCorrectionForm';
 import {getServerI18n} from '@/i18n/server';
 import {canonicalFor,localePath} from '@/lib/site';
-import type {Locale} from '@/lib/types';
 
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const copy:Record<Locale,{title:string;intro:string;store:string}>={
-  tr:{title:'Mağaza bilgilerinde hata mı var?',intro:'Yanlış adresi, kategoriyi veya kapanmış bir mağazayı bize bildir. Önerini inceleyip doğruladıktan sonra gerekli düzeltmeyi yapacağız.',store:'Düzenleme önerdiğin mağaza'},
-  en:{title:'Is something wrong with the store information?',intro:'Tell us about an incorrect address, category, or a store that has closed. We will review and verify your suggestion before making the correction.',store:'Store you are suggesting an edit for'},
-  de:{title:'Stimmt etwas mit den Geschäftsinformationen nicht?',intro:'Melde uns eine falsche Adresse, Kategorie oder ein geschlossenes Geschäft. Wir prüfen deinen Hinweis und nehmen die Korrektur nach der Bestätigung vor.',store:'Geschäft, für das du eine Änderung vorschlägst'},
-  ru:{title:'В данных магазина есть ошибка?',intro:'Сообщите о неверном адресе, категории или закрытом магазине. Мы проверим предложение и внесём исправление после подтверждения.',store:'Магазин, данные которого вы предлагаете изменить'},
-};
+// One copy of the heading and the sentence, shared with the sheet the store page opens.
+const copy=storeCorrectionIntro;
 
 export async function generateMetadata({params}:{params:Promise<{locale:string}>}):Promise<Metadata>{
   const {locale}=getServerI18n((await params).locale);
