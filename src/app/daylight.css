@@ -1321,6 +1321,14 @@ svg{stroke-width:2}
 .store-hero-photo.is-brand-mark img{padding:6% 12%}
 /* The frame stops under "puan detayını gör" and moves down when the detail opens, instead of
    standing at a fixed height with empty card below the last line. */
+/* One column, always. The table splits into two when the window is wider than 600px -- which
+   is right for a feed card that is as wide as the page, and wrong here: a card in this row is
+   272px at every window size, so on a desktop each cell got about 118px, the stars took 112
+   of them, and every heading was printed on top of its own score. The number of columns
+   belongs to the width of the card, not the width of the window. */
+.store-review-rail .post-criteria dl{grid-template-columns:minmax(0,1fr)}
+.store-review-rail .post-criteria dl div:nth-child(odd){padding-right:0;border-right:0}
+.store-review-rail .post-criteria dl div:nth-child(2n){padding-left:0}
 .store-review-rail .post-criteria{margin:10px 0 0}
 .store-review-rail .post-criteria[open]{margin-bottom:4px}
 

@@ -8,6 +8,23 @@ value involved.
 
 ---
 
+## The score table was printed on top of itself on every desktop
+
+A card in the store page's review row is 272px wide whatever the window is. The score table
+inside it splits into two columns when the *window* is wider than 600px -- which is right for
+a feed card, because a feed card is as wide as the page, and wrong here. On a desktop each
+cell got about 118px, the stars took 112 of them, and every heading was drawn across its own
+score.
+
+The row's table is one column at every width now. The number of columns belongs to the width
+of the card, not the width of the window.
+
+Reported from a desktop, after two days of work on this card measured at 375px. The rule
+about checking both breakpoints is already in AGENTS.md, written after the last time this
+happened; this is the second.
+
+---
+
 ## A review card that says what the review is worth
 
 Nine notes on the store page, and most of them are one idea: a review is a stack of claims,
