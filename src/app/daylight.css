@@ -32,10 +32,27 @@ svg{stroke-width:2}
    padlock. It replaces a 40px outline heart, which said "favourites" but not "you are not
    signed in" -- and not being signed in is the whole reason the page is empty. Sized to the
    text it sits above rather than to the file, and capped so it never outgrows the column. */
-.favorites-empty .favorites-locked{width:min(236px,62vw);height:auto;margin-bottom:8px}
+.favorites-empty .favorites-locked{width:min(236px,62vw);height:auto;margin-bottom:-14px}
+/* The drawing carries its own transparent border, so the gap under it measured 8px and read
+   as nearer 30. Pulled up by the difference rather than by a new guess. */
+/* The page gutter, so the title has the width the rest of the product gives a phone. It was
+   inheriting the 40px an empty page uses when it holds one short line, and that width is what
+   broke "Değerlendirme yapmak için" across two lines. */
+@media(max-width:600px){
+  .favorites-empty{padding-left:18px;padding-right:18px}
+}
+/* Sized to the sentence rather than to a breakpoint: below the point where 48px stops fitting
+   the type follows the viewport down, so the longest line lands inside the gutter on a 320px
+   phone as well as a 430px one. The title then falls in two lines, and text-wrap:balance puts
+   the break where the sentence already wanted it. */
+.favorites-empty h1{font-size:clamp(24px,6.9vw,48px)}
 /* The phrase the title is actually about. The rest of the sentence is scaffolding around
    it, and this is the part somebody reads if they read three words. */
-.favorites-title-mark{color:var(--clay)}
+/* The marked phrase takes its own line. Balancing the heading put the break between "yapmak"
+   and "için" -- the two halves came out even, which is what balancing is for and is not what
+   the sentence is. The brackets already say where the seam is; this makes the seam the break,
+   in every language, instead of leaving it to whatever width the phone happens to be. */
+.favorites-title-mark{display:block;color:var(--clay)}
 /* Clay, like every other button that is the one thing to do on its screen. Ink is what this
    button wore, and ink is the colour of everything else on the page. */
 .favorites-empty .button.primary{background:var(--clay);color:var(--surface)}

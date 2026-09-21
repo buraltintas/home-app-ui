@@ -8,6 +8,35 @@ value involved.
 
 ---
 
+## The favourites page, read at the width a phone actually has
+
+Nine notes on one page, and seven of them are one complaint: the type was sized for a screen
+wider than the one it was on.
+
+**The title falls where the sentence falls.** It read over three lines, then over two with the
+break between "yapmak" and "için" -- which is what `text-wrap:balance` is for, and is not what
+the sentence is. The marked phrase now takes its own line, in every language, so the break is
+the seam the words already had. The heading also follows the viewport down below the point
+where the fixed size stops fitting, and the page uses the 18px gutter the rest of the product
+gives a phone rather than the 40px an empty page uses when it holds one short line.
+
+**"Değerlendirmeni" is one word again.** The two counts sit side by side in 375px, which left
+each label about 84px -- four short of the longest word in it -- so the label was allowed to
+break inside words and did, leaving "Değerlendirm / eni". The mark and the padding gave back
+what they did not need, and the permission to break mid-word is gone: nothing here needs it,
+in any of the four languages.
+
+**The count you are looking at is now bold, not just framed.** The frame and the mark changed
+colour on the active one; the words did not, and the words are the part somebody reads. Both
+labels stay two lines in either state, so switching does not move the page.
+
+**Two sizes.** The district under a shop's name was running at the page's body size directly
+below a 21px name, so it read as a second title; it is a detail now. And the arrow ending each
+row is ink rather than clay -- clay is this product's colour for "act on this", and spending
+it on every row spent it on nothing.
+
+---
+
 ## The favourites page, when you are not signed in
 
 The page said "Favourites" with an outline heart above it. True, and not the answer to the

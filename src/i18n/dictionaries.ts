@@ -12,7 +12,7 @@ export const favoriteActionCopy={
   tr:{favoritesTitle:'Değerlendirme yapmak için [kaydettiğin mağazalar]',saveStore:'Mağazayı kaydet'},
   en:{favoritesTitle:'[Stores saved] for reviewing',saveStore:'Save store'},
   de:{favoritesTitle:'Für eine Bewertung [gespeicherte Geschäfte]',saveStore:'Geschäft speichern'},
-  ru:{favoritesTitle:'[Магазины], сохранённые для отзыва',saveStore:'Сохранить магазин'},
+  ru:{favoritesTitle:'Магазины, [сохранённые для отзыва]',saveStore:'Сохранить магазин'},
 } as const;
 export const feedStateCopy={
   tr:{openNow:'Mağaza şu an açık',closedNow:'Mağaza şu an kapalı',clearSearch:'Aramayı temizle',feedMore:'Daha fazla deneyim',feedMoreLoading:'Yükleniyor…',feedEnd:'Şimdilik hepsi bu. Sıradaki deneyim seninkisi olabilir.',feedLoading:'Deneyimler yükleniyor…',feedErrorTitle:'Akış yüklenemedi',feedErrorBody:'Bağlantını kontrol edip tekrar deneyebilirsin.',feedEmptyTitle:'Henüz paylaşım yok',feedEmptyBody:'İlk doğrulanmış mağaza deneyimleri burada görünecek.',retry:'Tekrar dene'},
