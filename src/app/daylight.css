@@ -1189,11 +1189,10 @@ svg{stroke-width:2}
 /* The heading is read first and it is a question, not a warning. In amber it was the
    loudest thing on a page of results and read as something having gone wrong. */
 .add-store h2{display:flex;align-items:center;gap:10px;margin:0;font-size:17px;font-weight:800;letter-spacing:.01em;color:var(--warning)}
-.add-store h2 svg,.add-store-mark{width:32px;height:32px;flex:none;color:var(--warning)}
+.add-store h2 svg,.add-store-mark{width:40px;height:40px;flex:none;color:var(--warning)}
 /* R28's second sentence: still the request, so still bold, but a step back from ink. Two
    weights of the same near-black read as one shout in two sizes. */
 .add-store p strong{color:var(--ink-muted);font-weight:750}
-.add-store h2 svg{width:18px;height:18px;flex:none}
 .add-store p{margin:6px 0 16px;color:var(--ink-muted);font-size:15px}
 .add-store-action{display:flex;align-items:center;gap:26px;flex-wrap:wrap}
 .add-store-action img{width:72px;height:72px;border-radius:var(--r-md);object-fit:cover;flex:none}

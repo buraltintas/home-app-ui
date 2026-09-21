@@ -8,6 +8,19 @@ value involved.
 
 ---
 
+## Two rules four lines apart, and the later one was winning
+
+The magnifier beside "Aradığın mağazayı bulamadıysan" was asked to be made bigger, was made
+bigger, and did not change. Both are true: the size was raised from 24px to 32px in a rule
+that four lines further down the same file was overruled by `.add-store h2 svg{width:18px}`.
+The icon had been 18px the whole time, including when it was reported back as 32.
+
+There is one rule for that mark now, and it is 40px. The lesson is not about this icon:
+a declaration can be edited, committed and deployed and still never reach the screen, so a
+size reported back has to be a size read off the rendered page, not off the diff.
+
+---
+
 ## The favourites page, read at the width a phone actually has
 
 Nine notes on one page, and seven of them are one complaint: the type was sized for a screen
