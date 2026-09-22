@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import {useEffect,useState} from 'react';
-import {Gift,Medal,MessageCircle,PenLine,ShieldCheck,Star} from 'lucide-react';
+import {ArrowDownWideNarrow,ClipboardCheck,Gift,Medal,MessageCircle,PenLine,ShieldCheck,Star} from 'lucide-react';
 import {AuthDialog} from '@/components/AuthDialog';
 import {SignOutButton} from '@/components/SignOutButton';
 import Link from 'next/link';
@@ -52,11 +52,15 @@ const ladderCopy:Record<Locale,{current:string;next:string;level:(n:number)=>str
   de:{current:'Aktuelle Stufe',next:'Nächste Stufe',level:n=>`Stufe ${n}`,reviews:n=>`${n} Bewertungen`},
   ru:{current:'Текущий уровень',next:'Следующий уровень',level:n=>`Уровень ${n}`,reviews:n=>`Отзывов: ${n}`},
 };
-const totalReviewsCopy:Record<Locale,(n:number)=>string>={
-  tr:n=>`Toplam ${n} değerlendirme`,
-  en:n=>`${n} reviews in total`,
-  de:n=>`Insgesamt ${n} Bewertungen`,
-  ru:n=>`Всего отзывов: ${n}`,
+// The two things a list of reviews has to say before the list itself: how many there are,
+// and what order they are in. Said in the same pair of tiles the search results use, because
+// they are the same two questions and a reader who has met them once should not have to learn
+// a second shape for them.
+const reviewSummaryCopy:Record<Locale,{total:string;sort:string;sortValue:string}>={
+  tr:{total:'Toplam değerlendirme',sort:'Sıralama ölçütü',sortValue:'Değerlendirme tarihi'},
+  en:{total:'Reviews in total',sort:'Sorted by',sortValue:'Review date'},
+  de:{total:'Bewertungen insgesamt',sort:'Sortiert nach',sortValue:'Bewertungsdatum'},
+  ru:{total:'Всего отзывов',sort:'Сортировка',sortValue:'Дата отзыва'},
 };
 
 export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages'|'account'}){
@@ -128,7 +132,13 @@ export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages
     </nav>:<section className="profile-section-content">
       <PageBackButton/>
       <h2>{section==='edit'?t('editProfile'):section==='reviews'?reviewCopy[locale].title:section==='messages'?messageCopy[locale].title:t('accountSection')}</h2>
-      {section==='reviews'&&<p className="profile-section-total">{totalReviewsCopy[locale](me.post_count)}</p>}
+      {/* The search page's own tiles, class for class: the green one counts what is on the
+          screen, the amber one names the order. Newest first is what this list has always
+          been; it simply never said so. */}
+      {section==='reviews'&&<dl className="result-count profile-review-count">
+        <div className="result-count-total"><span className="result-count-mark" aria-hidden="true"><ClipboardCheck/></span><div><dt>{reviewSummaryCopy[locale].total}</dt><dd>{me.post_count}</dd></div></div>
+        <div className="result-count-sort"><span className="result-count-mark" aria-hidden="true"><ArrowDownWideNarrow/></span><div><dt>{reviewSummaryCopy[locale].sort}</dt><dd>{reviewSummaryCopy[locale].sortValue}</dd></div></div>
+      </dl>}
       {section==='edit'&&<ProfileEditor me={me} onSaved={setMe}/>}
       {section==='reviews'&&<MyReviews userId={me.id} locale={locale}/>}
       {section==='messages'&&<ProfileMessages locale={locale}/>}

@@ -516,6 +516,13 @@ svg{stroke-width:2}
 .criterion-detail-open:hover{color:var(--ink)}
 .criterion-detail p{margin:4px 0 2px;font-size:13px;line-height:1.45;color:var(--ink);overflow-wrap:anywhere}
 /* What the review claims, stacked under the score rather than beside the date. */
+/* Mark, then name and place: the listing's arrangement, so a shop looks the same wherever
+   this product shows it. */
+.post-store{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:16px}
+.post-store-mark{display:block;flex:none}
+.post-store-identity{min-width:0}
+/* The two tiles above the list, at the top of the section rather than floating over it. */
+.profile-review-count{margin:14px 0 22px}
 .post-claims{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin:12px 0 0}
 .post-purchased{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--success)}
 .post-purchased svg{width:14px;height:14px}
@@ -835,7 +842,6 @@ svg{stroke-width:2}
    for one -- was empty room at the top of four screens. */
 .profile-page.is-section{padding-top:22px}
 .profile-page.is-section .profile-section-content{margin-top:0}
-.profile-section-total{margin:-4px 0 18px;color:var(--ink-muted);font-size:14px;font-weight:650}
 .profile-section-content{margin-top:24px;display:grid;justify-items:start;gap:0}
 .profile-section-content>.page-back-button{position:static;top:auto;left:auto;margin:0 0 16px;box-shadow:none;backdrop-filter:none}
 .profile-section-content>h2{margin-top:0}
@@ -1089,7 +1095,9 @@ svg{stroke-width:2}
 .create-page .review-step .button.primary{background:var(--clay);color:var(--surface)}
 .profile-review-list .post-card.is-owned .post-meta{flex-wrap:nowrap;align-items:center;margin:0;gap:8px}
 .profile-review-list .post-card.is-owned .post-details{border-top:1px solid var(--line);box-shadow:none;padding:12px}
-.profile-review-list .post-card.is-owned .post-written{margin:8px 0}
+/* Right of the row, not pressed against the score: the score and the date are two facts
+   and side by side they read as one phrase. */
+.profile-review-list .post-card.is-owned .post-written{margin:8px 0 8px auto}
 .profile-review-list .post-card.is-owned .verified{font-size:12px}
 
 /* Search results no longer buy a Places photo for every row. The remaining information
@@ -1126,9 +1134,9 @@ svg{stroke-width:2}
 .result-row .result-photo{flex:none}
 /* Written against the row, because the old provider-photo rules are still in the sheet and
    size anything inside a result photo frame to the shape a photograph wanted. */
-.result-row .result-photo-mark,.review-store .result-photo-mark{width:92px;height:92px;object-fit:contain;padding:10px;border-radius:var(--r-md);background:var(--surface);border:1px solid var(--line)}
-.result-row .result-photo-empty,.review-store .result-photo-empty{width:92px;height:92px;border-radius:var(--r-md);background:var(--muted);display:grid;place-items:center}
-.result-row .result-photo-empty>span,.review-store .result-photo-empty>span{font-size:30px;font-weight:700;line-height:1;color:var(--ink-muted)}
+.result-row .result-photo-mark,.review-store .result-photo-mark,.post-store-mark .result-photo-mark{width:92px;height:92px;object-fit:contain;padding:10px;border-radius:var(--r-md);background:var(--surface);border:1px solid var(--line)}
+.result-row .result-photo-empty,.review-store .result-photo-empty,.post-store-mark .result-photo-empty{width:92px;height:92px;border-radius:var(--r-md);background:var(--muted);display:grid;place-items:center}
+.result-row .result-photo-empty>span,.review-store .result-photo-empty>span,.post-store-mark .result-photo-empty>span{font-size:30px;font-weight:700;line-height:1;color:var(--ink-muted)}
 /* Named like the saved list names it, and marked like it too. */
 .result-row .distance{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px;margin-top:8px;font-size:13px;font-weight:500;text-transform:none;letter-spacing:0;color:var(--ink-muted)}
 .result-row .distance svg{width:13px;height:13px;align-self:center;color:inherit}
@@ -1222,8 +1230,8 @@ svg{stroke-width:2}
 .result-count-mark svg{width:20px;height:20px}
 .result-count-total .result-count-mark{color:var(--success)}
 .result-count-sort .result-count-mark{color:var(--clay)}
-.result-count dt{font-size:11px;text-transform:none;letter-spacing:0;color:var(--ink-muted);line-height:1.25;overflow-wrap:anywhere}
-.result-count dd{margin:0;font-size:14px;font-weight:750;color:var(--ink);overflow-wrap:anywhere}
+.result-count dt{font-size:11px;text-transform:none;letter-spacing:0;color:var(--ink-muted);line-height:1.25}
+.result-count dd{margin:0;font-size:14px;font-weight:750;color:var(--ink)}
 .result-count-total dd{font-size:24px;line-height:1.05;color:var(--success)}
 @media(max-width:330px){.result-count{grid-template-columns:minmax(0,1fr)}}
 /* The end of the list is a question too. */
@@ -1557,7 +1565,10 @@ svg{stroke-width:2}
    eyebrow -- small, clay, in capitals -- with its real heading kept for screen readers; the
    profile was setting the same kind of word as a 48px display line, so two pages that do the
    same job opened differently. */
-.profile-page>h1{font-size:12px;font-weight:800;line-height:1.2;letter-spacing:1.7px;text-transform:uppercase;color:var(--clay);margin:0 0 18px}
+/* The same label the saved page opens with, at the same size. It was given the shape of that
+   label -- clay, uppercase, spaced -- but the base eyebrow size rather than the one the
+   favourites page sets on its own, so the two pages still opened differently. */
+.profile-page>h1{font-size:15px;font-weight:800;line-height:1.2;letter-spacing:2px;text-transform:uppercase;color:var(--clay);margin:0 0 18px}
 /* R37: a district and a city are not an emphasis. They were bold because the feed sets them
    that way, where they are the only line under a large store name. */
 .profile-review-list .post-store p{font-weight:500}

@@ -110,6 +110,9 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
   // Authored review media remains primary. Without it, the card uses the exact same store
   // cover as search and detail; that fallback opens the store, where Google credit is shown.
   const storePhoto=storePhotoURL(post.store_photo,960);
+  // The same mark the search results and the saved list draw, at the same size. Small, because
+  // it identifies the shop rather than showing it.
+  const storeMark=storePhotoURL(post.store_photo,320);
   const hasPhoto=Boolean(!onStorePage&&!owned&&storePhoto);
   // A date without its year answers "which day" and not "which year", and a review list
   // that goes back further than twelve months needs both.
@@ -128,7 +131,16 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
         <div><strong><span className="post-author-name">{post.display_name}</span>{!onStorePage&&<ContributorLevel level={post.author_level} withNumber/>}</strong>{onStorePage?<ContributorLevel level={post.author_level} withNumber/>:<span>{written}</span>}</div>
         {!onStorePage&&<button className="icon-button" disabled={busy==='save'} aria-label={t('save')} aria-pressed={saved} onClick={()=>void mutate('save')}><Bookmark className={saved?'active-icon':''}/></button>}
       </header>}
-      {!onStorePage&&<Link href={localePath(locale,`/stores/${post.store_id}`)} className="post-store"><h2>{post.store_name}</h2>{place&&<p>{place}</p>}</Link>}
+      {/* The shop's mark beside its name, in the frame the listing uses. On your own reviews
+          the name was the only thing identifying the shop, and a name is what you read second
+          -- the mark is what you recognise. A shop that is nobody's branch shows its initial
+          in the same frame, so the list keeps one shape down its length. */}
+      {!onStorePage&&<Link href={localePath(locale,`/stores/${post.store_id}`)} className="post-store">
+        <span className="post-store-mark">{storeMark
+          ?<Image className="result-photo-mark is-brand-mark" src={storeMark} width={184} height={184} alt="" unoptimized/>
+          :<span className="result-photo-empty" aria-hidden="true"><span>{post.store_name.trim().charAt(0).toLocaleUpperCase(locale)}</span></span>}</span>
+        <span className="post-store-identity"><h2>{post.store_name}</h2>{place&&<p>{place}</p>}</span>
+      </Link>}
     </div>
 
     {storePhoto&&!onStorePage&&!owned

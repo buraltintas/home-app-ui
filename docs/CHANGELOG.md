@@ -8,6 +8,33 @@ value involved.
 
 ---
 
+## Your own reviews, said the way the rest of the product says things
+
+**A list of reviews now answers its two questions in the shape the search results use.** How
+many there are, and what order they are in -- the same pair of tiles, the same classes, the
+same colours. The count was a grey sentence and the order was never stated at all, though
+newest-first is what the list has always been.
+
+**Each review carries the shop's mark.** On your own reviews the name was the only thing
+identifying the shop, and a name is what you read second; the mark is what you recognise. It
+is the listing's frame at the listing's size -- one declaration, shared -- and a shop that is
+nobody's branch shows its initial in the same frame.
+
+**The date moved to the end of its row.** It sat directly against the score, and two facts
+pressed together read as one phrase.
+
+**"Profilin" is finally the same label as "Favoriler".** It was given that label's shape --
+clay, uppercase, spaced -- but the base eyebrow size rather than the larger one the favourites
+page sets, so the two pages still opened differently.
+
+**And "Favoriler" was two colours depending on whether you had any.** The rule that mutes the
+explanatory paragraph on an empty page is written as `.empty-page > p`, which is one class and
+one element -- enough to outrank `.eyebrow`, which is one class. So the same label was clay on
+a page with saved shops and muted on a page without. The generic rule now leaves the eyebrow
+alone.
+
+---
+
 ## The score table was printed on top of itself on every desktop
 
 A card in the store page's review row is 272px wide whatever the window is. The score table
