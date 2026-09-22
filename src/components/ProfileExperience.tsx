@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import {useEffect,useState} from 'react';
-import {ArrowDownWideNarrow,ClipboardCheck,Gift,Medal,MessageCircle,PenLine,ShieldCheck,Star} from 'lucide-react';
+import {ArrowDownWideNarrow,ArrowRight,ChevronRight,ClipboardCheck,Gift,MessageCircle,PenLine,ShieldCheck,Star,UserRound} from 'lucide-react';
 import {AuthDialog} from '@/components/AuthDialog';
 import {SignOutButton} from '@/components/SignOutButton';
 import Link from 'next/link';
@@ -26,8 +26,28 @@ const accountCopy:Record<Locale,{body:string;danger:string;title:string;confirm:
   de:{body:'Melde dich an, um dein Konto und deine privaten Einstellungen zu verwalten.',danger:'Kontoaktionen',title:'Konto löschen?',confirm:'Mein Konto löschen',cancel:'Abbrechen',failed:'Das Konto konnte nicht gelöscht werden.'},
   ru:{body:'Войдите, чтобы управлять аккаунтом и личными настройками.',danger:'Действия с аккаунтом',title:'Удалить аккаунт?',confirm:'Удалить аккаунт',cancel:'Отмена',failed:'Не удалось удалить аккаунт.'},
 };
+// The second line of the signed-out page: what you get, rather than what you are missing.
+// The heading above it already says "sign in"; this says why it is worth it.
+const signedOutLead:Record<Locale,string>={
+  tr:'Daha kişisel bir deneyimle, keşfetmeye devam et.',
+  en:'Carry on exploring, with an experience that knows you.',
+  de:'Entdecke weiter -- mit einem Erlebnis, das dich kennt.',
+  ru:'Продолжайте искать -- с опытом, который знает вас.',
+};
+
 const deleteBody:Record<Locale,string>={tr:'Yorumlarınız, arama geçmişiniz, profil bilgileriniz ve sosyal bağlantılarınız kaldırılır. Daha sonra aynı e-postayla giriş yapabilirsiniz ancak silinen veriler geri gelmez.',en:'Your reviews, search history, profile information, and social connections will be removed. You can sign in later with the same email, but deleted data cannot be restored.',de:'Deine Bewertungen, dein Suchverlauf, deine Profilangaben und deine sozialen Verbindungen werden entfernt. Du kannst dich später mit derselben E-Mail-Adresse anmelden, gelöschte Daten werden jedoch nicht wiederhergestellt.',ru:'Ваши отзывы, история поиска, данные профиля и социальные связи будут удалены. Позже вы сможете войти с тем же адресом электронной почты, но удалённые данные нельзя восстановить.'};
 const reviewCopy:Record<Locale,{title:string;hint:string}>={tr:{title:'Değerlendirmelerim',hint:'Daha önce paylaştığın mağaza deneyimleri'},en:{title:'My reviews',hint:'Store experiences you shared before'},de:{title:'Meine Bewertungen',hint:'Deine bisherigen Erfahrungen mit Geschäften'},ru:{title:'Мои отзывы',hint:'Ваши опубликованные впечатления о магазинах'}};
+// The set's medal, minus the numeral on its face. Every other stroke is the same one the
+// icon set draws; only the "1" is gone, because a badge for level three and a badge for
+// level four were both stamped with it.
+function LevelMedal(){
+  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M7.21 15 2.66 7.14a2 2 0 0 1 .13-2.2L4.4 2.8A2 2 0 0 1 6 2h12a2 2 0 0 1 1.6.8l1.6 2.14a2 2 0 0 1 .14 2.2L16.79 15"/>
+    <path d="M11 12 5.12 2.2"/><path d="m13 12 5.88-9.8"/><path d="M8 7h8"/>
+    <circle cx="12" cy="17" r="5"/>
+  </svg>;
+}
+
 const messageCopy:Record<Locale,{title:string;hint:string}>={tr:{title:'Mesajlarım',hint:'Bize gönderdiklerin ve yanıtlarımız'},en:{title:'My messages',hint:'What you sent us and our replies'},de:{title:'Meine Nachrichten',hint:'Deine Nachrichten und unsere Antworten'},ru:{title:'Мои сообщения',hint:'Ваши сообщения и наши ответы'}};
 const profileEditorHint:Record<Locale,string>={tr:'Görünen adın ve profil bilgilerin',en:'Your display name and profile details',de:'Dein Anzeigename und deine Profilangaben',ru:'Ваше отображаемое имя и данные профиля'};
 const progressionCopy:Record<Locale,{next:(level:number,count:number)=>string;reward:string;top:string}>={
@@ -77,10 +97,29 @@ export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages
   useScrollTopWhenReady(!checking);
   if(checking)return <AccountPageSkeleton className="profile-page" eyebrow="" title={t('profileTitle')}/>;
 
+  // Signed out, this page has one thing to say and one thing to offer. It said them as a
+  // heading, a sentence and a small button on an otherwise empty screen; the drawing beside
+  // it shows what is behind the door -- the three places this page leads to -- so the
+  // invitation is about what you get rather than about what you have not done.
   if(!signedIn||!me)return <main className="profile-page profile-page-out">
-    <h1>{t('profileTitle')}</h1>
-    <p>{copy.body}</p>
-    <button className="button primary" onClick={()=>setOpen(true)}>{t('signIn')}</button>
+    <div className="profile-out-copy">
+      <p className="eyebrow">{t('profile')}</p>
+      <h1>{copy.body}</h1>
+      <p className="profile-out-lead">{signedOutLead[locale]}</p>
+      <button type="button" className="button primary profile-out-action" onClick={()=>setOpen(true)}>
+        <UserRound aria-hidden="true"/>{t('signIn')}<ArrowRight className="profile-out-go" aria-hidden="true"/>
+      </button>
+    </div>
+    {/* What is behind the sign-in, drawn rather than described: the same three destinations
+        the page shows once you are in, with the marks they carry there. */}
+    <div className="profile-out-art" aria-hidden="true">
+      <span className="profile-out-avatar"><UserRound/></span>
+      <ul className="profile-out-peek">
+        <li><span className="is-gold"><PenLine/></span>{t('editProfile')}</li>
+        <li><span className="is-clay"><Star/></span>{reviewCopy[locale].title}</li>
+        <li><span className="is-plain"><ShieldCheck/></span>{t('accountSection')}</li>
+      </ul>
+    </div>
     <AuthDialog open={open} onClose={()=>setOpen(false)}/>
   </main>;
 
@@ -90,11 +129,15 @@ export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages
   // Both numbers come from the backend, so the ladder here can never disagree with the one
   // being applied there.
   const nextTarget=me.next_level!==undefined?me.post_count+(me.reviews_to_next_level??0):undefined;
+  // Four destinations, four marks, four grounds. The colour is named on the row rather than
+  // worked out from its position, so reordering the list cannot silently repaint it. They are
+  // this product's own four -- gold, clay, green, and a neutral for the account, which is the
+  // settings drawer rather than a themed place.
   const sectionLinks=[
-    ['edit',t('editProfile'),profileEditorHint[locale],PenLine],
-    ['reviews',reviewCopy[locale].title,reviewCopy[locale].hint,Star],
-    ['messages',messageCopy[locale].title,messageCopy[locale].hint,MessageCircle],
-    ['account',t('accountSection'),t('accountHint'),ShieldCheck],
+    ['edit',t('editProfile'),profileEditorHint[locale],PenLine,'gold'],
+    ['reviews',reviewCopy[locale].title,reviewCopy[locale].hint,Star,'clay'],
+    ['messages',messageCopy[locale].title,messageCopy[locale].hint,MessageCircle,'green'],
+    ['account',t('accountSection'),t('accountHint'),ShieldCheck,'plain'],
   ] as const;
 
   // A sub-page has no title of its own above the back arrow, so the page's opening margin
@@ -106,7 +149,7 @@ export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages
       <div className="profile-summary-identity"><strong>{me.display_name||me.email}</strong><span>{me.email}</span></div>
       <div className={`level-ladder${me.next_level===undefined?' is-top':''}`}>
         <div className="level-ladder-step">
-          <span className="level-ladder-badge" aria-hidden="true"><Medal/></span>
+          <span className="level-ladder-badge" aria-hidden="true"><LevelMedal/></span>
           <small>{ladder.current}</small>
           <strong>{ladder.level(Math.min(me.level,5))}</strong>
           <span className="level-ladder-name">{t(`level${Math.min(Math.max(me.level,1),5)}` as 'level1')}</span>
@@ -116,7 +159,7 @@ export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages
             is no next rung to travel to and an empty rail would read as one. */}
         <span className="level-ladder-rail" aria-hidden="true"><span style={{width:`${nextTarget?Math.min(100,Math.round(me.post_count/nextTarget*100)):100}%`}}/></span>
         {me.next_level!==undefined&&<div className="level-ladder-step is-next">
-          <span className="level-ladder-badge" aria-hidden="true"><Medal/></span>
+          <span className="level-ladder-badge" aria-hidden="true"><LevelMedal/></span>
           <small>{ladder.next}</small>
           <strong>{ladder.level(me.next_level)}</strong>
           <span className="level-ladder-name">{t(`level${Math.min(Math.max(me.next_level,1),5)}` as 'level1')}</span>
@@ -128,7 +171,11 @@ export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages
     {!section&&<ContributorLevelsDialog locale={locale}/>}
     {!section&&<ProfileInvite locale={locale}/>}
     {!section?<nav className="profile-sections">
-      {sectionLinks.map(([path,title,hint,Icon])=><Link key={path} href={localePath(locale,`/profile/${path}`)}><span className="profile-section-icon" aria-hidden="true"><Icon/></span><span className="profile-section-copy"><strong>{title}</strong><small>{hint}</small></span></Link>)}
+      {sectionLinks.map(([path,title,hint,Icon,tone])=><Link key={path} href={localePath(locale,`/profile/${path}`)}>
+        <span className={`profile-section-icon is-${tone}`} aria-hidden="true"><Icon/></span>
+        <span className="profile-section-copy"><strong>{title}</strong><small>{hint}</small></span>
+        <span className="profile-section-go" aria-hidden="true"><ChevronRight/></span>
+      </Link>)}
     </nav>:<section className="profile-section-content">
       <PageBackButton/>
       <h2>{section==='edit'?t('editProfile'):section==='reviews'?reviewCopy[locale].title:section==='messages'?messageCopy[locale].title:t('accountSection')}</h2>

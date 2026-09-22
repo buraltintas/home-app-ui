@@ -8,6 +8,35 @@ value involved.
 
 ---
 
+## The profile, laid out as an invitation rather than a form
+
+**Signed out, the page now says what is behind the door.** It was a heading, a sentence and a
+small button on an empty screen -- an account you do not have, described. It opens on the
+three places the profile leads to, drawn with the marks they carry once you are in, so the
+invitation is about what you get.
+
+**The four sections are cards on a tinted ground.** A white card on a white page is a
+rectangle nobody sees, so the ground is what makes them cards. Each mark sits in a square of
+its own colour, and the colour is named on the row rather than worked out from its position --
+reordering the list cannot silently repaint it. They are this product's own four: gold, clay,
+green, and a neutral for the account, which is the settings drawer rather than a themed place.
+
+**"Topluluğu güçlendir" is green and carries one button.** It is the only block on the page
+that asks for something rather than reporting something, and green is what this product
+already uses for a contribution that counted.
+
+**The medal lost its numeral.** The icon set's medal has a "1" struck into its face, so the
+badge for level three and the badge for level four were both stamped with a one. It is drawn
+here now: every other stroke the same, the numeral gone. And the bar between the two rungs is
+an arrow, because a plain line between two badges reads as a separator, which is the opposite
+of what it is.
+
+**A review on your own list is one card, not two.** The shop's mark and name sat outside the
+box that held the score, which put a frame between a shop and the judgement of it -- as though
+they were two entries.
+
+---
+
 ## Your own reviews, said the way the rest of the product says things
 
 **A list of reviews now answers its two questions in the shape the search results use.** How
