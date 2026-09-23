@@ -48,7 +48,7 @@ export type SearchResponse = { search_id: string; visitor_session_id?: string; i
 // reviewer_count is how many different people, which review_count stops being the moment
 // somebody visits twice. slug is here so a link goes straight to the store's readable
 // address rather than to a uuid that answers with a redirect.
-export type StoreHighlight = { id:string;slug?:string;name:string;city:string;district?:string;average_rating:number;review_count:number;recent_review_count:number;reviewer_count?:number;rating_increase?:number;photo?:StoredPhoto };
+export type StoreHighlight = { id:string;slug?:string;name:string;city:string;district?:string;average_rating:number;review_count:number;recent_review_count:number;reviewer_count?:number;rating_increase?:number;photo?:StoredPhoto;categories?:string[] };
 // recent is not a ranking: it is the shops written about most recently, and it carries no
 // threshold because it makes no claim beyond that.
 export type MonthlyStoreHighlights = { rating_gainer?:StoreHighlight;most_reviewed?:StoreHighlight;recent?:StoreHighlight[] };

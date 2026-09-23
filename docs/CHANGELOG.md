@@ -8,6 +8,26 @@ value involved.
 
 ---
 
+## Nineteen brand marks were carrying their own empty margins
+
+İşbir Yatak's file is 250 pixels wide and the logo inside it is 182, all of the empty space on
+the right and none on the left -- so every frame that showed it centred the *file* and the
+drawing sat shoved to one side. Measured across all of them, nineteen marks carry a margin
+worth cropping; Konfor Yatak's was 1080x1080 holding a drawing 1021x107.
+
+They are cropped to what is drawn on them. The frames have padding of their own, so nothing
+was kept.
+
+**And a mark is no longer stretched across a store's header.** It is an identifier, not a
+photograph of the shop: most of these files are a few hundred pixels wide, and a header nine
+hundred across was enlarging them four or five times over, which is the blur that was
+reported. Held to 380px and centred, the same file is drawn at or near its own resolution.
+
+Twenty of the thirty-nine marks are still under 600px in their source, which no amount of
+layout fixes -- those want replacing from the brands' own sites.
+
+---
+
 ## A shop that calls itself Yataş now wears the Yataş mark
 
 The mark on a store page normally arrives with the shop, because the shop came out of a

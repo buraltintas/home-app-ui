@@ -1425,8 +1425,13 @@ svg{stroke-width:2}
    it -- drawn the other way it reads as a mistake rather than as a logo. */
 .is-brand-mark{background:var(--surface);border:1px solid var(--line)}
 .is-brand-mark img,img.is-brand-mark{object-fit:contain!important;padding:10%;background:var(--surface)}
-.store-hero-photo.is-brand-mark{background:var(--surface)}
-.store-hero-photo.is-brand-mark img{padding:6% 12%}
+/* A chain's mark is an identifier, not a photograph of the shop, so it is drawn at the size
+   an identifier needs rather than stretched across the whole hero. That is also what keeps it
+   sharp: most of these files are a few hundred pixels wide -- İşbir Yatak is 182 -- and a
+   header nine hundred pixels across was enlarging them four or five times over. Held to 380px
+   and centred, the same file is drawn at or near its own resolution. */
+.store-hero-photo.is-brand-mark{background:var(--surface);display:grid;place-items:center}
+.store-hero-photo.is-brand-mark img{position:static;width:auto;height:auto;max-width:min(380px,62%);max-height:58%;padding:0}
 /* The frame stops under "puan detayını gör" and moves down when the detail opens, instead of
    standing at a fixed height with empty card below the last line. */
 /* One column, always. The table splits into two when the window is wider than 600px -- which

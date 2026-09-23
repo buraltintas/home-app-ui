@@ -17,10 +17,10 @@ import {homeSignalsCopy} from '@/content/home';
 
 function HighlightLink({item,locale,label,metric}:{item:StoreHighlight;locale:Locale;label:string;metric:string}){
   const place=[item.district,item.city].filter(Boolean).join(', ');
-  const photo=storePhotoURL(item.photo,520,item.name);
+  const photo=storePhotoURL(item.photo,520,item.name,item.categories);
   return <Link className="store-highlight" href={localePath(locale,storePath(item))}>
     {photo
-      ?<Image className={`store-highlight-photo${isBrandMark(item.photo,item.name)?' is-brand-mark':''}`} src={photo} width={72} height={72} alt="" unoptimized/>
+      ?<Image className={`store-highlight-photo${isBrandMark(item.photo,item.name,item.categories)?' is-brand-mark':''}`} src={photo} width={72} height={72} alt="" unoptimized/>
       :<span className="store-highlight-photo store-highlight-photo-empty" aria-hidden="true">{item.name.trim().charAt(0)}</span>}
     <span className="store-highlight-copy">
       <span>{label}</span>
@@ -52,13 +52,13 @@ export async function HomeDiscoverySignals({locale}:{locale:Locale}){
     {recent.length>0&&<div className="home-signal-recent">
       <h3>{copy.recent} <small>{copy.recentIntro}</small></h3>
       <ul>{recent.map(store=>{
-        const photo=storePhotoURL(store.photo,160,store.name);
+        const photo=storePhotoURL(store.photo,160,store.name,store.categories);
         // How many people, not how many reviews. One person who wrote fourteen times is
         // one opinion, and the page says so rather than counting to fourteen.
         const people=store.reviewer_count??0;
         return <li key={store.id}><Link href={localePath(locale,storePath(store))}>
           {photo
-            ?<Image className={`home-recent-mark${isBrandMark(store.photo,store.name)?' is-brand-mark':''}`} src={photo} width={40} height={40} alt="" unoptimized/>
+            ?<Image className={`home-recent-mark${isBrandMark(store.photo,store.name,store.categories)?' is-brand-mark':''}`} src={photo} width={40} height={40} alt="" unoptimized/>
             :<span className="home-recent-mark is-empty" aria-hidden="true">{store.name.trim().charAt(0)}</span>}
           <span className="home-recent-copy">
             <strong>{store.name}</strong>
