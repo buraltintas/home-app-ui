@@ -8,7 +8,7 @@ import type { Coordinates, Locale, LocationResult, Me, SearchHistory, SearchResp
 import { SaveStoreButton } from './SaveStoreButton';
 import { ResultCriteria } from './ResultCriteria';
 import { AddStoreSheet } from './AddStoreSheet';
-import { storePhotoURL } from '@/lib/store-photo';
+import { brandMarkForName,storePhotoURL } from '@/lib/store-photo';
 import Image from 'next/image';
 import { useI18n } from '@/i18n/I18nProvider';
 import { localePath, stripLocale } from '@/lib/site';
@@ -107,7 +107,7 @@ function Result({item,onSelect,saved,viewerPosition,reviewRadiusMeters}:{item:Se
   // The mark of the chain this shop belongs to, drawn in a frame of its own. A shop that is
   // nobody's branch has no mark to show and shows its initial instead -- in the same frame,
   // so the list keeps one shape whether or not there is a picture to put in it.
-  const mark=item.brand_slug?storePhotoURL({source:'brand',brand_slug:item.brand_slug},320):undefined;
+  const mark=item.brand_slug?storePhotoURL({source:'brand',brand_slug:item.brand_slug},320):brandMarkForName(item.name);
   const card=<div className="search-result">
     <div className="result-photo">{mark
       ?<Image className="result-photo-mark is-brand-mark" src={mark} width={184} height={184} alt="" unoptimized/>

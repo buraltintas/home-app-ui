@@ -8,6 +8,43 @@ value involved.
 
 ---
 
+## A shop that calls itself Yataş now wears the Yataş mark
+
+The mark on a store page normally arrives with the shop, because the shop came out of a
+chain's own published list and is therefore one of its branches. A dealer is not on that list
+-- chains publish their branches, not the shops that stock them -- so it arrived some other
+way, had no chain attached, and had nothing to show but its initial. Two shops under the same
+sign, one with the sign and one without. Measured on Yataş: their published list is 196 shops
+in seven cities, and the shop that prompted this is in Antalya.
+
+Wearing a mark and being a branch are different claims, and this is only the first: nothing
+here touches the chain a shop belongs to, so a dealer still does not appear on that chain's
+pages or in its count.
+
+The match is the shop's **whole** name against a chain's name or the first word of it, which
+is the line between "this shop is called Yataş" and "this shop has the word yataş somewhere in
+a long trade title" -- and the second is not evidence of anything. Run over a thousand-store
+sample it marks 26, every one of them a bare brand name: Bellona, İDAŞ, Mondi, Kelebek,
+İstikbal, Taç. Anything looser puts somebody else's trademark on a shop that merely shares a
+word, which this product has already got wrong once.
+
+## An empty hand's width of white inside the save prompt
+
+Measured on a desktop: the box was 316px wide and 110px tall, and the two things in it were
+186px and 188px -- both at the left, with 106px of nothing down the right-hand side.
+
+316px is the right width on a phone, where it is very nearly the whole screen and the sentence
+has to sit above the button. On a desktop the two still stacked, because there is no room for
+them side by side in 316px, and the box stayed 316 while the widest line in it was 188. That
+gap is what a fixed width does when the content was measured against a different one: the
+phone case had media queries written for it, the wide case had none, so the wide case was
+getting the phone's number by default.
+
+Above 720px the row does not wrap and the box is the width of the row: 436 by 76, and the
+white is gone. It stays where it was, centred at the bottom.
+
+---
+
 ## A store page an hour behind the reviews on it
 
 Three complaints, one cause. A shop said seventeen reviews when it had twenty; the newest

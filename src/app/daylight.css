@@ -799,6 +799,18 @@ svg{stroke-width:2}
 /* The phone override was still the full width of the screen, which is why narrowing the
    base rule changed nothing on a phone -- the only place anybody looks at it. */
 @media(max-width:720px){.timed-nudge{bottom:calc(88px + env(safe-area-inset-bottom));width:min(316px,calc(100% - 56px))}.store-page .timed-nudge{bottom:calc(164px + env(safe-area-inset-bottom))}}
+/* One line on a wide screen, and the box as wide as that line.
+   316px is the right width on a phone, where it is very nearly the whole screen and the
+   sentence has to sit above the button. Given the same 316px on a desktop the two still
+   stacked -- there is no room for them side by side -- and the box stayed 316 while the
+   widest of them was 188, leaving a hand's width of empty white down its right-hand side.
+   That gap is what a fixed width does when the content was measured against a different one.
+   Wide screens have the room, so the row does not wrap and the box is the row. */
+@media(min-width:721px){
+  .store-save-dock,.timed-nudge{flex-wrap:nowrap;width:max-content;max-width:calc(100vw - 56px)}
+  .store-save-dock>span,.timed-nudge-copy{white-space:normal}
+  .store-save-dock .button{flex:none;white-space:nowrap}
+}
 @media(max-width:340px){.store-save-dock .button{width:100%}}
 /* Nothing moves for a reader who has asked for that, leaving included: without the second
    selector the departure animation outranked this rule and played anyway. */

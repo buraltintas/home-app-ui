@@ -38,10 +38,10 @@ export function StoreNeighbours({stores,locale,reviewWord}:{stores:NearbyStore[]
   return <section className="store-neighbours" aria-labelledby="store-neighbours-title">
     <header><h2 id="store-neighbours-title">{words.title}</h2><p>{words.intro}</p></header>
     <ul>{stores.map(store=>{
-      const photo=storePhotoURL(store.photo,160);
+      const photo=storePhotoURL(store.photo,160,store.name);
       return <li key={store.id}><Link href={localePath(locale,storePath(store))}>
         {photo
-          ?<Image className={`store-neighbour-mark${isBrandMark(store.photo)?' is-brand-mark':''}`} src={photo} width={48} height={48} alt="" unoptimized/>
+          ?<Image className={`store-neighbour-mark${isBrandMark(store.photo,store.name)?' is-brand-mark':''}`} src={photo} width={48} height={48} alt="" unoptimized/>
           :<span className="store-neighbour-mark is-empty" aria-hidden="true">{store.name.trim().charAt(0)}</span>}
         <span className="store-neighbour-copy">
           <strong>{store.name}</strong>

@@ -71,7 +71,7 @@ export function storeJsonLd(store:Store,posts:Post[]):JsonLd{
   // machine-readable copy was missing them.
   if(store.phone)data.telephone=store.phone;
   if(store.website)data.sameAs=[store.website];
-  const image=storePhotoURL(store.photo);
+  const image=storePhotoURL(store.photo,1200,store.name);
   if(image)data.image=[image];
   // Opening hours are not published here any more: they came from a provider this product
   // no longer uses, and inventing them from nothing would be worse than their absence. The

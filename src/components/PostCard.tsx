@@ -119,10 +119,10 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
   const place=[post.store_district,post.store_city].filter(Boolean).join(', ');
   // Authored review media remains primary. Without it, the card uses the exact same store
   // cover as search and detail; that fallback opens the store, where Google credit is shown.
-  const storePhoto=storePhotoURL(post.store_photo,960);
+  const storePhoto=storePhotoURL(post.store_photo,960,post.store_name);
   // The same mark the search results and the saved list draw, at the same size. Small, because
   // it identifies the shop rather than showing it.
-  const storeMark=storePhotoURL(post.store_photo,320);
+  const storeMark=storePhotoURL(post.store_photo,320,post.store_name);
   const hasPhoto=Boolean(!onStorePage&&!owned&&storePhoto);
   // A date without its year answers "which day" and not "which year", and a review list
   // that goes back further than twelve months needs both.

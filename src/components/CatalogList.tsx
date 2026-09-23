@@ -13,10 +13,10 @@ import type {Locale} from '@/lib/types';
 // on two pages of the same site is the kind of difference nobody intends and everybody sees.
 export function CatalogList({items,locale,reviews,none}:{items:CatalogEntry[];locale:Locale;reviews:string;none:string}){
   return <ul className="catalog-list">{items.map(store=>{
-    const photo=storePhotoURL(store.photo,160);
+    const photo=storePhotoURL(store.photo,160,store.name);
     return <li key={store.id}><Link href={localePath(locale,storePath(store))}>
       {photo
-        ?<Image className={`catalog-mark${isBrandMark(store.photo)?' is-brand-mark':''}`} src={photo} width={56} height={56} alt="" unoptimized/>
+        ?<Image className={`catalog-mark${isBrandMark(store.photo,store.name)?' is-brand-mark':''}`} src={photo} width={56} height={56} alt="" unoptimized/>
         :<span className="catalog-mark is-empty" aria-hidden="true">{store.name.trim().charAt(0)}</span>}
       <span className="catalog-copy">
         <strong>{store.name}</strong>

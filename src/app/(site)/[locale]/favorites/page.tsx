@@ -117,9 +117,9 @@ export default function Page(){
     {/* The review action sits outside the link, not inside it: an anchor cannot hold
         another anchor, and starting a review is not a step on the way to opening the
         store's page. It is the same control, and the same wording, the store page uses. */}
-    {shown.length?<ul className="favorites-list">{shown.map(store=>{const photo=storePhotoURL(store.photo,320);return <li key={store.id}>
+    {shown.length?<ul className="favorites-list">{shown.map(store=>{const photo=storePhotoURL(store.photo,320,store.name);return <li key={store.id}>
       <Link href={localePath(locale,`/stores/${store.id}`)} prefetch={false}>
-        {photo?<Image className={`favorite-store-photo${isBrandMark(store.photo)?' is-brand-mark':''}`} src={photo} width={160} height={120} alt="" unoptimized/>:<div className="favorite-store-photo is-empty" aria-hidden="true">{store.name.trim().charAt(0)}</div>}
+        {photo?<Image className={`favorite-store-photo${isBrandMark(store.photo,store.name)?' is-brand-mark':''}`} src={photo} width={160} height={120} alt="" unoptimized/>:<div className="favorite-store-photo is-empty" aria-hidden="true">{store.name.trim().charAt(0)}</div>}
         <div>{/* Said before the name, because it is the reason this list is two lists. Which of
                  the two counts a shop belongs to was only legible by opening the other tab and
                  seeing whether it was there as well. */}
