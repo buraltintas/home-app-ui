@@ -8,6 +8,31 @@ value involved.
 
 ---
 
+## Half the site's traffic was crawlers that cannot send anybody to a shop
+
+The database is billed by the hour it stays awake and suspends itself after five quiet
+minutes. Over a full day it never got five quiet minutes: 288 five-minute windows out of
+288 carried a request. That is what the bill was, and no scheduled job inside the API could
+have caused it -- a timer only matters if there is a gap for it to sit in.
+
+Counting a day of requests said who was asking. Of 18,266, about 9,400 came from named
+crawlers, and they rendered 4,141 of the 6,647 store pages served: SemrushBot alone made
+4,685 requests, then PetalBot, AhrefsBot, Amazonbot and Meta's training crawler. Googlebot
+made 100 and Bingbot 117.
+
+They are disallowed now. The line is what a crawl is for: a search engine, or an agent that
+quotes a source to somebody, can put a shop in front of a reader and stays. A backlink
+suite sells our own pages back to us as a report, and a training crawl quotes nobody.
+Replaying last night's log without them leaves eight gaps of five to fifteen minutes in
+three and a half hours -- about forty minutes the database can spend asleep, where today it
+has none.
+
+What this costs, plainly: we disappear from the link graphs those tools sell, so a backlink
+or rank report bought from Semrush or Ahrefs will show less of this site, and Amazon's and
+Huawei's indexes and Meta's training set lose it. No search engine that sends readers is
+affected and no page changed. AI assistants that cite a source were left alone deliberately;
+whether to keep them is a product decision, not a hosting one.
+
 ## Nineteen brand marks were carrying their own empty margins
 
 İşbir Yatak's file is 250 pixels wide and the logo inside it is 182, all of the empty space on
