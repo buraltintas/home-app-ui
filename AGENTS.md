@@ -115,6 +115,29 @@ to the API, so anything that reads the catalogue at build time -- `generateStati
 `generateSitemaps`, a prerendered route -- either fails the build or bakes in an empty
 answer. Read the catalogue per request.
 
+## A route's `revalidate` is a ceiling, not a setting
+
+The store page was told to cache for a day and kept caching for an hour. Next gives a route
+the *shortest* revalidate of everything rendered into it, and three reads on that page were
+still asking for the default hour -- so the declaration on the route did nothing and the
+work looked done.
+
+It says so out loud, which is the only reason this was caught:
+
+```bash
+curl -s -o /dev/null -D - https://bosagezme.com/stores/<slug> | grep -i cache-control
+# s-maxage=<the number actually in force>
+```
+
+Check that header after changing a cache lifetime. And when a page declares its own life,
+pass it to the fetches it makes rather than leaving them on the shared default -- one read
+on the shortest default silently sets the lifetime for the whole page.
+
+A second half to the same rule: a long lifetime is only honest if everything that changes
+the page drops it. Before lengthening one, list the things that can change what the page
+says and check each of them actually invalidates. The hour was hiding a deleted review that
+stayed on a shop's public page, because deleting one never dropped anything.
+
 ## Keep the log
 
 Every change that a person would want explained later goes in `docs/CHANGELOG.md`, newest
