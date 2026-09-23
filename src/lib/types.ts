@@ -9,7 +9,7 @@ export type CriteriaAverages = { review_count:number;availability:number;value:n
 export type Post = {
   id: string; user_id: string; store_id: string; text: string; content_language?: Locale; rating: number;
   visit_verified: true; distance_meters: number; store_distance_meters?: number; created_at: string;
-  display_name: string; avatar_url: string; store_name: string; store_city: string; store_district: string; store_photo?: StoredPhoto;
+  display_name: string; avatar_url: string; store_name: string; store_slug?: string; store_city: string; store_district: string; store_photo?: StoredPhoto;
   media: MediaAsset[]; like_count: number; comment_count: number; viewer_has_liked: boolean;
   viewer_follows_author: boolean; viewer_has_favorited_store: boolean; author_level: number;
   // Absent on reviews written before the eight criteria existed.

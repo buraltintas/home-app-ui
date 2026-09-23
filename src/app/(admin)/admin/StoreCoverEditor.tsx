@@ -4,12 +4,13 @@ import Image from 'next/image';
 import {useRouter} from 'next/navigation';
 import {ChangeEvent,useRef,useState} from 'react';
 import {apiFetch} from '@/lib/api-client';
+import {refreshStorePage} from '@/lib/store-cache';
 import type {MediaUpload} from '@/lib/types';
 
 const allowed=new Set(['image/jpeg','image/png','image/webp']);
 const maxBytes=10*1024*1024;
 
-export function StoreCoverEditor({storeId,initialMediaId}:{storeId:string;initialMediaId?:string}){
+export function StoreCoverEditor({storeId,storeSlug,initialMediaId}:{storeId:string;storeSlug?:string;initialMediaId?:string}){
   const router=useRouter();
   const input=useRef<HTMLInputElement>(null);
   const [mediaId,setMediaId]=useState(initialMediaId);
@@ -35,6 +36,9 @@ export function StoreCoverEditor({storeId,initialMediaId}:{storeId:string;initia
       const published=await apiFetch(`/api/proxy/admin/stores/${storeId}/cover`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({media_id:id})});
       if(!published.ok)throw new Error();
       setMediaId(id);
+      // The shop's own page is cached for a day and this is its hero image, so the page is
+      // dropped rather than left showing the picture that was just replaced.
+      await refreshStorePage(storeId,storeSlug).catch(()=>undefined);
       router.refresh();
     }catch{setError('Görsel yüklenemedi. Tekrar deneyin.');}
     finally{setBusy(false);}
@@ -47,6 +51,9 @@ export function StoreCoverEditor({storeId,initialMediaId}:{storeId:string;initia
       const response=await apiFetch(`/api/proxy/admin/stores/${storeId}/cover`,{method:'DELETE'});
       if(!response.ok)throw new Error();
       setMediaId(undefined);
+      // The shop's own page is cached for a day and this is its hero image, so the page is
+      // dropped rather than left showing the picture that was just replaced.
+      await refreshStorePage(storeId,storeSlug).catch(()=>undefined);
       router.refresh();
     }catch{setError('Görsel kaldırılamadı. Tekrar deneyin.');}
     finally{setBusy(false);}

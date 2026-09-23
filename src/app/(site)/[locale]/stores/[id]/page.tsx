@@ -34,7 +34,7 @@ type Props={params:Promise<{id:string;locale:string}>};
 // headers is what makes a page dynamic, and what it would have read is one reader's view.
 // Everything that does differ per reader is read in the browser after the page arrives:
 // whether this reader saved the shop, and which of its reviews they liked.
-// A store page is the same page for everybody, so it is built once and served for an hour
+// A store page is the same page for everybody, so it is built once and served from cache
 // rather than assembled from two backend round trips on every view.
 //
 // Three things had to be true first, and now are. The locale comes from the address rather
@@ -44,12 +44,27 @@ type Props={params:Promise<{id:string;locale:string}>};
 // would have read is one reader's view. And everything that does differ per reader is read
 // in the browser after the page arrives -- whether this reader saved the shop, and which of
 // its reviews they liked.
-export const revalidate=3600;
+// An hour, measured, was close to no cache at all. In a day of traffic only 9% of store
+// page requests were for an address already asked for that day, and once the crawlers that
+// give nothing back were turned away, 5%: a crawl walks distinct addresses, and at the rate
+// the remaining ones move, a given shop is asked for again about every eighteen days. An
+// hour expires long before any of that, so nearly every request rendered the page again and
+// went to the database for it.
+//
+// A day is what the staleness can honestly carry. Everything that changes a store page and
+// can be seen from this application now drops it on the spot -- a review written, a review
+// deleted, a cover image replaced -- so the day is only the ceiling for a change made
+// somewhere this application cannot hear about, such as straight in the catalogue.
+//
+// Longer than a day would convert more of those repeats, and is worth revisiting once the
+// catalogue can announce its own edits. Until then a day is the point where the saving stops
+// being worth what it risks showing.
+export const revalidate=86400;
 
 // Nothing is prebuilt: eight and a half thousand shops in four languages is a build nobody
 // wants to wait for, and the pages people open are a small fraction of them. What this
 // declares is that the route may be cached at all -- the first visitor to a shop pays for
-// rendering it and everybody after them, for the next hour, does not.
+// rendering it and everybody after them, until it is dropped or expires, does not.
 export function generateStaticParams(){return [] as {id:string}[];}
 
 // The page's own name, said the same way here as on the page itself: a link that renames

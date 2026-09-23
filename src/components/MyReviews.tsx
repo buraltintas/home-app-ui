@@ -1,6 +1,7 @@
 'use client';
 
 import {useEffect,useState} from 'react';
+import {refreshStorePage} from '@/lib/store-cache';
 import {PostCard} from '@/components/PostCard';
 import {apiFetch} from '@/lib/api-client';
 import type {Locale,Post} from '@/lib/types';
@@ -42,5 +43,11 @@ export function MyReviews({userId,locale}:{userId:string;locale:Locale}){
   return <div className="profile-review-list">
     {posts.length>=LIMIT&&<p className="profile-reviews-capped" role="note">{copy[locale].capped(LIMIT)}</p>}
     {posts.map(post=>
-    <PostCard key={post.id} post={post} owned onDeleted={()=>setPosts(current=>(current??[]).filter(p=>p.id!==post.id))}/>)}</div>;
+    <PostCard key={post.id} post={post} owned onDeleted={()=>{
+      setPosts(current=>(current??[]).filter(p=>p.id!==post.id));
+      // The review was also on the shop's own page, which is cached for a day. Deleting it
+      // here and leaving it there is the worse half of the same act, so that page is
+      // dropped too -- under both addresses it answers to.
+      void refreshStorePage(post.store_id,post.store_slug).catch(()=>undefined);
+    }}/>)}</div>;
 }

@@ -63,7 +63,7 @@ export default async function Page({searchParams}:{searchParams:Promise<{q?:stri
         <tbody>
           {result.data.rows.map(store=><tr key={store.id}>
             <td>{store.name}</td>
-            <td><StoreCoverEditor storeId={store.id} initialMediaId={store.cover_media_id}/></td>
+            <td><StoreCoverEditor storeId={store.id} storeSlug={store.slug} initialMediaId={store.cover_media_id}/></td>
             <td>{store.city}</td>
             <td>{store.review_count}</td>
             <td>{store.review_count?store.average_rating.toFixed(1):'—'}</td>

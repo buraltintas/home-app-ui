@@ -74,6 +74,10 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
     window.setTimeout(()=>{setRuleOpen(false);setRuleLeaving(false);},520);
   };
 
+  // The shop answers to its slug and to its uuid, and its page names the slug as canonical.
+  // Linking by uuid pointed every review on the site at the copy rather than the original.
+  const storeRef=post.store_slug||post.store_id;
+
   const remove=async()=>{
     if(removing||!window.confirm(t('confirmDeleteReview')))return;
     setRemoving(true);setRemoveFailed(false);
@@ -106,7 +110,7 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
   // Feed shares lead to the store, not to a person's review. This keeps private-looking
   // review copy and the author's name out of messaging previews and matches store sharing.
   const share=async()=>{
-    const url=new URL(localePath(locale,`/stores/${post.store_id}`),window.location.origin).toString();
+    const url=new URL(localePath(locale,`/stores/${storeRef}`),window.location.origin).toString();
     const payload={title:post.store_name,text:'Boşa Gezme! Bize Sor.',url};
     try{
       if(navigator.share){await navigator.share(payload);return;}
@@ -145,7 +149,7 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
           the name was the only thing identifying the shop, and a name is what you read second
           -- the mark is what you recognise. A shop that is nobody's branch shows its initial
           in the same frame, so the list keeps one shape down its length. */}
-      {!onStorePage&&<Link href={localePath(locale,`/stores/${post.store_id}`)} className="post-store">
+      {!onStorePage&&<Link href={localePath(locale,`/stores/${storeRef}`)} className="post-store">
         <span className="post-store-mark">{storeMark
           ?<Image className="result-photo-mark is-brand-mark" src={storeMark} width={184} height={184} alt="" unoptimized/>
           :<span className="result-photo-empty" aria-hidden="true"><span>{post.store_name.trim().charAt(0).toLocaleUpperCase(locale)}</span></span>}</span>
@@ -154,7 +158,7 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
     </div>
 
     {storePhoto&&!onStorePage&&!owned
-      ?<Link href={localePath(locale,`/stores/${post.store_id}`)} className="post-photo"><Image src={storePhoto} fill sizes="(max-width: 760px) 100vw, 760px" alt={post.store_name} unoptimized/></Link>
+      ?<Link href={localePath(locale,`/stores/${storeRef}`)} className="post-photo"><Image src={storePhoto} fill sizes="(max-width: 760px) 100vw, 760px" alt={post.store_name} unoptimized/></Link>
       :!onStorePage&&!owned?<Link href={localePath(locale,`/reviews/${post.id}`)} className="post-photo is-empty"><span aria-hidden="true">{post.store_name.slice(0,2).toLocaleUpperCase(locale)}</span><small>{t('noPhoto')}</small></Link>:null}
 
     <div className="post-details">

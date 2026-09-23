@@ -8,6 +8,31 @@ value involved.
 
 ---
 
+## A store page cached for an hour was close to not cached at all
+
+Measured over a day of traffic: only 9% of store page requests were for an address already
+asked for that day, and 5% once the crawlers that give nothing back are excluded. A crawl
+walks distinct addresses, and at the rate the remaining ones move a given shop comes up
+again about every eighteen days. An hour expires long before any repeat, so nearly every
+request rendered the page and went to the database for it.
+
+It is a day now. What made a day affordable is the other half of this change: everything
+that alters a store page and can be seen from the web application drops that page on the
+spot, under both addresses it answers to. A review written already did. A review deleted did
+not -- so somebody could delete their review and have it stay on the shop's public page
+until the cache expired. An admin replacing a shop's cover image did not either. Both do now.
+
+Dropping the page by both addresses needed the review card to know the shop's slug, which it
+did not. The API now says it (`store_slug`, additive), and the same field fixes something
+else that was quietly wrong: every review on the site linked to its shop by uuid, which is a
+second address for a page whose canonical is the slug. Those links now point at the original
+rather than the copy.
+
+Honest limit: a day converts the repeats that fall inside a day, which the measurement puts
+at about 5% of store page requests. Going longer would convert more and is worth revisiting
+once the catalogue can announce its own edits; until then a day is where the saving stops
+being worth what it risks showing.
+
 ## Half the site's traffic was crawlers that cannot send anybody to a shop
 
 The database is billed by the hour it stays awake and suspends itself after five quiet
