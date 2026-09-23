@@ -273,7 +273,7 @@ function ReviewWizard({storeId}:{storeId:string}){
   // Whatever the store page would show in its frame: an administrator's photograph first,
   // then the mark of the chain, then nothing -- the backend decides, and this screen only
   // draws what it decided.
-  const photo=storePhotoURL(store.store.photo,320,store.store.name);
+  const photo=storePhotoURL(store.store.photo,320,store.store.name,store.store.categories);
 
   const steps=[[verification?t('verifyLocationDone'):t('verifyLocation'),MapPin],[t('criteriaTitle'),Star],[t('purchaseTitle'),ShoppingBag],[t('reviewSummaryTitle'),Check]] as const;
   return <main className="create-page">
@@ -286,7 +286,7 @@ function ReviewWizard({storeId}:{storeId:string}){
         in front of the right door. */}
     <div className="review-store">
       <div className="result-photo">{photo
-        ?<Image className={`result-photo-mark${isBrandMark(store.store.photo,store.store.name)?' is-brand-mark':''}`} src={photo} width={184} height={184} alt="" unoptimized/>
+        ?<Image className={`result-photo-mark${isBrandMark(store.store.photo,store.store.name,store.store.categories)?' is-brand-mark':''}`} src={photo} width={184} height={184} alt="" unoptimized/>
         :<div className="result-photo-empty" aria-hidden="true"><span>{store.store.name.trim().charAt(0).toLocaleUpperCase(locale)}</span></div>}</div>
       <div className="result-identity">
         <p className="eyebrow">{t('reviewFor')}</p>

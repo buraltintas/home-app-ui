@@ -176,7 +176,7 @@ export async function generateMetadata({params}:Props):Promise<Metadata>{
   ].join(' ');
   // Every store link shared anywhere previewed as the generic homepage card, because
   // this page set no openGraph of its own and inherited the root layout's.
-  const image=storePhotoURL(store.photo,1200,store.name);
+  const image=storePhotoURL(store.photo,1200,store.name,store.categories);
   return {title,description,
     alternates:canonicalFor(locale,storePath(store)),
     openGraph:{type:'website',url:storePath(store),title,description,...(image?{images:[{url:image,width:1200,height:630,alt:store.name}]}:{})},
@@ -235,7 +235,7 @@ export default async function Page({params}:Props){
   if(store.slug&&id!==store.slug)permanentRedirect(storePath(store));
   // A bare personal name under a photograph of a shop reads as the shop's name, so the
   // credit says what it is. The provider requires it to be shown either way.
-  const photo=storePhotoURL(store.photo,1200,store.name);
+  const photo=storePhotoURL(store.photo,1200,store.name,store.categories);
   const contribution=contributionCopy[locale];
   const scores=scoreCopy[locale];
   const correction=correctionCopy[locale];
@@ -264,7 +264,7 @@ export default async function Page({params}:Props){
           nothing about it, and the only thing that fixes it is somebody going there and
           taking a picture -- so the space asks for exactly that. */}
       {photo
-        ?<figure className={`store-hero-photo${isBrandMark(store.photo,store.name)?' is-brand-mark':''}`}><Image src={photo} fill style={{objectFit:isBrandMark(store.photo,store.name)?'contain':'cover'}} sizes="100vw" priority unoptimized alt=""/></figure>
+        ?<figure className={`store-hero-photo${isBrandMark(store.photo,store.name,store.categories)?' is-brand-mark':''}`}><Image src={photo} fill style={{objectFit:isBrandMark(store.photo,store.name,store.categories)?'contain':'cover'}} sizes="100vw" priority unoptimized alt=""/></figure>
         :<div className="store-hero-photo store-hero-empty"><span className="store-hero-initial" aria-hidden="true">{store.name.trim().charAt(0)}</span><p>{t.noPhotoYet}</p><Link className="button secondary" href={localePath(locale,`/create?store=${store.id}`)}>{t.addFirstPhoto}</Link></div>}
     </section>
     <section className="store-overview">

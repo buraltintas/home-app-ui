@@ -21,12 +21,22 @@ Wearing a mark and being a branch are different claims, and this is only the fir
 here touches the chain a shop belongs to, so a dealer still does not appear on that chain's
 pages or in its count.
 
-The match is the shop's **whole** name against a chain's name or the first word of it, which
-is the line between "this shop is called Yataş" and "this shop has the word yataş somewhere in
-a long trade title" -- and the second is not evidence of anything. Run over a thousand-store
-sample it marks 26, every one of them a bare brand name: Bellona, İDAŞ, Mondi, Kelebek,
-İstikbal, Taç. Anything looser puts somebody else's trademark on a shop that merely shares a
-word, which this product has already got wrong once.
+The match comes in two strengths, because the evidence does.
+
+A shop whose **whole name is a chain's whole name** has said who it is: "Enza Home" is Enza
+Home and there is nothing else it could be. That one stands on its own.
+
+A shop whose name is only the chain's **first word** has said much less, and the catalogue
+proves it: "Cam" sells glassware while Cam Halı makes carpets, "Konfor Mobilya" sells
+furniture while Konfor Yatak makes beds, "Tepe Halı" is not Tepe Home, "Çam Mobilya" is not
+anybody's Cam. Each shares one ordinary Turkish word with a chain and nothing else. So a
+first-word match is allowed only where the shop sells something the chain sells -- corroborated
+by the categories, from the same registry the marks come from. Measured against those five,
+every one of them is now left alone; "Yataş" and "Özdilek Puffy Yataş Ev Tekstili" are marked,
+because furniture and bedding, and home textiles, are what those chains sell.
+
+Where a screen does not know what a shop sells there is no corroboration to be had, so the
+shop keeps its initial there. That is the safe way to be wrong.
 
 ## An empty hand's width of white inside the save prompt
 
