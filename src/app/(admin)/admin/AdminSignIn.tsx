@@ -6,10 +6,15 @@ import {useState} from 'react';
 // no field to prove otherwise, is a dead end -- the visitor had to know to sign in on the
 // public site first.
 //
-// It reuses the ordinary email code endpoints; there is no separate admin credential. An
-// address that is not on the allowlist can complete this form and still see nothing, and
-// the message never distinguishes the two cases: telling somebody "that address exists but
-// is not an administrator" hands them half the answer.
+// There is no separate admin credential -- the same email code, verified the same way. The
+// request for that code is the one thing this form does not share with the public one: this
+// page is reachable by anybody, so asking through the public endpoint meant that typing any
+// address here posted a real code to it, to somebody who has never seen this page.
+//
+// What the visitor is told does not change and must not. An address that is not on the
+// allowlist can complete this form and still see nothing, and the message never
+// distinguishes the two cases: telling somebody "that address exists but is not an
+// administrator" hands them half the answer.
 export function AdminSignIn(){
   const router=useRouter();
   const [email,setEmail]=useState('');
@@ -29,7 +34,7 @@ export function AdminSignIn(){
         // panel should not silently inherit whoever was browsing the site on this machine,
         // and leaving it should not leave an elevated session behind.
         await fetch('/api/auth/logout',{method:'POST'});
-        const response=await fetch('/api/auth/request-code',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email.trim()})});
+        const response=await fetch('/api/auth/request-admin-code',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email.trim()})});
         if(!response.ok)throw new Error();
         setSent(true);
       }else{

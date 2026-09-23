@@ -8,6 +8,20 @@ value involved.
 
 ---
 
+## Typing any address into the admin sign-in posted that person a real code
+
+/admin is a public address and its form called the ordinary sign-in endpoint, so whatever
+address was typed there received a genuine six-digit code -- somebody who has never seen the
+panel, getting a code for it because a stranger typed their address into a page.
+
+The form has its own endpoint now. What a visitor is told is deliberately unchanged: the
+same message for every address, because "that address is not an administrator" tells whoever
+asked which addresses are, and anybody can reach this page. What changed is that an address
+which is not on the allowlist has nothing sent to it and nothing written for it.
+
+Nothing about who may use the panel changed -- that was always enforced on the routes
+themselves, and still is. This is about who receives mail.
+
 ## A store page cached for an hour was close to not cached at all
 
 Measured over a day of traffic: only 9% of store page requests were for an address already
