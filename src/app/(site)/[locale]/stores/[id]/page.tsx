@@ -206,13 +206,13 @@ export default async function Page({params}:Props){
   // Fetched after the store rather than beside it: the id in the URL can be a slug, and
   // asking for neighbours of a slug that turns out not to exist is a wasted round trip on
   // a page that is about to be a 404 anyway.
-  const neighbours=await getNearbyStores(store.id);
+  const neighbours=await getNearbyStores(store.id,6,revalidate);
   // The page this shop belongs to, when there is one: its city and one of its categories.
   // The breadcrumb used to point the city at /discover, which is a search box rather than a
   // place -- it told a reader nothing and gave a crawler nowhere to go. The link is only
   // offered where the catalogue can fill the page behind it.
   // Tolerant on purpose: a store page without its catalogue links is still the store page.
-  const pairs=await getCityCategoriesIfKnown(locale);
+  const pairs=await getCityCategoriesIfKnown(locale,revalidate);
   // Every page this shop belongs to, up to three -- not one page picked as "the" category.
   //
   // Two rules were tried for picking a single one and both were guesses wearing a rule's
@@ -225,7 +225,7 @@ export default async function Page({params}:Props){
   // A shop really does belong to several, so it says several. Largest first, because the
   // broadest name is the one a reader recognises; three, because a row of links stops being
   // a sentence after that.
-  const brandPairs=await getCityBrandsIfKnown(locale);
+  const brandPairs=await getCityBrandsIfKnown(locale,revalidate);
   // The chain's page in this city comes first when there is one, because it is the page
   // somebody looking for this shop most likely wanted: the queries reaching us are "yataş
   // antalya" and "en yakın yataş bayi", not the trade in the abstract.

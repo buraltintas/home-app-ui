@@ -155,14 +155,18 @@ export const getAllStores=cache(async():Promise<StoreIndexEntry[]>=>{
 // A neighbouring shop as the store page lists it. The backend decides what "nearby" and
 // "similar" mean; this is only the shape it answers in.
 export type NearbyStore={id:string;slug:string;name:string;district?:string;city:string;distance_meters:number;average_rating:number;review_count:number;brand_slug?:string;photo?:StoredPhoto};
-export async function getNearbyStores(ref:string,limit=6):Promise<NearbyStore[]>{
+// seconds is the caller's cache life, not a suggestion: Next gives a route the shortest
+// revalidate of everything rendered into it, so a page that declares a day and then reads
+// this with the default hour gets an hour. A page that wants its own life has to say it
+// here too.
+export async function getNearbyStores(ref:string,limit=6,seconds?:number):Promise<NearbyStore[]>{
   if(!UUID.test(ref)&&!STORE_REF.test(ref))return [];
   // Read as nobody in particular: which shops are near this one does not depend on who is
   // asking, so the answer is shared and cached rather than rebuilt per reader.
   //
   // A store page is worth rendering without its neighbours; it is not worth failing over
   // them. Anything that goes wrong here leaves the block out and the page stands.
-  try{return (await publicApi<{items:NearbyStore[]}>(`/v1/stores/${ref}/nearby?limit=${limit}`)).items??[]}catch{return []}
+  try{return (await publicApi<{items:NearbyStore[]}>(`/v1/stores/${ref}/nearby?limit=${limit}`,seconds?{revalidate:seconds}:{})).items??[]}catch{return []}
 }
 
 export const backendOrigin=API_ORIGIN;
@@ -201,14 +205,14 @@ export type CityCategory={city:string;city_slug:string;category_slug:string;cate
 //
 // Throwing gives a 500 instead. A crawler treats that as "come back later", which is the
 // truth, and Next does not cache it.
-export const getCityCategories=cache(async(locale:Locale):Promise<CityCategory[]>=>
-  (await publicApi<{items:CityCategory[]}>('/v1/discovery/city-categories',{locale})).items??[]);
+export const getCityCategories=cache(async(locale:Locale,seconds?:number):Promise<CityCategory[]>=>
+  (await publicApi<{items:CityCategory[]}>('/v1/discovery/city-categories',seconds?{locale,revalidate:seconds}:{locale})).items??[]);
 
 // The same list for callers that only decorate a page with it. A store page shows links to
 // the pages its shop belongs to; not knowing them costs a few links and nothing else, so
 // here the failure really is worth swallowing.
-export const getCityCategoriesIfKnown=cache(async(locale:Locale):Promise<CityCategory[]>=>{
-  try{return await getCityCategories(locale);}catch{return [];}
+export const getCityCategoriesIfKnown=cache(async(locale:Locale,seconds?:number):Promise<CityCategory[]>=>{
+  try{return await getCityCategories(locale,seconds);}catch{return [];}
 });
 
 export type CatalogEntry={id:string;slug:string;name:string;address?:string;district?:string;city:string;average_rating:number;review_count:number;brand_name?:string;brand_slug?:string;category_labels:string[];photo?:StoredPhoto};
@@ -221,11 +225,11 @@ export async function getCityCategoryPage(citySlug:string,categorySlug:string,lo
 // One chain's branches in one city -- the question Search Console says people actually ask.
 export type CityBrand={city:string;city_slug:string;brand_slug:string;brand_name:string;store_count:number};
 // Throws, for the same reason getCityCategories throws.
-export const getCityBrands=cache(async(locale:Locale):Promise<CityBrand[]>=>
-  (await publicApi<{items:CityBrand[]}>('/v1/discovery/city-brands',{locale})).items??[]);
+export const getCityBrands=cache(async(locale:Locale,seconds?:number):Promise<CityBrand[]>=>
+  (await publicApi<{items:CityBrand[]}>('/v1/discovery/city-brands',seconds?{locale,revalidate:seconds}:{locale})).items??[]);
 
-export const getCityBrandsIfKnown=cache(async(locale:Locale):Promise<CityBrand[]>=>{
-  try{return await getCityBrands(locale);}catch{return [];}
+export const getCityBrandsIfKnown=cache(async(locale:Locale,seconds?:number):Promise<CityBrand[]>=>{
+  try{return await getCityBrands(locale,seconds);}catch{return [];}
 });
 
 export type CityBrandPage={city:string;brand_slug:string;brand_name:string;total:number;items:CatalogEntry[]};
