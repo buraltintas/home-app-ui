@@ -36,7 +36,20 @@ export function ReviewRail({children,label}:{children:ReactNode;label:string}){
     const element=rail.current;
     if(!element)return;
     measure();
-    element.addEventListener('scroll',measure,{passive:true});
+    // Once a frame, not once an event.
+    //
+    // A phone fires scroll events far faster than it paints, and every one of them was
+    // reading the row's geometry and then setting React state -- so a single flick queued
+    // dozens of layout reads and dozens of re-renders, each one landing in the middle of the
+    // scroll it was describing. That is what "takılarak akıyor" is: the row is not moving
+    // unevenly, it is being interrupted. Coalescing to one measurement per frame does all
+    // the work the bar needs and none of the work it does not.
+    let frame=0;
+    const onScroll=()=>{
+      if(frame)return;
+      frame=requestAnimationFrame(()=>{frame=0;measure();});
+    };
+    element.addEventListener('scroll',onScroll,{passive:true});
     // The share that fits changes with the width of the window, and with the fonts arriving.
     const observer=new ResizeObserver(measure);
     observer.observe(element);
@@ -44,7 +57,7 @@ export function ReviewRail({children,label}:{children:ReactNode;label:string}){
     // fonts arriving does change it, and so does a photograph loading. Measure once more
     // after the page has settled rather than trusting the first frame.
     const settle=window.setTimeout(measure,600);
-    return()=>{window.clearTimeout(settle);element.removeEventListener('scroll',measure);observer.disconnect();};
+    return()=>{window.clearTimeout(settle);if(frame)cancelAnimationFrame(frame);element.removeEventListener('scroll',onScroll);observer.disconnect();};
   },[measure]);
 
   return <>

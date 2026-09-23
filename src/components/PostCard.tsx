@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import {Bookmark,Heart,MessageCircle,Send,ShoppingBag,Trash2,TriangleAlert} from 'lucide-react';
+import {Bookmark,Heart,MessageCircle,Send,ShoppingBag,Trash2,TriangleAlert,X} from 'lucide-react';
 import {useState} from 'react';
 import type {Post,ReviewCriteriaScores} from '@/lib/types';
 import {useI18n} from '@/i18n/I18nProvider';
@@ -63,6 +63,16 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
   // Which low score is showing its reason. One at a time: the rows are narrow and a card
   // with every note open is a wall of text where a table was.
   const [openNote,setOpenNote]=useState<string|null>(null);
+  // Why a heading is marked, opened from the mark itself. It arrives and leaves on the same
+  // curve and at the same 0.52s as every other sheet in this product; three panels at three
+  // speeds read as three products.
+  const [ruleOpen,setRuleOpen]=useState(false);
+  const [ruleLeaving,setRuleLeaving]=useState(false);
+  const closeRule=()=>{
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){setRuleOpen(false);return;}
+    setRuleLeaving(true);
+    window.setTimeout(()=>{setRuleOpen(false);setRuleLeaving(false);},520);
+  };
 
   const remove=async()=>{
     if(removing||!window.confirm(t('confirmDeleteReview')))return;
@@ -161,7 +171,10 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
             so the badge and the thing bought arrive together or not at all. */}
         {post.purchased&&post.purchased_item&&<>
           <span className="post-purchased"><ShoppingBag aria-hidden="true"/>{t('purchaseMade')}</span>
-          <span className="post-purchased-item"><span>{t('productLabel')}:</span> <strong>{post.purchased_item}</strong></span>
+          {/* "Bought:" is the claim, so it is the badge; what was bought is the shopper's own
+              words and stays in the page's own ink. Colouring both would have made the
+              product name look like a second claim we were standing behind. */}
+          <span className="post-purchased-item"><span className="post-purchased-tag"><ShoppingBag aria-hidden="true"/>{t('purchasedLabel')}:</span> <strong>{post.purchased_item}</strong></span>
         </>}
       </div>
       {/* The score is an average of eight answers, and the eight are what somebody reading
@@ -180,11 +193,16 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
           const note=post.criterion_notes?.[field];
           const shown=openNote===field;
           return <div key={key} className={low?'is-low':undefined}>
-            <dt>{low&&<TriangleAlert className="criterion-warn" aria-hidden="true"/>}<span className="criterion-name">{split.length===2?<>{split[0]}/<span>{split[1]}</span></>:label}</span></dt>
+            <dt><span className="criterion-name">{split.length===2?<>{split[0]}/<span>{split[1]}</span></>:label}</span></dt>
             <dd><RatingStars value={value} showValue={false}/><span>{value}</span></dd>
-            {low&&note&&<div className="criterion-detail">
-              <button type="button" className="criterion-detail-open" aria-expanded={shown} onClick={()=>setOpenNote(shown?null:field)}>{shown?t('hideDetail'):t('seeDetail')}</button>
-              {shown&&<p>{note}</p>}
+            {low&&<div className="criterion-detail">
+              {/* The mark sits beside the way out rather than beside the heading: it is a
+                  note about this score, and the reader meets it at the moment they are
+                  deciding whether to open the reason. It answers for itself now -- a sign
+                  nobody can ask about is a sign that has to be guessed at. */}
+              {note&&<button type="button" className="criterion-detail-open" aria-expanded={shown} onClick={()=>setOpenNote(shown?null:field)}>{shown?t('hideDetail'):t('seeDetail')}</button>}
+              <button type="button" className="criterion-warn-button" aria-label={t('whyWarning')} onClick={()=>setRuleOpen(true)}><TriangleAlert aria-hidden="true"/></button>
+              {shown&&note&&<p>{note}</p>}
             </div>}
           </div>;
         })}</dl>
@@ -207,5 +225,15 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
       {removeFailed&&<p className="form-error" role="alert">{t('deleteReviewFailed')}</p>}
     </div>
     <AuthDialog open={auth} onClose={()=>setAuth(false)}/>
+    {ruleOpen&&<div className={`dialog-backdrop add-store-backdrop${ruleLeaving?' is-leaving':''}`} role="presentation"
+      onMouseDown={event=>{if(event.target===event.currentTarget)closeRule();}}>
+      <div className="add-store-sheet criterion-rule-sheet" role="dialog" aria-modal="true" aria-labelledby={`criterion-rule-${post.id}`}>
+        <header>
+          <h3 id={`criterion-rule-${post.id}`}>{t('lowScoreRuleTitle')}</h3>
+          <button type="button" className="icon-button" aria-label={t('close')} onClick={closeRule}><X aria-hidden="true"/></button>
+        </header>
+        <p>{t('lowScoreRule')}</p>
+      </div>
+    </div>}
   </article>;
 }

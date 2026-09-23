@@ -451,7 +451,9 @@ svg{stroke-width:2}
 .level-note p{margin:0;font-size:14px;line-height:1.45;color:var(--ink-muted)}
 .level-note-action{min-height:40px;padding:0 14px;font-size:14px}
 .store-review-scrollbar{position:relative;height:6px;margin:0 2px 14px;border-radius:var(--r-pill);background:var(--muted);overflow:hidden}
-.store-review-scrollbar>span{position:absolute;top:0;bottom:0;border-radius:var(--r-pill);background:var(--line-strong);transition:left .08s linear}
+/* No transition on the thumb. It is a readout of where the row is, and animating it meant
+   the bar was always a frame or two behind the finger -- which reads as the row dragging. */
+.store-review-scrollbar>span{position:absolute;top:0;bottom:0;border-radius:var(--r-pill);background:var(--line-strong)}
 @media(prefers-reduced-motion:reduce){.store-review-scrollbar>span{transition:none}}
 .store-review-rail>.post-card{display:flex;flex-direction:column;min-width:0;padding:22px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface)}
 .store-review-rail .post-number{display:none}
@@ -501,17 +503,21 @@ svg{stroke-width:2}
    mark is a warning sign because that is what it is -- not an error in the review, a heading
    the shop did badly on -- and the reason sits under it, one tap away, in the words the
    reviewer wrote at the time. */
-/* Before the heading, not after it. After it, the sign sat wherever the label happened to
-   end -- which on a short label is against the stars, and on the narrow cards of a store
-   page is on top of them. Ahead of the words it has one place, and the row reads left to
-   right: something is wrong, here is what, here is the score. */
+/* The mark moved out of the heading and down beside the way in to the reason. It had sat
+   ahead of the words, which put it a long way from the thing it is about; here it is next to
+   "see detail", where a reader meets it exactly when they are deciding whether to open it.
+   And it is a button, because a sign nobody can ask about is a sign that gets guessed at. */
 .post-criteria dt{display:flex;align-items:flex-start;gap:6px}
 .post-criteria .criterion-name{min-width:0}
-.criterion-warn{width:14px;height:14px;margin-top:2px;flex:none;color:var(--warning)}
+.criterion-warn-button{display:inline-grid;place-items:center;width:26px;height:26px;padding:0;border:0;border-radius:var(--r-pill);background:color-mix(in srgb,var(--warning) 14%,transparent);color:var(--warning);cursor:pointer}
+.criterion-warn-button:hover{background:color-mix(in srgb,var(--warning) 24%,transparent)}
+.criterion-warn-button svg{width:15px;height:15px}
 /* The note is a sentence and needs the width of the row, so this row spans both columns --
    and it has to say so twice, because every div inside the table is otherwise a two-column
    row with a rule under it, and that rule was splitting the button from its own note. */
-.post-criteria dl div.is-low>.criterion-detail{display:block;grid-column:1/-1;margin-top:6px;padding:0;border:0}
+.post-criteria dl div.is-low>.criterion-detail{display:flex;align-items:center;flex-wrap:wrap;gap:8px;grid-column:1/-1;margin-top:6px;padding:0;border:0}
+/* The note takes the whole row under the two controls, because it is a sentence. */
+.post-criteria dl div.is-low>.criterion-detail>p{flex:1 0 100%}
 .criterion-detail-open{min-height:32px;padding:0;border:0;background:transparent;color:var(--clay);font-size:12px;font-weight:700;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 .criterion-detail-open:hover{color:var(--ink)}
 .criterion-detail p{margin:4px 0 2px;font-size:13px;line-height:1.45;color:var(--ink);overflow-wrap:anywhere}
@@ -526,7 +532,11 @@ svg{stroke-width:2}
 .post-claims{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin:12px 0 0}
 .post-purchased{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--success)}
 .post-purchased svg{width:14px;height:14px}
-.post-purchased-item{font-size:13px;color:var(--ink-muted)}
+/* The claim is a badge; the thing bought is not. Two green things side by side would have
+   made the shopper's own words look like something this product is vouching for. */
+.post-purchased-item{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:13px;color:var(--ink-muted)}
+.post-purchased-tag{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:var(--r-pill);background:color-mix(in srgb,var(--success) 12%,var(--surface));color:var(--success);font-weight:700}
+.post-purchased-tag svg{width:13px;height:13px}
 .post-purchased-item strong{color:var(--ink);font-weight:650;overflow-wrap:anywhere}
 /* Anchored to the right edge of its own column rather than the left. The column is a fixed
    width, so a row whose stars and number happen to be wider than it -- a larger system text
@@ -1342,6 +1352,13 @@ svg{stroke-width:2}
 .store-correction-sheet h3{font-size:18px;line-height:1.25}
 .store-correction-sheet-intro{margin:0 0 4px;font-size:14px;line-height:1.5;color:var(--ink-muted)}
 .store-correction-sheet .feedback-form{gap:18px}
+/* Half the height it has as a page. On a page the form is the whole screen and a tall box
+   invites a long answer; in a drawer that same box pushed the send button out of sight, and
+   a field nobody can reach the bottom of is worse than a short one. It still grows by hand. */
+.store-correction-sheet .feedback-field textarea{min-height:85px}
+/* The chosen answer wears the product's colour, not black. Ink is what this sheet's text is
+   set in, so a selected chip in ink read as a heading rather than as a choice somebody made. */
+.store-correction-sheet .feedback-kind[data-selected="true"]{background:var(--clay);border-color:var(--clay);color:var(--surface)}
 @media(min-width:701px){.add-store-backdrop{align-items:center}.add-store-sheet{border-radius:var(--r-lg)}}
 
 .result-support{

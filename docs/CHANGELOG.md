@@ -8,6 +8,44 @@ value involved.
 
 ---
 
+## A store page an hour behind the reviews on it
+
+Three complaints, one cause. A shop said seventeen reviews when it had twenty; the newest
+reviews were missing from the row; and a review you had just written did not appear until you
+reloaded. The page is prerendered with `revalidate=3600`, so what everyone was looking at was
+a copy rendered up to an hour before -- correct when it was made and wrong ever since.
+
+Writing a review now drops that one shop's page from the cache. Not the route: revalidating
+`/stores/[id]` as a pattern would clear eleven thousand prerendered pages every time anybody
+reviewed anything. The fetch carries a tag naming the shop, and the tag is dropped for both
+the id and the slug, because the route answers to either and they are two cache entries.
+
+It is `updateTag`, not `revalidateTag`, and the difference is the whole point in this version:
+`revalidateTag` marks the entry stale and serves the stale copy while fetching a fresh one in
+the background, so the reviewer would still have landed on a page without their review on it.
+`updateTag` expires it and the next request waits for the real thing. That is what
+read-your-own-writes needs, and it is only callable from a Server Action -- which is why this
+is an action rather than a route handler.
+
+## The row of reviews was being interrupted, not scrolling unevenly
+
+Removing scroll snapping helped and did not fix it, because the snapping was the smaller half.
+The drawn scrollbar measured the row and set React state **on every scroll event** -- and a
+phone fires those far faster than it paints, so one flick queued dozens of layout reads and
+dozens of re-renders, each landing in the middle of the scroll it was describing. The
+measurement is coalesced to one per frame now, and the thumb lost its transition: it is a
+readout of where the row is, and animating it left the bar a frame behind the finger.
+
+## The store page travelled to the top instead of opening there
+
+It opened part way down and then visibly scrolled up. The correction was already there; what
+was missing is that the document is set to `scroll-behavior:smooth`, which is right when a
+person asks to go somewhere and wrong for undoing an offset that was never meant to apply --
+so the fix animated itself, and the page looked like it was moving on its own. It is instant
+now, and there is nothing to see.
+
+---
+
 ## The profile, laid out as an invitation rather than a form
 
 **Signed out, the page now says what is behind the door.** It was a heading, a sentence and a

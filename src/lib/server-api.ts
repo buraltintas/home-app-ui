@@ -84,10 +84,18 @@ export const getStore=cache(async function getStore(ref:string):Promise<StoreDet
 // what it would fetch is one reader's view of the store. This asks anonymously, tells Next
 // how long the answer may be reused, and leaves everything that differs per reader to be
 // read in the browser afterwards.
+// One name for the cache entry of one shop, so the reader and the writer cannot spell it
+// differently.
+export function storeTag(ref:string){return `store:${ref.toLowerCase()}`;}
+
 export const getPublicStore=cache(async function getPublicStore(ref:string,locale:Locale,seconds:number):Promise<StoreDetail>{
   if(!STORE_REF.test(ref)&&!UUID.test(ref))notFound();
   const response=await fetch(`${API_ORIGIN}/v1/stores/${encodeURIComponent(ref)}`,{
-    next:{revalidate:seconds},
+    // Tagged with the shop it is about, so writing a review can drop this one page rather
+    // than waiting out the hour or dumping eleven thousand of them. The route answers to
+    // either the id or the slug and they are two different cache keys, so the tag is the
+    // reference that was asked for -- whichever it was, the writer knows it too.
+    next:{revalidate:seconds,tags:[storeTag(ref)]},
     headers:{'Content-Type':'application/json','X-BFF-Secret':process.env.BFF_SECRET??'','X-Locale':locale,'Accept-Language':locale},
   });
   if(response.status===404)notFound();

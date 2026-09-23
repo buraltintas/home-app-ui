@@ -12,6 +12,7 @@ import {apiFetch} from '@/lib/api-client';
 import {canUseDeviceLocationWithoutPrompt,locationMessage,requestVisitPosition} from '@/lib/location';
 import {isBrandMark,storePhotoURL} from '@/lib/store-photo';
 import {readOriginSearch} from '@/lib/search-origin';
+import {refreshStorePage} from '@/lib/store-cache';
 import {useScrollTopWhenReady} from '@/lib/scroll-top';
 import type {Locale,StoreDetail,VisitVerification} from '@/lib/types';
 
@@ -253,6 +254,10 @@ function ReviewWizard({storeId}:{storeId:string}){
       if(response.status===401){setSignedIn(false);setAuth(true);return;}
       if(!response.ok)throw new Error();
       sessionStorage.setItem('bosagezme:review-nudge','1');
+      // The page being returned to is cached for an hour, so without this the reviewer
+      // arrives at a copy of the shop rendered before they wrote anything -- their review
+      // missing and the count beside the rating one short.
+      await refreshStorePage(storeId,store?.store.slug).catch(()=>undefined);
       router.push(localePath(locale,`/stores/${storeId}`));
       router.refresh();
     }catch{setSubmitError(t('reviewError'));}

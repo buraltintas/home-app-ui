@@ -18,7 +18,12 @@ export function useScrollTopWhenReady(ready:boolean){
     if(!ready)return;
     const previous=history.scrollRestoration;
     history.scrollRestoration='manual';
-    const top=()=>window.scrollTo(0,0);
+    // Instant, explicitly. The document is set to scroll smoothly, which is right when a
+    // person asks to go somewhere and wrong here: this correction is not a journey, it is
+    // undoing an offset that was never meant to apply. Left to the default, the page opened
+    // part way down and then visibly travelled to the top -- which is what was reported, and
+    // it looked like the page was moving on its own, because it was.
+    const top=()=>window.scrollTo({top:0,left:0,behavior:'instant'});
     top();
     // Framework navigation and bfcache restoration can both apply their saved offset
     // after the first layout effect. Cover those two browser-owned moments, then stop;
