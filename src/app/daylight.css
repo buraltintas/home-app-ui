@@ -1430,8 +1430,12 @@ svg{stroke-width:2}
    sharp: most of these files are a few hundred pixels wide -- İşbir Yatak is 182 -- and a
    header nine hundred pixels across was enlarging them four or five times over. Held to 380px
    and centred, the same file is drawn at or near its own resolution. */
-.store-hero-photo.is-brand-mark{background:var(--surface);display:grid;place-items:center}
-.store-hero-photo.is-brand-mark img{position:static;width:auto;height:auto;max-width:min(380px,62%);max-height:58%;padding:0}
+.store-hero-photo.is-brand-mark{background:var(--surface)}
+/* Centred by the margins rather than by the container, because the image carries its own
+   inline position:absolute and width/height from the framework and a stylesheet cannot take
+   those back. An absolutely positioned box with all four insets at zero and auto margins
+   centres itself inside them, and the max sizes are what it centres. */
+.store-hero-photo.is-brand-mark img{inset:0;margin:auto;max-width:min(380px,62%);max-height:58%;padding:0}
 /* The frame stops under "puan detayını gör" and moves down when the detail opens, instead of
    standing at a fixed height with empty card below the last line. */
 /* One column, always. The table splits into two when the window is wider than 600px -- which

@@ -21,7 +21,13 @@ was kept.
 **And a mark is no longer stretched across a store's header.** It is an identifier, not a
 photograph of the shop: most of these files are a few hundred pixels wide, and a header nine
 hundred across was enlarging them four or five times over, which is the blur that was
-reported. Held to 380px and centred, the same file is drawn at or near its own resolution.
+reported. Held to 380px and centred, the same file is drawn at about twice its own width
+rather than five times it.
+
+Centred by auto margins on all four insets rather than by the container, because the image
+carries `position:absolute` and a full width and height as inline styles from the framework,
+and a stylesheet cannot take those back. The first attempt set the size and left the picture
+in the top-left corner.
 
 Twenty of the thirty-nine marks are still under 600px in their source, which no amount of
 layout fixes -- those want replacing from the brands' own sites.
