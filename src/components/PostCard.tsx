@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import {Bookmark,Heart,MessageCircle,Send,ShoppingBag,Trash2,TriangleAlert,X} from 'lucide-react';
+import {Bookmark,Heart,Info,MessageCircle,Package,Send,ShoppingBag,Trash2,X} from 'lucide-react';
 import {useState} from 'react';
 import type {Post,ReviewCriteriaScores} from '@/lib/types';
 import {useI18n} from '@/i18n/I18nProvider';
@@ -178,7 +178,7 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
           {/* "Bought:" is the claim, so it is the badge; what was bought is the shopper's own
               words and stays in the page's own ink. Colouring both would have made the
               product name look like a second claim we were standing behind. */}
-          <span className="post-purchased-item"><span className="post-purchased-tag"><ShoppingBag aria-hidden="true"/>{t('purchasedLabel')}:</span> <strong>{post.purchased_item}</strong></span>
+          <span className="post-purchased-item"><span className="post-purchased-tag"><Package aria-hidden="true"/>{t('purchasedLabel')}:</span> <strong>{post.purchased_item}</strong></span>
         </>}
       </div>
       {/* The score is an average of eight answers, and the eight are what somebody reading
@@ -205,7 +205,7 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
                   deciding whether to open the reason. It answers for itself now -- a sign
                   nobody can ask about is a sign that has to be guessed at. */}
               {note&&<button type="button" className="criterion-detail-open" aria-expanded={shown} onClick={()=>setOpenNote(shown?null:field)}>{shown?t('hideDetail'):t('seeDetail')}</button>}
-              <button type="button" className="criterion-warn-button" aria-label={t('whyWarning')} onClick={()=>setRuleOpen(true)}><TriangleAlert aria-hidden="true"/></button>
+              <button type="button" className="criterion-warn-button" aria-label={t('whyWarning')} onClick={()=>setRuleOpen(true)}><Info aria-hidden="true"/></button>
               {shown&&note&&<p>{note}</p>}
             </div>}
           </div>;

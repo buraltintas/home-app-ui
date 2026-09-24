@@ -8,6 +8,33 @@ value involved.
 
 ---
 
+## The shop page opened part way down, and the reason was not on the shop page
+
+Reported twice. Measured this time, frame by frame, on a page scrolled to 2200px: tapping a
+shop went 2200, then **760 while the page being left was still on screen**, then 0 once the
+shop arrived. The 760 is the framework scrolling the new route into view before it exists,
+which lands on the old document. On a fast connection that state lasts 50ms; on a phone it
+lasts as long as the fetch, and what a person sees is a page that opened in its middle and
+then moved on its own.
+
+Correcting it on arrival cannot work, which is why the last attempt did not: by then it has
+been seen. A navigation now begins at the top of the page it goes to -- one instant jump on
+the page being left, before anything else happens. Measured again afterwards: 2200, 0, 0.
+
+## A review was written, and the browser showed the page it already had
+
+The server cache was dropped when a review was written, and the review still did not appear
+without a manual refresh. The response says why: `x-nextjs-stale-time: 300`. The router keeps
+its copy of a page for five minutes and serves it on navigation without asking the server --
+and the reviewer had been on that very page a moment before, which is how it got there.
+
+Dropping that copy is `router.refresh()`, and the order was wrong: it ran after the
+navigation, which refreshes a page already on screen. That is precisely the refresh the
+reader was having to do by hand. It runs before now.
+
+Not verified end to end, and worth saying plainly: writing a review needs an account, so
+this is the cause the measurement points at rather than the fix watched working.
+
 ## White goods had no brand marks because it had no brands
 
 Asked as "why is there no photo on any Vestel store, or any Arçelik". The three shops named

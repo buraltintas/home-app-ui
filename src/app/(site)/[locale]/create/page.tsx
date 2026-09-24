@@ -254,12 +254,23 @@ function ReviewWizard({storeId}:{storeId:string}){
       if(response.status===401){setSignedIn(false);setAuth(true);return;}
       if(!response.ok)throw new Error();
       sessionStorage.setItem('bosagezme:review-nudge','1');
-      // The page being returned to is cached for an hour, so without this the reviewer
-      // arrives at a copy of the shop rendered before they wrote anything -- their review
-      // missing and the count beside the rating one short.
+      // Two caches stand between writing a review and seeing it, and dropping one of them
+      // was not enough.
+      //
+      // The first is the server's: the shop's page is prerendered, so without this the
+      // reviewer arrives at a copy rendered before they wrote anything. That is what
+      // refreshStorePage expires, under both addresses the page answers to.
+      //
+      // The second is the one that kept the review invisible after that was fixed, and it
+      // is in the browser. The page comes back with `x-nextjs-stale-time: 300`, so the
+      // router keeps its copy of the shop for five minutes and serves it on navigation
+      // without asking the server at all -- and the reviewer was on that very page a moment
+      // ago, which is how it got there. refresh() is what drops it, and it has to happen
+      // before the navigation rather than after: afterwards it is refreshing a page that has
+      // already been shown, which is the refresh the reader was having to do by hand.
       await refreshStorePage(storeId,store?.store.slug).catch(()=>undefined);
-      router.push(localePath(locale,`/stores/${storeId}`));
       router.refresh();
+      router.push(localePath(locale,`/stores/${storeId}`));
     }catch{setSubmitError(t('reviewError'));}
     finally{setSubmitting(false);}
   };
