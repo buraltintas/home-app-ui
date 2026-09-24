@@ -8,6 +8,30 @@ value involved.
 
 ---
 
+## Two rules on the listing screen were reaching past what they were written for
+
+Both found while making six requested changes, and both the same shape of fault.
+
+The heading "Aradığın mağazayı bulamadıysan" was breaking its last word onto a second line.
+Measured on a 375px screen: 269px of text in 251px of room. The room is found first -- a
+tighter card, a tighter gap, no letter-spacing -- and only what is still missing is taken
+from the type, which now shrinks with the screen instead of wrapping. The mark keeps its
+size; it was enlarged twice on purpose.
+
+The search heading's emphasised word came out at 160px and ran off the screen. `.search-title
+span` was written for the arrow beside the heading and was catching anything inside it; it is
+a direct-child selector now. The change-location control kept its frame after being told to
+drop it, for the same reason: a rule left over from the old three-part markup outranked the
+new one. That rule described a shape the control no longer has, so it is gone rather than
+out-specified.
+
+The rest: the clear button lost its frame for a broom and a rule that fades out; the place
+being searched from became a pill with its pin set in a disc, and changing it became plainly
+an action rather than a third piece of the sentence; the search heading took the two-tone
+treatment the favourites heading has, which moved that helper somewhere both pages can reach
+it; and the category sheet centres its name, takes the page's own ground, and keeps only the
+act on its button with the qualifier above it.
+
 ## Typing any address into the admin sign-in posted that person a real code
 
 /admin is a public address and its form called the ordinary sign-in endpoint, so whatever

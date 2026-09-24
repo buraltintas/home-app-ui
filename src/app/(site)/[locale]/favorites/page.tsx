@@ -8,6 +8,7 @@ import {AuthDialog} from '@/components/AuthDialog';
 import {AccountPageSkeleton} from '@/components/AccountPageSkeleton';
 import {useScrollTopWhenReady} from '@/lib/scroll-top';
 import {RatingStars} from '@/components/Rating';
+import {emphasisedTitle,plainTitle} from '@/lib/emphasis';
 import {useI18n} from '@/i18n/I18nProvider';
 import { localePath } from '@/lib/site';
 import {apiFetch} from '@/lib/api-client';
@@ -27,22 +28,6 @@ const favoriteSummary:Record<Locale,{saved:string;pending:string;pendingEmpty:st
   de:{saved:'Gespeicherte Geschäfte',pending:'Wartet auf deine Bewertung',pendingEmpty:'Du hast jedes gespeicherte Geschäft bewertet.',yours:n=>n===1?'eine davon ist deine':`${n} davon sind deine`,awaiting:'Wartet auf deine Bewertung',reviewed:'Von dir bewertet'},
   ru:{saved:'Сохранённые магазины',pending:'Ждут вашей оценки',pendingEmpty:'Вы оценили все сохранённые магазины.',yours:n=>n===1?'одна из них ваша':`ваших: ${n}`,awaiting:'Ждёт вашей оценки',reviewed:'Вы оценили'},
 };
-
-// The title is one string per language with the emphasised phrase in brackets. Everything
-// that needs the words without the decoration -- the accessible name, the skeleton, the
-// heading a screen reader announces -- strips them; only the heading that is looked at
-// draws them. Written this way because the phrase is not the last few words in every
-// language, and a rule about position would have been right in Turkish and wrong elsewhere.
-const EMPHASIS=/\[([^\]]+)\]/;
-
-function plainTitle(title:string){return title.replace(/[[\]]/g,'');}
-
-function emphasisedTitle(title:string){
-  const found=title.match(EMPHASIS);
-  if(!found)return title;
-  const [before,after]=title.split(found[0]);
-  return <>{before}<span className="favorites-title-mark">{found[1]}</span>{after}</>;
-}
 
 export default function Page(){
   const {t,locale}=useI18n();

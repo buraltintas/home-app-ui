@@ -53,6 +53,7 @@ svg{stroke-width:2}
    the sentence is. The brackets already say where the seam is; this makes the seam the break,
    in every language, instead of leaving it to whatever width the phone happens to be. */
 .favorites-title-mark{display:block;color:var(--clay)}
+.search-title-mark{color:var(--clay)}
 /* Clay, like every other button that is the one thing to do on its screen. Ink is what this
    button wore, and ink is the colour of everything else on the page. */
 .favorites-empty .button.primary{background:var(--clay);color:var(--surface)}
@@ -115,7 +116,9 @@ svg{stroke-width:2}
 .search-hero{max-width:1440px;margin:0 auto;padding:68px 40px 54px;background:var(--canvas);color:var(--ink);animation:ink-in .62s cubic-bezier(.16,1,.3,1) backwards}
 .search-title{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:24px}/* This is the one page where the line is not decoration: asking us is literally what the
    field below it does. */.search-slogan{margin:0 0 14px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-ink)}
-.search-title span{font-size:clamp(72px,11vw,160px);line-height:.7;color:var(--accent-ink)}
+/* The arrow, and only the arrow. Written as a descendant it also caught the emphasised
+   word inside the heading and set it at 160px. */
+.search-title>span{font-size:clamp(72px,11vw,160px);line-height:.7;color:var(--accent-ink)}
 .search-hero h1{max-width:900px;font-size:clamp(44px,6vw,78px)}
 .home-search{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--r-lg);padding:8px 8px 8px 18px;margin-top:28px;max-width:580px;box-shadow:var(--lift)}
 .home-search svg{color:var(--ink-muted)}
@@ -148,8 +151,18 @@ svg{stroke-width:2}
 .search-form{grid-template-columns:auto 1fr auto;gap:14px;background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--r-lg);padding:8px 8px 8px 20px;margin-top:40px;color:var(--ink)}
 .search-form textarea{font-size:17px}
 .search-form>button{border-radius:var(--r-md);background:var(--ink);color:var(--surface);min-width:120px}
-.location-control{color:var(--ink-muted)}
-.location-control>span{color:var(--ink)}
+/* The place we are searching from, and the way to change it. They were one run of text
+   with a framed button on the end, which read as one control with a spare part. Now the
+   place is a thing -- a pill with the pin set in a disc of its own -- and changing it is
+   plainly an action: no frame, underlined, with a mark that says re-aim rather than pin. */
+.location-control{display:flex;flex-wrap:wrap;align-items:center;gap:12px;color:var(--ink-muted)}
+.location-current{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:5px 18px 5px 5px;border:1px solid var(--line);border-radius:var(--r-pill);background:var(--muted);color:var(--ink);font-weight:650}
+.location-current-mark{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;flex:none;border-radius:50%;background:var(--surface);color:inherit}
+.location-current-mark svg{width:19px;height:19px}
+.location-change{display:inline-flex;align-items:center;gap:7px;min-height:44px;padding:0;border:0;background:none;color:var(--ink-muted);font-size:15px;font-weight:650;text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:5px}
+.location-change svg{width:17px;height:17px;flex:none}
+.location-change:hover{color:var(--ink)}
+.location-change:disabled{opacity:.55}
 .nearby-button{border-radius:var(--r-md);background:var(--ink);color:var(--surface)}
 .search-suggestions{gap:100px;margin-top:46px}
 .search-suggestions h2{font-size:13px;font-weight:600;letter-spacing:.08em;color:var(--ink-muted)}
@@ -287,7 +300,7 @@ svg{stroke-width:2}
 @keyframes ink-in{from{opacity:.01;transform:translateY(18px);clip-path:inset(0 0 12% 0)}to{opacity:1;transform:none;clip-path:inset(0)}}
 @media(max-width:900px){body{padding-bottom:calc(86px + env(safe-area-inset-bottom))}.site-header{backdrop-filter:none}.nav-wrap{height:66px;padding:0 20px}.brand-link{font-size:15px}.brand-mark,.brand-link img{width:52px;height:52px}.site-header nav{position:fixed;z-index:24;left:50%;right:auto;bottom:calc(10px + env(safe-area-inset-bottom));width:min(420px,calc(100% - 28px));height:66px;transform:translateX(-50%);display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:0;padding:0 8px;background:color-mix(in srgb,var(--surface) 82%,transparent);border:1px solid var(--line);border-radius:22px;box-shadow:0 12px 32px rgba(22,20,15,.12);backdrop-filter:blur(24px) saturate(150%);overflow:visible}.site-header nav a{min-height:54px;height:54px;align-self:center;justify-content:center;padding:0;border-radius:15px}.site-header nav a span{display:none}.site-header nav a svg{display:block;width:24px;height:24px}.site-header nav a.is-active{background:var(--accent-wash);color:var(--ink);transform:translateY(-2px)}.site-header nav a.is-active::after{display:none}.feed-layout{padding:38px 22px 40px}.feed-intro{grid-template-columns:minmax(0,820px)}.post-card{grid-template-columns:46px minmax(0,1fr);column-gap:14px}.post-number{grid-column:1}.post-heading{grid-column:2;display:block}.post-author{margin-bottom:22px}.post-store h2{font-size:30px}.post-photo{grid-column:2;grid-row:2}.post-details{grid-column:2;grid-row:3}.results-layout{grid-template-columns:1fr}.map-panel{display:none}.store-overview{grid-template-columns:1fr 1fr}.store-copy,.store-actions{grid-column:1/-1}.store-body{gap:50px}.create-page{grid-template-columns:1fr}.create-page>.button{grid-column:auto}.public-profile{grid-template-columns:auto 1fr}.public-profile dl{grid-column:1/-1}}
 @media(max-width:600px){.nav-wrap{height:62px;padding:0 16px}.brand-name{font-size:14px}.brand-mark,.brand-link img{width:48px;height:48px}.feed-layout{padding:26px 0 24px}.feed-intro{padding:10px 18px 18px;grid-template-columns:minmax(0,1fr);gap:14px;align-items:center}.feed-intro h1{font-size:clamp(23px,6.2vw,29px);line-height:1.1;letter-spacing:-.03em}.search-hero h1{font-size:clamp(24px,6.4vw,30px);line-height:1.1;letter-spacing:-.03em}.search-title{grid-template-columns:1fr}.search-title>span{display:none}.search-form{margin-top:20px;padding:6px 6px 6px 14px;gap:8px}.search-form textarea{font-size:16px}.location-control{margin-top:14px}.search-suggestions{margin-top:26px}.feed-intro>div>p{font-size:14px;line-height:1.45;margin-top:8px}
-.feed-rule{margin:0 18px}.post-card{display:block;padding:34px 0}.post-heading{margin:0 18px 18px}.post-author{padding-right:0}.post-store{margin-top:20px}.post-store h2{font-size:24px;line-height:1.12}.post-photo{width:100%;aspect-ratio:4/3;clip-path:none}.post-details{margin:0 18px;padding:20px;border-top-width:6px}.post-copy{font-size:15px}.post-actions{gap:6px}.feed-state{margin:0 18px;padding:32px 24px;grid-template-columns:1fr}.feed-more{padding:28px 18px 40px}.feed-more button{width:100%;min-width:0}.feed-end{padding:32px 18px 60px}.feed-state>img{grid-row:auto}.feed-skeleton{aspect-ratio:4/1}.search-hero{padding:20px 18px 26px}.search-slogan{margin-bottom:10px;font-size:12px}.brand-tagline{font-size:11px}.search-title span{font-size:70px}.search-form{grid-template-columns:auto 1fr;margin-top:28px}.search-form>button{grid-column:1/-1}.search-suggestions{grid-template-columns:1fr;gap:24px}.location-sheet{grid-template-columns:1fr;padding:20px}.location-results{grid-column:1}.result-list{padding:0 18px 100px}.search-result{grid-template-columns:110px 1fr;gap:14px}.result-call{margin:0 0 12px;width:100%;justify-content:center}.result-google{margin:0 0 18px;width:100%;justify-content:center}.search-result>img{width:110px;height:145px}.search-result>svg{display:none}.search-result h2{font-size:19px}.store-hero-grid{height:76vw;grid-template-columns:1fr}.store-side-image{display:none}.store-overview{padding:30px 18px;gap:24px}.store-body{display:block;margin:44px auto 36px;padding:0 18px}.public-profile{grid-template-columns:1fr}.auth-dialog{box-shadow:none;border-top-width:8px}.dialog-backdrop{padding:0}.auth-dialog{align-self:end}.empty-page{padding-bottom:110px}.create-page{margin:40px auto 110px;padding:0 18px}}
+.feed-rule{margin:0 18px}.post-card{display:block;padding:34px 0}.post-heading{margin:0 18px 18px}.post-author{padding-right:0}.post-store{margin-top:20px}.post-store h2{font-size:24px;line-height:1.12}.post-photo{width:100%;aspect-ratio:4/3;clip-path:none}.post-details{margin:0 18px;padding:20px;border-top-width:6px}.post-copy{font-size:15px}.post-actions{gap:6px}.feed-state{margin:0 18px;padding:32px 24px;grid-template-columns:1fr}.feed-more{padding:28px 18px 40px}.feed-more button{width:100%;min-width:0}.feed-end{padding:32px 18px 60px}.feed-state>img{grid-row:auto}.feed-skeleton{aspect-ratio:4/1}.search-hero{padding:20px 18px 26px}.search-slogan{margin-bottom:10px;font-size:12px}.brand-tagline{font-size:11px}.search-title>span{font-size:70px}.search-form{grid-template-columns:auto 1fr;margin-top:28px}.search-form>button{grid-column:1/-1}.search-suggestions{grid-template-columns:1fr;gap:24px}.location-sheet{grid-template-columns:1fr;padding:20px}.location-results{grid-column:1}.result-list{padding:0 18px 100px}.search-result{grid-template-columns:110px 1fr;gap:14px}.result-call{margin:0 0 12px;width:100%;justify-content:center}.result-google{margin:0 0 18px;width:100%;justify-content:center}.search-result>img{width:110px;height:145px}.search-result>svg{display:none}.search-result h2{font-size:19px}.store-hero-grid{height:76vw;grid-template-columns:1fr}.store-side-image{display:none}.store-overview{padding:30px 18px;gap:24px}.store-body{display:block;margin:44px auto 36px;padding:0 18px}.public-profile{grid-template-columns:1fr}.auth-dialog{box-shadow:none;border-top-width:8px}.dialog-backdrop{padding:0}.auth-dialog{align-self:end}.empty-page{padding-bottom:110px}.create-page{margin:40px auto 110px;padding:0 18px}}
 @media(prefers-reduced-motion:reduce){.feed-intro,.search-hero{animation:none}.post-photo,.post-photo img,.brand-mark{transition:none}}
 
 /* Returned navigation destinations use one visual language. Search and Profile were
@@ -932,7 +945,7 @@ svg{stroke-width:2}
 
 .profile-section-content .profile-form-actions .button.primary{background:var(--clay);color:var(--surface)}
 .account-loading-progress{height:2px;width:72px;background:var(--line-strong);margin-top:24px}
-.location-control.is-device>span,.location-control.is-device>svg{color:var(--success)}
+.location-control.is-device .location-current{border-color:color-mix(in srgb,var(--success) 30%,var(--line));background:color-mix(in srgb,var(--success) 8%,var(--surface));color:var(--success)}
 .search-form{position:relative}
 .search-query-suggestions{position:absolute;z-index:10;left:0;right:0;top:calc(100% + 8px);background:var(--surface);box-shadow:var(--lift);border-radius:var(--r-md);padding:8px 8px 24px}
 .search-query-suggestions-list{max-height:176px;overflow-y:auto;overscroll-behavior:contain}
@@ -1330,10 +1343,15 @@ svg{stroke-width:2}
 /* The end of the list is a question too. */
 /* A notice, not a card in the list: its own ground, its own colour, and a mark that says so
    before the words are read. */
-.add-store{margin:34px 0 0;padding:22px;border:1px solid color-mix(in srgb,var(--clay) 16%,var(--line));border-radius:var(--r-lg);background:color-mix(in srgb,var(--accent-wash) 70%,var(--surface))}
+.add-store{margin:34px 0 0;padding:18px;border:1px solid color-mix(in srgb,var(--clay) 16%,var(--line));border-radius:var(--r-lg);background:color-mix(in srgb,var(--accent-wash) 70%,var(--surface))}
 /* The heading is read first and it is a question, not a warning. In amber it was the
    loudest thing on a page of results and read as something having gone wrong. */
-.add-store h2{display:flex;align-items:center;gap:10px;margin:0;font-size:17px;font-weight:800;letter-spacing:.01em;color:var(--warning)}
+/* One line, always. The phrase is a question and a question that breaks in the middle
+   reads as two. Measured on a 375px screen it wanted 269px of the 251px it had, so the
+   room is found first -- tighter card, tighter gap, no letter-spacing -- and only what is
+   still missing is taken from the type, which shrinks with the screen rather than wrapping.
+   The mark keeps its size: it was enlarged twice on purpose. */
+.add-store h2{display:flex;align-items:center;gap:8px;margin:0;font-size:min(17px,4.15vw);font-weight:800;letter-spacing:0;white-space:nowrap;color:var(--warning)}
 .add-store h2 svg,.add-store-mark{width:40px;height:40px;flex:none;color:var(--warning)}
 /* R28's second sentence: still the request, so still bold, but a step back from ink. Two
    weights of the same near-black read as one shout in two sizes. */
@@ -1537,9 +1555,14 @@ svg{stroke-width:2}
    main action rather than as the way back from a list. */
 /* Centred. An inline-flex box does not take an auto margin, so it is laid out as a flex item
    the width of its own words and centred both ways -- whichever kind of container it lands in. */
-.clear-results{display:flex;width:fit-content;align-self:center;align-items:center;justify-content:center;gap:8px;min-height:44px;margin:14px auto 0;padding:0 18px;border:1px solid var(--line-strong);border-radius:var(--r-pill);background:var(--surface);color:var(--ink-muted);font-size:15px;transition:background-color .16s ease,color .16s ease}
-.clear-results:hover{background:var(--muted);color:var(--ink)}
-.clear-results svg{width:17px;height:17px;flex:none}
+/* A frame around this said "another thing to press" beside the results it undoes. It is
+   a word and a broom now, over a rule that fades out the way a swept floor does. */
+.clear-results{position:relative;display:flex;width:fit-content;align-self:center;align-items:center;justify-content:center;gap:10px;min-height:44px;margin:14px auto 0;padding:0 2px 8px;border:0;border-radius:0;background:none;color:var(--ink);font-size:15px;font-weight:700;transition:color .16s ease}
+.clear-results::after{content:'';position:absolute;left:0;right:0;bottom:2px;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--ink) 0%,color-mix(in srgb,var(--ink) 55%,transparent) 62%,transparent 100%)}
+.clear-results:hover{color:var(--accent-ink)}
+/* Sized here rather than on the mark's own class: a descendant selector outranks it, and
+   that is exactly how a magnifier on this page stayed 18px while its own rule said 32. */
+.clear-results svg{width:26px;height:26px;flex:none}
 @media(max-width:600px){.clear-results{width:auto;margin-top:12px}}
 
 /* City-and-category pages. The same row the neighbours list uses, one size up, because the
@@ -1645,11 +1668,11 @@ svg{stroke-width:2}
    a drawing thrown away. */
 .category-sheet-backdrop{z-index:88;animation:backdrop-in .52s cubic-bezier(.16,1,.3,1) both}
 .category-sheet-backdrop.is-leaving{animation:backdrop-out .52s cubic-bezier(.16,1,.3,1) both;pointer-events:none}
-.category-sheet{width:min(420px,100%);display:grid;gap:16px;padding:24px;background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--lift);animation:alert-in .52s cubic-bezier(.16,1,.3,1) both}
+.category-sheet{width:min(420px,100%);display:grid;gap:16px;padding:24px;background:var(--canvas);border-radius:var(--r-lg);box-shadow:var(--lift);animation:alert-in .52s cubic-bezier(.16,1,.3,1) both}
 .category-sheet-backdrop.is-leaving .category-sheet{animation:alert-out .52s cubic-bezier(.16,1,.3,1) both}
-.category-sheet header{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.category-sheet h2{margin:0;font-size:24px;line-height:1.15;letter-spacing:-.02em}
-.category-sheet header .icon-button{margin-right:-10px}
+.category-sheet header{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:8px}
+.category-sheet h2{grid-column:2;margin:0;font-size:24px;line-height:1.15;letter-spacing:-.02em;text-align:center;text-wrap:balance}
+.category-sheet header .icon-button{grid-column:3;justify-self:end;margin-right:-10px}
 .category-sheet-art{display:grid;place-items:center;padding:10px 0}
 /* The whole photograph, at the width of the sheet. It was a square before, which cropped a
    wide picture down to its middle and threw away the half that said what the category was.
@@ -1660,6 +1683,9 @@ svg{stroke-width:2}
 /* The three categories still on a line icon get the same circle, drawn rather than filled. */
 .category-sheet-art .category-icon{width:184px;height:184px;border-radius:50%;background:var(--accent-wash);color:var(--clay)}
 .category-sheet-art .category-icon svg{width:76px;height:76px}
+/* The qualifier is not part of the act. "Search" is what the button does; "nearest to me"
+   is which shop it will find, and it says so above rather than inside. */
+.category-sheet-lead{margin:0;text-align:center;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted)}
 .category-sheet-search{min-height:52px}
 .category-sheet-search.button.primary{background:var(--clay);color:var(--surface)}
 .category-sheet-search.button.primary:hover{background:color-mix(in srgb,var(--clay) 88%,var(--ink))}

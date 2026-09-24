@@ -14,11 +14,15 @@ import type {Locale} from '@/lib/types';
 // It opens the category instead, at the size the picture was drawn for, and the search is
 // behind its own button. The picture is the point: it says what the category means faster
 // than the name does, which is what pictures are for.
-const copy:Record<Locale,{search:string;close:string}>={
-  tr:{search:'Bana en yakın mağazayı ara',close:'Kapat'},
-  en:{search:'Find the nearest store',close:'Close'},
-  de:{search:'Nächstgelegenes Geschäft finden',close:'Schließen'},
-  ru:{search:'Найти ближайший магазин',close:'Закрыть'},
+// The qualifier and the act are two different things and were one string. "Nearest to me"
+// is which shop the search will find; "search" is what pressing this does. Only the second
+// belongs on the button. The whole sentence stays as the button's accessible name, because
+// a reader who cannot see the line above it would otherwise lose half the meaning.
+const copy:Record<Locale,{lead:string;search:string;full:string;close:string}>={
+  tr:{lead:'Bana en yakın',search:'Mağazayı ara',full:'Bana en yakın mağazayı ara',close:'Kapat'},
+  en:{lead:'Nearest to me',search:'Find a store',full:'Find the nearest store',close:'Close'},
+  de:{lead:'Mir am nächsten',search:'Geschäft finden',full:'Nächstgelegenes Geschäft finden',close:'Schließen'},
+  ru:{lead:'Ближайший ко мне',search:'Найти магазин',full:'Найти ближайший магазин',close:'Закрыть'},
 };
 
 const MOTION_MS=520;
@@ -59,7 +63,8 @@ export function CategorySheet({slug,name,locale,onSearch,onClose}:{
           ?<Image src={`/categories/${slug}.webp`} width={720} height={400} alt="" aria-hidden="true" sizes="(max-width:600px) 100vw, 372px"/>
           :<CategoryIcon slug={slug}/>}
       </div>
-      <button ref={action} type="button" className="button primary category-sheet-search" onClick={onSearch}>
+      <p className="category-sheet-lead">{words.lead}</p>
+      <button ref={action} type="button" className="button primary category-sheet-search" onClick={onSearch} aria-label={words.full}>
         {words.search}
       </button>
     </div>
