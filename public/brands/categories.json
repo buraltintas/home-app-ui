@@ -1,190 +1,217 @@
 {
-"alfemo": [
-"furniture",
-"bedding"
-],
-"bambi": [
-"bedding",
-"home_textile"
-],
-"bellona": [
-"furniture",
-"bedding",
-"home_textile"
-],
-"boyner-ev": [
-"home_textile",
-"decoration",
-"kitchenware",
-"home_accessories"
-],
-"cam-hali": [
-"carpet",
-"home_textile"
-],
-"chakra": [
-"home_textile",
-"decoration",
-"home_accessories"
-],
-"cilek": [
-"furniture",
-"bedding"
-],
-"dinarsu": [
-"carpet"
-],
-"dogtas": [
-"furniture",
-"bedding"
-],
-"emsan": [
-"kitchenware",
-"tableware",
-"small_appliances"
-],
-"english-home": [
-"home_textile",
-"decoration",
-"kitchenware",
-"tableware",
-"home_accessories",
-"bedding"
-],
-"enza-home": [
-"furniture",
-"bedding"
-],
-"halsa-yatak": [
-"bedding"
-],
-"idas": [
-"bedding",
-"home_textile"
-],
-"ikea": [
-"furniture",
-"decoration",
-"kitchenware",
-"home_textile",
-"lighting",
-"bedding"
-],
-"isbir-yatak": [
-"bedding",
-"home_textile"
-],
-"istikbal": [
-"furniture",
-"bedding",
-"home_textile"
-],
-"karaca-home": [
-"home_textile",
-"bedding",
-"kitchenware",
-"tableware"
-],
-"kelebek-mobilya": [
-"furniture",
-"bedding"
-],
-"koctas": [
-"household",
-"garden",
-"bathroom",
-"lighting",
-"kitchenware"
-],
-"konfor-yatak": [
-"bedding"
-],
-"korkmaz": [
-"kitchenware",
-"tableware",
-"small_appliances"
-],
-"linens": [
-"home_textile",
-"bedding",
-"decoration"
-],
-"lova-yatak": [
-"bedding",
-"home_textile"
-],
-"madame-coco": [
-"home_textile",
-"decoration",
-"kitchenware",
-"tableware",
-"home_accessories"
-],
-"merinos": [
-"carpet",
-"home_textile"
-],
-"modalife": [
-"furniture",
-"decoration"
-],
-"mondi": [
-"furniture",
-"bedding"
-],
-"mudo-concept": [
-"decoration",
-"home_accessories",
-"home_textile",
-"tableware"
-],
-"mutlu-hali": [
-"carpet",
-"home_textile"
-],
-"ozdilek-home": [
-"home_textile",
-"bedding",
-"decoration",
-"kitchenware"
-],
-"pasabahce": [
-"tableware",
-"kitchenware",
-"decoration"
-],
-"pierre-cardin-home": [
-"home_textile",
-"bedding",
-"decoration"
-],
-"tac": [
-"home_textile",
-"bedding",
-"curtain"
-],
-"tepe-home": [
-"furniture",
-"decoration",
-"home_textile",
-"home_accessories"
-],
-"vivense": [
-"furniture",
-"decoration",
-"home_textile"
-],
-"weltew": [
-"furniture",
-"bedding"
-],
-"yatas-bedding": [
-"bedding",
-"home_textile",
-"furniture"
-],
-"yatsan": [
-"bedding",
-"home_textile"
-]
+  "alfemo": [
+    "furniture",
+    "bedding"
+  ],
+  "arcelik": [
+    "major_appliances",
+    "small_appliances"
+  ],
+  "arzum": [
+    "small_appliances"
+  ],
+  "bambi": [
+    "bedding",
+    "home_textile"
+  ],
+  "beko": [
+    "major_appliances",
+    "small_appliances"
+  ],
+  "bellona": [
+    "furniture",
+    "bedding",
+    "home_textile"
+  ],
+  "bosch": [
+    "major_appliances",
+    "small_appliances"
+  ],
+  "boyner-ev": [
+    "home_textile",
+    "decoration",
+    "kitchenware",
+    "home_accessories"
+  ],
+  "cam-hali": [
+    "carpet",
+    "home_textile"
+  ],
+  "chakra": [
+    "home_textile",
+    "decoration",
+    "home_accessories"
+  ],
+  "cilek": [
+    "furniture",
+    "bedding"
+  ],
+  "dinarsu": [
+    "carpet"
+  ],
+  "dogtas": [
+    "furniture",
+    "bedding"
+  ],
+  "emsan": [
+    "kitchenware",
+    "tableware",
+    "small_appliances"
+  ],
+  "english-home": [
+    "home_textile",
+    "decoration",
+    "kitchenware",
+    "tableware",
+    "home_accessories",
+    "bedding"
+  ],
+  "enza-home": [
+    "furniture",
+    "bedding"
+  ],
+  "halsa-yatak": [
+    "bedding"
+  ],
+  "idas": [
+    "bedding",
+    "home_textile"
+  ],
+  "ikea": [
+    "furniture",
+    "decoration",
+    "kitchenware",
+    "home_textile",
+    "lighting",
+    "bedding"
+  ],
+  "isbir-yatak": [
+    "bedding",
+    "home_textile"
+  ],
+  "istikbal": [
+    "furniture",
+    "bedding",
+    "home_textile"
+  ],
+  "karaca-home": [
+    "home_textile",
+    "bedding",
+    "kitchenware",
+    "tableware"
+  ],
+  "kelebek-mobilya": [
+    "furniture",
+    "bedding"
+  ],
+  "koctas": [
+    "household",
+    "garden",
+    "bathroom",
+    "lighting",
+    "kitchenware"
+  ],
+  "konfor-yatak": [
+    "bedding"
+  ],
+  "korkmaz": [
+    "kitchenware",
+    "tableware",
+    "small_appliances"
+  ],
+  "linens": [
+    "home_textile",
+    "bedding",
+    "decoration"
+  ],
+  "lova-yatak": [
+    "bedding",
+    "home_textile"
+  ],
+  "madame-coco": [
+    "home_textile",
+    "decoration",
+    "kitchenware",
+    "tableware",
+    "home_accessories"
+  ],
+  "merinos": [
+    "carpet",
+    "home_textile"
+  ],
+  "modalife": [
+    "furniture",
+    "decoration"
+  ],
+  "mondi": [
+    "furniture",
+    "bedding"
+  ],
+  "mudo-concept": [
+    "decoration",
+    "home_accessories",
+    "home_textile",
+    "tableware"
+  ],
+  "mutlu-hali": [
+    "carpet",
+    "home_textile"
+  ],
+  "ozdilek-home": [
+    "home_textile",
+    "bedding",
+    "decoration",
+    "kitchenware"
+  ],
+  "pasabahce": [
+    "tableware",
+    "kitchenware",
+    "decoration"
+  ],
+  "pierre-cardin-home": [
+    "home_textile",
+    "bedding",
+    "decoration"
+  ],
+  "profilo": [
+    "major_appliances",
+    "small_appliances"
+  ],
+  "siemens": [
+    "major_appliances",
+    "small_appliances"
+  ],
+  "tac": [
+    "home_textile",
+    "bedding",
+    "curtain"
+  ],
+  "tepe-home": [
+    "furniture",
+    "decoration",
+    "home_textile",
+    "home_accessories"
+  ],
+  "vestel": [
+    "major_appliances",
+    "small_appliances"
+  ],
+  "vivense": [
+    "furniture",
+    "decoration",
+    "home_textile"
+  ],
+  "weltew": [
+    "furniture",
+    "bedding"
+  ],
+  "yatas-bedding": [
+    "bedding",
+    "home_textile",
+    "furniture"
+  ],
+  "yatsan": [
+    "bedding",
+    "home_textile"
+  ]
 }

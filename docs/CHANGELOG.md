@@ -8,6 +8,24 @@ value involved.
 
 ---
 
+## White goods had no brand marks because it had no brands
+
+Asked as "why is there no photo on any Vestel store, or any Arçelik". The three shops named
+on the card are white-goods dealers, and the answer is the same for all of them: a shop with
+no photograph of its own shows its chain's mark, and the register of chains held 39 home and
+living brands and not one white-goods brand -- although the catalogue has carried a
+major_appliances category all along.
+
+Measured across the whole catalogue: 83 shops whose name begins with a white-goods brand,
+led by Bosch (21), Vestel (20) and Arçelik (16). Seven brands are registered now, with marks
+taken from each brand's own site, and 72 of those 83 shops carry one. Altus, Regal and Tefal
+are the eleven that do not: their sites refuse an automated fetch and their marks still have
+to be collected.
+
+The rule that lends the mark is unchanged, including the guard that keeps it honest: a name
+match alone is not enough, the shop's categories have to overlap what the brand sells. A
+Bosch heating-systems dealer filed under furniture gets nothing, which is correct.
+
 ## Two rules on the listing screen were reaching past what they were written for
 
 Both found while making six requested changes, and both the same shape of fault.
