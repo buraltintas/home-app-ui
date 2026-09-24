@@ -51,6 +51,11 @@ const pictures=new Set(['bedding','furniture','home_textile','kitchenware','curt
 // to know which it is going to get before it reserves the room.
 export function hasCategoryPicture(slug:string){return pictures.has(slug);}
 
+// The drawn shop whose sign carries the category's name. The same thirteen: the set was
+// drawn as one, and a category without a sign is one nobody drew rather than one we chose
+// to leave out -- so it simply shows nothing rather than borrowing a neighbour's shop.
+export function hasCategorySign(slug:string){return pictures.has(slug);}
+
 export function CategoryIcon({slug}:{slug:string}){
   if(pictures.has(slug))return <span className="category-icon is-picture" aria-hidden="true">
     <Image src={`/categories/${slug}.webp`} width={720} height={400} alt="" sizes="88px"/>

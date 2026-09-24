@@ -176,21 +176,6 @@ const useBeforePaint=typeof window==='undefined'?useEffect:useLayoutEffect;
 
 const PAGE=30;
 
-// Drawn, because the icon set has no broom and its nearest neighbour is a paintbrush -- a
-// different idea entirely. Handle, bound head, bristles, and three short strokes for the
-// sweep, in the two tones the rest of the page already uses.
-function BroomMark(){
-  return <svg className="clear-results-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    <path d="M20.4 3.6 12.9 11.1" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"/>
-    <path d="M9.4 10.2 14.5 15.3 12.1 21a1 1 0 0 1-1.6.3L4 14.8a1 1 0 0 1 .3-1.6Z"
-      fill="var(--accent-wash)" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round"/>
-    <path d="M7.1 12.5 12.1 17.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity=".55"/>
-    <g stroke="var(--success)" strokeWidth="1.7" strokeLinecap="round">
-      <path d="M17.6 12.4h2.6"/><path d="M16.4 9.1 18.6 7.9"/><path d="M17.9 15.9l2.3 1.2"/>
-    </g>
-  </svg>;
-}
-
 export function SearchExperience() {
   const {t,locale}=useI18n();
   const pathname=usePathname();
@@ -278,6 +263,11 @@ export function SearchExperience() {
   const [manual,setManual]=useState('');
   const [candidates,setCandidates]=useState<LocationResult[]>([]);const [lookingUp,setLookingUp]=useState(false);
   const [location,setLocationState]=useState<SearchPlace>();
+  // Whether the location kept from last time has been read back yet. Without this the
+  // first frame of a reload has no location, so the panel opens, and what a reader sees is
+  // the dark "use my location" button appearing and vanishing. Absence and not-yet-known
+  // are different things and the page has to be able to tell them apart.
+  const [locationRestored,setLocationRestored]=useState(false);
   const [restored,setRestored]=useState(false);
   // The language the answer on screen is written in, which is not always the language on
   // screen: between the switcher and the new address they differ, and stamping the stored
@@ -378,6 +368,7 @@ export function SearchExperience() {
     else if(snapshot&&snapshot.data&&snapshot.locale&&snapshot.locale!==locale){setQuery(snapshot.query);const initial=snapshot.location??persisted;if(initial)setLocation(initial);pending.current=snapshot.query;}
     else if(snapshot){setQuery(snapshot.query);const initial=snapshot.location??persisted;if(initial)setLocation(initial);setData(snapshot.data);setDataLocale(snapshot.locale??locale);}
     else if(persisted)setLocation(persisted);
+    setLocationRestored(true);
     // Offering the same three examples on every visit teaches people the product only
     // understands those three.
     setRotation(Math.floor(Math.random()*997));
@@ -471,7 +462,7 @@ export function SearchExperience() {
   // The panel is open either because it was asked for or because there is no location
   // yet. Gating this on the first case alone left the field on screen with nothing behind
   // it: a visitor could type a district and never get a single candidate back.
-  const sheetOpen=locationOpen||!location;
+  const sheetOpen=locationOpen||(locationRestored&&!location);
   useEffect(()=>{
     if(!sheetOpen||manual.trim().length<2)return;
     const controller=new AbortController();
@@ -821,7 +812,7 @@ export function SearchExperience() {
   // answer "what shall I type" should not be holding half its answers back.
   const stripPhrases=Array.from(new Set([...strip.phrases,...seasonalPool(locale)]));
   const prompts=stripPhrases;
-  return <main className="search-page"><header className="search-hero"><div className="search-title"><h1>{emphasisedTitle(t('searchTitle'),'search-title-mark')}</h1><span aria-hidden="true">↗</span></div>{!location&&<p className="location-lead">{t('locationRequired')}</p>}{location&&!sheetOpen&&<div className={`location-control${location.source==='device'?' is-device':''}`}><span className="location-current"><span className="location-current-mark" aria-hidden="true"><MapPin/></span><span>{location.source==='device'?t('currentLocationActive'):location.label}</span></span>{/* One control, not two. The cross beside it cleared the location outright, which is a
+  return <main className="search-page"><header className="search-hero"><div className="search-title"><h1>{emphasisedTitle(t('searchTitle'),'search-title-mark')}</h1><Image className="search-title-shop" src="/illustrations/store-front.webp" width={520} height={345} alt="" aria-hidden="true" priority/></div>{!location&&<p className="location-lead">{t('locationRequired')}</p>}{location&&!sheetOpen&&<div className={`location-control${location.source==='device'?' is-device':''}`}><span className="location-current-mark" aria-hidden="true"><MapPin/></span><span className="location-current">{location.source==='device'?t('currentLocationActive'):location.label}</span>{/* One control, not two. The cross beside it cleared the location outright, which is a
           thing almost nobody wants and everybody could hit by accident -- and "Konumu
           değiştir" already opens the place to change it, including to somewhere else. */}
         <button className="location-change" onClick={()=>setLocationOpen(true)} disabled={loading}><Crosshair aria-hidden="true"/>{t('changeLocation')}</button></div>}{sheetOpen&&<section className="location-sheet" aria-label={t('chooseLocation')}>{location&&<div><p>{t('locationBenefit')}</p></div>}<div className="location-actions">{autoLocating&&<p className="location-working" aria-live="polite"><span className="location-pulse" aria-hidden="true"/>{t('locatingYou')}</p>}{/* One control, two states. It used to be swapped for a separate confirmation line,
@@ -876,7 +867,7 @@ export function SearchExperience() {
         phone leaves the site entirely as often as not. It sits directly under the field it
         undoes, and it clears the answer rather than navigating: the question stays in the
         bar, so changing one word is still one tap away. */}
-    {data&&!loading&&<button type="button" className="clear-results" onClick={()=>{setData(undefined);setSuggestionsOpen(false);}}>{t('clearResults')}<BroomMark/></button>}{/* The panel opens above these, it does not replace them. Hiding them while somebody
+    {data&&!loading&&<button type="button" className="clear-results" onClick={()=>{setData(undefined);setSuggestionsOpen(false);}}>{t('clearResults')}<Image className="clear-results-mark" src="/illustrations/broom.webp" width={88} height={104} alt="" aria-hidden="true"/></button>}{/* The panel opens above these, it does not replace them. Hiding them while somebody
         changes their location threw away the recent searches and the categories they were
         about to pick from, and put them back only once the location was settled. */}
     {/* Recent searches used to sit here, on the page. They belong with the field instead:

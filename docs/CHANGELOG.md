@@ -8,6 +8,29 @@ value involved.
 
 ---
 
+## The search screen gets its own artwork, and a reload stops flashing
+
+The heading breaks where it means to now: the verb belongs to the words it acts on, so
+"mağazaları bul" takes the second line and the colour together, with a drawn shop beside it
+where an arrow used to be. The broom on the clear button is the drawn one rather than the one
+I sketched in the icon grammar when there was no picture to use.
+
+The dark "use my location" button appeared for a frame on every reload. Absence and
+not-yet-known were the same state: the location kept from last time is read back in an
+effect, so the first frame has none and the panel opens. They are different states now and
+the panel waits to know which one it is in.
+
+The pin steps out of its pill and lines up with the mark on the control beside it, so the two
+read as a pair rather than as a badge and a button.
+
+In the category sheet: closing was a different movement from opening, because it had
+keyframes of its own -- it uses the product's one sheet animation now, both ways. And the
+sheet shows the shop whose sign carries that category's name, chosen by the slug rather than
+by anybody's judgement, with the act moved to the right of it at the width the act needs.
+
+Thirteen of the fifteen categories have a sign. Decoration and tableware show none rather
+than borrowing a neighbour's shop.
+
 ## "The same speed as the other sheets" has to mean the same animation
 
 Two sheets were told to open and close like the rest of the product and did not, twice. The

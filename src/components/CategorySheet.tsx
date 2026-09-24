@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import {X} from 'lucide-react';
 import {useCallback,useEffect,useRef,useState} from 'react';
-import {CategoryIcon,hasCategoryPicture} from './CategoryIcon';
+import {CategoryIcon,hasCategoryPicture,hasCategorySign} from './CategoryIcon';
 import type {Locale} from '@/lib/types';
 
 // Tapping a category used to run the search on the spot. That is one tap for a decision the
@@ -47,7 +47,7 @@ export function CategorySheet({slug,name,locale,onSearch,onClose}:{
     return()=>window.removeEventListener('keydown',escape);
   },[close]);
 
-  return <div className={`dialog-backdrop category-sheet-backdrop${leaving?' is-leaving':''}`} role="presentation"
+  return <div className="dialog-backdrop category-sheet-backdrop" data-state={leaving?'leaving':'visible'} role="presentation"
     onMouseDown={event=>{if(event.target===event.currentTarget)close();}}>
     <div className="category-sheet" role="dialog" aria-modal="true" aria-labelledby="category-sheet-title">
       <header>
@@ -63,10 +63,17 @@ export function CategorySheet({slug,name,locale,onSearch,onClose}:{
           ?<Image src={`/categories/${slug}.webp`} width={720} height={400} alt="" aria-hidden="true" sizes="(max-width:600px) 100vw, 372px"/>
           :<CategoryIcon slug={slug}/>}
       </div>
-      <p className="category-sheet-lead">{words.lead}</p>
-      <button ref={action} type="button" className="button primary category-sheet-search" onClick={onSearch} aria-label={words.full}>
-        {words.search}
-      </button>
+      {/* R44: the shop whose sign carries this category's name. Picked by the slug rather
+          than by anybody's judgement -- the file is named after the category it shows. */}
+      <div className="category-sheet-foot">
+        {hasCategorySign(slug)&&<Image className="category-sheet-sign" src={`/categories/signs/${slug}.webp`} width={300} height={290} alt="" aria-hidden="true"/>}
+        <div className="category-sheet-act">
+          <p className="category-sheet-lead">{words.lead}</p>
+          <button ref={action} type="button" className="button primary category-sheet-search" onClick={onSearch} aria-label={words.full}>
+            {words.search}
+          </button>
+        </div>
+      </div>
     </div>
   </div>;
 }
