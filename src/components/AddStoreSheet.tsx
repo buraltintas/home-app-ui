@@ -76,7 +76,7 @@ export function AddStoreSheet({query}:{query:string}){
       <Image src="/illustrations/add-store.png" width={72} height={72} alt="" aria-hidden="true"/>
       <button ref={opener} type="button" className="button primary add-store-open" onClick={()=>setOpen(true)}><Plus aria-hidden="true"/>{t('addStore')}</button>
     </div>
-    {open&&<div className="dialog-backdrop add-store-backdrop" role="presentation" onMouseDown={event=>{if(event.target===event.currentTarget)close();}}>
+    {open&&<div className="dialog-backdrop add-store-backdrop" data-state="visible" role="presentation" onMouseDown={event=>{if(event.target===event.currentTarget)close();}}>
       <div className="add-store-sheet" role="dialog" aria-modal="true" aria-labelledby="add-store-title">
         <header><h3 id="add-store-title">{t('addStoreTitle')}</h3><button type="button" className="icon-button" aria-label={t('close')} onClick={close}><X aria-hidden="true"/></button></header>
         {state==='done'

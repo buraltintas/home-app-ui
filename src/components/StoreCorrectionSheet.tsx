@@ -65,7 +65,7 @@ export function StoreCorrectionSheet({locale,storeId,storeName,title,body}:{
       <span className="store-correction-copy"><strong>{title}</strong><span>{body}</span></span>
       <ChevronRight className="store-correction-go" aria-hidden="true"/>
     </button>
-    {open&&<div className={`dialog-backdrop add-store-backdrop${leaving?' is-leaving':''}`} role="presentation"
+    {open&&<div className="dialog-backdrop add-store-backdrop" data-state={leaving?'leaving':'visible'} role="presentation"
       onMouseDown={event=>{if(event.target===event.currentTarget)close();}}>
       <div className="add-store-sheet store-correction-sheet" role="dialog" aria-modal="true" aria-labelledby="store-correction-title">
         <header>

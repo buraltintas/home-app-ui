@@ -8,6 +8,25 @@ value involved.
 
 ---
 
+## "The same speed as the other sheets" has to mean the same animation
+
+Two sheets were told to open and close like the rest of the product and did not, twice. The
+first attempt gave them keyframes of their own, timed to match -- the same duration and a
+different movement, which is exactly what "not the same" looks like. They use the panel's own
+animation now, one definition for all of them.
+
+Three other things on the review card, each with a cause worth naming. The box in the
+correction sheet stayed tall although its minimum had been halved, because a minimum is a
+floor and the height came from the textarea's own `rows`; the send button was below the fold
+as a result. The explanation under a low score could only be opened one at a time, because
+the state held one field rather than a set -- a reader weighing two scores had to close the
+first to read the second. And the information sign carried a tinted disc that read as a
+shadow behind a mark that already has a circle drawn on it.
+
+The "have you been here" frame is now drawn as the card beside it is drawn -- same fill,
+same border, a mark of its own and the same chevron -- because the two make the same kind of
+offer and looked like unrelated things.
+
 ## The shop page travelled to its top because the whole document was told to animate
 
 Reported three times, and the first two fixes treated the symptom. `html { scroll-behavior:

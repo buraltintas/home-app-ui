@@ -62,7 +62,14 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
   const [removeFailed,setRemoveFailed]=useState(false);
   // Which low score is showing its reason. One at a time: the rows are narrow and a card
   // with every note open is a wall of text where a table was.
-  const [openNote,setOpenNote]=useState<string|null>(null);
+  // A set, not one field. Each low score can carry its own explanation, and a reader
+  // weighing two of them against each other had to close the first to see the second.
+  const [openNotes,setOpenNotes]=useState<ReadonlySet<string>>(()=>new Set());
+  const toggleNote=(field:string)=>setOpenNotes(current=>{
+    const next=new Set(current);
+    if(!next.delete(field))next.add(field);
+    return next;
+  });
   // Why a heading is marked, opened from the mark itself. It arrives and leaves on the same
   // curve and at the same 0.52s as every other sheet in this product; three panels at three
   // speeds read as three products.
@@ -195,7 +202,7 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
           // for one are marked but have nothing to open, which is honest: the score was low
           // and nobody was asked why.
           const note=post.criterion_notes?.[field];
-          const shown=openNote===field;
+          const shown=openNotes.has(field);
           return <div key={key} className={low?'is-low':undefined}>
             <dt><span className="criterion-name">{split.length===2?<>{split[0]}/<span>{split[1]}</span></>:label}</span></dt>
             <dd><RatingStars value={value} showValue={false}/><span>{value}</span></dd>
@@ -204,7 +211,7 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
                   note about this score, and the reader meets it at the moment they are
                   deciding whether to open the reason. It answers for itself now -- a sign
                   nobody can ask about is a sign that has to be guessed at. */}
-              {note&&<button type="button" className="criterion-detail-open" aria-expanded={shown} onClick={()=>setOpenNote(shown?null:field)}>{shown?t('hideDetail'):t('seeDetail')}</button>}
+              {note&&<button type="button" className="criterion-detail-open" aria-expanded={shown} onClick={()=>toggleNote(field)}>{shown?t('hideDetail'):t('seeDetail')}</button>}
               <button type="button" className="criterion-warn-button" aria-label={t('whyWarning')} onClick={()=>setRuleOpen(true)}><Info aria-hidden="true"/></button>
               {shown&&note&&<p>{note}</p>}
             </div>}
@@ -229,7 +236,7 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
       {removeFailed&&<p className="form-error" role="alert">{t('deleteReviewFailed')}</p>}
     </div>
     <AuthDialog open={auth} onClose={()=>setAuth(false)}/>
-    {ruleOpen&&<div className={`dialog-backdrop add-store-backdrop${ruleLeaving?' is-leaving':''}`} role="presentation"
+    {ruleOpen&&<div className="dialog-backdrop add-store-backdrop" data-state={ruleLeaving?'leaving':'visible'} role="presentation"
       onMouseDown={event=>{if(event.target===event.currentTarget)closeRule();}}>
       <div className="add-store-sheet criterion-rule-sheet" role="dialog" aria-modal="true" aria-labelledby={`criterion-rule-${post.id}`}>
         <header>

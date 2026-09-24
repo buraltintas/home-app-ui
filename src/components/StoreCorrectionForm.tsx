@@ -52,7 +52,7 @@ export function StoreCorrectionForm({locale,storeName}:{locale:Locale;storeId:st
 
   return <form className="feedback-form store-correction-form" onSubmit={event=>void submit(event)}>
     <fieldset className="feedback-kinds"><legend>{t.topic}</legend>{t.categories.map((category,index)=><label key={category} className="feedback-kind" data-selected={topic===index}><input type="radio" name="correction-topic" checked={topic===index} onChange={()=>setTopic(index)}/><span>{category}</span></label>)}</fieldset>
-    <label className="feedback-field"><span>{t.label}</span><textarea value={message} maxLength={3600} rows={7} required onChange={event=>setMessage(event.target.value)}/><small>{t.hint}</small></label>
+    <label className="feedback-field"><span>{t.label}</span><textarea value={message} maxLength={3600} rows={3} required onChange={event=>setMessage(event.target.value)}/><small>{t.hint}</small></label>
     <label className="feedback-field"><span>{t.email}</span><input type="email" value={email} maxLength={320} autoCapitalize="none" autoCorrect="off" spellCheck={false} onChange={event=>setEmail(event.target.value)}/><small>{t.emailHint}</small></label>
     <div className="feedback-actions"><button className="button primary" type="submit" disabled={sending}>{sending?t.sending:t.send}</button><small>{t.privacy}</small></div>
     {error&&<p className="form-error" role="alert">{error}</p>}

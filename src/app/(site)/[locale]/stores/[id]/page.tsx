@@ -1,3 +1,4 @@
+import {ChevronRight,DoorOpen} from 'lucide-react';
 import type {Metadata} from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -307,8 +308,13 @@ export default async function Page({params}:Props){
       {/* R69: the frame says what is being asked for; the panel that explains contributor
           levels is a footnote to it, so it hangs from the frame's bottom edge instead of
           sitting inside among the words. */}
+      {/* R72: drawn as the card beside it is drawn, because the two make the same kind of
+          offer -- tell us something about this shop. The mark is a door being walked
+          through, which is what the question asks about. */}
       <aside className="review-invitation">
+        <span className="review-invitation-mark" aria-hidden="true"><DoorOpen/></span>
         <div className="review-invitation-copy"><h2>{contribution.title}</h2><p>{contribution.body}</p></div>
+        <ChevronRight className="review-invitation-go" aria-hidden="true"/>
       </aside>
       <div className="review-invitation-actions">
           {/* The same panel the profile opens, in the same words and at the same speed --
