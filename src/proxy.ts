@@ -1,4 +1,5 @@
 import {NextResponse,type NextRequest} from 'next/server';
+import {isUnwelcomeCrawler} from '@/lib/crawlers';
 
 // Locale used to live only in a cookie. Googlebot sends no cookies, so every crawl saw
 // Turkish, `<html lang>` was always `tr`, and the fully translated English, German and
@@ -38,6 +39,19 @@ function preferredLocale(request:NextRequest):Locale{
 export function proxy(request:NextRequest){
   const {pathname}=request.nextUrl;
   const segment=pathname.split('/')[1]??'';
+
+  // robots.txt asks these agents not to crawl the site. Some of them read it and stopped --
+  // one that was making 4,685 requests a day now makes four. Others carried on regardless,
+  // and a request that is refused here costs a header: the page is never rendered, so the
+  // backend is never called and the database is never woken. Measured, that is the whole
+  // point of doing it at the door rather than deeper in.
+  //
+  // 403 rather than a quiet 404: they are not being told the page is missing, they are
+  // being told they may not have it. The rules are published at /robots.txt, which stays
+  // readable to everyone including them.
+  if(pathname!=='/robots.txt'&&isUnwelcomeCrawler(request.headers.get('user-agent'))){
+    return new NextResponse('Disallowed by /robots.txt',{status:403,headers:{'content-type':'text/plain; charset=utf-8','cache-control':'no-store'}});
+  }
 
   // An explicitly prefixed URL is authoritative: it is what was linked, shared or
   // crawled, and it must not be renegotiated away from under the visitor.

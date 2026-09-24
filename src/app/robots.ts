@@ -1,19 +1,7 @@
 import type {MetadataRoute} from 'next';
+import {UNWELCOME_CRAWLERS} from '@/lib/crawlers';
 import {siteUrl} from '@/lib/site';
 
-// Crawlers that take a page and give nothing back. See the note beside the rule that uses
-// this for how the line is drawn; a name belongs here only when the crawl cannot put the
-// store in front of a person.
-const UNWELCOME_CRAWLERS=[
-  // Backlink and rank-tracking suites. They crawl the whole catalogue to sell it back as a
-  // report; the three of them were 6,652 requests in a day.
-  'SemrushBot','AhrefsBot','AhrefsSiteAudit','MJ12bot','DotBot','BLEXBot','SEOkicks',
-  'SERankingBot','DataForSeoBot','Barkrowler','rogerbot','ZoominfoBot',
-  // Indexes for marketplaces and assistants with no readers in this market, and training
-  // crawls that quote nobody: 2,737 requests in the same day.
-  'Amazonbot','PetalBot','Bytespider','ImagesiftBot','meta-externalagent','Applebot-Extended',
-  'CCBot','Diffbot','omgili','Timpibot','Webzio-Extended','FriendlyCrawler',
-];
 
 // Personal and transactional routes are kept out of the index. They need a session to
 // render anything, so a crawler only ever sees an empty shell, and every one of them

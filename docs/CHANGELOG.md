@@ -8,6 +8,24 @@ value involved.
 
 ---
 
+## Some crawlers read robots.txt and stopped; the rest are now stopped at the door
+
+A day after the disallow shipped, SemrushBot had gone from 4,685 requests a day to four, and
+AhrefsBot, Amazonbot and Meta's training crawler had gone entirely. PetalBot carried on --
+172 requests in four hours -- which is what a notice can do and no more.
+
+An agent that was asked not to crawl and crawls anyway is now refused in the proxy, before
+anything renders. That is the point of doing it at the door: a refused request costs a
+header, so no page is built, no backend call is made and the database is not woken. The list
+is the one robots.txt publishes, read from one place by both, because a door that disagrees
+with the notice on it is worse than either alone.
+
+What it does not touch is the larger half of the problem, measured the same day: 955 API
+requests an hour, never a gap longer than eighteen seconds, and 73% of the store-page traffic
+arriving from AWS, Google and Azure address space wearing browser user agents. 435 of the 436
+addresses that asked for a store page never fetched a single stylesheet or script. Those are
+not browsers and they do not read robots.txt.
+
 ## The shop page opened part way down, and the reason was not on the shop page
 
 Reported twice. Measured this time, frame by frame, on a page scrolled to 2200px: tapping a
