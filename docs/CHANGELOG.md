@@ -8,6 +8,23 @@ value involved.
 
 ---
 
+## The shop page travelled to its top because the whole document was told to animate
+
+Reported three times, and the first two fixes treated the symptom. `html { scroll-behavior:
+smooth }` was set for the whole document, so every scroll the framework performs on its own
+-- and it performs one on each navigation, bringing the new route into view -- became an
+animation. On a phone that is a page opening somewhere other than its top and then
+travelling there by itself.
+
+Correcting it at each call site could not work, because the corrections animated too: asking
+for `behavior: 'instant'` inside a document that has been told to be smooth is a request
+some browsers honour and others quietly do not, which is why it looked fixed in a desktop
+browser and stayed broken on a phone.
+
+Scrolling is a jump now unless somebody asks for a journey. Nothing lost it: the one place
+that wants one -- the button that jumps to the reviews -- asks in its own call and still
+animates.
+
 ## Some crawlers read robots.txt and stopped; the rest are now stopped at the door
 
 A day after the disallow shipped, SemrushBot had gone from 4,685 requests a day to four, and
