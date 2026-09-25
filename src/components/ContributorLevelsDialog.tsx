@@ -1,6 +1,6 @@
 'use client';
 
-import {X} from 'lucide-react';
+import {ChevronRight,Medal,X} from 'lucide-react';
 import {useEffect,useState} from 'react';
 import {about} from '@/content/legal/about';
 import type {Locale} from '@/lib/types';
@@ -59,10 +59,15 @@ export function ContributorLevelsDialog({locale,note}:{locale:Locale;note?:strin
   if(!section)return null;
   return <>
     {note
-      ?<aside className="level-note">
-        <p>{note}</p>
-        <button type="button" className="button secondary level-note-action" onClick={()=>setOpen(true)}>{openHint[locale]}</button>
-      </aside>
+      ?/* R74: the question is the heading and the claim is underneath it, in the same card
+           the page's other two offers are drawn in. It was a frame inside a frame, in
+           another colour and another width, saying "raise your level" above the question
+           that explains what a level is. */
+        <button type="button" className="offer-card level-offer" onClick={()=>setOpen(true)}>
+          <span className="offer-card-mark" aria-hidden="true"><Medal/></span>
+          <span className="offer-card-copy"><strong>{openHint[locale]}</strong><span>{note}</span></span>
+          <ChevronRight className="offer-card-go" aria-hidden="true"/>
+        </button>
       :<div className="level-boost">
         <button type="button" className="contribution-progress level-boost-action" onClick={()=>setOpen(true)}>
           <span aria-hidden="true">↗</span><span><strong>{openLabel[locale]}</strong><small>{openHint[locale]}</small></span>

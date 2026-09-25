@@ -8,6 +8,42 @@ value involved.
 
 ---
 
+## The shop page was never scrolling; the footer was climbing
+
+Third report, and the reporter's own screen recording settles it. A frame from it shows the
+privacy links filling the screen under the masthead -- and the frame before shows the page
+they tapped from sitting at its top, scroll position zero. Nothing had scrolled anywhere.
+
+What happens is that between one page being taken down and the next being ready there is a
+moment with nothing in the slot they share. The document collapses to the masthead and the
+footer, the footer rises to just under the masthead, and what a reader sees is the bottom of
+a page they never asked for, followed by a jump when the real page arrives and pushes it
+down. On a desktop that moment is too short to see, which is why two fixes aimed at scrolling
+looked right in a browser and stayed wrong on a phone.
+
+The slot has a floor of one viewport now, so the footer cannot climb into it whatever is or
+is not being rendered. Measured by emptying the slot outright: the footer's top lands at
+875px on an 812px screen.
+
+## After writing a review, the page is loaded rather than navigated to
+
+The report came back with the detail that settles it: reloading by hand three seconds later
+shows the review, so nothing is waiting on the backend. The server's copy is expired when the
+review is written; what kept showing the old one is the router's own copy of the page, which
+it keeps for five minutes and serves without asking, and which the reviewer had populated by
+being on that page a moment earlier. Dropping it before or after the navigation both failed.
+
+So this one transition asks the browser for the page instead of the router. It costs the
+instant transition once, on the one journey where being right matters more than being quick.
+
+## Three offers on one page, drawn once
+
+"Have you been here", "what are contributor levels for" and "suggest a correction" make the
+same kind of offer and were drawn separately, so every time one changed the other two were
+reported as not matching it. They share one shape now. The levels panel in particular stops
+being a frame inside a frame in a different colour at a different width, and leads with the
+question rather than with an instruction that assumed the answer.
+
 ## The search screen gets its own artwork, and a reload stops flashing
 
 The heading breaks where it means to now: the verb belongs to the words it acts on, so

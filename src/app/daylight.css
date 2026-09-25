@@ -531,7 +531,9 @@ svg{stroke-width:2}
 /* R61: it explains a score rather than warning about one, so it is an information mark in
    the colour the product uses for explanation. R70: and nothing behind it -- the tinted disc
    read as a shadow around a sign that already has its own circle drawn on it. */
-.criterion-warn-button{display:inline-grid;place-items:center;width:26px;height:26px;padding:0;border:0;border-radius:var(--r-pill);background:none;color:var(--accent-ink);cursor:pointer}
+/* R73: the same ink as the headings it explains -- it is a note about a criterion, so it
+   reads as part of that column rather than as a second colour arriving to say something. */
+.criterion-warn-button{display:inline-grid;place-items:center;width:26px;height:26px;padding:0;border:0;border-radius:var(--r-pill);background:none;color:var(--ink-muted);cursor:pointer}
 .criterion-warn-button:hover{color:var(--ink)}
 .criterion-warn-button svg{width:16px;height:16px}
 /* The note is a sentence and needs the width of the row, so this row spans both columns --
@@ -606,9 +608,9 @@ svg{stroke-width:2}
 .contributor-level-number{font-size:12px;font-weight:700;color:var(--ink-muted)}
 /* The levels explanation, offered where somebody is looking at their own level. Its own
    frame, matching the invitation block underneath it. */
-.level-boost{width:100%;margin:0 0 4px;padding:18px 20px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);display:flex}
-.level-boost-action{width:100%;background:color-mix(in srgb,var(--surface) 72%,transparent)}
-.level-boost .contribution-progress>span:first-child{background:var(--accent-wash);color:var(--clay)}
+/* R74: it was a frame inside a frame, in a different colour and a different width from
+   the two beside it. It is one of them now. */
+.level-boost{width:100%;margin:0}
 /* Shorter than it was, at the same width. It is a table of five rows and two sentences, and
    it was taking most of a phone screen to say that -- the reader had to scroll a sheet that
    has nothing below the fold worth scrolling to. Only the vertical measurements moved. */
@@ -760,36 +762,36 @@ svg{stroke-width:2}
 /* A thing to read, not a word to press. Five words in a pill, sitting among the address
    links, asked the reader to work out what the form behind them wanted. Three parts now: the
    mark, what it is for, and where it goes. */
-.store-correction-card{
+/* The offer card: a mark, a rule, what is being asked, and the way in.
+ *
+ * Three things on this page make the same kind of offer -- tell us about this shop, tell us
+ * what is wrong with it, find out what contributing gets you -- and each was drawn on its
+ * own. Every time one of them was changed the other two were reported as not matching it.
+ * The shape is defined here once and worn by all three. */
+.offer-card{
   display:grid;grid-template-columns:auto 1px minmax(0,1fr) auto;align-items:center;gap:0 14px;
-  margin-top:18px;padding:14px 16px;text-decoration:none;color:var(--ink);
+  width:100%;padding:14px 16px;text-align:left;text-decoration:none;color:var(--ink);
   background:color-mix(in srgb,var(--success) 6%,var(--surface));
   border:1px solid color-mix(in srgb,var(--success) 26%,var(--line));border-radius:var(--r-lg);
 }
+.offer-card:hover{border-color:color-mix(in srgb,var(--success) 48%,var(--line));background:color-mix(in srgb,var(--success) 10%,var(--surface))}
+.offer-card-mark{grid-column:1;display:grid;place-items:center;width:44px;height:44px;color:var(--success)}
+.offer-card-mark svg{width:28px;height:28px}
+/* Placed, not left to fall where it lands: an unplaced grid item takes the next free cell,
+   which is the one the words are in -- that is how a chevron once printed across them. */
+.offer-card::after{content:'';grid-column:2;grid-row:1;align-self:stretch;width:1px;background:color-mix(in srgb,var(--success) 26%,var(--line))}
+.offer-card-copy{grid-column:3;display:grid;gap:3px;min-width:0}
+.offer-card-copy strong{font-size:15px;font-weight:700;line-height:1.25;letter-spacing:-.01em}
+.offer-card-copy>span{font-size:14px;line-height:1.4;color:var(--ink-muted)}
+.offer-card-go{grid-column:4;width:22px;height:22px;color:color-mix(in srgb,var(--success) 88%,var(--ink));flex:none}
+@media(max-width:600px){.offer-card{padding:12px 12px;gap:0 10px}.offer-card-mark{width:38px;height:38px}}
+
+.store-correction-card{margin-top:18px}
 .store-correction-card+*{margin-top:0}
 /* R46: the frame is the end of what the page says about the shop itself, so the boundary is
    drawn under it -- the same line the rating block and "Mağaza hakkında" already carry. */
 .store-description{padding-bottom:26px;border-bottom:1px solid var(--line)}
-.store-correction-card:hover{border-color:color-mix(in srgb,var(--success) 48%,var(--line));background:color-mix(in srgb,var(--success) 10%,var(--surface))}
-.store-correction-mark{grid-column:1;display:grid;place-items:center;width:44px;height:44px;color:var(--success)}
-.store-correction-mark svg{width:28px;height:28px}
-/* Placed, not left to fall where it lands. A pseudo-element on a grid is a grid item like
-   any other, so an unplaced one takes the next free cell -- which was the one the text was
-   supposed to be in, and the chevron then printed itself across the words. */
-.store-correction-card::after{content:'';grid-column:2;grid-row:1;align-self:stretch;width:1px;background:color-mix(in srgb,var(--success) 26%,var(--line))}
-.store-correction-copy{grid-column:3;display:grid;gap:3px;min-width:0}
-.store-correction-copy strong{font-size:15px;font-weight:700;line-height:1.25;letter-spacing:-.01em}
-.store-correction-copy>span{font-size:14px;line-height:1.4;color:var(--ink-muted)}
-/* R67: the card is green and its arrow was clay, which is the colour this product uses
-   for something else. */
-.store-correction-go{grid-column:4;width:22px;height:22px;color:color-mix(in srgb,var(--success) 88%,var(--ink));flex:none}
-@media(max-width:600px){
-  .store-correction-card{padding:12px 12px;gap:0 10px}
-  .store-correction-mark{width:38px;height:38px}
-  .store-correction-mark svg{width:24px;height:24px}
-  .store-correction-copy strong{font-size:14px}
-  .store-correction-copy>span{font-size:13px}
-}
+@media(max-width:600px){.offer-card-copy strong{font-size:14px}.offer-card-copy>span{font-size:13px}.offer-card-mark svg{width:24px;height:24px}}
 
 .store-correction-link{display:inline-flex;align-items:center;gap:8px;min-height:44px;margin-top:14px;padding:0 16px;border:1px solid var(--line-strong);border-radius:var(--r-pill);background:var(--surface);color:var(--ink);font-size:14px;font-weight:700;text-decoration:none}
 .store-correction-link:hover{border-color:var(--clay);color:var(--clay)}
@@ -801,28 +803,21 @@ svg{stroke-width:2}
 /* R69: sized and toned to match the card that suggests an edit, because the two are the
    same kind of offer and were drawn as if they were not. A near tone rather than the same
    one: they are neighbours, not copies. */
-.review-invitation{min-width:0;margin:0;padding:14px 16px;background:color-mix(in srgb,var(--success) 6%,var(--surface));border:1px solid color-mix(in srgb,var(--success) 26%,var(--line));border-radius:var(--r-lg);color:var(--ink);display:grid;grid-template-columns:auto 1px minmax(0,1fr) auto;align-items:center;gap:0 14px}
-.review-invitation-mark{grid-column:1;display:grid;place-items:center;width:44px;height:44px;color:var(--success)}
-.review-invitation-mark svg{width:28px;height:28px}
-/* Placed rather than left to land: an unplaced grid item takes the next free cell, which is
-   the one the words are in -- the same way a chevron once printed itself across them. */
-.review-invitation::after{content:'';grid-column:2;grid-row:1;align-self:stretch;width:1px;background:color-mix(in srgb,var(--success) 26%,var(--line))}
-.review-invitation-copy{grid-column:3;min-width:0}
-.review-invitation-go{grid-column:4;width:22px;height:22px;color:color-mix(in srgb,var(--success) 88%,var(--ink));flex:none}
+.review-invitation{min-width:0;margin:0}
 .review-invitation>*{min-width:0}
 .review-invitation h2{margin:0;font-size:15px;font-weight:700;line-height:1.25;letter-spacing:-.01em;text-align:center}
 .review-invitation p{max-width:720px;margin:3px 0 0;color:var(--ink-muted);font-size:14px;line-height:1.4}
 /* Outside the frame but joined to it: it hangs from the bottom edge, sharing the border
    so the two read as one object with a handle rather than as a button that wandered off. */
-.review-invitation-actions{display:grid;justify-items:start;gap:0;margin:0 0 0 18px}
-/* Joined by a stem rather than by touching: the button is a footnote to the frame above and
-   the line says which frame, without pretending to be part of it. */
-.review-invitation-actions::before{content:'';width:2px;height:12px;margin-left:12px;background:color-mix(in srgb,var(--success) 34%,var(--line))}
+/* R74: the two sit one under the other in the same column, at the same width. They were a
+   frame and a footnote hanging off it, which is what "make it the same width" was asking to
+   stop being. */
+.review-invitation-actions{display:grid;gap:10px;margin:10px 0 0}
 .contribution-progress{width:100%;text-align:left;min-height:58px;padding:9px 12px;border:1px solid color-mix(in srgb,var(--clay) 28%,var(--line));border-radius:var(--r-sm);display:grid;grid-template-columns:34px 1fr;align-items:center;gap:9px;color:var(--ink);text-decoration:none;background:color-mix(in srgb,var(--surface) 72%,transparent)}
 .contribution-progress>span:first-child{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--surface);font-size:20px}
 .contribution-progress>span:last-child{display:grid;gap:2px}
 .contribution-progress strong{font-size:14px}.contribution-progress small{color:var(--ink-muted);font-size:11px}
-@media(max-width:720px){.store-overview,.store-body{max-width:100vw}.store-contribution{width:100%;max-width:100vw;padding:20px 18px 0;overflow:hidden}.review-invitation{width:100%;max-width:calc(100vw - 36px);padding:12px 12px;gap:0 10px}.review-invitation-mark{width:38px;height:38px}.review-invitation h2{font-size:15px}.review-invitation p{overflow-wrap:anywhere}.review-invitation-actions{width:100%;max-width:100%}}
+@media(max-width:720px){.store-overview,.store-body{max-width:100vw}.store-contribution{width:100%;max-width:100vw;padding:20px 18px 0;overflow:hidden}.review-invitation{width:100%;max-width:calc(100vw - 36px)}.review-invitation h2{font-size:15px}.review-invitation p{overflow-wrap:anywhere}.review-invitation-actions{width:100%;max-width:100%}}
 /* The same width as the navigation dock it stands above; two floating bars on one
    screen that nearly line up read as a mistake rather than as a pair. */
 @media(max-width:720px){

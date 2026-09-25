@@ -60,10 +60,10 @@ export function StoreCorrectionSheet({locale,storeId,storeName,title,body}:{
     {/* The same card the page has always shown, drawn the same way. Only what it does
         changed, so only the element changed with it: a button, because it no longer
         goes anywhere. */}
-    <button ref={opener} type="button" className="store-correction-card" onClick={()=>setOpen(true)}>
-      <span className="store-correction-mark" aria-hidden="true"><NotebookPen/></span>
-      <span className="store-correction-copy"><strong>{title}</strong><span>{body}</span></span>
-      <ChevronRight className="store-correction-go" aria-hidden="true"/>
+    <button ref={opener} type="button" className="offer-card store-correction-card" onClick={()=>setOpen(true)}>
+      <span className="offer-card-mark" aria-hidden="true"><NotebookPen/></span>
+      <span className="offer-card-copy"><strong>{title}</strong><span>{body}</span></span>
+      <ChevronRight className="offer-card-go" aria-hidden="true"/>
     </button>
     {open&&<div className="dialog-backdrop add-store-backdrop" data-state={leaving?'leaving':'visible'} role="presentation"
       onMouseDown={event=>{if(event.target===event.currentTarget)close();}}>

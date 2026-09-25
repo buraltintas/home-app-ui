@@ -89,10 +89,10 @@ const cityCategoryName:Record<Locale,(city:string,category:string)=>string>={
 // that explains it -- because a sentence mentioning contributor levels that cannot answer
 // "what are those?" is a sentence that raises a question and walks away.
 const contributionCopy:Record<Locale,{title:string;body:string;levelNote:string;action:string;correction:string}>={
-  tr:{title:'Bu mağazaya gittin mi?',body:'Deneyimin, bir sonraki kişinin kendine en uygun mağazayı seçmesine yardım eder. Doğrulanmış her değerlendirme katkı seviyeni de yükseltir.',levelNote:'Doğrulanmış her değerlendirme katkı seviyeni de yükseltir.',action:'Değerlendirme yap',correction:'Mağaza bilgilerinde düzenleme öner.'},
-  en:{title:'Have you visited this store?',body:'Your experience helps the next person choose the store that suits them. Every verified review also raises your contributor level.',levelNote:'Every verified review also raises your contributor level.',action:'Write a review',correction:'Suggest an edit to store information'},
-  de:{title:'Warst du in diesem Geschäft?',body:'Deine Erfahrung hilft der nächsten Person, das für sie passende Geschäft zu wählen. Jede bestätigte Bewertung erhöht auch deine Beitragsstufe.',levelNote:'Jede bestätigte Bewertung erhöht auch deine Beitragsstufe.',action:'Bewertung abgeben',correction:'Änderung der Geschäftsinformationen vorschlagen'},
-  ru:{title:'Вы были в этом магазине?',body:'Ваш опыт поможет следующему человеку выбрать подходящий для него магазин. Каждый подтверждённый отзыв также повышает ваш уровень участника.',levelNote:'Каждый подтверждённый отзыв также повышает ваш уровень участника.',action:'Оставить оценку',correction:'Предложить исправление данных магазина'},
+  tr:{title:'Bu mağazaya gittin mi?',body:'Deneyimin, bir sonraki kişinin kendine en uygun mağazayı seçmesine yardım eder.',levelNote:'Doğrulanmış her değerlendirme katkı seviyeni de yükseltir.',action:'Değerlendirme yap',correction:'Mağaza bilgilerinde düzenleme öner.'},
+  en:{title:'Have you visited this store?',body:'Your experience helps the next person choose the store that suits them.',levelNote:'Every verified review also raises your contributor level.',action:'Write a review',correction:'Suggest an edit to store information'},
+  de:{title:'Warst du in diesem Geschäft?',body:'Deine Erfahrung hilft der nächsten Person, das für sie passende Geschäft zu wählen.',levelNote:'Jede bestätigte Bewertung erhöht auch deine Beitragsstufe.',action:'Bewertung abgeben',correction:'Änderung der Geschäftsinformationen vorschlagen'},
+  ru:{title:'Вы были в этом магазине?',body:'Ваш опыт поможет следующему человеку выбрать подходящий для него магазин.',levelNote:'Каждый подтверждённый отзыв также повышает ваш уровень участника.',action:'Оставить оценку',correction:'Предложить исправление данных магазина'},
 };
 // Two sentences that say different kinds of thing: the first explains how the number is
 // worked out, the second is why it can be trusted. They are held apart because the second
@@ -311,10 +311,10 @@ export default async function Page({params}:Props){
       {/* R72: drawn as the card beside it is drawn, because the two make the same kind of
           offer -- tell us something about this shop. The mark is a door being walked
           through, which is what the question asks about. */}
-      <aside className="review-invitation">
-        <span className="review-invitation-mark" aria-hidden="true"><DoorOpen/></span>
-        <div className="review-invitation-copy"><h2>{contribution.title}</h2><p>{contribution.body}</p></div>
-        <ChevronRight className="review-invitation-go" aria-hidden="true"/>
+      <aside className="offer-card review-invitation">
+        <span className="offer-card-mark" aria-hidden="true"><DoorOpen/></span>
+        <div className="offer-card-copy"><h2>{contribution.title}</h2><p>{contribution.body}</p></div>
+        <ChevronRight className="offer-card-go" aria-hidden="true"/>
       </aside>
       <div className="review-invitation-actions">
           {/* The same panel the profile opens, in the same words and at the same speed --
@@ -322,7 +322,7 @@ export default async function Page({params}:Props){
               somebody meets the claim. */}
         {/* Without a note of its own: the sentence it used to carry is in the frame above
             now, and printing it twice made the page argue with itself. */}
-        <ContributorLevelsDialog locale={locale}/>
+        <ContributorLevelsDialog locale={locale} note={contribution.levelNote}/>
       </div>
     </section>
     <section className="store-body">

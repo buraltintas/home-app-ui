@@ -269,8 +269,22 @@ function ReviewWizard({storeId}:{storeId:string}){
       // before the navigation rather than after: afterwards it is refreshing a page that has
       // already been shown, which is the refresh the reader was having to do by hand.
       await refreshStorePage(storeId,store?.store.slug).catch(()=>undefined);
-      router.refresh();
-      router.push(localePath(locale,`/stores/${storeId}`));
+      // Loaded rather than navigated to, and this is the third attempt at it.
+      //
+      // The server's copy of the shop's page is expired above, so the page that gets built
+      // is a fresh one. What kept showing the old review count was never the server: the
+      // router keeps its own copy of a page for five minutes and serves it on navigation
+      // without asking, and the reviewer had been on that very page a moment earlier, which
+      // is how it got there. refresh() is supposed to drop it and, ordered either way
+      // against the navigation, did not -- reported again with the detail that settles it:
+      // reloading by hand three seconds later shows the review, so nothing is waiting on
+      // the backend.
+      //
+      // So this one transition asks the browser for the page instead of the router. It
+      // costs the instant transition once, on the one journey in the product where being
+      // right matters more than being quick: somebody has just written something and is
+      // going to look for it.
+      window.location.assign(localePath(locale,`/stores/${storeId}`));
     }catch{setSubmitError(t('reviewError'));}
     finally{setSubmitting(false);}
   };

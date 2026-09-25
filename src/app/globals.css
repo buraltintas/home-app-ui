@@ -13,6 +13,22 @@
   --font-serif:var(--font-sans);--font-quote:ui-serif,Georgia,'Times New Roman',serif;--cobalt:var(--ink);--sun:var(--accent-wash);--forest:var(--success);--accent-strong:var(--clay)
 }
 *{box-sizing:border-box}
+/* The slot a page lives in, and the reason it has a floor.
+ *
+ * Between one page being taken down and the next being ready there is a moment with nothing
+ * in here. The document collapses to the masthead and the footer, the footer rises to just
+ * under the masthead, and what a reader sees is the bottom of a page they never asked for --
+ * followed by a jump when the real page arrives and pushes it back down.
+ *
+ * That was reported three times as "the shop page opens at the bottom and then goes to the
+ * top", and it was measured as exactly this: a frame from the reporter's own screen
+ * recording shows the privacy links filling the screen under the header, on a page whose
+ * scroll position was zero the whole time. Scrolling was never the cause.
+ *
+ * A floor of one viewport means the footer cannot climb into view, whatever is or is not in
+ * here. svh rather than vh because the phone's address bar is part of the viewport it hides.
+ */
+.page-slot{min-height:100svh}
 /* Scrolling is a jump unless somebody asked for a journey.
  *
  * This declared the opposite for the whole document, and the cost was not decoration. Every
