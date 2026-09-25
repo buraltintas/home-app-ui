@@ -8,6 +8,27 @@ value involved.
 
 ---
 
+## The search screen, again: what flashed, what was framed, and what was drawn beside a shop
+
+The dark "use my location" button still appeared for a frame on reload, because only half of
+what depends on the location had been taught the difference between "no location" and "not
+read back yet". The sentence above it had not, and it was the sentence that was flashing.
+
+The heading is centred in the room it has rather than starting at the edge of it, and the
+phrase that takes the second line is capitalised as a line. The place being searched from
+loses its frame: it names where the search is, it is not a control. "Listelemeyi temizle"
+takes the same ink as the control beside it, and its rule belongs to the words -- it used to
+run on under the broom, which made the broom look struck through.
+
+The two tiles above the results take the ground the shop marks sit on, one ink for both
+marks, and the rule that separates the shops below them, so the pair reads as the head of the
+list rather than as two loose cards.
+
+And the drawn shops: six of them carried a sliver of a neighbouring shop at one edge. The
+strays that stood apart came off by keeping the largest connected drawing; the ones joined by
+an anti-aliased fringe needed the column profile instead -- a shop is a broad mass, a
+leftover is a narrow band with a valley between it and the mass.
+
 ## The shop page was never scrolling; the footer was climbing
 
 Third report, and the reporter's own screen recording settles it. A frame from it shows the
