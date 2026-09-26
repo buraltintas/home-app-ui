@@ -1,4 +1,4 @@
-import {ChevronRight,DoorOpen} from 'lucide-react';
+import {DoorOpen} from 'lucide-react';
 import type {Metadata} from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -291,7 +291,9 @@ export default async function Page({params}:Props){
         <p>{[store.district,store.city].filter(Boolean).join(', ')}{store.distance_meters!==undefined&&` · ${(store.distance_meters/1000).toLocaleString(locale,{maximumFractionDigits:1})} km`}</p>
         {belongsTo.length>0&&<p className="store-belongs-to">{belongsTo.map(page=><Link key={page.path} href={localePath(locale,page.path)}>{page.name}</Link>)}</p>}
       </div>
-      <div className="store-score"><span>{t.communityRating}</span><strong>{store.platform.review_count?<Rating value={store.platform.average_rating}/>:'—'}</strong><small>{store.platform.review_count} {t.profileRatings.toLocaleLowerCase(locale)}</small></div>
+      {/* R79: the count is printed twice on this page -- here and beside the rating in the
+          breakdown below, where it belongs to a heading that explains it. Once is enough. */}
+      <div className="store-score"><span>{t.communityRating}</span><strong>{store.platform.review_count?<Rating value={store.platform.average_rating}/>:'—'}</strong></div>
       <div className="store-score"><span>{t.savedBy}</span><strong>{store.platform.favorite_count}</strong><small>{t.people}</small></div>
       <StoreActions storeId={store.id} name={store.name} latitude={store.latitude} longitude={store.longitude} initialFavorited={store.viewer_has_favorited} phone={store.phone}/>
       <section className="store-rating-breakdown" aria-labelledby="store-rating-title">
@@ -311,10 +313,12 @@ export default async function Page({params}:Props){
       {/* R72: drawn as the card beside it is drawn, because the two make the same kind of
           offer -- tell us something about this shop. The mark is a door being walked
           through, which is what the question asks about. */}
-      <aside className="offer-card review-invitation">
-        <span className="offer-card-mark" aria-hidden="true"><DoorOpen/></span>
-        <div className="offer-card-copy"><h2>{contribution.title}</h2><p>{contribution.body}</p></div>
-        <ChevronRight className="offer-card-go" aria-hidden="true"/>
+      {/* R76: a note, not an offer. It does not go anywhere -- the thing it invites is the
+          button below it -- so it loses the chevron and the frame and takes the ground the
+          page already uses for saying something. */}
+      <aside className="review-invitation" role="note">
+        <span className="review-invitation-mark" aria-hidden="true"><DoorOpen/></span>
+        <div className="review-invitation-copy"><h2>{contribution.title}</h2><p>{contribution.body}</p></div>
       </aside>
       <div className="review-invitation-actions">
           {/* The same panel the profile opens, in the same words and at the same speed --

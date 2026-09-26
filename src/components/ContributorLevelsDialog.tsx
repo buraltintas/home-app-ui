@@ -1,6 +1,7 @@
 'use client';
 
-import {ChevronRight,Medal,X} from 'lucide-react';
+import {LevelMedal} from './LevelMedal';
+import {ChevronRight,X} from 'lucide-react';
 import {useEffect,useState} from 'react';
 import {about} from '@/content/legal/about';
 import type {Locale} from '@/lib/types';
@@ -64,7 +65,7 @@ export function ContributorLevelsDialog({locale,note}:{locale:Locale;note?:strin
            another colour and another width, saying "raise your level" above the question
            that explains what a level is. */
         <button type="button" className="offer-card level-offer" onClick={()=>setOpen(true)}>
-          <span className="offer-card-mark" aria-hidden="true"><Medal/></span>
+          <span className="offer-card-mark" aria-hidden="true"><LevelMedal/></span>
           <span className="offer-card-copy"><strong>{openHint[locale]}</strong><span>{note}</span></span>
           <ChevronRight className="offer-card-go" aria-hidden="true"/>
         </button>

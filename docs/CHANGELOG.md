@@ -8,6 +8,36 @@ value involved.
 
 ---
 
+## Where a heading breaks is a fact about the sentence
+
+The search heading was asked for in three lines -- "Sana uygun", then the phrase, then the
+verb. Narrowing the column until it happened to break there would have been right in Turkish
+and wrong in every other language, so the break is written into the string: a newline in the
+heading is a line break in the heading, and the three other languages keep the one line they
+read best in.
+
+The shop beside it now takes the right half, so its left edge lands on the middle of the
+page, which is also what gives the heading the width it breaks at. The two marks in the row
+below share one box and one size, measured level to the pixel.
+
+## Three of the drawn shops were replaced, and one mark lost its number
+
+Small appliances, kitchenware and garden have new artwork. Each was identified by the name on
+its own signboard rather than by the order it arrived in, because that is the part a person
+should not have to check afterwards.
+
+The contributor mark carried a "1" inside the medal -- a level, where the mark stands for
+contributing. The medal is drawn without it, and it lives in one place now: the profile drew
+its own copy and the store page imported the set's, which is how one of them came to have a
+number the other did not.
+
+The "have you been here" block stops being an offer card. It does not go anywhere -- the
+thing it invites is the button under it -- so it loses the chevron and the frame and takes
+the ground the page already uses for saying something, measured as the same fill as the note
+above the reviews. The save button wears the heart the bottom navigation uses for saved
+shops, the rating and the number of people who saved it are one size rather than a headline
+and a footnote, and the review count stops being printed twice on one page.
+
 ## The search screen, again: what flashed, what was framed, and what was drawn beside a shop
 
 The dark "use my location" button still appeared for a frame on reload, because only half of

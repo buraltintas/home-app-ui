@@ -16,6 +16,7 @@ import {ProfileMessages} from '@/components/ProfileMessages';
 import {ProfileEditor} from '@/components/ProfileEditor';
 import {ContributorLevelsDialog} from '@/components/ContributorLevelsDialog';
 import {ProfileInvite} from '@/components/ProfileInvite';
+import {LevelMedal} from '@/components/LevelMedal';
 import {useI18n} from '@/i18n/I18nProvider';
 import {apiFetch} from '@/lib/api-client';
 import type {Locale,Me} from '@/lib/types';
@@ -40,14 +41,6 @@ const reviewCopy:Record<Locale,{title:string;hint:string}>={tr:{title:'Değerlen
 // The set's medal, minus the numeral on its face. Every other stroke is the same one the
 // icon set draws; only the "1" is gone, because a badge for level three and a badge for
 // level four were both stamped with it.
-function LevelMedal(){
-  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M7.21 15 2.66 7.14a2 2 0 0 1 .13-2.2L4.4 2.8A2 2 0 0 1 6 2h12a2 2 0 0 1 1.6.8l1.6 2.14a2 2 0 0 1 .14 2.2L16.79 15"/>
-    <path d="M11 12 5.12 2.2"/><path d="m13 12 5.88-9.8"/><path d="M8 7h8"/>
-    <circle cx="12" cy="17" r="5"/>
-  </svg>;
-}
-
 const messageCopy:Record<Locale,{title:string;hint:string}>={tr:{title:'Mesajlarım',hint:'Bize gönderdiklerin ve yanıtlarımız'},en:{title:'My messages',hint:'What you sent us and our replies'},de:{title:'Meine Nachrichten',hint:'Deine Nachrichten und unsere Antworten'},ru:{title:'Мои сообщения',hint:'Ваши сообщения и наши ответы'}};
 const profileEditorHint:Record<Locale,string>={tr:'Görünen adın ve profil bilgilerin',en:'Your display name and profile details',de:'Dein Anzeigename und deine Profilangaben',ru:'Ваше отображаемое имя и данные профиля'};
 const progressionCopy:Record<Locale,{next:(level:number,count:number)=>string;reward:string;top:string}>={

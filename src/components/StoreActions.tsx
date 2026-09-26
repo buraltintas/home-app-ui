@@ -1,6 +1,6 @@
 'use client';
 
-import {Bookmark,Check,Map,Phone,Send} from 'lucide-react';
+import {Heart,Map,Phone,Send} from 'lucide-react';
 import {useEffect,useRef,useState} from 'react';
 import {useI18n} from '@/i18n/I18nProvider';
 import {apiFetch} from '@/lib/api-client';
@@ -107,7 +107,10 @@ export function StoreActions({storeId,name,latitude,longitude,initialFavorited,p
   };
 
   return <><div className="store-actions">
-    <button onClick={()=>void toggleFavorite()} disabled={busy} aria-pressed={favorited}>{favorited?<Check/>:<Bookmark/>}{t('save')}</button>
+    {/* R78: the heart the bottom navigation uses for saved shops. A bookmark here and a
+        heart there were two marks for one idea. Filled once it is saved, which is the
+        state the mark is carrying. */}
+    <button onClick={()=>void toggleFavorite()} disabled={busy} aria-pressed={favorited}><Heart className={favorited?'is-saved':undefined}/>{t('save')}</button>
     <button onClick={directions}><Map/>{t('directions')}</button>
     {phone&&<a href={`tel:${phone.replace(/[^\d+]/g,'')}`} onClick={call}><Phone/>{t('callStore')}</a>}
     <button onClick={()=>void share()}><Send/>{t('share')}</button>
