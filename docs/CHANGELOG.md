@@ -8,6 +8,27 @@ value involved.
 
 ---
 
+## A message sent by a signed-in person could arrive as an anonymous one
+
+Reported as a question: a message sent at 17:20 never appeared in the sender's own
+"Mesajlarım". It can only get there if the row carries their user id, and the row carries it
+only if the request carried a live token.
+
+The browser repairs a dead token when something answers 401. Feedback never answers 401 --
+an anonymous sender is allowed, deliberately, for the same reason browsing is -- so a token
+that expired while the page sat open was simply not recognised, the message was filed as
+anonymous, the form said thank you, and the sender's own list never showed it. Nothing
+failed, so nothing was repaired.
+
+Writes now renew the session before they leave rather than after a failure that never comes.
+This is not about feedback: every endpoint that accepts both a signed-in and an anonymous
+sender had the same silent hole, and any future one would have inherited it. One reader of
+the session-expiry cookie serves both this and the renewal timer that was already there.
+
+The page itself still cannot say the message was filed under your name, because the form does
+not know whether you are signed in. That is the remaining half, and it is a question of what
+the page should say, not of how it behaves.
+
 ## The feedback page stopped asking people to classify their own complaint
 
 Four buttons stood between the page and the box: Suggestion, Problem, Something you liked,

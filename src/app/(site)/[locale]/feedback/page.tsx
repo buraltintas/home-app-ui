@@ -15,7 +15,6 @@ export default async function Page({params}:{params:Promise<{locale:string}>}){
   return <main className="feedback-page">
     <ScrollTop/>
     <PageBackButton/>
-    <p className="eyebrow">Boşa Gezme!</p>
     <h1>{t.feedbackTitle}</h1>
     <p className="feedback-intro">{t.feedbackIntro}</p>
     <FeedbackForm/>

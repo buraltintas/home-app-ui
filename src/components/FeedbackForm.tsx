@@ -40,7 +40,6 @@ export function FeedbackForm({initialKind='suggestion',initialMessage=''}:{initi
 
   if(sent)return <div className="feedback-done">
     <p role="status">{t('feedbackThanks')}</p>
-    <button className="button secondary" onClick={()=>setSent(false)}>{t('feedbackAnother')}</button>
   </div>;
 
   return <form className="feedback-form" onSubmit={event=>void submit(event)}>

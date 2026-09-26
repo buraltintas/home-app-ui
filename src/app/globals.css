@@ -648,6 +648,10 @@ body>main{flex:1 0 auto;min-width:0;width:100%}
 .feedback-actions small{color:var(--ink-muted);font-size:14px;max-width:38ch}
 .feedback-done{display:grid;gap:18px;justify-items:start;padding:26px;background:var(--accent-wash);border-radius:var(--r-lg)}
 .feedback-done p{margin:0;font-size:19px;font-weight:600}
+/* The message landed, and green is what this product says that with everywhere else.
+   Said once, on its own screen: the button under it offered to undo the only thing that
+   had just gone right. */
+.feedback-page .feedback-done p{color:var(--success)}
 .google-button-slot{width:100%;height:48px;margin-top:10px;overflow:hidden;display:grid;place-items:center}
 /* The placeholder and Google's own button are stacked in the same cell rather than laid
    out as two rows. As siblings in a grid they took a row each, so the box held two rows

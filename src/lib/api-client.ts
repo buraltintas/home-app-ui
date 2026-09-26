@@ -16,6 +16,37 @@ function refresh():Promise<boolean>{
   return refreshing;
 }
 
+// When the session this browser holds runs out. The cookie is readable on purpose: the
+// access token itself is httpOnly and nothing in the browser can look at it, so this is the
+// only way anything here knows the token is still worth sending.
+const SESSION_EXPIRES_COOKIE='bosagezme_session_expires';
+
+export function sessionExpiresAt():number|null{
+  if(typeof document==='undefined')return null;
+  const match=document.cookie.match(new RegExp(`(?:^|; )${SESSION_EXPIRES_COOKIE}=([^;]*)`));
+  if(!match)return null;
+  const value=Date.parse(decodeURIComponent(match[1]));
+  return Number.isNaN(value)?null:value;
+}
+
+// A write that carries an identity must not lose it quietly.
+//
+// Some endpoints accept a signed-in sender and an anonymous one alike -- telling us the
+// product is broken is one, for the same reason browsing does not need an account. Those
+// answer success either way, so the retry above never fires for them: a token that died
+// while the page sat open turned a signed-in person's message into an anonymous one, the
+// form said thank you, and the message then never appeared in their own list of messages.
+// Nothing failed, so nothing was repaired. The session is renewed before the write instead
+// of after a failure that never comes.
+//
+// No cookie means signed out, and there is nothing to lose.
+const WRITE_LEAD_MS=10_000;
+
+function sessionAboutToExpire():boolean{
+  const expiry=sessionExpiresAt();
+  return expiry!==null&&expiry-Date.now()<WRITE_LEAD_MS;
+}
+
 // Writes still in the air when a page reads. Saving a store and going straight to the
 // favourites list showed an empty list: the list request overtook the save that had not
 // landed yet, and only a reload put the store back. The optimistic flip in the button is
@@ -59,6 +90,7 @@ export async function apiFetch(path:string,init?:RequestInit):Promise<Response>{
     await settleWrites();
     return send(path,init);
   }
+  if(sessionAboutToExpire())await refresh();
   const call=send(path,init);
   pendingWrites.add(call);
   // Both outcomes clear it, so a failed write cannot leave every later read waiting.
