@@ -9,11 +9,17 @@
 //
 // This lives here rather than beside one page because a second page wanted the same
 // treatment, and the second copy of a rule is the one that drifts.
+import {ChevronDown} from 'lucide-react';
 import {Fragment} from 'react';
 
-const EMPHASIS=/\[([^\]]+)\]/;
+// Two marks, both written into the string for the same reason: which word carries the
+// emphasis, and which word is the one being offered, are facts about the sentence. Square
+// brackets colour a phrase. Braces turn a word into the shape of a control -- filled, with
+// the arrow that means "there is a list under this" -- without making it one. It is the
+// heading's verb; pressing it is what the field below is for.
+const MARKED=/\[([^\]]+)\]|\{([^}]+)\}/g;
 
-export function plainTitle(title:string){return title.replace(/[[\]]/g,'').replace(/\n/g,' ');}
+export function plainTitle(title:string){return title.replace(/[[\]{}]/g,'').replace(/\n/g,' ');}
 
 // A newline in the string is a line break in the heading. It is written into the string
 // rather than produced by narrowing a column, because where a heading should break is a
@@ -25,8 +31,16 @@ function lines(text:string){
 }
 
 export function emphasisedTitle(title:string,className='favorites-title-mark'){
-  const found=title.match(EMPHASIS);
-  if(!found)return <>{lines(title)}</>;
-  const [before,after]=title.split(found[0]);
-  return <>{lines(before)}<span className={className}>{lines(found[1])}</span>{lines(after)}</>;
+  const parts=[];
+  let last=0;
+  let key=0;
+  for(const found of title.matchAll(MARKED)){
+    const at=found.index??0;
+    if(at>last)parts.push(<Fragment key={key++}>{lines(title.slice(last,at))}</Fragment>);
+    if(found[1]!==undefined)parts.push(<span key={key++} className={className}>{lines(found[1])}</span>);
+    else parts.push(<span key={key++} className="title-chip">{found[2]}<ChevronDown aria-hidden="true"/></span>);
+    last=at+found[0].length;
+  }
+  if(last<title.length)parts.push(<Fragment key={key++}>{lines(title.slice(last))}</Fragment>);
+  return <>{parts}</>;
 }

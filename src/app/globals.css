@@ -773,7 +773,7 @@ body>main{flex:1 0 auto;min-width:0;width:100%}
 /* Four things on one line only fits while the words are short, and the row is allowed to
    become two when they are not: the place keeps its pill, the control drops beneath it.
    That holds in any language, including ones nobody has translated the product into yet. */
-@media(max-width:600px){.location-control{gap:10px}}
+@media(max-width:600px){.location-control{column-gap:12px;row-gap:0}}
 
 /* Safari on iOS zooms the whole page when a field it is focusing computes below 16px, and
    there is no way to decline that other than not being below 16px. The location field was

@@ -8,6 +8,30 @@ value involved.
 
 ---
 
+## A margin that survived the line break
+
+Two marks in the location row were asked twice to line up, and were measured as lined up
+twice. Both measurements were taken on a desktop, where the row is one line and the question
+does not exist.
+
+On a phone the row wraps: "Mevcut konum kullanılıyor" takes the first line and "Konumu
+değiştir" takes the second. The button carried `margin-left:8px`, put there to hold it off
+the text beside it -- and a margin does not know the row broke. So the button, and the mark
+inside it, sat eight pixels right of the mark above. Measured on the phone: 18 and 26.
+
+The separation is a column gap now, which is exactly what it was for: it applies between
+columns and disappears at the break. Both marks measure 18. The text beside the first mark
+also gave up the 44px height it was holding -- it is a span, not a target, and that height
+was the reason the two lines stood so far apart.
+
+The general form: a margin between flex siblings is a claim about a row that may not exist
+after the wrap. `column-gap` makes the claim only where it is true.
+
+The heading's last word is now drawn as the control it stands for -- filled, with the arrow
+that means a list opens underneath -- while remaining a word. The mark for it is written into
+the string like the emphasis mark beside it, because which word is the verb is a fact about
+the sentence: Turkish ends on it, English does not have it as a separate word at all.
+
 ## A message sent by a signed-in person could arrive as an anonymous one
 
 Reported as a question: a message sent at 17:20 never appeared in the sender's own
