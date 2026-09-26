@@ -8,6 +8,26 @@ value involved.
 
 ---
 
+## An anonymous message now has to leave a way back
+
+A message sent without signing in cannot be attached to an account, so it cannot appear in
+the sender's own list and the only route back to them is an address they type. That address
+was optional, which meant the commonest kind of message -- sent by somebody annoyed enough to
+write in, and not signed in -- could arrive with no way to answer it. It is required now, and
+the field says why rather than simply refusing.
+
+Signed in, it stays optional: the account is the way back.
+
+The endpoint still accepts a message without an address. This is a rule about this form, not
+about feedback -- the store correction sheet asks the same question optionally and the mobile
+app has its own flow, and a server-side refusal would break both to fix neither.
+
+The confirmation lost its box and gained a tick. A frame says "there is something else here
+to separate this from"; on that screen there is nothing else, and the mark carries the whole
+message to somebody who only glances. The page also returns to the top when the message goes:
+the form is taller than the line that replaces it, so staying put left the reader looking at
+the empty space under a confirmation they never saw.
+
 ## A margin that survived the line break
 
 Two marks in the location row were asked twice to line up, and were measured as lined up

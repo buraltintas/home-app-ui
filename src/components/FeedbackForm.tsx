@@ -1,6 +1,7 @@
 'use client';
 
-import {useState} from 'react';
+import {Check} from 'lucide-react';
+import {useEffect,useState} from 'react';
 import {useI18n} from '@/i18n/I18nProvider';
 import {apiFetch} from '@/lib/api-client';
 
@@ -20,11 +21,25 @@ export function FeedbackForm({initialKind='suggestion',initialMessage=''}:{initi
   const [sending,setSending]=useState(false);
   const [sent,setSent]=useState(false);
   const [error,setError]=useState('');
+  // Whether there is an account behind this message. It decides one thing: an anonymous
+  // message has no other way back to its sender, so it has to carry an address. A signed-in
+  // one already does. Unknown counts as anonymous -- the address is asked for, which is the
+  // harmless way to be wrong.
+  const [signedIn,setSignedIn]=useState<boolean|null>(null);
+  useEffect(()=>{
+    let active=true;
+    void apiFetch('/api/proxy/me',{cache:'no-store'})
+      .then(response=>{if(active)setSignedIn(response.ok);})
+      .catch(()=>{if(active)setSignedIn(false);});
+    return()=>{active=false;};
+  },[]);
+  const emailRequired=signedIn!==true;
 
   const submit=async(event:React.FormEvent)=>{
     event.preventDefault();
     setError('');
     if(message.trim().length<5){setError(t('feedbackTooShort'));return;}
+    if(emailRequired&&!/.+@.+\..+/.test(email.trim())){setError(t('feedbackEmailMissing'));return;}
     setSending(true);
     try{
       const response=await apiFetch('/api/proxy/feedback',{
@@ -34,12 +49,15 @@ export function FeedbackForm({initialKind='suggestion',initialMessage=''}:{initi
       });
       if(!response.ok)throw new Error();
       setSent(true);setMessage(initialMessage);setEmail('');
+      // The form is taller than the line that replaces it, so staying where the page was
+      // left the reader looking at the empty space under a confirmation they never saw.
+      window.scrollTo({top:0,behavior:'auto'});
     }catch{setError(t('feedbackError'));}
     finally{setSending(false);}
   };
 
   if(sent)return <div className="feedback-done">
-    <p role="status">{t('feedbackThanks')}</p>
+    <p role="status"><Check aria-hidden="true"/>{t('feedbackThanks')}</p>
   </div>;
 
   return <form className="feedback-form" onSubmit={event=>void submit(event)}>
@@ -48,9 +66,9 @@ export function FeedbackForm({initialKind='suggestion',initialMessage=''}:{initi
       <small>{t('feedbackMessageHint')}</small>
     </label>
 
-    <label className="feedback-field"><span>{t('feedbackEmail')}</span>
-      <input type="email" value={email} maxLength={320} autoCapitalize="none" autoCorrect="off" spellCheck={false} onChange={event=>setEmail(event.target.value)}/>
-      <small>{t('feedbackEmailHint')}</small>
+    <label className="feedback-field"><span>{emailRequired?t('feedbackEmailRequired'):t('feedbackEmail')}</span>
+      <input type="email" value={email} maxLength={320} required={emailRequired} autoCapitalize="none" autoCorrect="off" spellCheck={false} onChange={event=>setEmail(event.target.value)}/>
+      <small>{emailRequired?t('feedbackEmailWhy'):t('feedbackEmailHint')}</small>
     </label>
 
     <div className="feedback-actions">
