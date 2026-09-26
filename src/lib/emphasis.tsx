@@ -10,6 +10,7 @@
 // This lives here rather than beside one page because a second page wanted the same
 // treatment, and the second copy of a rule is the one that drifts.
 import {ChevronDown} from 'lucide-react';
+import Link from 'next/link';
 import {Fragment} from 'react';
 
 // Two marks, both written into the string for the same reason: which word carries the
@@ -28,6 +29,17 @@ export function plainTitle(title:string){return title.replace(/[[\]{}]/g,'').rep
 function lines(text:string){
   const parts=text.split('\n');
   return parts.map((part,index)=>index===0?part:<Fragment key={index}><br/>{part}</Fragment>);
+}
+
+// The same convention, one sentence lower: a word in brackets, and here it is the word that
+// goes somewhere. Written into the string for the reason the emphasis is -- which word names
+// the destination is a fact about the sentence, and it is not the same word, or in the same
+// place, in four languages.
+export function sentenceWithLink(text:string,href:string,className='inline-link'){
+  const found=text.match(/\[([^\]]+)\]/);
+  if(!found)return <>{lines(text)}</>;
+  const [before,after]=text.split(found[0]);
+  return <>{lines(before)}<Link href={href} className={className}>{found[1]}</Link>{lines(after)}</>;
 }
 
 export function emphasisedTitle(title:string,className='favorites-title-mark'){

@@ -8,6 +8,23 @@ value involved.
 
 ---
 
+## The feedback form says which way the answer will come back
+
+There are two routes and they are not equal. Signed in, the reply lands in the sender's own
+messages, where they will look for it. Not signed in, it goes to an address they typed, and
+if they mistyped it the reply goes nowhere and nobody finds out.
+
+So the form now offers the better route before asking for the worse one: a sign-in button
+sits under the message, and the note beside the address explains both routes instead of
+merely refusing. The send button stays inert until one of the two exists -- a control that
+looks ready and then refuses teaches nothing.
+
+The confirmation names the route the message actually took, and the route is fixed at the
+moment of sending: signing in afterwards must not promise a profile page that holds nothing.
+Signed in, the word "mesajlarım" in that sentence is the link to it -- marked in the string
+the way the emphasis in a heading is, because which word names the destination is a fact
+about the sentence and is neither the same word nor in the same place in four languages.
+
 ## An anonymous message now has to leave a way back
 
 A message sent without signing in cannot be attached to an account, so it cannot appear in

@@ -657,7 +657,17 @@ body>main{flex:1 0 auto;min-width:0;width:100%}
    message on its own -- somebody who only glances has already read it. */
 .feedback-page .feedback-done{padding:0;background:none;border-radius:0}
 .feedback-page .feedback-done p{display:flex;align-items:center;gap:10px}
-.feedback-page .feedback-done svg{width:22px;height:22px;flex:none;stroke-width:2.6}
+.feedback-page .feedback-done svg{width:22px;height:22px;flex:none;stroke-width:2.6;margin-top:3px}
+.feedback-page .feedback-done p{align-items:flex-start;white-space:pre-line}
+/* The word in the sentence that goes somewhere, underlined because that is what says a
+   word can be pressed when it sits inside a line of prose. */
+.feedback-done-link{color:inherit;font-weight:800;text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1.5px}
+/* (R10) The same button as the profile page's, because it opens the same door. */
+.feedback-signin.button.primary{justify-self:start;background:var(--clay);color:var(--surface)}
+.feedback-signin.button.primary:hover{background:color-mix(in srgb,var(--clay) 86%,var(--ink))}
+/* (R12) Not ready, and it looks it. */
+.feedback-page .feedback-actions .button.primary:disabled{background:var(--muted);color:var(--ink-muted);cursor:not-allowed}
+.feedback-field small{white-space:pre-line}
 .google-button-slot{width:100%;height:48px;margin-top:10px;overflow:hidden;display:grid;place-items:center}
 /* The placeholder and Google's own button are stacked in the same cell rather than laid
    out as two rows. As siblings in a grid they took a row each, so the box held two rows

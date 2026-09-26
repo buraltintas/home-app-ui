@@ -2,8 +2,11 @@
 
 import {Check} from 'lucide-react';
 import {useEffect,useState} from 'react';
+import {AuthDialog} from '@/components/AuthDialog';
 import {useI18n} from '@/i18n/I18nProvider';
 import {apiFetch} from '@/lib/api-client';
+import {sentenceWithLink} from '@/lib/emphasis';
+import {localePath} from '@/lib/site';
 
 // Feedback is a message to us, not a contribution to the product, so the form asks for as
 // little as it can: the message, and an address only if the sender wants an answer. Signing
@@ -15,7 +18,7 @@ import {apiFetch} from '@/lib/api-client';
 // only thing on the page that matters -- most of the way down the screen. The kind is
 // something we can read off what they wrote; asking is our work moved onto them.
 export function FeedbackForm({initialKind='suggestion',initialMessage=''}:{initialKind?:string;initialMessage?:string}={}){
-  const {t}=useI18n();
+  const {t,locale}=useI18n();
   const [message,setMessage]=useState(initialMessage);
   const [email,setEmail]=useState('');
   const [sending,setSending]=useState(false);
@@ -34,12 +37,18 @@ export function FeedbackForm({initialKind='suggestion',initialMessage=''}:{initi
     return()=>{active=false;};
   },[]);
   const emailRequired=signedIn!==true;
+  const emailGiven=/.+@.+\..+/.test(email.trim());
+  // Which of the two ways back this message actually took, fixed at the moment it was sent.
+  // Signing in afterwards must not turn "we will write to you" into "look in your profile"
+  // for a message that is not there.
+  const [sentWithAccount,setSentWithAccount]=useState(false);
+  const [authOpen,setAuthOpen]=useState(false);
 
   const submit=async(event:React.FormEvent)=>{
     event.preventDefault();
     setError('');
     if(message.trim().length<5){setError(t('feedbackTooShort'));return;}
-    if(emailRequired&&!/.+@.+\..+/.test(email.trim())){setError(t('feedbackEmailMissing'));return;}
+    if(emailRequired&&!emailGiven){setError(t('feedbackEmailMissing'));return;}
     setSending(true);
     try{
       const response=await apiFetch('/api/proxy/feedback',{
@@ -48,6 +57,7 @@ export function FeedbackForm({initialKind='suggestion',initialMessage=''}:{initi
         body:JSON.stringify({kind:initialKind,message:message.trim(),contact_email:email.trim()}),
       });
       if(!response.ok)throw new Error();
+      setSentWithAccount(signedIn===true);
       setSent(true);setMessage(initialMessage);setEmail('');
       // The form is taller than the line that replaces it, so staying where the page was
       // left the reader looking at the empty space under a confirmation they never saw.
@@ -56,8 +66,12 @@ export function FeedbackForm({initialKind='suggestion',initialMessage=''}:{initi
     finally{setSending(false);}
   };
 
+  // Where the answer will arrive. Two routes, and the page says which one this message took
+  // rather than a thank-you that leaves the reader to guess.
   if(sent)return <div className="feedback-done">
-    <p role="status"><Check aria-hidden="true"/>{t('feedbackThanks')}</p>
+    <p role="status"><Check aria-hidden="true"/>{sentWithAccount
+      ?sentenceWithLink(t('feedbackThanksSignedIn'),localePath(locale,'/profile/messages'),'feedback-done-link')
+      :t('feedbackThanksEmail')}</p>
   </div>;
 
   return <form className="feedback-form" onSubmit={event=>void submit(event)}>
@@ -65,6 +79,11 @@ export function FeedbackForm({initialKind='suggestion',initialMessage=''}:{initi
       <textarea value={message} maxLength={4000} rows={4} required onChange={event=>setMessage(event.target.value)}/>
       <small>{t('feedbackMessageHint')}</small>
     </label>
+    {/* The other way to answer the question the field below asks. It is offered here, next to
+        the message, because signing in is the better of the two routes -- it is the one that
+        puts our reply where the sender will look for it -- and it is worth offering before
+        they have typed an address to avoid it. */}
+    {emailRequired&&<button type="button" className="button primary feedback-signin" onClick={()=>setAuthOpen(true)}>{t('signIn')}</button>}
 
     <label className="feedback-field"><span>{emailRequired?t('feedbackEmailRequired'):t('feedbackEmail')}</span>
       <input type="email" value={email} maxLength={320} required={emailRequired} autoCapitalize="none" autoCorrect="off" spellCheck={false} onChange={event=>setEmail(event.target.value)}/>
@@ -72,9 +91,13 @@ export function FeedbackForm({initialKind='suggestion',initialMessage=''}:{initi
     </label>
 
     <div className="feedback-actions">
-      <button className="button primary" type="submit" disabled={sending}>{sending?t('feedbackSending'):t('feedbackSend')}</button>
+      {/* Nothing to press until there is a way back to the sender. A button that looks ready
+          and then refuses teaches nothing; one that is plainly not ready yet says what is
+          missing, and the field above it says why. */}
+      <button className="button primary" type="submit" disabled={sending||(emailRequired&&!emailGiven)}>{sending?t('feedbackSending'):t('feedbackSend')}</button>
       <small>{t('feedbackPrivacy')}</small>
     </div>
     {error&&<p className="form-error" role="alert">{error}</p>}
+    <AuthDialog open={authOpen} onClose={()=>setAuthOpen(false)} onAuthenticated={()=>{setSignedIn(true);setAuthOpen(false);}}/>
   </form>;
 }
