@@ -96,6 +96,15 @@ A layout rule that only one breakpoint gets wrong is invisible to anyone testing
 other. When a change touches a grid, a flex row or anything that a media query redefines,
 look at it at both sizes before calling it done.
 
+The same rule caught a second case, and it is worth naming because it looks like nothing:
+two marks in the location row were reported out of line, measured as in line, and reported
+again -- three times, because every measurement was made on a desktop, where that row is one
+line and the question does not exist. The cause only exists after the wrap: a `margin-left`
+between flex siblings is a claim about a row, and it survives the line break that ends the
+row, so the second line starts indented by it. `column-gap` makes the same claim only
+between columns and disappears at the break. Reach for the gap, and measure a wrapped row at
+the width where it wraps.
+
 ## A failing build looks exactly like a fix that did not work
 
 The site stays up on the last image that built, so a broken deploy has no symptom of its
