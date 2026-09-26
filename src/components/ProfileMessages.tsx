@@ -26,8 +26,12 @@ export function ProfileMessages({locale}:{locale:Locale}){
   if(error)return <p className="form-error" role="alert">{error}</p>;
   if(items===null)return <div className="profile-list-skeleton" aria-label={text.sent}/>;
   if(items.length===0)return <p className="profile-empty">{text.empty}</p>;
+  // A message sent from a form that names itself -- a store correction, a store suggestion --
+  // arrives with that name as its first line, and the name is a better label than "your
+  // message" could be. Only what somebody typed into the footer's open box arrives without
+  // one, and there the label is the only thing saying who wrote it.
   return <div className="profile-messages">{items.map(item=>{const [title,...body]=item.message.split('\n');return <article key={item.id} className="profile-message">
-    <header><strong>{text.sent}</strong><time dateTime={item.created_at}>{new Intl.DateTimeFormat(locale,{dateStyle:'medium'}).format(new Date(item.created_at))}</time></header>
+    <header>{body.length===0&&<strong>{text.sent}</strong>}<time dateTime={item.created_at}>{new Intl.DateTimeFormat(locale,{dateStyle:'medium'}).format(new Date(item.created_at))}</time></header>
     <p>{body.length?<><strong className="profile-message-kind">{title}</strong>{body.join('\n')}</>:item.message}</p>
     {item.reply?<div className="profile-message-reply"><strong>{text.reply}</strong><p>{item.reply}</p>{item.replied_at&&<time dateTime={item.replied_at}>{new Intl.DateTimeFormat(locale,{dateStyle:'medium'}).format(new Date(item.replied_at))}</time>}</div>:<small className="profile-message-status">{text.pending}</small>}
   </article>})}</div>;

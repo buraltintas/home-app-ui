@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import {useEffect,useState} from 'react';
-import {ArrowDownWideNarrow,ArrowRight,ChevronRight,ClipboardCheck,Gift,MessageCircle,PenLine,ShieldCheck,Star,UserRound} from 'lucide-react';
+import {ArrowDownWideNarrow,ChevronRight,ClipboardCheck,Gift,MessageCircle,PenLine,ShieldCheck,Star,UserRound} from 'lucide-react';
 import {AuthDialog} from '@/components/AuthDialog';
 import {SignOutButton} from '@/components/SignOutButton';
 import Link from 'next/link';
@@ -29,11 +29,23 @@ const accountCopy:Record<Locale,{body:string;danger:string;title:string;confirm:
 };
 // The second line of the signed-out page: what you get, rather than what you are missing.
 // The heading above it already says "sign in"; this says why it is worth it.
+// Broken by hand at the comma rather than left to the column width: the two halves are a
+// condition and a promise, and a line that ends mid-condition reads as one long clause.
 const signedOutLead:Record<Locale,string>={
-  tr:'Daha kişisel bir deneyimle, keşfetmeye devam et.',
-  en:'Carry on exploring, with an experience that knows you.',
-  de:'Entdecke weiter -- mit einem Erlebnis, das dich kennt.',
-  ru:'Продолжайте искать -- с опытом, который знает вас.',
+  tr:'Daha kişisel bir deneyimle,\nkeşfetmeye devam et.',
+  en:'Carry on exploring,\nwith an experience that knows you.',
+  de:'Entdecke weiter --\nmit einem Erlebnis, das dich kennt.',
+  ru:'Продолжайте искать --\nс опытом, который знает вас.',
+};
+
+// Signing out is the reversible one and deleting is not, but on a page that offers both,
+// the quiet button is the one people hesitate over. Said before the button rather than after
+// it, because it is what somebody wants to know while deciding.
+const signOutNote:Record<Locale,string>={
+  tr:'Hesabınızdan çıkış yapmak, oturumunuzu kapatmanız anlamına gelir. Yapmış olduğunuz değerlendirmeler ve kaydettikleriniz silinmez.',
+  en:'Signing out only ends your session. The reviews you wrote and the stores you saved are not deleted.',
+  de:'Beim Abmelden wird nur deine Sitzung beendet. Deine Bewertungen und gespeicherten Geschäfte werden nicht gelöscht.',
+  ru:'Выход из аккаунта завершает только сеанс. Ваши отзывы и сохранённые магазины не удаляются.',
 };
 
 const deleteBody:Record<Locale,string>={tr:'Yorumlarınız, arama geçmişiniz, profil bilgileriniz ve sosyal bağlantılarınız kaldırılır. Daha sonra aynı e-postayla giriş yapabilirsiniz ancak silinen veriler geri gelmez.',en:'Your reviews, search history, profile information, and social connections will be removed. You can sign in later with the same email, but deleted data cannot be restored.',de:'Deine Bewertungen, dein Suchverlauf, deine Profilangaben und deine sozialen Verbindungen werden entfernt. Du kannst dich später mit derselben E-Mail-Adresse anmelden, gelöschte Daten werden jedoch nicht wiederhergestellt.',ru:'Ваши отзывы, история поиска, данные профиля и социальные связи будут удалены. Позже вы сможете войти с тем же адресом электронной почты, но удалённые данные нельзя восстановить.'};
@@ -42,6 +54,7 @@ const reviewCopy:Record<Locale,{title:string;hint:string}>={tr:{title:'Değerlen
 // icon set draws; only the "1" is gone, because a badge for level three and a badge for
 // level four were both stamped with it.
 const messageCopy:Record<Locale,{title:string;hint:string}>={tr:{title:'Mesajlarım',hint:'Bize gönderdiklerin ve yanıtlarımız'},en:{title:'My messages',hint:'What you sent us and our replies'},de:{title:'Meine Nachrichten',hint:'Deine Nachrichten und unsere Antworten'},ru:{title:'Мои сообщения',hint:'Ваши сообщения и наши ответы'}};
+const levelNote:Record<Locale,string>={tr:'Doğrulanmış her değerlendirme katkı seviyeni yükseltir.',en:'Every verified review raises your contributor level.',de:'Jede bestätigte Bewertung erhöht deine Beitragsstufe.',ru:'Каждый подтверждённый отзыв повышает ваш уровень участника.'};
 const profileEditorHint:Record<Locale,string>={tr:'Görünen adın ve profil bilgilerin',en:'Your display name and profile details',de:'Dein Anzeigename und deine Profilangaben',ru:'Ваше отображаемое имя и данные профиля'};
 const progressionCopy:Record<Locale,{next:(level:number,count:number)=>string;reward:string;top:string}>={
   tr:{next:(level,count)=>`${level}. seviyeye geçmene ${count} değerlendirme kaldı.`,reward:'Bir sonraki seviye ödülün',top:'En yüksek katkı seviyesindesin.'},
@@ -99,9 +112,7 @@ export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages
       <p className="eyebrow">{t('profile')}</p>
       <h1>{copy.body}</h1>
       <p className="profile-out-lead">{signedOutLead[locale]}</p>
-      <button type="button" className="button primary profile-out-action" onClick={()=>setOpen(true)}>
-        <UserRound aria-hidden="true"/>{t('signIn')}<ArrowRight className="profile-out-go" aria-hidden="true"/>
-      </button>
+      <button type="button" className="button primary profile-out-action" onClick={()=>setOpen(true)}>{t('signIn')}</button>
     </div>
     {/* What is behind the sign-in, drawn rather than described: the same three destinations
         the page shows once you are in, with the marks they carry there. */}
@@ -161,7 +172,10 @@ export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages
       </div>
       {(me.next_level!==undefined||me.level>=5)&&<div className="profile-progression"><p>{me.next_level!==undefined?progression.next(me.next_level,me.reviews_to_next_level??0):progression.top}</p>{me.next_level!==undefined&&<span className="profile-reward"><Gift aria-hidden="true"/>{progression.reward}</span>}</div>}
     </section>}
-    {!section&&<ContributorLevelsDialog locale={locale}/>}
+    {/* R49: the same card the store page carries, question first. The profile had its own
+        "raise your level" frame, which is an instruction that assumes the reader knows what
+        a level is -- and it was a second drawing of a thing that already existed. */}
+    {!section&&<ContributorLevelsDialog locale={locale} note={levelNote[locale]}/>}
     {!section&&<ProfileInvite locale={locale}/>}
     {!section?<nav className="profile-sections">
       {sectionLinks.map(([path,title,hint,Icon,tone])=><Link key={path} href={localePath(locale,`/profile/${path}`)}>
@@ -182,7 +196,15 @@ export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages
       {section==='edit'&&<ProfileEditor me={me} onSaved={setMe}/>}
       {section==='reviews'&&<MyReviews userId={me.id} locale={locale}/>}
       {section==='messages'&&<ProfileMessages locale={locale}/>}
-      {section==='account'&&<><SignOutButton className="button secondary account-signout"/><div className="danger-zone"><h3>{copy.danger}</h3><p>{deleteBody[locale]}</p><button className="button secondary danger-button" disabled={deleting} onClick={()=>void remove()}>{copy.confirm}</button></div></>}
+      {/* Both notes are plain page text rather than boxed warnings. A red frame around the
+          sentence that explains what deleting removes made the explanation read as the alarm;
+          the frame belongs to the act, and the sentence belongs to the reader. */}
+      {section==='account'&&<>
+        <p className="profile-form-hint account-note">{signOutNote[locale]}</p>
+        <SignOutButton className="button secondary account-signout"/>
+        <div className="danger-zone"><h3>{copy.danger}</h3><button className="button secondary danger-button" disabled={deleting} onClick={()=>void remove()}>{copy.confirm}</button></div>
+        <p className="profile-form-hint account-note">{deleteBody[locale]}</p>
+      </>}
     </section>}
     {!section&&<TimedNudge kind="profile"/>}
     <AuthDialog open={open} onClose={()=>setOpen(false)}/>

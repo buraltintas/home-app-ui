@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import {Bookmark,Heart,Info,MessageCircle,Package,Send,ShoppingBag,Trash2,X} from 'lucide-react';
+import {Bookmark,ChevronRight,Heart,Info,MessageCircle,Package,Send,ShoppingBag,X} from 'lucide-react';
 import {useState} from 'react';
 import type {Post,ReviewCriteriaScores} from '@/lib/types';
 import {useI18n} from '@/i18n/I18nProvider';
@@ -161,6 +161,7 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
           ?<Image className="result-photo-mark is-brand-mark" src={storeMark} width={184} height={184} alt="" unoptimized/>
           :<span className="result-photo-empty" aria-hidden="true"><span>{post.store_name.trim().charAt(0).toLocaleUpperCase(locale)}</span></span>}</span>
         <span className="post-store-identity"><h2>{post.store_name}</h2>{place&&<p>{place}</p>}</span>
+        <ChevronRight className="post-store-go" aria-hidden="true"/>
       </Link>}
     </div>
 
@@ -175,6 +176,7 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
           below. What the review is worth is a stack of claims; when it was written is not
           one of them, it is a label on the whole thing. */}
       <div className="post-meta"><RatingStars value={post.rating}/><span className="post-written">{written}</span></div>
+      {owned&&<button type="button" className="post-delete" disabled={removing} onClick={()=>void remove()}>{t('deleteReview')}</button>}
       <div className="post-claims">
         <Verified label={t('verified')}/>
         {/* Only where the shopper answered yes and named what they bought. "Yes" on its own
@@ -224,14 +226,14 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
       {/* On the store's own page these go: liking and sharing a single review are things
           you do in the feed, and in a row of narrow cards under the score table they read
           as chrome on top of the one thing the card is there to say. */}
-      {!onStorePage&&<footer className="post-actions">
+      {/* R47: on your own reviews there is one action and it is not liking or sharing your
+          own writing. Liking and commenting are things other people do with it; sharing is
+          a thing the shop's page already offers. What is left is the one thing only you
+          can do, spelled out rather than drawn, under the date it belongs to. */}
+      {!onStorePage&&!owned&&<footer className="post-actions">
         <button disabled={busy==='like'} aria-pressed={showLiked} onClick={()=>void mutate('like')}><Heart className={showLiked?'active-icon':''}/>{likes}</button>
-        {!owned&&!onStorePage&&<Link href={localePath(locale,`/reviews/${post.id}`)} className="post-action-link"><MessageCircle/>{post.comment_count}</Link>}
-        {/* On your own reviews these two are icons. The row is a list entry, not a page,
-            and a spelled-out "Delete review" beside a spelled-out "Share" turns a row of
-            actions into a sentence. The names are still there for screen readers. */}
-        <button aria-label={owned?(shared?t('copied'):t('share')):undefined} title={owned?t('share'):undefined} onClick={()=>void share()}><Send/>{owned?null:shared?t('copied'):t('share')}</button>
-        {owned&&<button className="post-delete" disabled={removing} aria-label={t('deleteReview')} title={t('deleteReview')} onClick={()=>void remove()}><Trash2/></button>}
+        <Link href={localePath(locale,`/reviews/${post.id}`)} className="post-action-link"><MessageCircle/>{post.comment_count}</Link>
+        <button onClick={()=>void share()}><Send/>{shared?t('copied'):t('share')}</button>
       </footer>}
       {removeFailed&&<p className="form-error" role="alert">{t('deleteReviewFailed')}</p>}
     </div>

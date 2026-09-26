@@ -8,6 +8,36 @@ value involved.
 
 ---
 
+## One unbreakable word was pushing a whole section off the page
+
+A grid track left at `auto` is sized by its widest content, and the profile's section column
+was one. A message containing a link with no space in it made the column wider than the page,
+so the white card carrying it hung past the right gutter while the left gutter stayed where
+it was -- reported as the card not fitting, which is exactly what it was. The column is now
+capped at the container and long words wrap inside the card. It was never about messages: any
+section of that page could be stretched by one long word, and now none can.
+
+Two smaller things on the same page followed from asking what each control is for. Your own
+review is the one thing on the page nobody else can act on, so liking, commenting on and
+sharing it have gone from it; what is left is deleting it, which now says so in words under
+the date rather than being a drawn bin. And a message sent from a form that names itself --
+a store correction, a store suggestion -- carries that name as its first line, so labelling
+it "your message" as well said the same thing twice; the label is kept for what somebody
+typed into the footer's open box, where nothing else says who wrote it.
+
+The signed-out profile page and the account page both had a button stretched to the width of
+the column it sat in. A control as wide as the page reads as the page's purpose, and signing
+out is not the purpose of the account page. Both are the width of their words now, which is
+the width every other button in the product has.
+
+## Why this form is short, said in the form
+
+Somebody who opens "edit your profile" and finds two fields reads it as unfinished. The
+reason is the opposite -- nothing else is collected -- and that only counts if it is written
+down, so it is, in the same quiet frame the store page states its review policy in. One shape
+now serves both, because they are the same kind of sentence: a condition this product holds
+itself to rather than a claim it is making.
+
 ## Where a heading breaks is a fact about the sentence
 
 The search heading was asked for in three lines -- "Sana uygun", then the phrase, then the

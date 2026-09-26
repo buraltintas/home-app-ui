@@ -440,12 +440,14 @@ svg{stroke-width:2}
 
 /* Quiet, because it is a condition rather than a claim: the page is not arguing, it is
    stating what it does and does not do. */
-.store-review-policy{
+.store-review-policy,.info-note{
   display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;margin:0 0 22px;padding:14px 16px;
   background:var(--muted);border-radius:var(--r-md);color:var(--ink-muted);font-size:13px;line-height:1.5;
 }
-.store-review-policy>svg{width:20px;height:20px;color:var(--ink-muted);margin-top:1px}
-.store-review-policy p{margin:0}
+.store-review-policy>svg,.info-note>svg{width:20px;height:20px;color:var(--ink-muted);margin-top:1px}
+.store-review-policy p,.info-note p{margin:0}
+.info-note p+p{margin-top:6px}
+.info-note strong{color:var(--ink)}
 .store-review-policy details{margin-top:6px}
 .store-review-policy summary{display:inline-flex;min-height:32px;align-items:center;color:var(--clay);font-weight:700;cursor:pointer}
 .store-review-policy details[open] summary{margin-bottom:6px}
@@ -560,7 +562,9 @@ svg{stroke-width:2}
 /* What the review claims, stacked under the score rather than beside the date. */
 /* Mark, then name and place: the listing's arrangement, so a shop looks the same wherever
    this product shows it. */
-.post-store{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:16px}
+.post-store{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:16px}
+.post-store-go{width:22px;height:22px;flex:none;color:var(--ink-muted)}
+.post-store:hover .post-store-go{color:var(--ink)}
 .post-store-mark{display:block;flex:none}
 .post-store-identity{min-width:0}
 /* The two tiles above the list, at the top of the section rather than floating over it. */
@@ -634,36 +638,40 @@ svg{stroke-width:2}
    reporting something -- and green is what this product already uses for a contribution that
    counted. The card sits on its own tint so it reads as an invitation next to four white
    cards that are just doors. */
-.profile-invite{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) 132px;gap:14px 24px;align-items:center;margin:28px 0 24px;padding:26px 24px;border:1px solid color-mix(in srgb,var(--success) 22%,var(--line));border-radius:var(--r-lg);background:color-mix(in srgb,var(--success) 7%,var(--surface))}
+.profile-invite{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) 176px;gap:14px 24px;align-items:center;margin:28px 0 24px;padding:26px 24px;border:1px solid color-mix(in srgb,var(--success) 22%,var(--line));border-radius:var(--r-lg);background:color-mix(in srgb,var(--success) 7%,var(--surface))}
 .profile-invite-copy{grid-column:1;min-width:0}
 /* The mark sits on the heading's line and at its size, so the two read as one phrase. */
-.profile-invite-mark{width:34px;height:34px;color:var(--success);vertical-align:-7px;margin-right:10px}
-.profile-invite h2{display:inline;margin:0;font-size:24px;line-height:1.15;letter-spacing:-.02em}
-.profile-invite p{margin:8px 0 0;color:var(--ink-muted);font-size:15px;line-height:1.45;max-width:34ch}
+/* R44: the mark sits beside the heading rather than inside its text, so it cannot push a
+   word onto a second line -- which is what "güçlendir" kept doing. */
+.profile-invite-mark{width:34px;height:34px;flex:none;color:var(--success)}
+.profile-invite-head{display:flex;align-items:center;gap:10px}
+.profile-invite h2{margin:0;font-size:clamp(18px,4.6vw,24px);line-height:1.15;letter-spacing:-.02em;white-space:nowrap}
+.profile-invite p{margin:8px 0 0;color:var(--ink-muted);font-size:15px;line-height:1.45;max-width:34ch;white-space:pre-line}
 .profile-invite-actions{grid-column:1;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-start}
-.profile-invite-actions .button{min-height:52px;padding-inline:26px;font-size:16px}
+.profile-invite-actions .button{min-height:52px;padding-inline:22px;font-size:clamp(14px,3.7vw,16px);white-space:nowrap}
 /* The one action on the card, in the card's own colour and shaped like a thing you press. */
 .profile-invite-share.button.primary{border-radius:var(--r-pill);background:var(--success);color:var(--surface)}
 .profile-invite-share.button.primary:hover{background:color-mix(in srgb,var(--success) 85%,var(--ink))}
 .profile-invite-share svg{width:20px;height:20px}
 .profile-invite-actions svg{width:17px;height:17px}
 .profile-invite-status{grid-column:1/-1;color:var(--ink-muted)!important;text-align:right}
-.profile-invite-phone{grid-column:2;grid-row:1/3;align-self:center;justify-self:end;width:132px;height:auto;object-fit:contain}
+/* (R44.6) The picture sets this frame's height -- everything in the left column is shorter
+   than it -- so its width is the frame's proportion. At 176px the frame comes out 640x283
+   on the page's own 720px measure, which is the 1536x676 shape that was asked for. */
+.profile-invite-phone{grid-column:2;grid-row:1/3;align-self:center;justify-self:end;width:176px;height:auto;object-fit:contain}
 /* Signed out, the profile is an invitation rather than a report, so it is laid out like one:
    what you get on the left, a drawing of what is behind the door on the right. The drawing is
    the three places this page leads to, carrying the marks they carry once you are in -- so it
    is a preview rather than decoration. */
 /* The invitation takes the width; the drawing takes what is left. Split evenly, a 40px
    heading fell into five lines on a 720px page. */
-.profile-page-out{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,248px);align-items:center;gap:32px;padding-block:24px}
+.profile-page-out{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,204px);align-items:start;gap:44px;padding-block:24px}
 .profile-out-copy{min-width:0}
 .profile-page-out h1{margin:10px 0 12px;font-size:clamp(25px,2.9vw,34px);font-weight:650;line-height:1.16;letter-spacing:-.03em;text-wrap:balance}
-.profile-out-lead{margin:0 0 26px;color:var(--ink-muted);font-size:17px;line-height:1.5;max-width:34ch}
-.profile-out-action.button.primary{min-height:58px;padding-inline:26px;border-radius:var(--r-pill);background:var(--clay);color:var(--surface);font-size:17px;gap:12px}
+.profile-out-lead{margin:0 0 26px;color:var(--ink-muted);font-size:17px;line-height:1.5;max-width:42ch;white-space:pre-line}
+.profile-out-action.button.primary{background:var(--clay);color:var(--surface)}
 .profile-out-action.button.primary:hover{background:color-mix(in srgb,var(--clay) 86%,var(--ink))}
-.profile-out-action svg{width:22px;height:22px}
-.profile-out-go{margin-left:6px}
-.profile-out-art{position:relative;display:grid;justify-items:end;min-height:230px}
+.profile-out-art{position:relative;display:grid;justify-items:end}
 .profile-out-avatar{display:grid;place-items:center;width:104px;height:104px;margin-right:18px;border-radius:var(--r-pill);background:var(--clay);color:var(--surface)}
 .profile-out-avatar svg{width:52px;height:52px}
 .profile-out-peek{list-style:none;margin:-26px 0 0;padding:14px 16px;width:100%;border-radius:var(--r-lg);background:var(--surface);box-shadow:var(--lift);display:grid;gap:2px}
@@ -681,9 +689,14 @@ svg{stroke-width:2}
   .profile-out-art{justify-items:stretch;min-height:0}
   .profile-out-avatar{justify-self:end;width:84px;height:84px}
   .profile-out-avatar svg{width:42px;height:42px}
-  .profile-out-action.button.primary{width:100%}
 }
 .account-signout{margin-bottom:28px}
+/* Both of this page's buttons are the width of the words in them, like every other button
+   in the product. The section stretches whatever it holds to its own width, which is right
+   for a list and wrong for a control: a full-width "Çıkış yap" reads as the page's purpose. */
+.profile-section-content>.account-signout,.danger-zone .danger-button{width:max-content;max-width:100%}
+.profile-section-content>.account-note{margin:0 0 12px}
+.profile-section-content>.danger-zone+.account-note{margin:14px 0 0}
 @media(max-width:600px){
   .profile-invite{grid-template-columns:minmax(0,1fr) 92px;align-items:center;padding:20px 16px}
   .profile-invite-copy,.profile-invite-actions{grid-column:1}
@@ -970,7 +983,9 @@ svg{stroke-width:2}
 .profile-section-icon svg{width:22px;height:22px}
 .profile-section-copy{display:flex;flex-direction:column;gap:3px;min-width:0}
 .profile-section-copy strong{color:var(--ink)}
-.profile-section-copy small{color:var(--ink-muted);font-size:15px;line-height:1.35}
+/* R45: one line. It names what the row is; a second line makes it read as prose and
+   makes the four rows different heights. Shrinks with the screen rather than wrapping. */
+.profile-section-copy small{color:var(--ink-muted);font-size:clamp(12px,3.4vw,15px);line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* The back control belongs in the flow here, not floating over it. Pinned, it sat on top of
    the heading of every one of these four pages -- edit, reviews, messages, account -- because
    they all begin with their title at the top of the column. The legal and feedback pages
@@ -979,13 +994,27 @@ svg{stroke-width:2}
    for one -- was empty room at the top of four screens. */
 .profile-page.is-section{padding-top:22px}
 .profile-page.is-section .profile-section-content{margin-top:0}
-.profile-section-content{margin-top:24px;display:grid;justify-items:start;gap:0}
+/* The column is capped at the container. Left `auto` it is sized by its widest content, so
+   a single unbreakable word anywhere in a section stretched the whole section past the
+   page's right gutter while the left one stayed put. */
+.profile-section-content{margin-top:24px;display:grid;grid-template-columns:minmax(0,1fr);justify-items:start;gap:0}
 .profile-section-content>.page-back-button{position:static;top:auto;left:auto;margin:0 0 16px;box-shadow:none;backdrop-filter:none}
 .profile-section-content>h2{margin-top:0}
 .profile-section-content>*{width:100%}
 .profile-section-content>.page-back-button{width:46px}
 
 .profile-section-content .profile-form-actions .button.primary{background:var(--clay);color:var(--surface)}
+/* (R50) Both of this page's saves are short words on a short button now. A button sized for
+   "Değişiklikleri kaydet" stays that size when the word inside it is "Kaydet", and a control
+   much wider than the word it carries reads as the page's main act -- which saving a display
+   name is not. */
+.profile-form-actions .button{min-height:42px;padding-inline:18px;font-size:15px}
+/* The address is the way back into the account, so its save carries the same weight -- and
+   the same colour -- as the one above it rather than reading as a secondary aside. */
+.profile-email-start.button.secondary{background:var(--clay);border-color:var(--clay);color:var(--surface)}
+.profile-email-start.button.secondary:hover{background:color-mix(in srgb,var(--clay) 86%,var(--ink))}
+/* The note sits under the button it explains, not against the section's bottom edge. */
+.profile-email .info-note{margin:18px 0 0}
 .account-loading-progress{height:2px;width:72px;background:var(--line-strong);margin-top:24px}
 .location-control.is-device .location-current{color:var(--success)}
 .location-control.is-device .location-current-mark{color:var(--success)}
@@ -1243,6 +1272,11 @@ svg{stroke-width:2}
 /* Right of the row, not pressed against the score: the score and the date are two facts
    and side by side they read as one phrase. */
 .profile-review-list .post-card.is-owned .post-written{margin:8px 0 8px auto}
+/* R47: the only action left on your own review, named rather than drawn, sitting under the
+   date it belongs to. An icon on its own asks the reader to guess, and the thing it does
+   cannot be undone -- so it says what it is. */
+.profile-review-list .post-card.is-owned .post-delete{display:block;margin:0 0 4px auto;padding:8px 0;min-height:44px;background:none;border:0;font:inherit;font-size:13px;font-weight:600;color:var(--ink-muted);text-decoration:underline;text-underline-offset:3px}
+.profile-review-list .post-card.is-owned .post-delete:hover{color:var(--error)}
 .profile-review-list .post-card.is-owned .verified{font-size:12px}
 
 /* Search results no longer buy a Places photo for every row. The remaining information
@@ -1344,7 +1378,10 @@ svg{stroke-width:2}
    of what it is. The head is drawn past the end of the rail so the fill can still reach it. */
 .level-ladder-rail{position:relative;display:block;height:6px;border-radius:var(--r-pill);background:var(--muted);margin-top:23px}
 .level-ladder-rail::after{content:'';position:absolute;right:-1px;top:50%;width:9px;height:9px;border-top:2px solid var(--muted);border-right:2px solid var(--muted);transform:translate(0,-50%) rotate(45deg)}
-.level-ladder-rail>span{display:block;height:100%;border-radius:var(--r-pill);background:var(--clay)}
+/* R46: one colour for the whole arrow, the colour of its head. The clay portion was how
+   far along the ladder you are; that reading goes with it, and the figures beside the two
+   badges still say it in words. */
+.level-ladder-rail>span{display:block;height:100%;border-radius:var(--r-pill);background:var(--muted)}
 /* One rung and no distance: the ladder ends here, so there is nothing to draw between.
    Marked from the markup rather than with :has(), which a browser can simply not implement
    -- and when it does not, the rule does not degrade, it is absent. That is how an earlier

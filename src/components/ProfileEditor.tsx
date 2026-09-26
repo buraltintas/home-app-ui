@@ -1,7 +1,9 @@
 'use client';
 
+import {ShieldCheck} from 'lucide-react';
 import {useState} from 'react';
 import {useI18n} from '@/i18n/I18nProvider';
+import type {Locale} from '@/lib/types';
 import {apiFetch} from '@/lib/api-client';
 import type {Me} from '@/lib/types';
 
@@ -9,6 +11,18 @@ import type {Me} from '@/lib/types';
 // one, so a name chosen at sign-up could never be changed. Only the public fields are
 // offered here: the private household questions belong to the survey that asks them, not
 // to a settings form.
+// Why this form is as short as it is. Somebody who arrives expecting to fill in a profile
+// and finds two fields reads it as unfinished; the reason is the opposite -- nothing else is
+// collected -- and that only counts if it is said. Stated in the same quiet frame the store
+// page states its review policy in, because it is the same kind of sentence: a condition the
+// product holds itself to, not a claim it is making.
+const dataNote:Record<Locale,{question:string;answer:string}>={
+  tr:{question:'Neden sadece ad ve mail bilgilerimi düzenleyebiliyorum?',answer:'Boşa Gezme! sadece mağaza değerlendirmelerini görmek ve topluluğa katkıda bulunman için gereken bilgileri alır.'},
+  en:{question:'Why can I only edit my name and email?',answer:'Boşa Gezme! collects only what you need in order to read store reviews and contribute to the community.'},
+  de:{question:'Warum kann ich nur Name und E-Mail-Adresse bearbeiten?',answer:'Boşa Gezme! erhebt nur die Angaben, die nötig sind, damit du Bewertungen lesen und zur Community beitragen kannst.'},
+  ru:{question:'Почему я могу изменить только имя и адрес электронной почты?',answer:'Boşa Gezme! собирает только те данные, которые нужны, чтобы читать отзывы о магазинах и участвовать в сообществе.'},
+};
+
 export function ProfileEditor({me,onSaved}:{me:Me;onSaved:(next:Me)=>void}){
   const {t}=useI18n();
   const [displayName,setDisplayName]=useState(me.display_name??'');
@@ -61,7 +75,7 @@ export function ProfileEditor({me,onSaved}:{me:Me;onSaved:(next:Me)=>void}){
 // So it asks for the same proof sign-in asks for: a code sent to the new address, read back.
 // Two steps, and the second one is where anything changes.
 function EmailEditor({me,onSaved}:{me:Me;onSaved:(next:Me)=>void}){
-  const {t}=useI18n();
+  const {t,locale}=useI18n();
   const [changing,setChanging]=useState(false);
   const [email,setEmail]=useState('');
   const [code,setCode]=useState('');
@@ -104,6 +118,7 @@ function EmailEditor({me,onSaved}:{me:Me;onSaved:(next:Me)=>void}){
     finally{setBusy(false);}
   };
 
+  const noteCopy=dataNote[locale];
   return <section className="profile-form profile-email">
     {/* What is in this field is not an input, it is a fact: the address this account signs
         in with. It is shown greyed and cannot be typed into, so nobody edits it expecting a
@@ -124,7 +139,7 @@ function EmailEditor({me,onSaved}:{me:Me;onSaved:(next:Me)=>void}){
     </>}
     <div className="profile-form-actions">
       {!changing
-        ?<button type="button" className="button secondary" onClick={()=>setChanging(true)}>{t('emailChangeStart')}</button>
+        ?<button type="button" className="button secondary profile-email-start" onClick={()=>setChanging(true)}>{t('emailChangeStart')}</button>
         :stage==='address'
           ?<><button type="button" className="button secondary" disabled={!ready||busy} onClick={()=>void sendCode()}>{busy?'…':t('emailSendCode')}</button>
             <button type="button" className="button quiet" disabled={busy} onClick={reset}>{t('emailCancel')}</button></>
@@ -133,5 +148,12 @@ function EmailEditor({me,onSaved}:{me:Me;onSaved:(next:Me)=>void}){
       {note&&<p role="status">{note}</p>}
     </div>
     {problem&&<p className="form-error" role="alert">{problem}</p>}
+    <aside className="info-note" role="note">
+      <ShieldCheck aria-hidden="true"/>
+      <div>
+        <p><strong>{noteCopy.question}</strong></p>
+        <p>{noteCopy.answer}</p>
+      </div>
+    </aside>
   </section>;
 }
