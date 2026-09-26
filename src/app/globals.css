@@ -637,7 +637,12 @@ body>main{flex:1 0 auto;min-width:0;width:100%}
 .feedback-field{display:grid;gap:8px}
 .feedback-field>span{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-muted)}
 .feedback-field textarea,.feedback-field input{width:100%;padding:14px;border:1px solid var(--line-strong);border-radius:var(--r-md);background:var(--surface);color:inherit;font-size:18px;line-height:1.55}
-.feedback-field textarea{resize:vertical;min-height:170px}
+.feedback-field textarea{resize:vertical;min-height:120px}
+/* Clay, because on this page the send is the page: there is one thing to do here and
+   nothing to weigh against it. The store correction sheet keeps the neutral button --
+   clay is already spoken for there by the selected topic chip. */
+.feedback-page .feedback-actions .button.primary{background:var(--clay);color:var(--surface)}
+.feedback-page .feedback-actions .button.primary:hover{background:color-mix(in srgb,var(--clay) 86%,var(--ink))}
 .feedback-field small{color:var(--ink-muted);font-size:16px;line-height:1.5}
 .feedback-actions{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
 .feedback-actions small{color:var(--ink-muted);font-size:14px;max-width:38ch}

@@ -8,6 +8,24 @@ value involved.
 
 ---
 
+## The feedback page stopped asking people to classify their own complaint
+
+Four buttons stood between the page and the box: Suggestion, Problem, Something you liked,
+Other. On a phone they pushed the box -- the only thing on the page that matters -- most of
+the way down the screen, and the screenshot that reported this shows the send button below
+the fold entirely. They are gone. What kind of message somebody sent is something we can
+read off what they wrote; asking first was our work moved onto them, charged at the moment
+they were already annoyed enough to write in.
+
+The box itself went from seven rows to four (225px to 142px) and the send button is clay,
+because on this page the send is the page: there is one thing to do here and nothing to
+weigh it against. The store correction sheet keeps its topic chips and its neutral button --
+it asks which field is wrong because the answer goes into the message, and clay is already
+spoken for there by the selected chip.
+
+The page loses five label words from the index and nothing else: no links, no headings, no
+body copy.
+
 ## One unbreakable word was pushing a whole section off the page
 
 A grid track left at `auto` is sized by its widest content, and the profile's section column
