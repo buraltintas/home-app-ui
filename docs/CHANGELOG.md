@@ -8,6 +8,26 @@ value involved.
 
 ---
 
+## A line break that cost two lines, and a heading that had room to grow
+
+The heading's last word sat a full empty line below the one above it. The cause: the break
+before it was a `<br/>`, and the words before that break already filled their line -- so the
+break opened a new line and the word landed on the line after. The word is a block of its own
+now and needs no break at all. It keeps its filled shape by taking its padding back as
+negative margin, so the box the page lays out is exactly one line tall: that is what makes the
+step to it identical to the step between any other two lines, at the phone's line height of
+1.1 and the desktop's of 0.98 alike. A fixed nudge could only ever have suited one of them.
+
+With that settled the heading could be grown, and the limit was measured rather than guessed:
+the widest line is "Sana uygun", and the largest size that keeps it on one line at 375px is
+30.4px. It is 28.9px now, up from 24. On the desktop it is 88px, up from 77. No word moved to
+a different line at any width, and the shop beside it is the same size it was -- it takes half
+the row, and half of the row did not change.
+
+The location row's text now starts where the text beside the button starts, because the mark
+and its words are one item spaced by the same 7px the button uses inside itself. The two were
+kept level by a number before, which is the arrangement that drifts.
+
 ## The feedback form says which way the answer will come back
 
 There are two routes and they are not equal. Signed in, the reply lands in the sender's own
