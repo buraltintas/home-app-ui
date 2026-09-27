@@ -8,6 +8,42 @@ value involved.
 
 ---
 
+## Every page in the sitemap claimed to have changed one second ago
+
+`lastmod` was `new Date()`, evaluated while the request was being answered. It went onto
+the sitemap index, onto all six of its parts, and onto the home page, the search, the 621
+chain pages and every city-and-category list page -- and two fetches four seconds apart
+disagreed about all of them. The catalogue was already doing this correctly: a store page
+has always carried its shop's own `updated_at`. Everything around the stores was carrying
+the clock.
+
+A sitemap where everything changed just now is a sitemap that says nothing. `lastmod` exists
+to tell a crawler which of 12,589 pages is worth fetching again, and Google's documented
+response to values it finds unreliable is to stop reading them -- at which point the signal
+is gone for the store pages too, which were telling the truth.
+
+Each kind of page now states the date it actually has:
+
+- Anything built out of the catalogue -- the home page, the search, the city-and-category
+  lists, the chain pages -- carries the newest `updated_at` among the shops in the
+  catalogue, because that is the only thing that changes what those pages say.
+- Each legal and informational document carries its own `updated` field, which it has
+  always held and which is already published on the page and in its structured data.
+- Each file named in the index carries the newest edit among the shops sliced into it,
+  computed from the same catalogue call and the same slicing as the file itself, so the
+  index cannot describe a division different from the one being served.
+- A page nothing knows a real date for gets no `lastmod` at all. An omitted one costs a
+  crawler nothing; an invented one costs it the ability to believe any of them.
+
+The twelve legal documents also now exist as one list (`src/content/legal/docs.ts`) rather
+than being re-enumerated wherever something needs to ask about all of them. The sitemap had
+its own copy of which documents exist, and a copy is a list that goes stale: the thirteenth
+document would have been published, indexed, and quietly missing from it.
+
+Nothing was removed from any page, and no URL left the sitemap.
+
+---
+
 ## An address ending in ".don" was accepted, thanked, and lost
 
 The form checked that an address contained an "@" and a dot. `guven.yilmaz1234@gmail.don`

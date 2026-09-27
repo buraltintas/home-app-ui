@@ -1,4 +1,4 @@
-import {sitemapCount} from '../sitemap';
+import {sitemapParts} from '../sitemap';
 import {siteUrl} from '@/lib/site';
 
 // The catalogue outgrew one sitemap, so the stores are split across several files and this
@@ -15,10 +15,15 @@ import {siteUrl} from '@/lib/site';
 export const dynamic='force-dynamic';
 
 export async function GET(){
-  const count=await sitemapCount();
-  const now=new Date().toISOString();
-  const parts=Array.from({length:count},(_,id)=>
-    `<sitemap><loc>${siteUrl}/sitemap/${id}.xml</loc><lastmod>${now}</lastmod></sitemap>`).join('\n');
+  // Each part says when it last changed, and that comes from the shops inside it. It used
+  // to be `new Date()`, so every part claimed to have changed at the instant the index was
+  // asked for -- six files, one timestamp, a different one on every fetch. A crawler that
+  // finds lastmod unreliable stops using it, and then nothing tells it which of the six
+  // files is worth re-reading.
+  const parts=(await sitemapParts()).map(({id,lastModified})=>
+    `<sitemap><loc>${siteUrl}/sitemap/${id}.xml</loc>${
+      lastModified?`<lastmod>${lastModified.toISOString()}</lastmod>`:''
+    }</sitemap>`).join('\n');
   return new Response(
     `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${parts}\n</sitemapindex>\n`,
     {headers:{'Content-Type':'application/xml','Cache-Control':'public, max-age=0, s-maxage=3600'}},
