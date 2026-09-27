@@ -719,6 +719,11 @@ export function SearchExperience() {
       const place=await response.json() as LocationResult;
       selectLocation({source:'manual',label:place.name,city:place.name,placeID:place.place_id,address:place.address,coordinates:{latitude:place.latitude,longitude:place.longitude}});
       setLocationOpen(false);
+      // The list of places is long enough to have been scrolled to, and the panel holding
+      // it disappears with the choice -- so the page that comes back is the same page
+      // several hundred pixels down, with its own heading above the fold. Choosing a place
+      // is the start of the next thing, not the end of this one, so it returns to the top.
+      window.scrollTo({top:0});
     }catch{setError(t('locationResolveError'));}
   };
   const fill=(example:string)=>{setQuery(example);void runSearch(example);};
@@ -846,13 +851,17 @@ export function SearchExperience() {
       },0);}} onSubmit={event=>{setSuggestionsOpen(false);submit(event);}} aria-busy={loading}>{!suggestionsOpen&&<Search aria-hidden="true"/>}<div className="search-field">{/* The way out sits inside the field, where the magnifier sits on the page this
         panel opens from: one control in one place, doing the opposite job. A separate
         corner button was a second way out of a screen that only needs one. */}
-      {suggestionsOpen&&<button type="button" className="search-query-back" onClick={()=>setSuggestionsOpen(false)} aria-label={t('back')}><ArrowLeft aria-hidden="true"/></button>}{/* Opened on the press, not on the focus that follows it. A phone decides how far to
-        scroll the page to put a field above the keyboard, and it decides using the position
-        the field is in when it is touched. On focus the field is still a bar in the middle
-        of the page, so the browser scrolls to a field that by then has moved to the top of a
-        full-screen panel -- and the panel, fixed to the layout viewport, travels with that
-        scroll. Opening on pointerdown means the field is already where it will end up before
-        anything is measured. */}<textarea ref={field} enterKeyHint="done" onPointerDown={()=>setSuggestionsOpen(true)} onFocus={()=>setSuggestionsOpen(true)} rows={1} value={query} onChange={event=>setQuery(event.target.value)} onKeyDown={event=>{if(event.key==='Escape')setSuggestionsOpen(false);if(event.key==='Enter'){event.preventDefault();if(window.matchMedia('(max-width: 720px)').matches){keepQueryPanelAfterBlur.current=true;event.currentTarget.blur();return;}void runSearch();}}} placeholder={placeholder} aria-label={t('searchHint')} disabled={loading}/>{query&&!loading&&<button type="button" className="search-clear" onClick={()=>{setQuery('');field.current?.focus();}} aria-label={t('clearSearch')}><X aria-hidden="true"/></button>}</div>{suggestionsOpen&&<button type="submit" disabled={loading}>{loading?t('loading'):t('searchAction')}</button>}{suggestionsOpen&&<div className="search-query-suggestions">{history.length>0&&<div className="search-query-recent">
+      {suggestionsOpen&&<button type="button" className="search-query-back" onClick={()=>setSuggestionsOpen(false)} aria-label={t('back')}><ArrowLeft aria-hidden="true"/></button>}{/* Opened when the finger lifts, not when it lands, and still before the focus that
+        follows. A phone decides how far to scroll the page to put a field above the
+        keyboard, and it decides using the position the field is in when it is touched. On
+        focus the field is still a bar in the middle of the page, so the browser scrolls to
+        a field that by then has moved to the top of a full-screen panel -- and the panel,
+        fixed to the layout viewport, travels with that scroll. Opening before focus is what
+        avoids that; opening on the press itself was a step too early (R62). A touch that
+        lands here and then moves is a scroll, and a browser that takes a gesture over for
+        scrolling cancels the pointer rather than releasing it -- so the panel no longer
+        opens under a finger that was only passing through. A mouse focuses on the press, so
+        that route is the handler beside this one. */}<textarea ref={field} enterKeyHint="done" onPointerUp={()=>setSuggestionsOpen(true)} onFocus={()=>setSuggestionsOpen(true)} rows={1} value={query} onChange={event=>setQuery(event.target.value)} onKeyDown={event=>{if(event.key==='Escape')setSuggestionsOpen(false);if(event.key==='Enter'){event.preventDefault();if(window.matchMedia('(max-width: 720px)').matches){keepQueryPanelAfterBlur.current=true;event.currentTarget.blur();return;}void runSearch();}}} placeholder={placeholder} aria-label={t('searchHint')} disabled={loading}/>{query&&!loading&&<button type="button" className="search-clear" onClick={()=>{setQuery('');field.current?.focus();}} aria-label={t('clearSearch')}><X aria-hidden="true"/></button>}</div>{suggestionsOpen&&<button type="submit" disabled={loading}>{loading?t('loading'):t('searchAction')}</button>}{suggestionsOpen&&<div className="search-query-suggestions">{history.length>0&&<div className="search-query-recent">
       <header><h2 className="search-query-suggestions-title">{t('showRecentSearches')}</h2><button type="button" onMouseDown={event=>event.preventDefault()} onClick={()=>void clearHistory()} disabled={historyBusy}>{t('clearSearches')}</button></header>
       {/* Three, because this is a shortcut and not a record: the whole history is a page of
           its own, and a list long enough to scan is a list that hides the suggestions under

@@ -9,15 +9,13 @@
 //
 // This lives here rather than beside one page because a second page wanted the same
 // treatment, and the second copy of a rule is the one that drifts.
-import {ChevronDown} from 'lucide-react';
 import Link from 'next/link';
 import {Fragment} from 'react';
 
 // Two marks, both written into the string for the same reason: which word carries the
 // emphasis, and which word is the one being offered, are facts about the sentence. Square
-// brackets colour a phrase. Braces turn a word into the shape of a control -- filled, with
-// the arrow that means "there is a list under this" -- without making it one. It is the
-// heading's verb; pressing it is what the field below is for.
+// brackets colour a phrase. Braces fill a word -- the heading's verb, drawn as the thing it
+// stands for -- without making it a control. It is not one: the field below it is.
 const MARKED=/\[([^\]]+)\]|\{([^}]+)\}/g;
 
 export function plainTitle(title:string){return title.replace(/[[\]{}]/g,'').replace(/\n/g,' ');}
@@ -50,7 +48,7 @@ export function emphasisedTitle(title:string,className='favorites-title-mark'){
     const at=found.index??0;
     if(at>last)parts.push(<Fragment key={key++}>{lines(title.slice(last,at))}</Fragment>);
     if(found[1]!==undefined)parts.push(<span key={key++} className={className}>{lines(found[1])}</span>);
-    else parts.push(<span key={key++} className="title-chip">{found[2]}<ChevronDown aria-hidden="true"/></span>);
+    else parts.push(<span key={key++} className="title-chip">{found[2]}</span>);
     last=at+found[0].length;
   }
   if(last<title.length)parts.push(<Fragment key={key++}>{lines(title.slice(last))}</Fragment>);

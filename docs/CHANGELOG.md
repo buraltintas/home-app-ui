@@ -8,6 +8,61 @@ value involved.
 
 ---
 
+## The search bar opened under a finger that was only scrolling past it
+
+Touching the bar on the discover page opened the full-screen search panel. Not tapping it --
+touching it. The panel opened on `pointerdown`, which a phone fires the instant a finger
+lands, so a scroll that happened to begin on the bar became a screen change nobody asked
+for. It opens on `pointerup` now: a gesture that turns into a scroll is cancelled by the
+browser rather than released, so it never completes, and a tap still does.
+
+The press was not an arbitrary choice and the reason it existed still holds, so the fix had
+to keep it. A phone decides how far to scroll the page to lift a field above the keyboard
+using the position that field is in when it is touched; the field then moves to the top of a
+full-screen panel, and the browser scrolls to where it used to be. Opening before focus is
+what avoids that, and `pointerup` on a touch screen still comes before focus. A mouse
+focuses on the press instead, which the focus handler beside it already covered.
+
+Checked in Mobile Safari on a simulated iPhone rather than in a desktop browser, because
+neither half of this exists without a real touch screen: dragging from the bar now scrolls
+the page and leaves the panel shut, and tapping it opens the panel flush to the top with the
+keyboard up.
+
+## Choosing a place left the page where the list had been
+
+The location panel's results are long enough to scroll to, and the panel disappears with the
+choice -- so the page that came back was the same page several hundred pixels down, with its
+own heading above the fold. It returns to the top now. Choosing a place is the beginning of
+the next thing, not the end of the last one.
+
+## The cross that clears the search wore the browser's own button skin
+
+`.search-clear` had been given a radius and a size but never a fill or a border of its own,
+so it kept the ones every browser puts on a bare `<button>`: a grey face and a bevelled
+ring. With the radius that read as a grey disc -- unlike every other cross on the site,
+which are all plain marks. The reset is now on `button` in the base sheet rather than on
+that one class, so the next control given a shape but no fill cannot inherit the same
+surprise. Nothing else on the site was wearing it; the scan was run before the change.
+
+The mark itself went from 18px to 15px beside 17px text. The 44px target it sits in did not
+move.
+
+## The heading's verb sat a line too high, and pointed at a list that does not exist
+
+Two things on `{bul}`, the filled word that ends the search heading.
+
+The arrow is gone. It was there to say "a list opens under this", and none does -- the word
+is not a control, the field below it is.
+
+And the frame sat 4.7px *above* where the line before it ended, which is why it read as
+crowded. It now clears that line by 2.8px, which is exactly what the two lines above it
+clear each other by. The two margins still add to the same figure, so the heading is still
+exactly three lines tall and the step between them is unchanged. What changed is that they
+are no longer equal to each other, and the amount is written against `lh` rather than as a
+number -- the space between lines is a share of the line, and the line is 1.1 on the phone
+and 0.98 on the desktop, so one number could only have been right on one of them. Measured
+at both: 2.81 against 2.75 on the phone, -2.02 against -2.60 on the desktop.
+
 ## Every page in the sitemap claimed to have changed one second ago
 
 `lastmod` was `new Date()`, evaluated while the request was being answered. It went onto

@@ -124,15 +124,25 @@ svg{stroke-width:2}
 .search-title h1{text-align:left}/* This is the one page where the line is not decoration: asking us is literally what the
    field below it does. */.search-slogan{margin:0 0 14px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-ink)}
 .search-title-shop{width:100%;height:auto;justify-self:end;align-self:center}
-/* (R54) The heading's last word is its verb, and it is drawn as the control it stands for
-   -- filled, with the arrow that says a list opens under it. It is not one: the field below
-   is, and two things that both look pressable would be one thing too many. */
-.title-chip{display:flex;width:max-content;align-items:center;gap:.22em;padding:.14em .38em;margin-block:-.14em;border-radius:var(--r-md);background:var(--clay);color:var(--surface)}
+/* (R54) The heading's last word is its verb, and it is drawn as the shape it stands for --
+   filled, like the one button on the screen. It is not one: the field below is, and two
+   things that both look pressable would be one thing too many. (R60 took the arrow off it
+   for the same reason -- an arrow says a list opens here, and none does.) */
+.title-chip{display:flex;width:max-content;align-items:center;padding:.14em .38em;border-radius:var(--r-md);background:var(--clay);color:var(--surface)}
 /* The fill is drawn outside the line it sits on: the padding that gives it room is taken
    back as margin, so the box the page lays out is exactly one line tall. That is what
    keeps the step to this line the same as the step to any other, at any line height --
-   the phone's is 1.1 and the desktop's is 0.98, and a fixed nudge could only suit one. */
-.title-chip svg{width:.62em;height:.62em;flex:none;stroke-width:3}
+   the phone's is 1.1 and the desktop's is 0.98, and a fixed nudge could only suit one.
+   (Older browsers without the `lh` unit keep the symmetric version.) */
+.title-chip{margin-block:-.14em}
+/* R60: the two margins still add up to -.28em, so the line still advances by exactly one
+   line -- but they are no longer equal, and the frame sits lower inside that line. Where
+   it stops is the point the line above starts from, one line further down: the space over
+   the frame is then the same space the lines of this heading leave each other. Written
+   against `lh` rather than as a number, because that space is a share of the line and the
+   line is 1.1 on the phone and 0.98 on the desktop. The .43em is this face's own metric --
+   how far the tallest letters of the line above rise past the middle of its line box. */
+.title-chip{margin-block:calc(.5lh - .43em) calc(.15em - .5lh)}
 .search-hero h1{max-width:900px;font-size:clamp(44px,6.9vw,92px)}
 .home-search{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--r-lg);padding:8px 8px 8px 18px;margin-top:28px;max-width:580px;box-shadow:var(--lift)}
 .home-search svg{color:var(--ink-muted)}
