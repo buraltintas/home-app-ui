@@ -1,7 +1,8 @@
 import type {Metadata} from 'next';
 import {redirect} from 'next/navigation';
 import {ScrollTop} from '@/components/ScrollTop';
-import {StoreCorrectionForm,storeCorrectionIntro} from '@/components/StoreCorrectionForm';
+import {StoreCorrectionForm} from '@/components/StoreCorrectionForm';
+import {storeCorrectionIntro} from '@/content/store-correction';
 import {getServerI18n} from '@/i18n/server';
 import {canonicalFor,localePath} from '@/lib/site';
 

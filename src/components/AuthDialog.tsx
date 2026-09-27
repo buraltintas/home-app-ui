@@ -5,6 +5,7 @@ import Script from 'next/script';
 import {FormEvent,useCallback,useEffect,useRef,useState} from 'react';
 import {ArrowLeft,X} from 'lucide-react';
 import {useI18n} from '@/i18n/I18nProvider';
+import {emailFaultMessage,useEmailCheck} from '@/lib/use-email-check';
 import {localePath} from '@/lib/site';
 
 type GoogleCredentialResponse={credential?:string};
@@ -26,6 +27,7 @@ export function AuthDialog({open,onClose,onAuthenticated}:{open:boolean;onClose:
   const [googleButtonReady,setGoogleButtonReady]=useState(false);
   const [googleGaveUp,setGoogleGaveUp]=useState(false);
   const [emailMode,setEmailMode]=useState(false);
+  // The same reading of an address the feedback form and the correction sheet use.
   const [sent,setSent]=useState(false);
   const [email,setEmail]=useState('');
   const [code,setCode]=useState('');
@@ -49,6 +51,7 @@ export function AuthDialog({open,onClose,onAuthenticated}:{open:boolean;onClose:
     return()=>{active=false;};
   },[]);
 
+  const {fault:emailFault,shown:emailShown,field:emailField}=useEmailCheck(email);
   const resetFlow=useCallback(()=>{setEmailMode(false);setSent(false);setEmail('');setCode('');setError('');setBusy(false);setGoogleButtonReady(false);setGoogleGaveUp(false)},[]);
   const closeDialog=useCallback(()=>{resetFlow();onClose()},[onClose,resetFlow]);
   const completeAuthentication=useCallback(()=>{window.dispatchEvent(new Event('bosagezme:authenticated'));onAuthenticated?.();closeDialog()},[closeDialog,onAuthenticated]);
@@ -95,7 +98,12 @@ export function AuthDialog({open,onClose,onAuthenticated}:{open:boolean;onClose:
   if(!open)return null;
 
   async function submit(event:FormEvent){
-    event.preventDefault();setBusy(true);setError('');
+    event.preventDefault();
+    // A mistyped address here is the most expensive one in the product: the code is sent to
+    // a mailbox that does not exist, nothing arrives, and the person is left waiting for a
+    // message with no way to tell why it never came.
+    if(!sent&&emailFault)return;
+    setBusy(true);setError('');
     try{
       const response=await fetch(sent?'/api/auth/verify-code':'/api/auth/request-code',{method:'POST',headers:{'content-type':'application/json','x-locale':locale},body:JSON.stringify(sent?{email,code}:{email})});
       if(!response.ok){const body=await response.json();throw new Error(body?.error?.message??t('authError'))}
@@ -125,9 +133,11 @@ export function AuthDialog({open,onClose,onAuthenticated}:{open:boolean;onClose:
       {emailMode?<form onSubmit={submit}>
         <p>{sent?email:t('emailBody')}</p>
         {sent&&<button type="button" onClick={()=>{setSent(false);setCode('');setError('')}} style={{minHeight:44,border:0,padding:0,background:'transparent',color:'var(--accent)',display:'inline-flex',alignItems:'center',gap:8,fontWeight:700}}><ArrowLeft size={18}/>{t('backToEmail')}</button>}
-        <label><span>{sent?t('codeLabel'):t('emailTitle')}</span><input required value={sent?code:email} onChange={event=>sent?setCode(event.target.value.replace(/\D/g,'').slice(0,6)):setEmail(event.target.value)} type={sent?'text':'email'} inputMode={sent?'numeric':'email'} maxLength={sent?6:254} placeholder={sent?'000000':'name@example.com'}/></label>
+        <label><span>{sent?t('codeLabel'):t('emailTitle')}</span><input required value={sent?code:email} onChange={event=>sent?setCode(event.target.value.replace(/\D/g,'').slice(0,6)):setEmail(event.target.value)} type={sent?'text':'email'} inputMode={sent?'numeric':'email'} maxLength={sent?6:254} placeholder={sent?'000000':'name@example.com'} aria-invalid={!sent&&emailShown?true:undefined} {...(sent?{}:emailField)}/></label>
+        {/* Said once the field has been left, not while it is being typed into. */}
+        {!sent&&emailShown&&<p className="auth-field-fault" role="alert">{emailFaultMessage(emailShown,t)}</p>}
         {error&&<p role="alert">{error}</p>}
-        <button disabled={busy||(sent&&code.length!==6)} className="button primary" type="submit">{busy?'…':sent?t('verify'):t('sendCode')}</button>
+        <button disabled={busy||(sent?code.length!==6:Boolean(emailFault))} className="button primary" type="submit">{busy?'…':sent?t('verify'):t('sendCode')}</button>
       </form>:<>
         <p>{t('signInBody')}</p>
         {/* Contract acceptance and the privacy notice are legally different things, so

@@ -5,7 +5,7 @@ import {useEffect,useState} from 'react';
 import {AuthDialog} from '@/components/AuthDialog';
 import {useI18n} from '@/i18n/I18nProvider';
 import {apiFetch} from '@/lib/api-client';
-import {emailProblem} from '@/lib/email';
+import {emailFaultMessage,useEmailCheck} from '@/lib/use-email-check';
 import {emphasisedTitle,sentenceWithLink} from '@/lib/emphasis';
 import {localePath} from '@/lib/site';
 
@@ -38,9 +38,9 @@ export function FeedbackForm({initialKind='suggestion',initialMessage=''}:{initi
     return()=>{active=false;};
   },[]);
   const emailRequired=signedIn!==true;
-  // What is wrong with the address, if anything. Checked as it is typed so the answer is
-  // there before the send is pressed, rather than after it.
-  const emailFault=email.trim()===''?null:emailProblem(email);
+  // What is wrong with the address, if anything. Known on every keystroke -- the send
+  // stays inert until it is right -- but only said once the field has been left.
+  const {fault:emailFault,shown:emailShown,field:emailField}=useEmailCheck(email);
   const emailGiven=email.trim()!==''&&emailFault===null;
   // Which of the two ways back this message actually took, fixed at the moment it was sent.
   // Signing in afterwards must not turn "we will write to you" into "look in your profile"
@@ -96,8 +96,8 @@ export function FeedbackForm({initialKind='suggestion',initialMessage=''}:{initi
     </>}
 
     <label className="feedback-field"><span>{emailRequired?t('feedbackEmailRequired'):t('feedbackEmail')}</span>
-      <input type="email" value={email} maxLength={320} required={emailRequired} aria-invalid={emailFault?true:undefined} autoCapitalize="none" autoCorrect="off" spellCheck={false} onChange={event=>setEmail(event.target.value)}/>
-      {emailFault&&<small className="feedback-email-fault" role="alert">{emailFault.kind==='tld'?t('feedbackEmailTld').replace('{x}',emailFault.tld):t('feedbackEmailFormat')}</small>}
+      <input type="email" value={email} maxLength={320} required={emailRequired} aria-invalid={emailShown?true:undefined} autoCapitalize="none" autoCorrect="off" spellCheck={false} onChange={event=>setEmail(event.target.value)} {...emailField}/>
+      {emailShown&&<small className="feedback-email-fault" role="alert">{emailFaultMessage(emailShown,t)}</small>}
       <small>{emailRequired?t('feedbackEmailWhy'):t('feedbackEmailHint')}</small>
     </label>
 

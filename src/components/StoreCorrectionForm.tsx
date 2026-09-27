@@ -2,6 +2,8 @@
 
 import {useState} from 'react';
 import {apiFetch} from '@/lib/api-client';
+import {useI18n} from '@/i18n/I18nProvider';
+import {emailFaultMessage,useEmailCheck} from '@/lib/use-email-check';
 import type {Locale} from '@/lib/types';
 
 const copy:Record<Locale,{topic:string;categories:[string,string,string,string];label:string;hint:string;email:string;emailHint:string;send:string;sending:string;thanks:string;again:string;short:string;error:string;privacy:string;prefix:string;store:string;field:string}>={
@@ -15,27 +17,26 @@ const copy:Record<Locale,{topic:string;categories:[string,string,string,string];
 // happened to hold it first. Two places open this form now -- a page, for a link somebody
 // was sent, and a sheet on the store itself -- and an explanation that lives in one of them
 // is an explanation the other has to copy.
-export const storeCorrectionIntro:Record<Locale,{title:string;intro:string;store:string}>={
-  tr:{title:'Mağaza bilgilerinde hata mı var?',intro:'Yanlış adresi, kategoriyi veya kapanmış bir mağazayı bize bildir. Önerini inceleyip doğruladıktan sonra gerekli düzeltmeyi yapacağız.',store:'Düzenleme önerdiğin mağaza'},
-  en:{title:'Is something wrong with the store information?',intro:'Tell us about an incorrect address, category, or a store that has closed. We will review and verify your suggestion before making the correction.',store:'Store you are suggesting an edit for'},
-  de:{title:'Stimmt etwas mit den Geschäftsinformationen nicht?',intro:'Melde uns eine falsche Adresse, Kategorie oder ein geschlossenes Geschäft. Wir prüfen deinen Hinweis und nehmen die Korrektur nach der Bestätigung vor.',store:'Geschäft, für das du eine Änderung vorschlägst'},
-  ru:{title:'В данных магазина есть ошибка?',intro:'Сообщите о неверном адресе, категории или закрытом магазине. Мы проверим предложение и внесём исправление после подтверждения.',store:'Магазин, данные которого вы предлагаете изменить'},
-};
 
 export function StoreCorrectionForm({locale,storeName}:{locale:Locale;storeId:string;storeName:string}){
   const t=copy[locale];
+  // What is wrong with an address is worded once for the whole product, so this reads it
+  // from the shared dictionary rather than keeping a fourth copy in the record above.
+  const {t:translate}=useI18n();
   const [topic,setTopic]=useState(0);
   const [message,setMessage]=useState('');
   const [email,setEmail]=useState('');
   const [sending,setSending]=useState(false);
   const [sent,setSent]=useState(false);
   const [error,setError]=useState('');
+  const {fault:emailFault,shown:emailShown,field:emailField}=useEmailCheck(email);
 
   const submit=async(event:React.FormEvent)=>{
     event.preventDefault();
     const correction=message.trim();
     setError('');
     if(correction.length<5){setError(t.short);return;}
+    if(emailFault)return;
     setSending(true);
     try{
       // Store context is attached only to the private operator message. The visitor sees
@@ -53,8 +54,12 @@ export function StoreCorrectionForm({locale,storeName}:{locale:Locale;storeId:st
   return <form className="feedback-form store-correction-form" onSubmit={event=>void submit(event)}>
     <fieldset className="feedback-kinds"><legend>{t.topic}</legend>{t.categories.map((category,index)=><label key={category} className="feedback-kind" data-selected={topic===index}><input type="radio" name="correction-topic" checked={topic===index} onChange={()=>setTopic(index)}/><span>{category}</span></label>)}</fieldset>
     <label className="feedback-field"><span>{t.label}</span><textarea value={message} maxLength={3600} rows={3} required onChange={event=>setMessage(event.target.value)}/><small>{t.hint}</small></label>
-    <label className="feedback-field"><span>{t.email}</span><input type="email" value={email} maxLength={320} autoCapitalize="none" autoCorrect="off" spellCheck={false} onChange={event=>setEmail(event.target.value)}/><small>{t.emailHint}</small></label>
-    <div className="feedback-actions"><button className="button primary" type="submit" disabled={sending}>{sending?t.sending:t.send}</button><small>{t.privacy}</small></div>
+    {/* Optional, and checked all the same: an address given here is the only way back to
+        whoever reported the mistake, so a mistyped one is worse than none at all. */}
+    <label className="feedback-field"><span>{t.email}</span><input type="email" value={email} maxLength={320} aria-invalid={emailShown?true:undefined} autoCapitalize="none" autoCorrect="off" spellCheck={false} onChange={event=>setEmail(event.target.value)} {...emailField}/>
+      {emailShown&&<small className="feedback-email-fault" role="alert">{emailFaultMessage(emailShown,translate)}</small>}
+      <small>{t.emailHint}</small></label>
+    <div className="feedback-actions"><button className="button primary" type="submit" disabled={sending||Boolean(emailFault)}>{sending?t.sending:t.send}</button><small>{t.privacy}</small></div>
     {error&&<p className="form-error" role="alert">{error}</p>}
   </form>;
 }

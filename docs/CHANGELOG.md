@@ -44,6 +44,53 @@ Nothing was removed from any page, and no URL left the sitemap.
 
 ---
 
+## The store correction page answered 500, and had been doing it in production
+
+Every "Mağaza bilgilerinde hata mı var?" link led to an error page. The cause is a rule of
+this framework rather than a typo: the page is a server component and it imported its
+heading and its sentence from the correction form, which is a client component. A value
+exported from a `'use client'` module is not that value on the server -- it is a reference
+the client will resolve -- so `copy[locale]` was undefined and reading `.title` threw, in
+`generateMetadata` and again in the page. The copy now lives in a module of its own that
+neither side owns, which is where shared data belongs; the form and the sheet read it from
+there too.
+
+It was found while adding the address check to that form, not by a report. Nothing on the
+page said it was broken: the link was there, the click produced an error page, and the
+person who wanted to tell us about a wrong address had no way through.
+
+## An address is checked the same way wherever it is asked for, and only once you have left it
+
+The check that the feedback form got yesterday now runs in the two other places an address
+is typed: the sign-in dialog and the store correction form. The dialog is where it matters
+most -- a mistyped address there means the code is sent to a mailbox that does not exist,
+nothing arrives, and there is nothing on screen to say why. One reading, one wording, one
+module; the forms differ only in whether the address is required.
+
+The timing changed too. The message used to appear on the keystroke that made the address
+wrong, which is every address halfway through being typed: it was on screen the whole time
+somebody typed the rest of it. It waits for the field to be left now, and goes away again
+when the field is picked back up, so the correction is made in quiet. What the form will
+accept has not changed -- the send stays inert until the address is right, which it already
+was.
+
+## The feedback page fits more of itself on a phone
+
+The heading is one line ("Ne düşündüğünü söyle"), and it stays one line at every phone width
+because its size is read off the column rather than fixed: measured, it is 346px of text in
+a 354px column at 390px wide, which leaves nothing for a narrower phone. The gaps above and
+below the sign-in button are equal at 14px. The page also gives back the room it was holding
+above and between its blocks, and the intro is set at the size of the notes around it.
+
+Together that lifts the sign-in button 54px, from 626 to 572 measured at 390px wide. It is
+still not above the fold: on the visible viewport of the phone this was reported from -- about
+610px, of which the floating navigation takes the last 76 -- everything has to end above 534.
+The blocks above the button are the header, the back button, the heading, the intro, the
+message box and its hint, and they come to more than that on their own. Getting it above the
+fold means removing one of them: shortening the intro, which is indexed text and this page's
+description, or moving the button above the message box, which is not where it was asked to
+be. That is a decision for the person who asked, and it is on the card.
+
 ## Reviews that carry a crime wait for a person, and the published texts now say so
 
 Written parts of a review are checked before they are published, and anything carrying an

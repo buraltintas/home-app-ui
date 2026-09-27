@@ -2,7 +2,8 @@
 
 import {ChevronRight,NotebookPen,X} from 'lucide-react';
 import {useCallback,useEffect,useRef,useState} from 'react';
-import {StoreCorrectionForm,storeCorrectionIntro} from './StoreCorrectionForm';
+import {StoreCorrectionForm} from './StoreCorrectionForm';
+import {storeCorrectionIntro} from '@/content/store-correction';
 import type {Locale} from '@/lib/types';
 
 // Reporting a wrong address is a footnote to reading a store page, not a destination.
