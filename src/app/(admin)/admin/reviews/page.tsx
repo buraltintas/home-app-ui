@@ -28,9 +28,10 @@ export default async function Page({searchParams}:{searchParams:Promise<{q?:stri
             <td>{review.store_name}</td>
             <td>{review.author||'—'}</td>
             <td>{review.rating}</td>
-            <td>{review.deleted?<em>silinmiş</em>:review.text.slice(0,120)}</td>
+            <td>{review.deleted?<em>silinmiş</em>:review.moderation==='held'?<em>denetimde bekliyor</em>:review.moderation==='removed'?<em>denetimde kaldırıldı</em>:review.text.slice(0,120)}</td>
             <td>{when(review.created_at)}</td>
             <td>{review.deleted?null:<AdminAction path={`reviews/${review.id}`} method="DELETE" label="Sil" tone="danger"
+              storeRefs={[review.store_id,review.store_slug]}
               confirm="Bu değerlendirme silinsin mi? Metni kalıcı olarak boşaltılır."/>}</td>
           </tr>)}
           {result.data.rows.length===0&&<tr><td colSpan={6} className="admin-empty">Sonuç yok.</td></tr>}

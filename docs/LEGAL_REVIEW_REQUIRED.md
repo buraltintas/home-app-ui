@@ -7,7 +7,7 @@ qualified lawyer can review a factual description rather than reconstruct the sy
 Every factual claim below is drawn from code. Where the code cannot answer a question, the
 question is listed rather than guessed.
 
-**Last updated:** 2026-08-19
+**Last updated:** 2026-09-27
 
 ---
 
@@ -69,7 +69,7 @@ fall within strictly necessary plus a user-set preference?
 ### Third parties actually used
 | Party | What is sent | Destination |
 |---|---|---|
-| OpenAI | **search query text and locale only** | api.openai.com (US) |
+| OpenAI | **search query text and locale**; **the written parts of a review** (low-score notes, what was bought) before it is published | api.openai.com (US) |
 | Google Places | query, coordinates, radius | places.googleapis.com |
 | Google Identity Services | browser loads gsi/client | Google |
 | Gmail API | authentication email delivery | gmail.googleapis.com |
@@ -79,6 +79,12 @@ fall within strictly necessary plus a user-set preference?
 `Context` struct carries latitude and longitude but they are **never** placed in the
 prompt. Coordinates, user id and email are therefore not sent to OpenAI. If that prompt
 changes, the privacy documents must change with it.
+
+**Verified detail (review check, since 2026-09-27):** `moderation.Text()` sends only the
+review's own written parts -- the per-criterion notes, the purchased item and the body --
+labelled by what they are. No user id, email, display name, store id or location is placed
+in the prompt. A review that is only scores is never sent. The KVKK notice (v1.2), the
+privacy policy (v1.2) and the terms (v1.1) were changed in the same release to say so.
 
 → **Counsel question:** processor status and international transfer mechanism for Google
 and OpenAI under the post-2024 KVKK art. 9 regime.
@@ -139,15 +145,28 @@ how long?
 
 ## 3. What does NOT exist
 
-- **No content reporting or moderation system.** No reports table, no moderation
-  endpoints, no appeals mechanism, no enforcement tooling. `reporting.Service` in the
-  backend is internal analytics, not abuse reporting.
+- **No user reporting and no appeals mechanism.** There is no reports table and no way for
+  a reader to flag a review. `reporting.Service` in the backend is internal analytics, not
+  abuse reporting.
+- **Pre-publication review moderation does exist (since 2026-09-27).** Before a review with
+  written content is published, its text is classified by OpenAI for insult, threat,
+  accusation of a crime stated as fact, a private person's personal data, or other content
+  whose publication could itself be a crime. Any finding holds the review off every public
+  surface -- the store page, the feed, the review page, the shop's rating -- until an
+  administrator publishes or removes it from the panel. If the check cannot run, the review
+  is held, not published. The author sees the review marked "İncelemede" / "Yayından
+  kaldırıldı" on their own list. Decisions are recorded with the administrator and time.
 - **No marketing or promotional messaging.** Only transactional mail (OTP, welcome).
 - **No payment, cart, order or checkout code** anywhere in either repository.
 - **No store ownership verification.**
 - **No paid placement, sponsorship or advertising.**
 
 → **Counsel questions:**
+- Holding a user's review from publication on an automated finding, pending a person: is
+  the notice given (terms §6, the author's "İncelemede" label) sufficient, and is a formal
+  objection route required before or after a removal?
+- Sending review text to OpenAI (US) for this check: KVKK art. 9 transfer basis, and whether
+  review text a user writes about a third party (a named employee) changes the analysis.
 - 5651 classification and what notice-and-takedown obligations follow.
 - Whether a notice-and-action mechanism is required before further growth.
 - Whether 6563 / İYS obligations are triggered at all today (probably not, since no

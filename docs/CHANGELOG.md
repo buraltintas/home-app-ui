@@ -44,6 +44,31 @@ Nothing was removed from any page, and no URL left the sitemap.
 
 ---
 
+## Reviews that carry a crime wait for a person, and the published texts now say so
+
+Written parts of a review are checked before they are published, and anything carrying an
+element of a crime -- insult, threat, an accusation of a crime, a private person's details --
+waits for an administrator. The web side does three things with that.
+
+The author is told. Writing a review that is held no longer sends its author to the shop's
+page, where it is not, to conclude it was lost: the form says it was received and will be
+read first, and links to their own list, where it carries "İncelemede" (or "Yayından
+kaldırıldı" once decided). Nobody else is ever sent a review that is not published.
+
+The panel has a queue. "Denetim" lists every held review with the passage the check pointed
+at and every part a visitor would read, under the headings the review form uses -- read from
+the same dictionary, not a second copy -- and two answers, publish or remove.
+
+And the published texts were wrong the moment this shipped, so they changed in the same
+release: the KVKK notice and the privacy policy both said the only thing sent to OpenAI is the
+search text, and the terms said there was no automated moderation. All three now say what
+happens, in four languages, with their version and date raised. LEGAL_REVIEW_REQUIRED.md
+records the two questions this raises for counsel.
+
+Deleting or deciding a review in the panel now drops that shop's page from the web cache as
+well. A shop's page is cached for a day and is only honest because every change drops it; an
+administrator's changes never did, so a deleted review could stay on the page for a day.
+
 ## An address ending in ".don" was accepted, thanked, and lost
 
 The form checked that an address contained an "@" and a dot. `guven.yilmaz1234@gmail.don`

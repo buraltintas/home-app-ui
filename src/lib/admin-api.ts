@@ -19,7 +19,11 @@ export type Snapshot={total_users?:number;total_stores?:number;total_posts?:numb
 export type UserRow={id:string;email:string;display_name:string;status:string;review_count:number;created_at:string;deleted_at?:string};
 export type StoreRow={id:string;name:string;slug:string;city:string;is_premium:boolean;is_catalog_store:boolean;cover_media_id?:string;categories:string[];review_count:number;average_rating:number;created_at:string;source_kind:string;brand_slug:string;verified:boolean;latitude:number;longitude:number};
 export type CategoryOption={slug:string;name:string};
-export type ReviewRow={id:string;store_id:string;store_name:string;user_id:string;author:string;rating:number;text:string;created_at:string;deleted:boolean};
+export type ReviewRow={id:string;store_id:string;store_name:string;store_slug?:string;user_id:string;author:string;rating:number;text:string;created_at:string;deleted:boolean;moderation?:'published'|'held'|'removed'};
+// A review the check held back, with every part a visitor would read and what was found in
+// it -- the passage, so the decision is made on the words and not on a label.
+export type HeldFinding={kind:'insult'|'threat'|'accusation'|'personal_data'|'other_crime';quote:string};
+export type HeldReviewRow={id:string;store_id:string;store_name:string;store_slug:string;user_id:string;author:string;rating:number;text:string;purchased_item?:string;criterion_notes?:Record<string,string>;verdict:'severe'|'unchecked';findings:HeldFinding[];error?:string;created_at:string};
 export type SearchRow={id:string;query:string;user_id?:string;query_language:string;scope:string;result_count:number;click_count:number;duration_ms?:number;fallback_state?:string;created_at:string};
 export type FeedbackRow={id:string;user_id?:string;kind:string;message:string;contact_email?:string;author?:string;locale:string;status:string;created_at:string;handled_at?:string;reply?:string;replied_at?:string};
 export type MatchQueueRow={id:string;brand:string;name:string;address:string;city:string;district:string;reason:string;similarity:number;distance_meters:number;created_at:string;match_id:string|null;match_name:string;match_address:string;match_source_kind:string};
@@ -52,6 +56,7 @@ export const getSearchInsights=()=>read<Record<string,unknown>>('search-insights
 export const getUsers=(q?:string,page=0)=>readPage<UserRow>('users',{q},page);
 export const getStores=(q?:string,premium?:boolean,page=0,source?:string)=>readPage<StoreRow>('stores',{q,premium:premium?'true':undefined,source},page);
 export const getReviews=(q?:string,page=0)=>readPage<ReviewRow>('reviews',{q},page);
+export const getHeldReviews=(page=0)=>readPage<HeldReviewRow>('moderation',{},page);
 export const getSearches=(q?:string,page=0)=>readPage<SearchRow>('searches',{q},page);
 export const getAudit=(page=0)=>readPage<AuditRow>('audit',{},page);
 export const getFeedback=(q?:string,page=0)=>readPage<FeedbackRow>('feedback',{q},page);

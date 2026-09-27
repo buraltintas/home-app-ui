@@ -824,3 +824,7 @@ body>main{flex:1 0 auto;min-width:0;width:100%}
   .store-save-dock>span{flex:0 1 122px;white-space:normal;line-height:1.25}
   .store-save-dock .button{flex:1 1 160px;padding-inline:12px;font-size:14px}
 }
+/* Where the author's own review stands, when it is not simply on the page. Waiting is amber --
+   nothing is wrong yet; removed is the error colour, because it was a decision against it. */
+.post-moderation{display:inline-flex;width:fit-content;align-items:center;margin:0 0 6px auto;padding:3px 10px;border-radius:var(--r-pill);font-size:12px;font-weight:700;letter-spacing:.02em;background:var(--accent-wash);color:var(--accent-ink)}
+.post-moderation[data-state="removed"]{background:color-mix(in srgb,var(--error) 10%,var(--surface));color:var(--error)}

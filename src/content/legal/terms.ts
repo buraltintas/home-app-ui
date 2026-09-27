@@ -23,9 +23,9 @@ const age=legalFacts.minimumAge??16;
 // promotion paid for has to be identifiable as such, whenever it exists.
 export const terms:LegalDoc={
   slug:'terms',
-  version:'1.0',
+  version:'1.1',
   effective:'2026-08-19',
-  updated:'2026-08-19',
+  updated:'2026-09-27',
   requiresEntity:true,
   content:{
     tr:{
@@ -70,7 +70,7 @@ export const terms:LegalDoc={
         ]},
         {id:'moderasyon',heading:'6. İçerik denetimi ve şikayet',blocks:[
           {p:`Kurallara aykırı olduğunu düşündüğünüz içeriği ${mail} adresine bildirebilirsiniz. Bildirimleri değerlendirir ve gerekli gördüğümüz içeriği kaldırabilir veya hesaba kısıtlama uygulayabiliriz.`},
-          {note:'Şu anda otomatik içerik denetim sistemi ve resmî bir itiraz süreci bulunmamaktadır. Bildirimler elle değerlendirilmektedir. Bu durum değiştiğinde bu metin güncellenecektir.'},
+          {note:`Değerlendirmelerde yazdığınız açıklamalar yayımlanmadan önce otomatik olarak kontrol edilir. Hakaret, tehdit, suç isnadı, başkasına ait kişisel veri ya da yayımlanması suç oluşturabilecek başka bir içerik taşıdığı düşünülen bir değerlendirme, ekibimiz okuyana kadar yayımlanmaz ve size “İncelemede” olarak gösterilir. Bildirimler elle değerlendirilir. Resmî bir itiraz süreci henüz bulunmamaktadır; bir kararla ilgili ${mail} adresine yazabilirsiniz.`},
           {p:'İçerik denetimi yapıyor olmamız, hukuka aykırı veya yanlış her içeriğin her zaman tespit edileceği anlamına gelmez. Kaldırılmamış olması onaylandığı anlamına gelmez.'},
         ]},
         {id:'ucuncu-taraf',heading:'7. Mağaza bilgileri ve üçüncü taraf kaynaklar',blocks:[
@@ -161,7 +161,7 @@ export const terms:LegalDoc={
         ]},
         {id:'moderasyon',heading:'6. Content moderation and reporting',blocks:[
           {p:`You can report content you believe breaks the rules to ${mail}. We review reports and may remove content or restrict an account where we consider it necessary.`},
-          {note:'There is currently no automated moderation system and no formal appeals process. Reports are reviewed by hand. This text will be updated when that changes.'},
+          {note:`The explanations you write in reviews are checked automatically before they are published. A review thought to contain an insult, a threat, an accusation of a crime, someone else’s personal data or anything else whose publication could be a crime is not published until our team has read it, and you see it marked “Under review”. Reports are reviewed by hand. There is no formal appeals process yet; you can write to ${mail} about a decision.`},
           {p:'That we moderate does not mean every unlawful or inaccurate piece of content will always be detected. Content that has not been removed has not thereby been approved.'},
         ]},
         {id:'ucuncu-taraf',heading:'7. Store information and third-party sources',blocks:[
@@ -252,7 +252,7 @@ export const terms:LegalDoc={
         ]},
         {id:'moderasyon',heading:'6. Moderation und Meldungen',blocks:[
           {p:`Regelwidrige Inhalte kannst du an ${mail} melden. Wir prüfen Meldungen und können Inhalte entfernen oder Konten einschränken, wenn wir es für erforderlich halten.`},
-          {note:'Derzeit gibt es weder ein automatisiertes Moderationssystem noch ein förmliches Beschwerdeverfahren. Meldungen werden manuell geprüft. Dieser Text wird angepasst, sobald sich das ändert.'},
+          {note:`Die Erläuterungen, die du in Bewertungen schreibst, werden vor der Veröffentlichung automatisch geprüft. Eine Bewertung, die vermutlich eine Beleidigung, eine Drohung, den Vorwurf einer Straftat, personenbezogene Daten anderer oder sonstige Inhalte enthält, deren Veröffentlichung strafbar sein könnte, wird erst veröffentlicht, wenn unser Team sie gelesen hat, und dir als „In Prüfung“ angezeigt. Meldungen werden manuell geprüft. Ein förmliches Widerspruchsverfahren gibt es noch nicht; zu einer Entscheidung kannst du an ${mail} schreiben.`},
           {p:'Dass wir moderieren, bedeutet nicht, dass jeder rechtswidrige oder unrichtige Inhalt stets erkannt wird. Nicht entfernte Inhalte sind damit nicht gebilligt.'},
         ]},
         {id:'ucuncu-taraf',heading:'7. Geschäftsdaten und Drittquellen',blocks:[
@@ -343,7 +343,7 @@ export const terms:LegalDoc={
         ]},
         {id:'moderasyon',heading:'6. Модерация и жалобы',blocks:[
           {p:`О контенте, нарушающем правила, сообщайте на ${mail}. Мы рассматриваем обращения и можем удалить контент или ограничить аккаунт, если сочтём это необходимым.`},
-          {note:'Сейчас нет ни автоматической системы модерации, ни формальной процедуры обжалования. Обращения рассматриваются вручную. Этот текст будет обновлён, когда это изменится.'},
+          {note:`Пояснения, которые вы пишете в отзывах, автоматически проверяются перед публикацией. Отзыв, в котором предположительно есть оскорбление, угроза, обвинение в преступлении, чужие персональные данные или иной контент, публикация которого может быть преступлением, не публикуется, пока его не прочитает наша команда, и показывается вам как «На проверке». Жалобы рассматриваются вручную. Официальной процедуры обжалования пока нет; по поводу решения можно написать на ${mail}.`},
           {p:'Наличие модерации не означает, что любой незаконный или недостоверный контент всегда будет выявлен. Неудалённый контент не считается одобренным.'},
         ]},
         {id:'ucuncu-taraf',heading:'7. Данные магазинов и сторонние источники',blocks:[

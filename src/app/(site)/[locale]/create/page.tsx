@@ -84,6 +84,9 @@ function ReviewWizard({storeId}:{storeId:string}){
   const [purchasedItem,setPurchasedItem]=useState('');
   const [submitting,setSubmitting]=useState(false);
   const [submitError,setSubmitError]=useState('');
+  // Set when the review was written but is waiting for a person to read it. It is not on
+  // the shop's page, so sending its author there would tell them it was lost.
+  const [held,setHeld]=useState(false);
   const autoVerificationAttempted=useRef(false);
 
   // The two steps are history entries, not component state. On a phone the back button
@@ -253,6 +256,8 @@ function ReviewWizard({storeId}:{storeId:string}){
       })});
       if(response.status===401){setSignedIn(false);setAuth(true);return;}
       if(!response.ok)throw new Error();
+      const created=await response.json().catch(()=>({})) as {moderation?:string};
+      if(created.moderation==='held'){setHeld(true);window.scrollTo({top:0,behavior:'auto'});return;}
       sessionStorage.setItem('bosagezme:review-nudge','1');
       // Two caches stand between writing a review and seeing it, and dropping one of them
       // was not enough.
@@ -289,6 +294,14 @@ function ReviewWizard({storeId}:{storeId:string}){
     finally{setSubmitting(false);}
   };
 
+  // Written and held. Said plainly, with the one place the review can be seen from now on.
+  if(held)return <main className="create-page create-held">
+    <div className="empty-state" role="status">
+      <h1>{t('reviewHeldTitle')}</h1>
+      <p>{t('reviewHeldBody')}</p>
+      <button className="button primary" onClick={()=>router.push(localePath(locale,'/profile/reviews'))}>{t('reviewHeldAction')}</button>
+    </div>
+  </main>;
   if(loadError)return <main className="create-page"><div className="empty-state"><h1>{t('storeUnavailable')}</h1><button className="button primary" onClick={()=>router.push(localePath(locale,'/discover'))}>{t('discover')}</button></div></main>;
   if(!store||signedIn===undefined)return <ReviewLoadingState/>;
 

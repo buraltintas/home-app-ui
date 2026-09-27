@@ -155,3 +155,18 @@
 .admin-table tr[data-off]{opacity:.55}
 .admin-table td[data-warn]{color:var(--error);font-weight:700}
 .admin-error-note{color:var(--error)}
+
+/* Denetim: one held review per card, the finding first -- it is what the decision is about --
+   then every part a visitor would read, then the two answers. */
+.admin-held-list{display:grid;gap:14px}
+.admin-held{border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface);padding:16px 18px;display:grid;gap:10px}
+.admin-held header{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 16px}
+.admin-held header span{color:var(--ink-muted);font-size:13px}
+.admin-held-findings{margin:0;padding:10px 12px;list-style:none;border-radius:var(--r-sm);background:color-mix(in srgb,var(--error) 8%,var(--surface));display:grid;gap:4px;font-size:14px}
+.admin-held-findings b{color:var(--error);margin-right:6px}
+.admin-held-parts{margin:0;display:grid;gap:6px;font-size:14px}
+.admin-held-parts div{display:grid;grid-template-columns:minmax(120px,180px) minmax(0,1fr);gap:10px}
+.admin-held-parts dt{color:var(--ink-muted)}
+.admin-held-parts dd{margin:0;overflow-wrap:anywhere}
+.admin-held-actions{display:flex;flex-wrap:wrap;gap:10px}
+@media(max-width:600px){.admin-held-parts div{grid-template-columns:minmax(0,1fr);gap:2px}}

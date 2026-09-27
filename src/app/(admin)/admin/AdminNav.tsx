@@ -12,6 +12,7 @@ const tabs=[
   {href:'/admin/eslesme',label:'Eşleştirme'},
   {href:'/admin/users',label:'Kullanıcılar'},
   {href:'/admin/reviews',label:'Değerlendirmeler'},
+  {href:'/admin/denetim',label:'Denetim'},
   {href:'/admin/feedback',label:'Görüşler'},
   {href:'/admin/audit',label:'İşlem kayıtları'},
 ];

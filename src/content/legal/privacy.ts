@@ -13,9 +13,9 @@ const mail=legalFacts.privacyEmail??'';
 // saved location is stored precisely, and that the email address outlives deletion.
 export const privacy:LegalDoc={
   slug:'privacy',
-  version:'1.1',
+  version:'1.2',
   effective:'2026-08-19',
-  updated:'2026-08-20',
+  updated:'2026-09-27',
   requiresEntity:true,
   content:{
     tr:{
@@ -60,7 +60,7 @@ export const privacy:LegalDoc={
             ['Google Identity Services','Google ile giriş seçilirse kimlik doğrulama verisi'],
             ['Google (Gmail API)','E-posta adresiniz ve gönderilen mesajın içeriği'],
             ['Bulut depolama','Yüklediğiniz görseller'],
-            ['OpenAI','Yalnızca arama metniniz ve dil tercihiniz'],
+            ['OpenAI','Arama metniniz ve dil tercihiniz; değerlendirmelerinizde yazdığınız açıklamalar (yayımlanmadan önce kontrol için)'],
           ]}},
           {p:'Bu hizmetlerin sunucuları yurt dışında olabilir. Verileriniz reklam veya pazarlama amacıyla hiçbir tarafla paylaşılmaz, satılmaz.'},
         ]},
@@ -126,7 +126,7 @@ export const privacy:LegalDoc={
             ['Google Identity Services','Authentication data, if you choose Google sign-in'],
             ['Google (Gmail API)','Your email address and the content of the message sent'],
             ['Cloud storage','Images you upload'],
-            ['OpenAI','Only your search text and language preference'],
+            ['OpenAI','Your search text and language preference; the explanations you write in reviews (checked before publication)'],
           ]}},
           {p:'These services may operate servers outside Türkiye. Your data is never shared or sold for advertising or marketing purposes.'},
         ]},
@@ -192,7 +192,7 @@ export const privacy:LegalDoc={
             ['Google Identity Services','Authentifizierungsdaten bei Google-Anmeldung'],
             ['Google (Gmail API)','Deine E-Mail-Adresse und der Inhalt der Nachricht'],
             ['Cloud-Speicher','Hochgeladene Bilder'],
-            ['OpenAI','Nur dein Suchtext und deine Spracheinstellung'],
+            ['OpenAI','Dein Suchtext und deine Spracheinstellung; die Erläuterungen in deinen Bewertungen (Prüfung vor der Veröffentlichung)'],
           ]}},
           {p:'Diese Dienste können Server außerhalb der Türkei betreiben. Deine Daten werden niemals zu Werbe- oder Marketingzwecken geteilt oder verkauft.'},
         ]},
@@ -258,7 +258,7 @@ export const privacy:LegalDoc={
             ['Google Identity Services','Данные аутентификации при входе через Google'],
             ['Google (Gmail API)','Ваш адрес почты и содержание отправляемого письма'],
             ['Облачное хранилище','Загруженные изображения'],
-            ['OpenAI','Только текст запроса и языковая настройка'],
+            ['OpenAI','Текст запроса и языковая настройка; пояснения в ваших отзывах (проверка перед публикацией)'],
           ]}},
           {p:'Серверы этих сервисов могут находиться за пределами Турции. Ваши данные никогда не передаются и не продаются для рекламы или маркетинга.'},
         ]},

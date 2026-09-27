@@ -18,6 +18,9 @@ export type Post = {
   // that answered neither question has neither field.
   purchased?: boolean; purchased_item?: string;
   criterion_notes?: Partial<Record<keyof ReviewCriteriaScores,string>>;
+  // Whether the review is on the page. Only ever anything but published on the author's own
+  // list: everywhere else a review that is not published is simply not returned.
+  moderation?: 'published'|'held'|'removed';
 };
 export type SearchIntent = {
   scope: 'home_living' | 'out_of_scope' | 'unclear'; query_language: Locale; normalized_query: string;

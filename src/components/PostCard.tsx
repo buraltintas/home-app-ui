@@ -176,6 +176,9 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
           below. What the review is worth is a stack of claims; when it was written is not
           one of them, it is a label on the whole thing. */}
       <div className="post-meta"><RatingStars value={post.rating}/><span className="post-written">{written}</span></div>
+      {/* Only the author is ever sent a review that is not published, so this only ever
+          appears on their own list: where it stands, in one word, beside when it was written. */}
+      {owned&&post.moderation&&post.moderation!=='published'&&<span className="post-moderation" data-state={post.moderation}>{t(post.moderation==='held'?'moderationHeld':'moderationRemoved')}</span>}
       {owned&&<button type="button" className="post-delete" disabled={removing} onClick={()=>void remove()}>{t('deleteReview')}</button>}
       <div className="post-claims">
         <Verified label={t('verified')}/>
