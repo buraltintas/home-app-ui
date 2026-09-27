@@ -8,6 +8,29 @@ value involved.
 
 ---
 
+## An address ending in ".don" was accepted, thanked, and lost
+
+The form checked that an address contained an "@" and a dot. `guven.yilmaz1234@gmail.don`
+passes that: the message was filed, the page said thank you, and the reply went to a domain
+that does not exist. On a page whose entire purpose is to be answered, a wrong address is
+worse than no address -- it looks like a way back and is not.
+
+The ending is now checked against the list of endings that exist, which is IANA's own
+published list: the authority that decides what a top-level domain is, so the list is
+complete by definition. A list of the popular providers would have been the other kind of
+answer -- it would catch `gmail.con` and miss every address at a company. The domain goes
+through the URL parser first, so an address written in Turkish letters is folded to the form
+the list is published in rather than being turned away for its alphabet; the ending is then
+reported back the way it was typed, because "there is no .xn--ky-fka" is true and useless.
+
+The form still only warns the person typing. The endpoint accepts a message without a valid
+address, deliberately: the store correction sheet and the app both send that way, and a
+refusal on the server would break both to fix neither.
+
+The confirmation was also being drawn as three columns standing side by side, which is what a
+flex container does to a sentence with a link in the middle of it -- every child becomes its
+own column. The words are one item now.
+
 ## A line break that cost two lines, and a heading that had room to grow
 
 The heading's last word sat a full empty line below the one above it. The cause: the break

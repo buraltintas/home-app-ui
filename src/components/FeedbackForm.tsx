@@ -5,7 +5,8 @@ import {useEffect,useState} from 'react';
 import {AuthDialog} from '@/components/AuthDialog';
 import {useI18n} from '@/i18n/I18nProvider';
 import {apiFetch} from '@/lib/api-client';
-import {sentenceWithLink} from '@/lib/emphasis';
+import {emailProblem} from '@/lib/email';
+import {emphasisedTitle,sentenceWithLink} from '@/lib/emphasis';
 import {localePath} from '@/lib/site';
 
 // Feedback is a message to us, not a contribution to the product, so the form asks for as
@@ -37,7 +38,10 @@ export function FeedbackForm({initialKind='suggestion',initialMessage=''}:{initi
     return()=>{active=false;};
   },[]);
   const emailRequired=signedIn!==true;
-  const emailGiven=/.+@.+\..+/.test(email.trim());
+  // What is wrong with the address, if anything. Checked as it is typed so the answer is
+  // there before the send is pressed, rather than after it.
+  const emailFault=email.trim()===''?null:emailProblem(email);
+  const emailGiven=email.trim()!==''&&emailFault===null;
   // Which of the two ways back this message actually took, fixed at the moment it was sent.
   // Signing in afterwards must not turn "we will write to you" into "look in your profile"
   // for a message that is not there.
@@ -48,7 +52,10 @@ export function FeedbackForm({initialKind='suggestion',initialMessage=''}:{initi
     event.preventDefault();
     setError('');
     if(message.trim().length<5){setError(t('feedbackTooShort'));return;}
-    if(emailRequired&&!emailGiven){setError(t('feedbackEmailMissing'));return;}
+    if(emailRequired&&email.trim()===''){setError(t('feedbackEmailMissing'));return;}
+    // An address is checked whenever one is given, signed in or not: a mistyped one is worse
+    // than none at all, because it looks like a way back and is not.
+    if(emailFault)return;
     setSending(true);
     try{
       const response=await apiFetch('/api/proxy/feedback',{
@@ -69,9 +76,9 @@ export function FeedbackForm({initialKind='suggestion',initialMessage=''}:{initi
   // Where the answer will arrive. Two routes, and the page says which one this message took
   // rather than a thank-you that leaves the reader to guess.
   if(sent)return <div className="feedback-done">
-    <p role="status"><Check aria-hidden="true"/>{sentWithAccount
+    <p role="status"><Check aria-hidden="true"/><span>{sentWithAccount
       ?sentenceWithLink(t('feedbackThanksSignedIn'),localePath(locale,'/profile/messages'),'feedback-done-link')
-      :t('feedbackThanksEmail')}</p>
+      :t('feedbackThanksEmail')}</span></p>
   </div>;
 
   return <form className="feedback-form" onSubmit={event=>void submit(event)}>
@@ -83,10 +90,14 @@ export function FeedbackForm({initialKind='suggestion',initialMessage=''}:{initi
         the message, because signing in is the better of the two routes -- it is the one that
         puts our reply where the sender will look for it -- and it is worth offering before
         they have typed an address to avoid it. */}
-    {emailRequired&&<button type="button" className="button primary feedback-signin" onClick={()=>setAuthOpen(true)}>{t('signIn')}</button>}
+    {emailRequired&&<>
+      <button type="button" className="button primary feedback-signin" onClick={()=>setAuthOpen(true)}>{t('signIn')}</button>
+      <p className="feedback-signin-why">{emphasisedTitle(t('feedbackSignInWhy'),'feedback-strong')}</p>
+    </>}
 
     <label className="feedback-field"><span>{emailRequired?t('feedbackEmailRequired'):t('feedbackEmail')}</span>
-      <input type="email" value={email} maxLength={320} required={emailRequired} autoCapitalize="none" autoCorrect="off" spellCheck={false} onChange={event=>setEmail(event.target.value)}/>
+      <input type="email" value={email} maxLength={320} required={emailRequired} aria-invalid={emailFault?true:undefined} autoCapitalize="none" autoCorrect="off" spellCheck={false} onChange={event=>setEmail(event.target.value)}/>
+      {emailFault&&<small className="feedback-email-fault" role="alert">{emailFault.kind==='tld'?t('feedbackEmailTld').replace('{x}',emailFault.tld):t('feedbackEmailFormat')}</small>}
       <small>{emailRequired?t('feedbackEmailWhy'):t('feedbackEmailHint')}</small>
     </label>
 
@@ -94,7 +105,7 @@ export function FeedbackForm({initialKind='suggestion',initialMessage=''}:{initi
       {/* Nothing to press until there is a way back to the sender. A button that looks ready
           and then refuses teaches nothing; one that is plainly not ready yet says what is
           missing, and the field above it says why. */}
-      <button className="button primary" type="submit" disabled={sending||(emailRequired&&!emailGiven)}>{sending?t('feedbackSending'):t('feedbackSend')}</button>
+      <button className="button primary" type="submit" disabled={sending||Boolean(emailFault)||(emailRequired&&!emailGiven)}>{sending?t('feedbackSending'):t('feedbackSend')}</button>
       <small>{t('feedbackPrivacy')}</small>
     </div>
     {error&&<p className="form-error" role="alert">{error}</p>}

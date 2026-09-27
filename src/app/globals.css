@@ -645,7 +645,7 @@ body>main{flex:1 0 auto;min-width:0;width:100%}
 .feedback-page .feedback-actions .button.primary:hover{background:color-mix(in srgb,var(--clay) 86%,var(--ink))}
 .feedback-field small{color:var(--ink-muted);font-size:16px;line-height:1.5}
 .feedback-actions{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
-.feedback-actions small{color:var(--ink-muted);font-size:14px;max-width:38ch}
+.feedback-actions small{color:var(--ink-muted);font-size:16px;line-height:1.5;max-width:38ch}
 .feedback-done{display:grid;gap:18px;justify-items:start;padding:26px;background:var(--accent-wash);border-radius:var(--r-lg)}
 .feedback-done p{margin:0;font-size:19px;font-weight:600}
 /* The message landed, and green is what this product says that with everywhere else.
@@ -658,12 +658,19 @@ body>main{flex:1 0 auto;min-width:0;width:100%}
 .feedback-page .feedback-done{padding:0;background:none;border-radius:0}
 .feedback-page .feedback-done p{display:flex;align-items:center;gap:10px}
 .feedback-page .feedback-done svg{width:22px;height:22px;flex:none;stroke-width:2.6;margin-top:3px}
-.feedback-page .feedback-done p{align-items:flex-start;white-space:pre-line}
+.feedback-page .feedback-done p{align-items:flex-start;white-space:normal}
+.feedback-page .feedback-done p>span{white-space:pre-line}
 /* The word in the sentence that goes somewhere, underlined because that is what says a
    word can be pressed when it sits inside a line of prose. */
 .feedback-done-link{color:inherit;font-weight:800;text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1.5px}
 /* (R10) The same button as the profile page's, because it opens the same door. */
-.feedback-signin.button.primary{justify-self:start;background:var(--clay);color:var(--surface)}
+.feedback-signin.button.primary{justify-self:center;background:var(--clay);color:var(--surface)}
+/* (R15/R16) The sentence that names the two ways in, under the button that is one of them.
+   The two things it names are picked out, because this paragraph exists to point at them. */
+.feedback-signin-why{margin:-14px 0 0;color:var(--ink-muted);font-size:16px;line-height:1.5}
+.feedback-strong{color:var(--ink);font-weight:700}
+/* (R18) What is wrong with the address, above the note that explains why one is wanted. */
+.feedback-email-fault{color:var(--error)!important;font-weight:600}
 .feedback-signin.button.primary:hover{background:color-mix(in srgb,var(--clay) 86%,var(--ink))}
 /* (R12) Not ready, and it looks it. */
 .feedback-page .feedback-actions .button.primary:disabled{background:var(--muted);color:var(--ink-muted);cursor:not-allowed}
