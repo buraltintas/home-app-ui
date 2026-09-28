@@ -41,6 +41,10 @@ export function backendHeaders({request,cookieStore,accessToken}:{
   // visitor at once, which made the per-address cap on sign-in codes a cap on the whole
   // website. The first entry is the client; the rest are proxies that added themselves.
   const forwardedFor=request.headers.get('x-forwarded-for');
+  // TEMPORARY, to be removed in the next commit: which entry of the chain is the one the
+  // edge wrote is the whole question, and it cannot be answered from a laptop. Logged for
+  // one real request each way, then this goes and the index is set from what it said.
+  console.log(JSON.stringify({probe:'xff',chain:forwardedFor,real:request.headers.get('x-real-ip')}));
   const clientIP=forwardedFor?.split(',')[0]?.trim();
   if(clientIP)headers.set(CLIENT_IP,clientIP);
 
