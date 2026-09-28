@@ -8,6 +8,27 @@ value involved.
 
 ---
 
+## Changing your location now opens with the cursor in the box
+
+Pressing "Konumu değiştir" is already the decision to type a place, so the panel opens with
+the box focused, its ring showing, and the box itself scrolled to the middle of the screen
+rather than wherever the page happened to be. Only on that press: the same panel appears by
+itself on a first visit, where the thing to press is "use my current location" and a
+keyboard over it would be in the way.
+
+The focus is taken without the scroll a browser does for it, and the centring is done a
+frame later. Left to itself the browser brings a field just inside the edge it was nearest,
+which on a phone is the bottom of the screen -- exactly where the keyboard is about to be.
+
+## The search panel was there in one frame
+
+A full-screen panel that appears between two frames reads as the page having been replaced,
+not as something having opened over it. It now arrives on the same clock as every other
+sheet in the product -- the levels dialog, the add-a-store sheet, the category sheet: 0.52s
+on the same curve, from the same edge, with its ground fading up underneath it. Checked on a
+simulated iPhone that it still lands flush at the top with the keyboard up, which is the
+thing this panel has historically got wrong.
+
 ## Nobody could sign in by email from the feedback page
 
 The sign-in dialog was rendered where it is used, and the feedback page uses it from inside

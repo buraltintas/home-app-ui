@@ -1151,8 +1151,16 @@ svg{stroke-width:2}
      that this could not happen. It is not a box that can be made exact: the browser is
      moving one of the two viewports while the measurement is being taken. So the gap is
      covered instead of being chased. */
-  html[data-search-panel=open] body::before{content:"";position:fixed;z-index:79;inset:0;background:var(--canvas);pointer-events:none}
-  .search-form.is-query-open{position:fixed;z-index:80;top:var(--panel-top,0px);left:0;right:0;bottom:auto;height:var(--panel-height,100dvh);max-height:var(--panel-height,100dvh);overflow:hidden;margin:0;padding:calc(18px + env(safe-area-inset-top)) 18px 0;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr);align-content:start;align-items:start;gap:10px;background:var(--canvas);border:0}
+  html[data-search-panel=open] body::before{content:"";position:fixed;z-index:79;inset:0;background:var(--canvas);pointer-events:none;animation:level-fade .52s ease both}
+  .search-form.is-query-open{position:fixed;z-index:80;top:var(--panel-top,0px);left:0;right:0;bottom:auto;height:var(--panel-height,100dvh);max-height:var(--panel-height,100dvh);overflow:hidden;margin:0;padding:calc(18px + env(safe-area-inset-top)) 18px 0;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr);align-content:start;align-items:start;gap:10px;background:var(--canvas);border:0;animation:level-in .52s cubic-bezier(.16,1,.3,1) both}
+  /* R65: it used to be there in one frame, which on a phone reads as the page having been
+     replaced rather than something having opened over it. This is the timing and the curve
+     every other sheet in the product arrives on -- the levels dialog, the add-a-store sheet,
+     the category sheet -- and it comes from the same edge, so it is recognisably the same
+     kind of thing. Its own ground fades up underneath it on the same clock. */
+  @media(prefers-reduced-motion:reduce){
+    html[data-search-panel=open] body::before,.search-form.is-query-open{animation:none}
+  }
   /* In the panel the magnifier is not decoration, it is the way back. */
   .search-form.is-query-open>svg{display:none}
   .search-form.is-query-open .search-query-back{flex:none;display:grid;place-items:center;width:36px;height:44px;margin-left:-6px;padding:0;border:0;background:transparent;color:var(--ink)}

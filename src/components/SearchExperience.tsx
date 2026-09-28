@@ -259,6 +259,12 @@ export function SearchExperience() {
   // browser has already decided never to ask again.
   const [errorReason,setErrorReason]=useState<LocationFailure|''>('');
   const [locationOpen,setLocationOpen]=useState(false);
+  // R64: pressing "Konumu değiştir" is already the decision to type a place, so the panel
+  // opens with the cursor in the box and the box in the middle of the screen. Only on that
+  // press: the same panel appears by itself on a first visit, where the thing to press is
+  // "use my current location" and a keyboard over it would be in the way.
+  const manualField=useRef<HTMLInputElement>(null);
+  const [openToType,setOpenToType]=useState(false);
   const [autoLocating,setAutoLocating]=useState(false);
   const [manual,setManual]=useState('');
   const [candidates,setCandidates]=useState<LocationResult[]>([]);const [lookingUp,setLookingUp]=useState(false);
@@ -463,6 +469,19 @@ export function SearchExperience() {
   // yet. Gating this on the first case alone left the field on screen with nothing behind
   // it: a visitor could type a district and never get a single candidate back.
   const sheetOpen=locationOpen||(locationRestored&&!location);
+  // Focus without the scroll the browser would do for it, then place the box ourselves:
+  // left to itself the browser brings a field just inside the edge it was nearest, which
+  // is the bottom of the screen on a phone -- exactly where the keyboard is about to be.
+  // The centring waits a frame so it measures the panel after it has been laid out.
+  useEffect(()=>{
+    if(!openToType||!sheetOpen)return;
+    const field=manualField.current;
+    if(!field)return;
+    field.focus({preventScroll:true});
+    const frame=window.requestAnimationFrame(()=>field.scrollIntoView({block:'center'}));
+    setOpenToType(false);
+    return()=>window.cancelAnimationFrame(frame);
+  },[openToType,sheetOpen]);
   useEffect(()=>{
     if(!sheetOpen||manual.trim().length<2)return;
     const controller=new AbortController();
@@ -820,13 +839,13 @@ export function SearchExperience() {
   return <main className="search-page"><header className="search-hero"><div className="search-title"><h1>{emphasisedTitle(t('searchTitle'),'search-title-mark')}</h1><Image className="search-title-shop" src="/illustrations/store-front.webp" width={1396} height={985} alt="" aria-hidden="true" priority/></div>{locationRestored&&!location&&<p className="location-lead">{t('locationRequired')}</p>}{location&&!sheetOpen&&<div className={`location-control${location.source==='device'?' is-device':''}`}><span className="location-current-pair"><span className="location-current-mark" aria-hidden="true"><MapPin/></span><span className="location-current">{location.source==='device'?t('currentLocationActive'):location.label}</span></span>{/* One control, not two. The cross beside it cleared the location outright, which is a
           thing almost nobody wants and everybody could hit by accident -- and "Konumu
           değiştir" already opens the place to change it, including to somewhere else. */}
-        <button className="location-change" onClick={()=>setLocationOpen(true)} disabled={loading}><Crosshair aria-hidden="true"/>{t('changeLocation')}</button></div>}{sheetOpen&&<section className="location-sheet" aria-label={t('chooseLocation')}>{location&&<div><p>{t('locationBenefit')}</p></div>}<div className="location-actions">{autoLocating&&<p className="location-working" aria-live="polite"><span className="location-pulse" aria-hidden="true"/>{t('locatingYou')}</p>}{/* One control, two states. It used to be swapped for a separate confirmation line,
+        <button className="location-change" onClick={()=>{setLocationOpen(true);setOpenToType(true);}} disabled={loading}><Crosshair aria-hidden="true"/>{t('changeLocation')}</button></div>}{sheetOpen&&<section className="location-sheet" aria-label={t('chooseLocation')}>{location&&<div><p>{t('locationBenefit')}</p></div>}<div className="location-actions">{autoLocating&&<p className="location-working" aria-live="polite"><span className="location-pulse" aria-hidden="true"/>{t('locatingYou')}</p>}{/* One control, two states. It used to be swapped for a separate confirmation line,
           which read as the button disappearing and something else taking its place. The
           same bubble now carries the answer, and pressing it again re-reads the device
           rather than being inert -- a control that looks pressable has to be pressable. */}
       <button type="button" className={`button primary use-location${location?.source==='device'?' is-verified':''}`} onClick={()=>void locateMe()} disabled={loading||autoLocating} aria-busy={autoLocating} aria-live="polite">
         {location?.source==='device'?<><Check aria-hidden="true"/>{t('currentLocationActive')}</>:<><LocateFixed/>{t('useCurrentLocation')}</>}
-      </button><label><span>{t('chooseLocation')}</span><span className="location-field"><input value={manual} onChange={event=>setManual(event.target.value)} placeholder={t('locationHint')} disabled={loading}/>{manual&&<button type="button" className="location-clear-text" onClick={()=>{setManual('');}} aria-label={t('clearSearch')}><X aria-hidden="true"/></button>}</span></label>{/* Directly under the box it is about. At the top of the panel it read as a warning
+      </button><label><span>{t('chooseLocation')}</span><span className="location-field"><input ref={manualField} value={manual} onChange={event=>setManual(event.target.value)} placeholder={t('locationHint')} disabled={loading}/>{manual&&<button type="button" className="location-clear-text" onClick={()=>{setManual('');}} aria-label={t('clearSearch')}><X aria-hidden="true"/></button>}</span></label>{/* Directly under the box it is about. At the top of the panel it read as a warning
       about the whole screen; here it is plainly an answer to what was just typed or
       pressed. */}
       {error&&<LocationAlert message={error} reason={errorReason} onRetry={()=>void locateMe()} onDismiss={()=>{setError('');setErrorReason('');}}/>}{location&&<button className="button quiet" onClick={()=>setLocationOpen(false)}>{location.source==='device'?t('close'):t('later')}</button>}</div>{/* The list is not thrown away to say "searching". Every keystroke starts another
