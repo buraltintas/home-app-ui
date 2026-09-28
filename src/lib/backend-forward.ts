@@ -40,12 +40,18 @@ export function backendHeaders({request,cookieStore,accessToken}:{
   // Who the request is for. Without this the API sees only this server's address for every
   // visitor at once, which made the per-address cap on sign-in codes a cap on the whole
   // website. The first entry is the client; the rest are proxies that added themselves.
-  const forwardedFor=request.headers.get('x-forwarded-for');
-  // TEMPORARY, to be removed in the next commit: which entry of the chain is the one the
-  // edge wrote is the whole question, and it cannot be answered from a laptop. Logged for
-  // one real request each way, then this goes and the index is set from what it said.
-  console.log(JSON.stringify({probe:'xff',chain:forwardedFor,real:request.headers.get('x-real-ip')}));
-  const clientIP=forwardedFor?.split(',')[0]?.trim();
+  // The last entry, and this is the whole of it: the edge appends the address it saw, and
+  // a caller cannot append after it. Anything earlier in the chain is whatever the caller
+  // sent, so reading the first entry -- which this did for one commit -- hands the choice
+  // of address straight back to the person being limited, and lets them pin the blame on
+  // somebody else's address while they are at it.
+  //
+  // Measured against the live site rather than reasoned about, because the shape of this
+  // chain is a property of the edge and not of the code: a plain request arrived with one
+  // entry, and the same request sent with a forged header arrived with the forged value
+  // first and the real one still last.
+  const forwarded=request.headers.get('x-forwarded-for')?.split(',') ?? [];
+  const clientIP=forwarded[forwarded.length-1]?.trim();
   if(clientIP)headers.set(CLIENT_IP,clientIP);
 
   for(const key of ['content-type','x-origin-search-id','x-origin-search-result-id']){

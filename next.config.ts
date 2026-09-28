@@ -22,10 +22,12 @@ const nextConfig: NextConfig = {
   // for that six times. The documents change once an hour at most, so they are cached at the
   // edge for an hour and served stale for a day while the next one is built. The index
   // already had this; the parts lost it when they were made dynamic.
-  // The site answered with no security headers at all, measured against the live domain.
-  // Two of the six below are not theoretical here: the page could be framed, and it holds
-  // one-tap actions behind a session; and this product asks for the visitor's location, so
-  // saying who may ask for it is our business rather than a formality.
+  //
+  // The site answered with no security headers at all, measured against the live domain,
+  // and announced what it runs on besides. Two of the six added below are not theoretical
+  // here: the page could be framed while holding one-tap actions behind a session, and
+  // this product asks for the visitor's location, so saying who may ask for it is our
+  // business rather than a formality.
   poweredByHeader: false,
   async headers() {
     return [

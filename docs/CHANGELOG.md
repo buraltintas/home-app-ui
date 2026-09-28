@@ -59,7 +59,17 @@ Both forwarders now read the httpOnly cookie and nothing else. There is no behav
 for anybody real, which is the point.
 
 They also now forward the visitor's own address as `X-Client-IP`, which the API believes
-only because the request already carried the shared secret. Without it the API saw this
+only because the request already carried the shared secret. The address is the **last**
+entry of `X-Forwarded-For`, not the first: the edge appends what it saw and a caller cannot
+append after it, while everything earlier in the chain is whatever the caller sent. Reading
+the first entry -- which this did for one commit, until a review -- would have handed the
+choice of address back to the person being limited, and let them pin the blame for it on
+somebody else's address as well.
+
+That shape was measured against the live site rather than reasoned about, because it is a
+property of the edge and not of this code: a plain request arrived carrying one entry, and
+the same request sent with a forged header arrived with the forged value first and the real
+one still last. Without it the API saw this
 server's address for every visitor at once, and the per-address cap on sign-in codes was
 therefore a cap on the whole website: ten an hour, for everyone, emptied by anyone.
 
