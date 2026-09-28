@@ -8,6 +8,24 @@ value involved.
 
 ---
 
+## The same cached 404, from the half of the lookup that was left tolerant
+
+The weekly check found `/izmir/hali-magazalari` and `/ankara/ev-tekstili-magazalari`
+answering **404** from cache, while their `/en/` versions and their page 2 answered 200 and
+the sitemap still listed them. It is the incident recorded further down ("A page that could
+not be looked up answered 404"), a second time, about an hour after an API deploy.
+
+That fix made the list of pages throw when it could not be read. The page's own list of
+stores was left swallowing its errors: `getCityCategoryPage` and `getCityBrandPage` returned
+`undefined` on any failure, the view read that as "nothing to show", and the route called
+`notFound()` -- which Next caches for the route's hour and serves to Google as "gone".
+
+Both now return nothing only when the backend itself says 404, and throw otherwise. A
+backend that could not answer gives a 500, which is not cached and which Google retries.
+The store, post and profile lookups already worked this way; these two were the last.
+
+---
+
 ## Changing your location now opens with the cursor in the box
 
 Pressing "Konumu değiştir" is already the decision to type a place, so the panel opens with

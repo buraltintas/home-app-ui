@@ -218,7 +218,16 @@ export const getCityCategoriesIfKnown=cache(async(locale:Locale,seconds?:number)
 export type CatalogEntry={id:string;slug:string;name:string;address?:string;district?:string;city:string;average_rating:number;review_count:number;brand_name?:string;brand_slug?:string;category_labels:string[];photo?:StoredPhoto};
 export type CityCategoryPage={city:string;category_slug:string;category_name:string;total:number;items:CatalogEntry[]};
 export async function getCityCategoryPage(citySlug:string,categorySlug:string,locale:Locale,limit=60,offset=0):Promise<CityCategoryPage|undefined>{
-  try{return await publicApi<CityCategoryPage>(`/v1/discovery/stores?city=${encodeURIComponent(citySlug)}&category=${encodeURIComponent(categorySlug)}&limit=${limit}&offset=${offset}`,{locale});}catch{return undefined;}
+  try{return await publicApi<CityCategoryPage>(`/v1/discovery/stores?city=${encodeURIComponent(citySlug)}&category=${encodeURIComponent(categorySlug)}&limit=${limit}&offset=${offset}`,{locale});}
+  catch(error){return absentOrThrow(error);}
+}
+
+// Only the backend saying "no such list" is a 404. Anything else -- a timeout, a 5xx, a
+// deploy in progress -- is "could not find out", and turning that into notFound() gets the
+// 404 cached for the route's whole lifetime on a page that exists.
+function absentOrThrow(error:unknown):undefined{
+  if(error instanceof ApiError&&error.status===404)return undefined;
+  throw error;
 }
 
 
@@ -234,5 +243,6 @@ export const getCityBrandsIfKnown=cache(async(locale:Locale,seconds?:number):Pro
 
 export type CityBrandPage={city:string;brand_slug:string;brand_name:string;total:number;items:CatalogEntry[]};
 export async function getCityBrandPage(citySlug:string,brandSlug:string,locale:Locale,limit=60,offset=0):Promise<CityBrandPage|undefined>{
-  try{return await publicApi<CityBrandPage>(`/v1/discovery/brand-stores?city=${encodeURIComponent(citySlug)}&brand=${encodeURIComponent(brandSlug)}&limit=${limit}&offset=${offset}`,{locale});}catch{return undefined;}
+  try{return await publicApi<CityBrandPage>(`/v1/discovery/brand-stores?city=${encodeURIComponent(citySlug)}&brand=${encodeURIComponent(brandSlug)}&limit=${limit}&offset=${offset}`,{locale});}
+  catch(error){return absentOrThrow(error);}
 }
