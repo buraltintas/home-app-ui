@@ -26,6 +26,59 @@ The store, post and profile lookups already worked this way; these two were the 
 
 ---
 
+## The site sent no security headers at all
+
+Measured against the live domain, not read off the config: no CSP, no HSTS, no
+`X-Frame-Options`, no `Referrer-Policy`, no `Permissions-Policy`, no `X-Content-Type-Options`.
+It did send `x-powered-by: Next.js`.
+
+Two of those are not theoretical here. The page could be framed, and it carries one-tap
+actions behind a session -- delete a review, save a shop, sign out. And this product asks
+for the visitor's location, so which parties may ask for it on our page is our business
+rather than a formality; `geolocation=(self)` says the site may and nothing embedded in it
+can.
+
+The sixth is a Content Security Policy, and it ships as **report-only** on purpose. Next
+emits inline script and style, so an enforcing policy needs a nonce on each of them, and a
+policy written slightly wrong breaks the site with no error anyone sees. Report-only blocks
+nothing and names in the console what would have been blocked, under real traffic, before
+we commit to it. The list it names is short because it was measured rather than guessed:
+typefaces come from our own origin through `next/font`, and the only thing loaded from
+anywhere else is Google's sign-in script.
+
+## Rotating one header bought an unlimited allowance on every rate limit
+
+`X-Visitor-Session-ID` is what the API counts an unauthenticated request against, and both
+forwarders read it from the incoming request before falling back to the cookie. Nothing in
+this application has ever sent that header -- server components read the cookie, browser
+code sends nothing -- so the only party it could ever have come from was one that wanted a
+fresh allowance per request. Search is the expensive one: every request is a model call,
+billed to us.
+
+Both forwarders now read the httpOnly cookie and nothing else. There is no behaviour change
+for anybody real, which is the point.
+
+They also now forward the visitor's own address as `X-Client-IP`, which the API believes
+only because the request already carried the shared secret. Without it the API saw this
+server's address for every visitor at once, and the per-address cap on sign-in codes was
+therefore a cap on the whole website: ten an hour, for everyone, emptied by anyone.
+
+## Next 16.3.0 to 16.3.6
+
+The installed version sat inside the affected range of two unauthenticated remote code
+execution advisories (`16.0.0 - 16.3.2`). One is specific to Windows-hosted servers and
+never applied to us; the other is in the image optimization path, which this site runs. The
+same upgrade carries `sharp` from 0.35.3 to 0.35.5 and closes a third, high-severity
+advisory in libheif.
+
+`exceljs` still depends on a `uuid` with a missing bounds check, and it stays. The only fix
+npm offers is a breaking downgrade to `exceljs@3.4.0`, and the defect is in a code path
+that takes a caller-supplied buffer -- which exceljs does not use. Recorded here so the
+next audit does not re-open it from scratch.
+
+And the locale cookie is `Secure` now. It holds a language, so losing it costs nothing;
+there was no reason for it to travel in clear either.
+
 ## Changing your location now opens with the cursor in the box
 
 Pressing "Konumu değiştir" is already the decision to type a place, so the panel opens with

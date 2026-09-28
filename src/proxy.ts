@@ -71,7 +71,9 @@ export function proxy(request:NextRequest){
       // and the header that carries the choice would never be sent again. The canonical
       // link and hreflang on the page itself are what consolidate the two addresses.
       const response=NextResponse.redirect(url,307);
-      response.cookies.set(COOKIE,DEFAULT_LOCALE,{path:'/',maxAge:31536000,sameSite:'lax'});
+      // It holds a language and nothing else, so losing it costs nothing -- but there is
+      // no reason for it to travel over a plain connection either.
+      response.cookies.set(COOKIE,DEFAULT_LOCALE,{path:'/',maxAge:31536000,sameSite:'lax',secure:process.env.NODE_ENV==='production'});
       return response;
     }
     return withLocale(request,segment);

@@ -22,11 +22,55 @@ const nextConfig: NextConfig = {
   // for that six times. The documents change once an hour at most, so they are cached at the
   // edge for an hour and served stale for a day while the next one is built. The index
   // already had this; the parts lost it when they were made dynamic.
+  // The site answered with no security headers at all, measured against the live domain.
+  // Two of the six below are not theoretical here: the page could be framed, and it holds
+  // one-tap actions behind a session; and this product asks for the visitor's location, so
+  // saying who may ask for it is our business rather than a formality.
+  poweredByHeader: false,
   async headers() {
-    return [{
-      source: "/sitemap/:id.xml",
-      headers: [{ key: "Cache-Control", value: "public, max-age=0, s-maxage=3600, stale-while-revalidate=86400" }],
-    }];
+    return [
+      {
+        source: "/sitemap/:id.xml",
+        headers: [{ key: "Cache-Control", value: "public, max-age=0, s-maxage=3600, stale-while-revalidate=86400" }],
+      },
+      {
+        source: "/:path*",
+        headers: [
+          { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          // geolocation is (self), not (): the product's own reason for existing is to
+          // list what is near you. What this refuses is anything embedded asking on our
+          // behalf.
+          { key: "Permissions-Policy", value: "geolocation=(self), camera=(), microphone=(), payment=(), usb=(), interest-cohort=()" },
+          // Reporting first, enforcing later, and deliberately so: Next emits inline
+          // script and style, so an enforcing policy needs a nonce on every one of them
+          // and a policy written wrong breaks the site silently. This one blocks nothing
+          // and names what would be blocked, in the browser's console, under real traffic.
+          //
+          // The list is short because it was measured rather than guessed: typefaces are
+          // served from our own origin by next/font, and the only thing loaded from
+          // anywhere else is Google's sign-in script.
+          {
+            key: "Content-Security-Policy-Report-Only",
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' https://accounts.google.com",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: blob: https://lh3.googleusercontent.com",
+              "font-src 'self'",
+              "connect-src 'self' https://accounts.google.com",
+              "frame-src https://accounts.google.com",
+              "frame-ancestors 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+              "object-src 'none'",
+            ].join("; "),
+          },
+        ],
+      },
+    ];
   },
 };
 
