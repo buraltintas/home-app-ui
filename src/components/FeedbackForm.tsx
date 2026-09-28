@@ -40,8 +40,7 @@ export function FeedbackForm({initialKind='suggestion',initialMessage=''}:{initi
   const emailRequired=signedIn!==true;
   // What is wrong with the address, if anything. Known on every keystroke -- the send
   // stays inert until it is right -- but only said once the field has been left.
-  const {fault:emailFault,shown:emailShown,field:emailField}=useEmailCheck(email);
-  const emailGiven=email.trim()!==''&&emailFault===null;
+  const {fault:emailFault,shown:emailShown,reveal:revealEmailFault,field:emailField}=useEmailCheck(email);
   // Which of the two ways back this message actually took, fixed at the moment it was sent.
   // Signing in afterwards must not turn "we will write to you" into "look in your profile"
   // for a message that is not there.
@@ -54,8 +53,10 @@ export function FeedbackForm({initialKind='suggestion',initialMessage=''}:{initi
     if(message.trim().length<5){setError(t('feedbackTooShort'));return;}
     if(emailRequired&&email.trim()===''){setError(t('feedbackEmailMissing'));return;}
     // An address is checked whenever one is given, signed in or not: a mistyped one is worse
-    // than none at all, because it looks like a way back and is not.
-    if(emailFault)return;
+    // than none at all, because it looks like a way back and is not. Pressing send is a way
+    // of saying the address is finished, so the fault is said here too -- the field has not
+    // been left, and waiting for it to be left is how this ended up silent.
+    if(emailFault){revealEmailFault();return;}
     setSending(true);
     try{
       const response=await apiFetch('/api/proxy/feedback',{
@@ -102,10 +103,12 @@ export function FeedbackForm({initialKind='suggestion',initialMessage=''}:{initi
     </label>
 
     <div className="feedback-actions">
-      {/* Nothing to press until there is a way back to the sender. A button that looks ready
-          and then refuses teaches nothing; one that is plainly not ready yet says what is
-          missing, and the field above it says why. */}
-      <button className="button primary" type="submit" disabled={sending||Boolean(emailFault)||(emailRequired&&!emailGiven)}>{sending?t('feedbackSending'):t('feedbackSend')}</button>
+      {/* Pressable whatever the address says, because the press is how the form is asked
+          what is wrong. Greying it out looked like the honest thing and was the opposite:
+          a disabled button takes no focus, so the field it belongs to never lost focus
+          either, so the message that would have explained it never appeared. The whole
+          form went quiet at exactly the moment somebody needed it to speak. */}
+      <button className="button primary" type="submit" disabled={sending}>{sending?t('feedbackSending'):t('feedbackSend')}</button>
       <small>{t('feedbackPrivacy')}</small>
     </div>
     {error&&<p className="form-error" role="alert">{error}</p>}

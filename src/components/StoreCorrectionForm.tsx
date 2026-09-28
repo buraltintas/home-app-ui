@@ -29,14 +29,18 @@ export function StoreCorrectionForm({locale,storeName}:{locale:Locale;storeId:st
   const [sending,setSending]=useState(false);
   const [sent,setSent]=useState(false);
   const [error,setError]=useState('');
-  const {fault:emailFault,shown:emailShown,field:emailField}=useEmailCheck(email);
+  const {fault:emailFault,shown:emailShown,reveal:revealEmailFault,field:emailField}=useEmailCheck(email);
 
   const submit=async(event:React.FormEvent)=>{
     event.preventDefault();
     const correction=message.trim();
     setError('');
     if(correction.length<5){setError(t.short);return;}
-    if(emailFault)return;
+    // Pressing send is a way of saying the address is finished, so the answer to it is
+    // owed here as surely as it is when the field is left. Refusing quietly -- which is
+    // what a button that greys itself out does -- leaves somebody pressing a control that
+    // does nothing and never says why.
+    if(emailFault){revealEmailFault();return;}
     setSending(true);
     try{
       // Store context is attached only to the private operator message. The visitor sees
@@ -59,7 +63,7 @@ export function StoreCorrectionForm({locale,storeName}:{locale:Locale;storeId:st
     <label className="feedback-field"><span>{t.email}</span><input type="email" value={email} maxLength={320} aria-invalid={emailShown?true:undefined} autoCapitalize="none" autoCorrect="off" spellCheck={false} onChange={event=>setEmail(event.target.value)} {...emailField}/>
       {emailShown&&<small className="feedback-email-fault" role="alert">{emailFaultMessage(emailShown,translate)}</small>}
       <small>{t.emailHint}</small></label>
-    <div className="feedback-actions"><button className="button primary" type="submit" disabled={sending||Boolean(emailFault)}>{sending?t.sending:t.send}</button><small>{t.privacy}</small></div>
+    <div className="feedback-actions"><button className="button primary" type="submit" disabled={sending}>{sending?t.sending:t.send}</button><small>{t.privacy}</small></div>
     {error&&<p className="form-error" role="alert">{error}</p>}
   </form>;
 }

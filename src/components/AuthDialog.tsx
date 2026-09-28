@@ -3,6 +3,7 @@ import Link from 'next/link';
 
 import Script from 'next/script';
 import {FormEvent,useCallback,useEffect,useRef,useState} from 'react';
+import {createPortal} from 'react-dom';
 import {ArrowLeft,X} from 'lucide-react';
 import {useI18n} from '@/i18n/I18nProvider';
 import {emailFaultMessage,useEmailCheck} from '@/lib/use-email-check';
@@ -51,7 +52,7 @@ export function AuthDialog({open,onClose,onAuthenticated}:{open:boolean;onClose:
     return()=>{active=false;};
   },[]);
 
-  const {fault:emailFault,shown:emailShown,field:emailField}=useEmailCheck(email);
+  const {fault:emailFault,shown:emailShown,reveal:revealEmailFault,field:emailField}=useEmailCheck(email);
   const resetFlow=useCallback(()=>{setEmailMode(false);setSent(false);setEmail('');setCode('');setError('');setBusy(false);setGoogleButtonReady(false);setGoogleGaveUp(false)},[]);
   const closeDialog=useCallback(()=>{resetFlow();onClose()},[onClose,resetFlow]);
   const completeAuthentication=useCallback(()=>{window.dispatchEvent(new Event('bosagezme:authenticated'));onAuthenticated?.();closeDialog()},[closeDialog,onAuthenticated]);
@@ -102,7 +103,7 @@ export function AuthDialog({open,onClose,onAuthenticated}:{open:boolean;onClose:
     // A mistyped address here is the most expensive one in the product: the code is sent to
     // a mailbox that does not exist, nothing arrives, and the person is left waiting for a
     // message with no way to tell why it never came.
-    if(!sent&&emailFault)return;
+    if(!sent&&emailFault){revealEmailFault();return;}
     setBusy(true);setError('');
     try{
       const response=await fetch(sent?'/api/auth/verify-code':'/api/auth/request-code',{method:'POST',headers:{'content-type':'application/json','x-locale':locale},body:JSON.stringify(sent?{email,code}:{email})});
@@ -117,7 +118,14 @@ export function AuthDialog({open,onClose,onAuthenticated}:{open:boolean;onClose:
   // not know either.
   const googleMissing=googleGaveUp||(runtimeConfigReady&&!googleClientId);
   const googleWorking=!googleButtonReady&&!googleMissing;
-  return <div className="dialog-backdrop" role="presentation" onMouseDown={closeDialog}>
+  // Hung on the document rather than wherever it was opened from, because this dialog holds
+  // a form and one of the places that opens it -- the feedback page -- is a form itself. A
+  // form inside a form is not a thing HTML has: pressing "send the code" there submitted
+  // the page instead, so the browser reloaded /feedback and everything typed was gone.
+  // Nobody could sign in by email from that page at all. A dialog belongs to the screen, not
+  // to the control that opened it, so this is where it should have been from the start.
+  if(typeof document==='undefined')return null;
+  return createPortal(<div className="dialog-backdrop" role="presentation" onMouseDown={closeDialog}>
     {/* onReady as well as onLoad, and this is the whole of "it works the first time and
         then stops". next/script keeps a cache of scripts it has already loaded, keyed by
         this id, and on a second mount it bails out of loading -- without calling onLoad
@@ -137,7 +145,7 @@ export function AuthDialog({open,onClose,onAuthenticated}:{open:boolean;onClose:
         {/* Said once the field has been left, not while it is being typed into. */}
         {!sent&&emailShown&&<p className="auth-field-fault" role="alert">{emailFaultMessage(emailShown,t)}</p>}
         {error&&<p role="alert">{error}</p>}
-        <button disabled={busy||(sent?code.length!==6:Boolean(emailFault))} className="button primary" type="submit">{busy?'…':sent?t('verify'):t('sendCode')}</button>
+        <button disabled={busy||(sent&&code.length!==6)} className="button primary" type="submit">{busy?'…':sent?t('verify'):t('sendCode')}</button>
       </form>:<>
         <p>{t('signInBody')}</p>
         {/* Contract acceptance and the privacy notice are legally different things, so
@@ -185,5 +193,5 @@ export function AuthDialog({open,onClose,onAuthenticated}:{open:boolean;onClose:
         <button className="button quiet" disabled={busy} onClick={closeDialog}>{t('later')}</button>
       </>}
     </section>
-  </div>
+  </div>,document.body);
 }

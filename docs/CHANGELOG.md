@@ -8,6 +8,48 @@ value involved.
 
 ---
 
+## Nobody could sign in by email from the feedback page
+
+The sign-in dialog was rendered where it is used, and the feedback page uses it from inside
+its own `<form>`. A form inside a form is not something HTML has; the browser resolves it by
+submitting the outer one. So pressing "Kodu gönder" reloaded /feedback, threw away the
+message and the address that had been typed, and never asked for a code. Email sign-in from
+that page had never worked.
+
+It was invisible because of the bug below it: the button greyed itself out whenever the
+address was faulty, so the only people who ever reached it were the ones whose address was
+fine -- and their page simply reloaded, which reads as a slow connection rather than a
+broken control.
+
+The dialog now goes through a portal to `document.body`, which is where anything floating
+over the page belongs. React context still reaches it, and it can be opened from inside a
+form, a table cell or an `overflow:hidden` box without any of them changing what it does.
+
+## The address warning was written, worded, translated -- and never shown
+
+Reported as "you have not done it on the store correction screen". It was done, on all three
+screens, and on all three it was unreachable.
+
+The message appears when the email field is left. The send button disabled itself the moment
+the address was faulty. A disabled button takes no focus, so the field it belongs to never
+lost any -- and the message that would have explained the refusal never ran. Somebody who
+typed `…@gmail.don` and pressed send got nothing: no message, no send, no reason. The form
+went silent at the exact moment it needed to speak.
+
+The send button is no longer disabled by the state of the address on any of the three forms;
+pressing it is now how you ask what is wrong. `useEmailCheck` gained `reveal()` for this:
+pressing send is a way of saying the address is finished, so the answer is owed even though
+the field has not been left. `disabled` is kept for work already in flight.
+
+## The sign-in dialog's warning was grey, small, and sat on top of the field
+
+Three differences from the same warning on the feedback page, all of them measured: it was
+14px against 16px, it sat -6px under the field (over its bottom edge) against 8px, and it
+came out in the dialog's muted ink rather than the colour of an error -- the rule said
+`var(--error)`, but `.auth-dialog p:not(.eyebrow)` is exactly as specific and won. It now
+matches the feedback page on all three, and is named `p.auth-field-fault` so the dialog's
+own paragraph rule cannot repaint it.
+
 ## The search bar opened under a finger that was only scrolling past it
 
 Touching the bar on the discover page opened the full-screen search panel. Not tapping it --

@@ -12,6 +12,10 @@ import type {TranslationKey} from '@/i18n/dictionaries';
 // right, and it is on screen for the whole time they type the rest.
 //
 // Picking the field back up hides it again, so the correction is made in quiet too.
+//
+// Leaving the field is not the only way of being finished with it, though. Pressing send
+// while still inside it is the other one, and that is the case the form has to say out loud
+// -- see `reveal`.
 export function useEmailCheck(value:string){
   const [settled,setSettled]=useState(false);
   const fault:EmailProblem=value.trim()===''?null:emailProblem(value);
@@ -21,6 +25,10 @@ export function useEmailCheck(value:string){
     fault,
     // What to show: only once the field has been left.
     shown:settled?fault:null,
+    // Say it now. A form calls this when send is pressed with the cursor still in the
+    // field: the address is finished as far as its author is concerned, so the answer is
+    // owed even though the field has not been left.
+    reveal:()=>setSettled(true),
     // Spread onto the input.
     field:{onFocus:()=>setSettled(false),onBlur:()=>setSettled(true)},
   };

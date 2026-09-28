@@ -105,6 +105,30 @@ row, so the second line starts indented by it. `column-gap` makes the same claim
 between columns and disappears at the break. Reach for the gap, and measure a wrapped row at
 the width where it wraps.
 
+## A disabled button cannot tell anybody why it is disabled
+
+An address ending in `.don` was caught, worded and never shown. The message appeared when
+the field lost focus, and the send button greyed itself out the moment the address was
+wrong -- so the one control somebody would press next took no focus, the field never lost
+any, and the explanation never ran. Pressing send did nothing at all, silently, on three
+forms. It was reported as "the warning does not appear", which is exactly what it was.
+
+Greying a control out looks like the honest thing and is the opposite: it withholds both
+the action and the reason. A control that cannot be used yet should still be pressable, and
+pressing it should say what is missing. Reserve `disabled` for work already in flight.
+
+## A dialog belongs to the document, not to whatever opened it
+
+The sign-in dialog was rendered where it was used, and one of the places that uses it is a
+`<form>`. A form inside a form is not a thing HTML has, and the browser resolves it by
+submitting the page: pressing "send the code" reloaded the page and threw away everything
+typed. Nobody could sign in by email from that page, and nothing in the console said so.
+
+Anything that floats over the page -- dialog, sheet, menu -- goes through a portal to
+`document.body`. React context still reaches it, so nothing is lost, and it can then be
+opened from inside a form, a table cell or an element with `overflow:hidden` without any of
+them changing what it does.
+
 ## A failing build looks exactly like a fix that did not work
 
 The site stays up on the last image that built, so a broken deploy has no symptom of its

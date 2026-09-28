@@ -676,9 +676,14 @@ body>main{flex:1 0 auto;min-width:0;width:100%}
 .feedback-signin.button.primary:hover{background:color-mix(in srgb,var(--clay) 86%,var(--ink))}
 /* (R12) Not ready, and it looks it. */
 .feedback-page .feedback-actions .button.primary:disabled{background:var(--muted);color:var(--ink-muted);cursor:not-allowed}
-/* (R23) What is wrong with the address, in the sign-in dialog. The same wording the other
-   two forms show, in this dialog's own type. */
-.auth-field-fault{margin:-6px 0 0;color:var(--error);font-size:14px;font-weight:600;line-height:1.4}
+/* (R23/R24) What is wrong with the address, in the sign-in dialog -- and now said the same
+   way the feedback page says it: the colour of an error, the size of the text around it,
+   eight pixels under the field it belongs to. It was none of those. It sat in this
+   dialog's own type, a size smaller, and its -6px pulled it up over the field's own edge.
+   The colour was the worst of it: the rule said error and the dialog's `p:not(.eyebrow)`
+   is exactly as specific, so the warning came out in the same muted ink as the sentence
+   explaining what a code is. Named `p.auth-field-fault` to settle that. */
+.auth-dialog p.auth-field-fault{margin:8px 0 0;color:var(--error);font-size:16px;font-weight:600;line-height:1.5}
 .feedback-field small{white-space:pre-line}
 .google-button-slot{width:100%;height:48px;margin-top:10px;overflow:hidden;display:grid;place-items:center}
 /* The placeholder and Google's own button are stacked in the same cell rather than laid
