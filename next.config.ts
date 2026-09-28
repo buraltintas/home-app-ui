@@ -57,7 +57,10 @@ const nextConfig: NextConfig = {
             value: [
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' https://accounts.google.com",
-              "style-src 'self' 'unsafe-inline'",
+              // accounts.google.com for the sign-in widget's own stylesheet, which the
+              // report-only run caught on its first day: enforcing the policy without it
+              // would have shipped an unstyled Google button and nothing would have said why.
+              "style-src 'self' 'unsafe-inline' https://accounts.google.com",
               "img-src 'self' data: blob: https://lh3.googleusercontent.com",
               "font-src 'self'",
               "connect-src 'self' https://accounts.google.com",
