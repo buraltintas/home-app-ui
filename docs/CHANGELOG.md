@@ -8,6 +8,45 @@ value involved.
 
 ---
 
+## The content policy is enforcing, and violations are written down somewhere
+
+Report-only ran for a day and produced one finding -- Google's sign-in widget fetching its
+own stylesheet -- and it produced it because somebody happened to have a console open when
+it happened. That is the whole flaw in report-only as it was configured: **the browser
+writes a violation to the console of the person it happened to and nowhere else.** A policy
+nobody can observe cannot be tightened, and the card waiting on "a while longer under real
+traffic" was waiting for evidence that was never going to arrive.
+
+Two changes, and the second is why the first is safe.
+
+**Violations now have an address.** `POST /api/csp-report` takes both shapes browsers send
+-- the old `report-uri` body and the Reporting API's array -- and writes one line per
+violation to the log, of fields it picks, from a body it caps at 8 KB. Anybody on the
+internet can post there, because that is what a report endpoint is, so nothing the sender
+controls is logged raw and a malformed report is answered 204 rather than turned into an
+error browsers would retry.
+
+**The policy is enforcing.** Before switching it, every page type was loaded and its
+cross-origin requests counted rather than assumed: home, discover, a store page, a review
+page, the profile, the sign-in dialog and the admin page. Across all of them there are
+exactly three requests to anywhere but our own origin -- Google's sign-in script, its
+stylesheet and its button frame -- and all three are named in the policy. The share links
+and the map links go through the address bar, which a content policy does not govern.
+
+`'unsafe-inline'` stays, and that is a decision. Next emits inline script and style on
+every page; removing it needs a nonce, a nonce differs per request, and a page carrying one
+cannot be served from cache -- so buying that one directive would turn every statically
+served page on this site dynamic. What enforcing buys without it is still most of the
+value: nothing may frame us, no base tag may be rewritten, no form may post elsewhere, no
+plugin may load, and no script, style, image, font or connection may come from an origin
+not on the list.
+
+One thing measuring caught that guessing would not have: **React's development build calls
+`eval()`**, to rebuild callstacks for its error overlay, and the enforcing policy blocked
+it -- a broken overlay and a console message about a header the developer did not know was
+there. `'unsafe-eval'` is therefore added in development only, and the built policy is
+checked to be the one without it.
+
 ## A comment under a review is now read before it is published
 
 The API side of this is the change; the web side is what people see of it. Three things:

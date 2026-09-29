@@ -30,6 +30,37 @@ const nextConfig: NextConfig = {
   // business rather than a formality.
   poweredByHeader: false,
   async headers() {
+    // One policy, written once, sent as the rule and named in the report address. Two
+    // copies of a list this long drift, and a report about a directive the live policy no
+    // longer carries is worse than no report.
+    // Development needs one thing production does not. React's dev build calls eval() to
+    // rebuild callstacks for its error overlay, and Next's dev bundler serves modules the
+    // same way; enforcing without it leaves a developer with a broken overlay and a
+    // console message about a header they did not know was there. Production never does
+    // this, and the shipped policy is the one without it.
+    const evalForDev = process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : "";
+    const policy = [
+      "default-src 'self'",
+      `script-src 'self' 'unsafe-inline'${evalForDev} https://accounts.google.com`,
+      "style-src 'self' 'unsafe-inline' https://accounts.google.com",
+      "img-src 'self' data: blob: https://lh3.googleusercontent.com",
+      "font-src 'self'",
+      "connect-src 'self' https://accounts.google.com",
+      "frame-src https://accounts.google.com",
+      "frame-ancestors 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "object-src 'none'",
+      // Where a violation goes. Without this the browser writes it to the console of
+      // whoever it happened to and nowhere else, which is how a day of report-only
+      // produced exactly one finding -- the one somebody was watching for.
+      //
+      // Both spellings, because browsers disagree about which one exists: report-uri is
+      // the one Firefox implements and Chrome still honours, report-to is the one Chrome
+      // prefers and needs the Reporting-Endpoints header below. Either arriving is enough.
+      "report-uri /api/csp-report",
+      "report-to csp-endpoint",
+    ].join("; ");
     return [
       {
         source: "/sitemap/:id.xml",
@@ -46,32 +77,28 @@ const nextConfig: NextConfig = {
           // list what is near you. What this refuses is anything embedded asking on our
           // behalf.
           { key: "Permissions-Policy", value: "geolocation=(self), camera=(), microphone=(), payment=(), usb=(), interest-cohort=()" },
-          // Reporting first, enforcing later, and deliberately so: Next emits inline
-          // script and style, so an enforcing policy needs a nonce on every one of them
-          // and a policy written wrong breaks the site silently. This one blocks nothing
-          // and names what would be blocked, in the browser's console, under real traffic.
+          // Names the address "report-to" above refers to. Relative, so it resolves against
+          // whichever host served the page rather than pinning one.
+          { key: "Reporting-Endpoints", value: 'csp-endpoint="/api/csp-report"' },
+          // Now enforcing, and the list is short because it was measured rather than
+          // guessed: typefaces are served from our own origin by next/font, and the only
+          // thing loaded from anywhere else is Google's sign-in script and the stylesheet
+          // that widget fetches beside it -- which report-only caught on its first day, and
+          // which enforcing without would have shipped an unstyled Google button with
+          // nothing anywhere saying why.
           //
-          // The list is short because it was measured rather than guessed: typefaces are
-          // served from our own origin by next/font, and the only thing loaded from
-          // anywhere else is Google's sign-in script.
+          // 'unsafe-inline' stays, and that is a decision rather than an oversight. Next
+          // emits inline script and style on every page; removing it needs a nonce, a
+          // nonce has to differ per request, and a page carrying one cannot be served from
+          // cache -- which would turn every statically served page on this site dynamic to
+          // buy one directive. What is bought without it is still most of the value:
+          // nothing may be framed, no base tag may be rewritten, no form may post
+          // elsewhere, no plugin may load, and no script, style, image, font or connection
+          // may come from an origin not named here. The nonce is a separate piece of work,
+          // and the reports below are what will say whether it is worth its cost.
           {
-            key: "Content-Security-Policy-Report-Only",
-            value: [
-              "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' https://accounts.google.com",
-              // accounts.google.com for the sign-in widget's own stylesheet, which the
-              // report-only run caught on its first day: enforcing the policy without it
-              // would have shipped an unstyled Google button and nothing would have said why.
-              "style-src 'self' 'unsafe-inline' https://accounts.google.com",
-              "img-src 'self' data: blob: https://lh3.googleusercontent.com",
-              "font-src 'self'",
-              "connect-src 'self' https://accounts.google.com",
-              "frame-src https://accounts.google.com",
-              "frame-ancestors 'none'",
-              "base-uri 'self'",
-              "form-action 'self'",
-              "object-src 'none'",
-            ].join("; "),
+            key: "Content-Security-Policy",
+            value: policy,
           },
         ],
       },
