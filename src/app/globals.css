@@ -94,7 +94,6 @@ html{scroll-behavior:auto}body{margin:0;background:var(--canvas);color:var(--ink
 .result-far-note svg{width:16px;height:16px;flex:none}
 /* The one sentence that stops a step. It is a refusal, so it carries the error colour --
    but it is also an invitation to fix the words, which are still on screen above it. */
-.review-blocked{margin-top:12px;padding:12px 14px;border-radius:var(--r-md);background:color-mix(in srgb,var(--error) 8%,transparent);border:1px solid color-mix(in srgb,var(--error) 30%,transparent);line-height:1.45}
 .result-row{position:relative}
 .post-written{margin:6px 0 0;font-size:13px;color:var(--ink-muted)}
 .post-delete:hover{color:var(--error)}

@@ -427,7 +427,7 @@ function ReviewWizard({storeId}:{storeId:string}){
       <button type="button" className="button quiet criteria-clear" onClick={()=>setCriteria({})} disabled={!Object.keys(criteria).length}><Eraser aria-hidden="true"/>{t('clearScores')}</button>
       {!scored&&<p className="criteria-hint" role="note"><Info aria-hidden="true"/><span>{t('criteriaIncomplete')}</span></p>}
       {submitError&&<p className="form-error" role="alert">{submitError}</p>}
-      {blocked&&<p className="form-error review-blocked" role="alert">{blocked}</p>}
+      {blocked&&<aside className="criteria-intro review-blocked" role="alert"><Info aria-hidden="true"/><p>{blocked}</p></aside>}
       <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>void screen('criterion_note',lowScores.map(key=>(notes[key]??'').trim()).filter(Boolean).join('\n'),3)} disabled={!scored||!verification||screening}>{screening?t('loading'):t('confirmReview')}</button></div>
     </section>}
 
@@ -447,7 +447,7 @@ function ReviewWizard({storeId}:{storeId:string}){
       {/* The step asks a question, so it cannot be left before it is answered. Saying yes and
           naming nothing is the same as not answering: the name is the whole value of the yes,
           because it is the word the next person searching for that thing will type. */}
-      {blocked&&<p className="form-error review-blocked" role="alert">{blocked}</p>}
+      {blocked&&<aside className="criteria-intro review-blocked" role="alert"><Info aria-hidden="true"/><p>{blocked}</p></aside>}
       <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>void screen('purchased_item',purchased===true?purchasedItem:'',4)} disabled={purchased===undefined||(purchased===true&&!purchasedItem.trim())||screening}>{screening?t('loading'):t('continue')}</button></div>
     </section>}
 

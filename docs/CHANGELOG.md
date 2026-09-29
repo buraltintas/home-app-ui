@@ -8,6 +8,27 @@ value involved.
 
 ---
 
+## The refusal on the review form wears the frame the page already had
+
+Two things the product owner asked for. The sentence now names what it is about -- "Yazdığın
+yorum, site kurallarına aykırı görünüyor" -- in all four dictionaries. And the message is no
+longer its own red box: it is the same framed note that sits above the eight scores, same
+border, same left mark, same background, same type. One kind of framed message on this page
+instead of two.
+
+That meant reusing `.criteria-intro` rather than styling a second object to match it, which
+is the only way the two stay matching after the next change to either.
+
+**Where the override lives is the whole of the second half of this.** `.review-blocked` and
+`.criteria-intro` are both one class deep, and `daylight.css` is imported after
+`globals.css` -- so the margin written in `globals.css` lost silently and the box kept the
+note's bottom margin instead of its own top one. Measured, not assumed: the computed margin
+still read `0 0 20px`. The rule now sits in `daylight.css` next to the rule it overrides,
+which is where an override can actually win.
+
+Checked at both widths, 375 and desktop: the two boxes come out the same height and the
+same width as each other.
+
 ## Two chains that were showing an initial where their sign belongs
 
 Bauhaus joined the catalogue and Banio Yapı Market had been in it without a mark, so both

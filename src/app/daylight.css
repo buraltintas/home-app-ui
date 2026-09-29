@@ -1204,6 +1204,15 @@ svg{stroke-width:2}
 .criteria-intro p{margin:0;font-size:14.5px;line-height:1.45;color:var(--ink)}
 .criteria-intro span{display:block}
 .criteria-intro-plain{margin:0 0 18px;font-size:14.5px;line-height:1.45;color:var(--ink-muted)}
+/* The refusal a blocked passage produces wears the same frame as the note above the
+   scores, down to the colour -- the product owner asked for exactly that, so a person
+   meets one kind of framed message on this page and not two. Only the margin differs,
+   because this one sits under the button rather than above the questions.
+
+   It lives here and not beside the other form messages in globals.css: both selectors are
+   one class deep, daylight.css is imported second, and an override written in the earlier
+   file loses silently. The rule that overrides belongs next to the rule it overrides. */
+.review-blocked{margin:12px 0 0}
 /* The eight scores, all visible at once, in the same two-column frame they were given in. */
 .review-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;margin:0 0 22px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .review-summary-average{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 14px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--muted)}
