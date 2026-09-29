@@ -26,6 +26,27 @@ The store, post and profile lookups already worked this way; these two were the 
 
 ---
 
+## The review flow stopped telling people their review was on its way when it was not
+
+A review carrying an insult, a threat, an accusation or somebody's personal data used to be
+written, held back, and shown to its author as "under review". They were told it was on its
+way when it was not, and they learned otherwise only by waiting -- and the flow carried them
+on to the next step as though nothing had happened.
+
+The words are now read as the step is left: the explanation a low score demands, on the way
+out of the scoring step, and what was bought, on the way out of the purchase step. Nothing
+is written. The author is shown one sentence -- "Yazdığın, site kurallarına aykırı
+görünüyor. Lütfen kontrol edip tekrar yaz." -- while the words are still in front of them,
+and the step does not advance.
+
+It never becomes a review, so it never appears in their own Değerlendirmelerim. It is
+recorded for the operator instead, listed under the moderation queue and plainly marked as
+something with no decision attached: nothing was written, so there is nothing to publish or
+remove. It is there so a refusal can be read.
+
+A check that cannot run lets the step through. Refusing on an outage would stop people
+writing reviews at all, and the review is read again before it is published anyway.
+
 ## Two shops 374 km away, under a heading that says "sorted by distance"
 
 Searching "Smeg" from Antalya returns branches in Ankara and Istanbul. The list is right --

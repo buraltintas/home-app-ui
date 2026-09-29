@@ -2,7 +2,7 @@ import {AdminNav} from '../AdminNav';
 import {AccessDenied} from '../AccessDenied';
 import {AdminAction} from '../AdminAction';
 import {AdminPager} from '../AdminPager';
-import {getHeldReviews,type HeldFinding} from '@/lib/admin-api';
+import {getBlockedAttempts,getHeldReviews,type HeldFinding} from '@/lib/admin-api';
 import {adminDate} from '@/lib/admin-time';
 import {getServerI18n} from '@/i18n/server';
 
@@ -32,7 +32,7 @@ const noteLabels:Record<string,string>={
 export default async function Page({searchParams}:{searchParams:Promise<{page?:string}>}){
   const {page:pageParam}=await searchParams;
   const page=Math.max(0,Number(pageParam)||0);
-  const result=await getHeldReviews(page);
+  const [result,blocked]=await Promise.all([getHeldReviews(page),getBlockedAttempts(0)]);
   if(!result.ok)return <AccessDenied/>;
   return <>
     <AdminNav/>
@@ -62,5 +62,25 @@ export default async function Page({searchParams}:{searchParams:Promise<{page?:s
       {result.data.rows.length===0&&<p className="admin-empty">Bekleyen değerlendirme yok.</p>}
     </div>
     <AdminPager page={page} hasNext={result.data.hasNext} count={result.data.rows.length} params={{}}/>
+
+    {/* Below the queue, and deliberately not part of it: nothing here was written, so there
+        is nothing to decide. The check stopped these passages as their author was leaving
+        the step, and they never became reviews -- which is also why the author does not see
+        them in Değerlendirmelerim. They are listed so a refusal can be read: audited,
+        noticed as a pattern, or answered if the person who wrote it asks why. */}
+    {blocked.ok&&blocked.data.rows.length>0&&<section className="admin-blocked">
+      <h2>Yazılmadan durdurulanlar</h2>
+      <p className="admin-lead">Kişi adımı geçmeden uyarıldı ve metin hiç kaydedilmedi. Burada karar verilecek bir şey yok; kayıt, ret gerekçesinin okunabilmesi için tutuluyor.</p>
+      <div className="admin-held">
+        {blocked.data.rows.map(row=><article key={row.id} className="admin-held-card">
+          <header>
+            <strong>{row.store_name}</strong>
+            <span>{row.author||'—'} · {row.field==='purchased_item'?'Alınan ürün':'Puan detayı'} · {adminDate(row.created_at)}</span>
+          </header>
+          <ul className="admin-held-findings">{row.findings.map((finding,index)=><li key={index}><b>{kinds[finding.kind]??finding.kind}</b> “{finding.quote}”</li>)}</ul>
+          <dl className="admin-held-parts"><div><dt>Yazdığı</dt><dd>{row.body}</dd></div></dl>
+        </article>)}
+      </div>
+    </section>}
   </>;
 }

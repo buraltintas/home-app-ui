@@ -101,6 +101,33 @@ function ReviewWizard({storeId}:{storeId:string}){
   const step=verification?requestedStep:1;
   const stepUrl=useCallback((next:number)=>`?store=${encodeURIComponent(storeId)}${next>1?`&step=${next}`:''}`,[storeId]);
   const advance=useCallback((next:number)=>{window.history.pushState(null,'',stepUrl(next));},[stepUrl]);
+  // Read before the step is left, rather than after the review is written.
+  //
+  // The check used to run at the end: a review carrying something severe was created, held
+  // back, and shown to its author as "under review". They were told it was on its way when
+  // it was not, and the flow carried on as though nothing had happened. Now the words are
+  // read as the step is left, nothing is written, and the author is told in one sentence
+  // while it is still in front of them to fix.
+  //
+  // A check that cannot run lets the step through. Refusing on an outage would stop people
+  // writing reviews at all, and the review is read again before it is published anyway.
+  const [screening,setScreening]=useState(false);
+  const [blocked,setBlocked]=useState('');
+  const screen=useCallback(async(field:'criterion_note'|'purchased_item',body:string,next:number)=>{
+    setBlocked('');
+    if(!body.trim()){advance(next);return;}
+    setScreening(true);
+    try{
+      const response=await apiFetch('/api/proxy/reviews/screen',{method:'POST',headers:{'content-type':'application/json'},
+        body:JSON.stringify({store_id:storeId,field,body})});
+      if(response.ok){
+        const {allowed}=await response.json() as {allowed:boolean};
+        if(!allowed){setBlocked(t('reviewBlocked'));return;}
+      }
+      advance(next);
+    }catch{advance(next);}
+    finally{setScreening(false);}
+  },[storeId,advance,t]);
   // A reload or a shared link can claim progress this session does not have. The address
   // is repaired once on entry so the flow always starts where the evidence starts.
   useEffect(()=>{window.history.replaceState(null,'',stepUrl(1));},[stepUrl]);
@@ -400,7 +427,8 @@ function ReviewWizard({storeId}:{storeId:string}){
       <button type="button" className="button quiet criteria-clear" onClick={()=>setCriteria({})} disabled={!Object.keys(criteria).length}><Eraser aria-hidden="true"/>{t('clearScores')}</button>
       {!scored&&<p className="criteria-hint" role="note"><Info aria-hidden="true"/><span>{t('criteriaIncomplete')}</span></p>}
       {submitError&&<p className="form-error" role="alert">{submitError}</p>}
-      <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>advance(3)} disabled={!scored||!verification}>{t('confirmReview')}</button></div>
+      {blocked&&<p className="form-error review-blocked" role="alert">{blocked}</p>}
+      <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>void screen('criterion_note',lowScores.map(key=>(notes[key]??'').trim()).filter(Boolean).join('\n'),3)} disabled={!scored||!verification||screening}>{screening?t('loading'):t('confirmReview')}</button></div>
     </section>}
 
     {step===3&&<section className="review-step">
@@ -419,7 +447,8 @@ function ReviewWizard({storeId}:{storeId:string}){
       {/* The step asks a question, so it cannot be left before it is answered. Saying yes and
           naming nothing is the same as not answering: the name is the whole value of the yes,
           because it is the word the next person searching for that thing will type. */}
-      <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>advance(4)} disabled={purchased===undefined||(purchased===true&&!purchasedItem.trim())}>{t('continue')}</button></div>
+      {blocked&&<p className="form-error review-blocked" role="alert">{blocked}</p>}
+      <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>void screen('purchased_item',purchased===true?purchasedItem:'',4)} disabled={purchased===undefined||(purchased===true&&!purchasedItem.trim())||screening}>{screening?t('loading'):t('continue')}</button></div>
     </section>}
 
     {/* Nothing is written until this page. Eight scores given one after another are easy to

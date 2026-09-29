@@ -57,6 +57,10 @@ export const getUsers=(q?:string,page=0)=>readPage<UserRow>('users',{q},page);
 export const getStores=(q?:string,premium?:boolean,page=0,source?:string)=>readPage<StoreRow>('stores',{q,premium:premium?'true':undefined,source},page);
 export const getReviews=(q?:string,page=0)=>readPage<ReviewRow>('reviews',{q},page);
 export const getHeldReviews=(page=0)=>readPage<HeldReviewRow>('moderation',{},page);
+// The passages the check refused before they could become reviews. Nothing here is waiting
+// on a decision -- nothing was written. It is listed so a refusal can be read.
+export type BlockedAttemptRow={id:string;user_id:string;author:string;store_id:string;store_name:string;field:'criterion_note'|'purchased_item';body:string;findings:HeldFinding[];created_at:string};
+export const getBlockedAttempts=(page=0)=>readPage<BlockedAttemptRow>('moderation/blocked',{},page);
 export const getSearches=(q?:string,page=0)=>readPage<SearchRow>('searches',{q},page);
 export const getAudit=(page=0)=>readPage<AuditRow>('audit',{},page);
 export const getFeedback=(q?:string,page=0)=>readPage<FeedbackRow>('feedback',{q},page);

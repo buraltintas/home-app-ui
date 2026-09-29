@@ -92,6 +92,9 @@ html{scroll-behavior:auto}body{margin:0;background:var(--canvas);color:var(--ink
    a sentence to be read correctly. */
 .result-far-note{display:flex;align-items:center;gap:8px;margin:0 0 14px;padding:10px 14px;border-radius:var(--r-md);background:var(--muted);color:var(--ink-muted);font-size:14px;line-height:1.45}
 .result-far-note svg{width:16px;height:16px;flex:none}
+/* The one sentence that stops a step. It is a refusal, so it carries the error colour --
+   but it is also an invitation to fix the words, which are still on screen above it. */
+.review-blocked{margin-top:12px;padding:12px 14px;border-radius:var(--r-md);background:color-mix(in srgb,var(--error) 8%,transparent);border:1px solid color-mix(in srgb,var(--error) 30%,transparent);line-height:1.45}
 .result-row{position:relative}
 .post-written{margin:6px 0 0;font-size:13px;color:var(--ink-muted)}
 .post-delete:hover{color:var(--error)}
