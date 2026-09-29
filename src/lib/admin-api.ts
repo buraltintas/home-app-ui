@@ -61,6 +61,12 @@ export const getHeldReviews=(page=0)=>readPage<HeldReviewRow>('moderation',{},pa
 // on a decision -- nothing was written. It is listed so a refusal can be read.
 export type BlockedAttemptRow={id:string;user_id:string;author:string;store_id:string;store_name:string;field:'criterion_note'|'purchased_item';body:string;findings:HeldFinding[];created_at:string};
 export const getBlockedAttempts=(page=0)=>readPage<BlockedAttemptRow>('moderation/blocked',{},page);
+
+// The same queue for replies written under a review. The review's own text comes with it:
+// a comment read on its own is half a conversation, and the decision is usually about what
+// it is answering.
+export type HeldCommentRow={id:string;post_id:string;store_id:string;store_name:string;store_slug:string;user_id:string;author:string;body:string;review_text?:string;verdict:'severe'|'unchecked';findings:HeldFinding[];error?:string;created_at:string};
+export const getHeldComments=(page=0)=>readPage<HeldCommentRow>('moderation/comments',{},page);
 export const getSearches=(q?:string,page=0)=>readPage<SearchRow>('searches',{q},page);
 export const getAudit=(page=0)=>readPage<AuditRow>('audit',{},page);
 export const getFeedback=(q?:string,page=0)=>readPage<FeedbackRow>('feedback',{q},page);

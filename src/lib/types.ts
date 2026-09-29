@@ -73,4 +73,4 @@ export type Me = { id:string;display_name:string;avatar_url:string;bio:string;bi
 export type FeedbackMessage = { id:string;kind:'suggestion'|'problem'|'praise'|'other';message:string;status:'new'|'read'|'handled';created_at:string;reply?:string;replied_at?:string };
 export type PublicProfile = { id:string;display_name:string;avatar_url:string;bio:string;bio_language?:Locale;city:string;follower_count:number;following_count:number;post_count:number;level:number };
 // The API names the written text `body` when reading and `text` when writing.
-export type Comment = { id:string;user_id:string;body:string;content_language?:Locale;display_name:string;avatar_url:string;created_at:string };
+export type Comment = { id:string;user_id:string;body:string;content_language?:Locale;display_name:string;avatar_url:string;created_at:string;moderation?:'published'|'held'|'removed' };

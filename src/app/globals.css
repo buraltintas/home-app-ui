@@ -116,6 +116,10 @@ html{scroll-behavior:auto}body{margin:0;background:var(--canvas);color:var(--ink
 .comment-list strong{font-size:14px}
 .comment-list span{font-size:12px;color:var(--ink-muted)}
 .comment-list p{margin:8px 0 0;font-size:15px;line-height:1.55;overflow-wrap:anywhere}
+/* The same mark a held review wears, put back on the start edge: in the review list it is
+   pushed to the far side of a wide card, and here it belongs under the words it is about. */
+.comment-list .post-moderation{margin:8px auto 0 0}
+.comment-held-notice{margin:0;padding:10px 12px;border-radius:var(--r-md);background:var(--accent-wash);color:var(--accent-ink);font-size:14px;line-height:1.5}
 .comment-form{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
 .comment-form label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-muted)}
 .comment-form textarea{width:100%;min-height:96px;padding:13px 14px;font:inherit;font-size:16px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface);color:inherit;resize:vertical}.public-profile{max-width:1100px;margin:70px auto 40px;padding:0 32px;display:grid;grid-template-columns:auto 1fr auto;gap:28px;align-items:start}.profile-avatar{width:96px;height:96px;font-size:32px}.public-profile h1{font-size:46px;margin:8px 0}.public-profile>div:nth-child(2)>p:not(.eyebrow){font-size:17px;color:var(--ink-muted)}.public-profile dl{display:flex;gap:28px}.public-profile dl div{display:flex;flex-direction:column-reverse}.public-profile dt{font-size:12px;color:var(--ink-muted)}.public-profile dd{font-size:24px;font-weight:700;margin:0}.empty-page{min-height:calc(100vh - 72px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px}.empty-page>svg{width:40px;height:40px;color:var(--clay);margin-bottom:24px}.empty-page .locale-field{margin-top:38px;display:grid;gap:8px;justify-items:start}

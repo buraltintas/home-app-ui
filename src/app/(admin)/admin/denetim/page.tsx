@@ -2,7 +2,7 @@ import {AdminNav} from '../AdminNav';
 import {AccessDenied} from '../AccessDenied';
 import {AdminAction} from '../AdminAction';
 import {AdminPager} from '../AdminPager';
-import {getBlockedAttempts,getHeldReviews,type HeldFinding} from '@/lib/admin-api';
+import {getBlockedAttempts,getHeldComments,getHeldReviews,type HeldFinding} from '@/lib/admin-api';
 import {adminDate} from '@/lib/admin-time';
 import {getServerI18n} from '@/i18n/server';
 
@@ -32,7 +32,7 @@ const noteLabels:Record<string,string>={
 export default async function Page({searchParams}:{searchParams:Promise<{page?:string}>}){
   const {page:pageParam}=await searchParams;
   const page=Math.max(0,Number(pageParam)||0);
-  const [result,blocked]=await Promise.all([getHeldReviews(page),getBlockedAttempts(0)]);
+  const [result,comments,blocked]=await Promise.all([getHeldReviews(page),getHeldComments(0),getBlockedAttempts(0)]);
   if(!result.ok)return <AccessDenied/>;
   return <>
     <AdminNav/>
@@ -62,6 +62,37 @@ export default async function Page({searchParams}:{searchParams:Promise<{page?:s
       {result.data.rows.length===0&&<p className="admin-empty">Bekleyen değerlendirme yok.</p>}
     </div>
     <AdminPager page={page} hasNext={result.data.hasNext} count={result.data.rows.length} params={{}}/>
+
+    {/* The second queue, and a real one: these were written, they are waiting, and each
+        needs the same decision the reviews above need. They are kept apart because the
+        review is the thing with a rating in it -- publishing one changes a shop's score
+        and publishing a comment does not -- and because a comment is decided by reading
+        what it is answering, which is printed with it. */}
+    {comments.ok&&comments.data.rows.length>0&&<section className="admin-held-comments">
+      <h2>Bekleyen yorumlar</h2>
+      <p className="admin-lead">Değerlendirmelerin altına yazılan yorumlar. Yayımla, olduğu gibi sayfaya çıkarır; kaldır, sayfadan uzak tutar. Mağazanın puanı değişmez. Yazan kişi beklerken kendi yorumunu “İncelemede” olarak görür.</p>
+      <div className="admin-held-list">
+        {comments.data.rows.map(row=><article key={row.id} className="admin-held">
+          <header>
+            <strong>{row.store_name}</strong>
+            <span>{row.author||'—'} · {adminDate(row.created_at)}</span>
+          </header>
+          {row.verdict==='unchecked'
+            ?<p className="admin-note">Kontrol çalışamadı{row.error?` (${row.error})`:''}; okunmadan yayımlanmaması için bekletildi.</p>
+            :<ul className="admin-held-findings">{row.findings.map((finding,index)=><li key={index}><b>{kinds[finding.kind]??finding.kind}</b> “{finding.quote}”</li>)}</ul>}
+          <dl className="admin-held-parts">
+            <div><dt>Yorum</dt><dd>{row.body}</dd></div>
+            {row.review_text&&<div><dt>Altına yazıldığı değerlendirme</dt><dd>{row.review_text}</dd></div>}
+          </dl>
+          <div className="admin-held-actions">
+            <AdminAction path={`moderation/comments/${row.id}`} body={{decision:'approved'}} label="Yayımla"
+              confirm="Bu yorum olduğu gibi yayımlansın mı?" storeRefs={[row.store_id,row.store_slug]}/>
+            <AdminAction path={`moderation/comments/${row.id}`} body={{decision:'removed'}} label="Kaldır" tone="danger"
+              confirm="Bu yorum sayfadan uzak tutulsun mu?" storeRefs={[row.store_id,row.store_slug]}/>
+          </div>
+        </article>)}
+      </div>
+    </section>}
 
     {/* Below the queue, and deliberately not part of it: nothing here was written, so there
         is nothing to decide. The check stopped these passages as their author was leaving

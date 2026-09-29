@@ -8,6 +8,25 @@ value involved.
 
 ---
 
+## A comment under a review is now read before it is published
+
+The API side of this is the change; the web side is what people see of it. Three things:
+
+- **On a review page**, a comment held for reading is served only to whoever wrote it, and
+  wears the same "İncelemede" mark a held review wears -- the same class, moved back to the
+  start edge, rather than a second pill that drifts from the first. Sending a comment that
+  gets held now says so on the spot: without it the comment appears to post and vanish.
+- **In the panel**, `/admin/denetim` gains a second queue under the review queue, with the
+  review each comment was written under printed beside it. Publishing a comment changes no
+  shop's score, and the copy says so, because the reviewer above is used to a decision that
+  does.
+- **The send button is no longer greyed out on an empty box.** It is pressable and says
+  what is missing. A disabled control withholds the reason along with the action, which is
+  a rule this file has already paid for once.
+
+New strings in all four dictionaries; the "İncelemede" wording was already there and is
+reused rather than written a second time.
+
 ## The same cached 404, from the half of the lookup that was left tolerant
 
 The weekly check found `/izmir/hali-magazalari` and `/ankara/ev-tekstili-magazalari`

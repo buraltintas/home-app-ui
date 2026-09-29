@@ -173,5 +173,5 @@
 
 /* The stopped passages sit under the queue and must not look like part of it: there is no
    decision here, so there are no buttons, and the seam above says where the queue ends. */
-.admin-blocked{margin-top:44px;padding-top:28px;border-top:1px solid var(--admin-line,#d9dce2)}
+.admin-held-comments,.admin-blocked{margin-top:44px;padding-top:28px;border-top:1px solid var(--admin-line,#d9dce2)}
 .admin-blocked h2{font-size:19px;margin:0 0 6px}
