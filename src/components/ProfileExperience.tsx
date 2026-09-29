@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import {useEffect,useState} from 'react';
-import {ArrowDownWideNarrow,ChevronRight,ClipboardCheck,Gift,MessageCircle,PenLine,ShieldCheck,Star,UserRound} from 'lucide-react';
+import {ArrowDownWideNarrow,ClipboardCheck,Gift,MessageCircle,PenLine,ShieldCheck,Star,UserRound} from 'lucide-react';
 import {AuthDialog} from '@/components/AuthDialog';
 import {SignOutButton} from '@/components/SignOutButton';
 import Link from 'next/link';
@@ -178,10 +178,12 @@ export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages
     {!section&&<ContributorLevelsDialog locale={locale} note={levelNote[locale]}/>}
     {!section&&<ProfileInvite locale={locale}/>}
     {!section?<nav className="profile-sections">
+      {/* No arrow on the right. It was a third column taking 48px with the gap, and the
+          line under each title was being cut off with an ellipsis to fit beside it -- the
+          arrow was decoration and the sentence was the content. */}
       {sectionLinks.map(([path,title,hint,Icon,tone])=><Link key={path} href={localePath(locale,`/profile/${path}`)}>
         <span className={`profile-section-icon is-${tone}`} aria-hidden="true"><Icon/></span>
         <span className="profile-section-copy"><strong>{title}</strong><small>{hint}</small></span>
-        <span className="profile-section-go" aria-hidden="true"><ChevronRight/></span>
       </Link>)}
     </nav>:<section className="profile-section-content">
       <PageBackButton/>
@@ -199,11 +201,19 @@ export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages
       {/* Both notes are plain page text rather than boxed warnings. A red frame around the
           sentence that explains what deleting removes made the explanation read as the alarm;
           the frame belongs to the act, and the sentence belongs to the reader. */}
+      {/* Both notes sit above the button they are about, which is where somebody reads
+          them -- after the button they are an explanation of something already done. The
+          heading no longer carries a frame of its own: it names the section, and a box
+          around a heading on a page that has no other boxes reads as a warning about the
+          heading. */}
       {section==='account'&&<>
         <p className="profile-form-hint account-note">{signOutNote[locale]}</p>
         <SignOutButton className="button secondary account-signout"/>
-        <div className="danger-zone"><h3>{copy.danger}</h3><button className="button secondary danger-button" disabled={deleting} onClick={()=>void remove()}>{copy.confirm}</button></div>
-        <p className="profile-form-hint account-note">{deleteBody[locale]}</p>
+        <div className="danger-zone">
+          <h3>{copy.danger}</h3>
+          <p className="profile-form-hint account-note">{deleteBody[locale]}</p>
+          <button className="button secondary danger-button" disabled={deleting} onClick={()=>void remove()}>{copy.confirm}</button>
+        </div>
       </>}
     </section>}
     {!section&&<TimedNudge kind="profile"/>}

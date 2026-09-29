@@ -8,6 +8,31 @@ value involved.
 
 ---
 
+## Four small corrections on the profile and store pages
+
+**R81, store page.** The mark beside "Bu mağazaya gittin mi?" is now the same shape, in the
+same colour and at the same size, as the one on the note under the community reviews. Both
+already carried a 2px stroke; one was drawn at 24px inside a 34px box and the other at
+20px, and the same stroke in a larger drawing reads as a heavier line. Measured on the live
+page before and after: `rgb(46,106,79)` at 24px became `rgb(107,101,89)` at 20px, which is
+the other note exactly.
+
+**R53, profile page.** The arrow on the right of each white card is gone. It was a third
+grid column costing 48px with its gap, and the line under each title was being cut off with
+an ellipsis to fit beside it -- the arrow was decoration and the sentence was the content.
+The line wraps now instead of ellipsing, which is what actually delivers what the request
+asked for: the whole of the lower line, at any width.
+
+**R54.** The contributor-levels card sits with the same space above it as below. The gap was
+being set by its neighbours -- 4px from the summary's bottom margin, 28px from the invite's
+top -- so it read as belonging to the invite. Both neighbours' vertical margins are cleared
+and the card sets its own, so the two numbers stay equal if either neighbour is restyled.
+
+**R56, account page.** The frame around "Hesap işlemleri" is gone: a red box around a
+heading, on a page with no other boxes, reads as a warning about the heading rather than a
+label for the section. And the sentence about what deleting removes moved above the button
+it describes -- after the button it explains something already pressed.
+
 ## The refusal on the review form wears the frame the page already had
 
 Two things the product owner asked for. The sentence now names what it is about -- "Yazdığın
