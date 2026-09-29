@@ -87,6 +87,11 @@ html{scroll-behavior:auto}body{margin:0;background:var(--canvas);color:var(--ink
 .search-clear:hover{color:var(--ink);background:var(--muted)}
 .search-clear:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .search-clear svg{width:15px;height:15px}
+/* Said once, above the list it explains: these shops are the nearest of that name, and the
+   nearest is not near. Muted rather than alarming -- the answer is correct, it just needs
+   a sentence to be read correctly. */
+.result-far-note{display:flex;align-items:center;gap:8px;margin:0 0 14px;padding:10px 14px;border-radius:var(--r-md);background:var(--muted);color:var(--ink-muted);font-size:14px;line-height:1.45}
+.result-far-note svg{width:16px;height:16px;flex:none}
 .result-row{position:relative}
 .post-written{margin:6px 0 0;font-size:13px;color:var(--ink-muted)}
 .post-delete:hover{color:var(--error)}

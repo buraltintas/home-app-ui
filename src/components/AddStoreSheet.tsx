@@ -20,7 +20,7 @@ export function AddStoreSheet({query}:{query:string}){
   const [open,setOpen]=useState(false);
   const [link,setLink]=useState('');
   const [state,setState]=useState<'idle'|'sending'|'done'|'invalid'|'failed'>('idle');
-  const field=useRef<HTMLInputElement>(null);
+  const sheet=useRef<HTMLDivElement>(null);
   const opener=useRef<HTMLButtonElement>(null);
 
   // Where the page was when the dialog opened. Focus moves back to the button that opened it,
@@ -37,7 +37,13 @@ export function AddStoreSheet({query}:{query:string}){
   useEffect(()=>{
     if(!open)return;
     restoreTo.current=window.scrollY;
-    field.current?.focus();
+    // The sheet, not the field inside it. Focusing the field raised the keyboard the moment
+    // the sheet appeared -- before anybody had said they wanted to type, and over the
+    // sentence explaining what to paste. The keyboard belongs to tapping the field.
+    //
+    // Focus still has to enter the sheet, or a keyboard reader is left behind on the page
+    // underneath it, so it lands on the sheet itself and the field is one tab away.
+    sheet.current?.focus({preventScroll:true});
     const escape=(event:KeyboardEvent)=>{if(event.key==='Escape')close();};
     window.addEventListener('keydown',escape);
     return()=>window.removeEventListener('keydown',escape);
@@ -77,14 +83,14 @@ export function AddStoreSheet({query}:{query:string}){
       <button ref={opener} type="button" className="button primary add-store-open" onClick={()=>setOpen(true)}><Plus aria-hidden="true"/>{t('addStore')}</button>
     </div>
     {open&&<div className="dialog-backdrop add-store-backdrop" data-state="visible" role="presentation" onMouseDown={event=>{if(event.target===event.currentTarget)close();}}>
-      <div className="add-store-sheet" role="dialog" aria-modal="true" aria-labelledby="add-store-title">
+      <div ref={sheet} tabIndex={-1} className="add-store-sheet" role="dialog" aria-modal="true" aria-labelledby="add-store-title">
         <header><h3 id="add-store-title">{t('addStoreTitle')}</h3><button type="button" className="icon-button" aria-label={t('close')} onClick={close}><X aria-hidden="true"/></button></header>
         {state==='done'
           ?<p className="add-store-done" role="status">{t('addStoreDone')}</p>
           :<>
             <p>{t('addStoreIntro')}</p>
             <label htmlFor="add-store-link">{t('addStoreLabel')}</label>
-            <input ref={field} id="add-store-link" type="url" inputMode="url" autoComplete="off" placeholder="https://maps.app.goo.gl/…" value={link}
+            <input id="add-store-link" type="url" inputMode="url" autoComplete="off" placeholder="https://maps.app.goo.gl/…" value={link}
               onChange={event=>{setLink(event.target.value);if(state==='invalid'||state==='failed')setState('idle');}}
               onKeyDown={event=>{if(event.key==='Enter')void send();}}/>
             {state==='invalid'&&<p className="form-error" role="alert">{t('addStoreInvalid')}</p>}

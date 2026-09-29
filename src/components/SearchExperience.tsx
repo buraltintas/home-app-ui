@@ -205,6 +205,29 @@ export function SearchExperience() {
   },[]);
   const [query,setQuery]=useState('');
   const [suggestionsOpen,setSuggestionsOpen]=useState(false);
+  // R66: the panel arrives over half a second and used to be gone between two frames. A
+  // sheet that leaves faster than it came reads as a crash rather than a close, which is
+  // the same complaint that was made about the category window once already.
+  //
+  // It cannot simply be given a leaving animation, because nothing unmounts here: the same
+  // form is the panel while the class is on it and an ordinary search bar the moment it
+  // comes off. So the class stays on for the length of the animation and `leaving` marks
+  // which direction it is playing. Every other part of the panel keys off `panelShowing`,
+  // so the contents do not vanish underneath the animation.
+  const [leaving,setLeaving]=useState(false);
+  const panelShowing=suggestionsOpen||leaving;
+  const closePanel=useCallback(()=>{
+    setSuggestionsOpen(previous=>{if(previous)setLeaving(true);return false;});
+  },[]);
+  useEffect(()=>{
+    if(!leaving)return;
+    // The same 520ms the arrival takes. A timer rather than animationend, because the
+    // element is not replaced and a cancelled animation would otherwise leave the class on.
+    const done=window.setTimeout(()=>setLeaving(false),520);
+    return()=>window.clearTimeout(done);
+  },[leaving]);
+  // Opening cancels a close still playing, so the element never carries both directions.
+  const openPanel=useCallback(()=>{setLeaving(false);setSuggestionsOpen(true);},[]);
   // What a phone browser actually leaves visible. `100dvh` covers the toolbars; it does not
   // cover the keyboard, which takes half the screen and is the case where the field at the
   // top of the panel went out of sight. The visual viewport knows both, so while the panel
@@ -212,7 +235,7 @@ export function SearchExperience() {
   // document behind it is held still so it cannot show through underneath.
   useBeforePaint(()=>{
     const root=document.documentElement;
-    if(!suggestionsOpen){root.style.removeProperty('--panel-height');root.removeAttribute('data-search-panel');return;}
+    if(!panelShowing){root.style.removeProperty('--panel-height');root.removeAttribute('data-search-panel');return;}
     root.setAttribute('data-search-panel','open');
     const viewport=window.visualViewport;
     const measure=()=>{
@@ -240,7 +263,7 @@ export function SearchExperience() {
       root.style.removeProperty('--panel-top');
       root.removeAttribute('data-search-panel');
     };
-  },[suggestionsOpen]);
+  },[panelShowing]);
   const [data,setData]=useState<SearchResponse>();
   // How many of the answer is on screen. The backend returns up to ninety stores in one
   // response, so revealing the next screenful costs nothing -- no request, no wait, and no
@@ -853,7 +876,7 @@ export function SearchExperience() {
             that was reported: list, searching, list, searching. The previous answers stay
             on screen while the next ones are fetched, and the status line appears only when
             there is genuinely nothing to show yet. */}
-    {manual.trim().length>=2&&<div className="location-results" aria-live="polite">{lookingUp&&candidates.length===0?<p>{t('searchingLocations')}</p>:!lookingUp&&candidates.length===0?<p>{t('noLocations')}</p>:candidates.map(candidate=><button key={candidate.place_id} onClick={()=>void choose(candidate)} disabled={loading}><strong>{candidate.name}</strong><span>{candidate.address}</span><small>{candidate.attributions.join(' · ')}</small></button>)}</div>}</section>}{location&&<form className={`search-form${suggestionsOpen?' is-query-open':''}`} onBlur={event=>{const panel=event.currentTarget;
+    {manual.trim().length>=2&&<div className="location-results" aria-live="polite">{lookingUp&&candidates.length===0?<p>{t('searchingLocations')}</p>:!lookingUp&&candidates.length===0?<p>{t('noLocations')}</p>:candidates.map(candidate=><button key={candidate.place_id} onClick={()=>void choose(candidate)} disabled={loading}><strong>{candidate.name}</strong><span>{candidate.address}</span><small>{candidate.attributions.join(' · ')}</small></button>)}</div>}</section>}{location&&<form className={`search-form${panelShowing?' is-query-open':''}${leaving?' is-query-leaving':''}`} onBlur={event=>{const panel=event.currentTarget;
       // Asking where focus went is unreliable on a touch screen: the element being tapped
       // is often not named as the blur's destination, so the panel closed under the finger
       // on its way to the control inside it. Asking a tick later, where focus actually
@@ -866,11 +889,11 @@ export function SearchExperience() {
         // pressing it used to close the panel and drop the reader back on the search page.
         // The way out is the arrow, the search button, or Escape.
         if(window.matchMedia('(max-width: 720px)').matches)return;
-        if(!panel.contains(document.activeElement))setSuggestionsOpen(false);
-      },0);}} onSubmit={event=>{setSuggestionsOpen(false);submit(event);}} aria-busy={loading}>{!suggestionsOpen&&<Search aria-hidden="true"/>}<div className="search-field">{/* The way out sits inside the field, where the magnifier sits on the page this
+        if(!panel.contains(document.activeElement))closePanel();
+      },0);}} onSubmit={event=>{closePanel();submit(event);}} aria-busy={loading}>{!panelShowing&&<Search aria-hidden="true"/>}<div className="search-field">{/* The way out sits inside the field, where the magnifier sits on the page this
         panel opens from: one control in one place, doing the opposite job. A separate
         corner button was a second way out of a screen that only needs one. */}
-      {suggestionsOpen&&<button type="button" className="search-query-back" onClick={()=>setSuggestionsOpen(false)} aria-label={t('back')}><ArrowLeft aria-hidden="true"/></button>}{/* Opened when the finger lifts, not when it lands, and still before the focus that
+      {panelShowing&&<button type="button" className="search-query-back" onClick={closePanel} aria-label={t('back')}><ArrowLeft aria-hidden="true"/></button>}{/* Opened when the finger lifts, not when it lands, and still before the focus that
         follows. A phone decides how far to scroll the page to put a field above the
         keyboard, and it decides using the position the field is in when it is touched. On
         focus the field is still a bar in the middle of the page, so the browser scrolls to
@@ -880,22 +903,22 @@ export function SearchExperience() {
         lands here and then moves is a scroll, and a browser that takes a gesture over for
         scrolling cancels the pointer rather than releasing it -- so the panel no longer
         opens under a finger that was only passing through. A mouse focuses on the press, so
-        that route is the handler beside this one. */}<textarea ref={field} enterKeyHint="done" onPointerUp={()=>setSuggestionsOpen(true)} onFocus={()=>setSuggestionsOpen(true)} rows={1} value={query} onChange={event=>setQuery(event.target.value)} onKeyDown={event=>{if(event.key==='Escape')setSuggestionsOpen(false);if(event.key==='Enter'){event.preventDefault();if(window.matchMedia('(max-width: 720px)').matches){keepQueryPanelAfterBlur.current=true;event.currentTarget.blur();return;}void runSearch();}}} placeholder={placeholder} aria-label={t('searchHint')} disabled={loading}/>{query&&!loading&&<button type="button" className="search-clear" onClick={()=>{setQuery('');field.current?.focus();}} aria-label={t('clearSearch')}><X aria-hidden="true"/></button>}</div>{suggestionsOpen&&<button type="submit" disabled={loading}>{loading?t('loading'):t('searchAction')}</button>}{suggestionsOpen&&<div className="search-query-suggestions">{history.length>0&&<div className="search-query-recent">
+        that route is the handler beside this one. */}<textarea ref={field} enterKeyHint="done" onPointerUp={openPanel} onFocus={openPanel} rows={1} value={query} onChange={event=>setQuery(event.target.value)} onKeyDown={event=>{if(event.key==='Escape')closePanel();if(event.key==='Enter'){event.preventDefault();if(window.matchMedia('(max-width: 720px)').matches){keepQueryPanelAfterBlur.current=true;event.currentTarget.blur();return;}void runSearch();}}} placeholder={placeholder} aria-label={t('searchHint')} disabled={loading}/>{query&&!loading&&<button type="button" className="search-clear" onClick={()=>{setQuery('');field.current?.focus();}} aria-label={t('clearSearch')}><X aria-hidden="true"/></button>}</div>{panelShowing&&<button type="submit" disabled={loading}>{loading?t('loading'):t('searchAction')}</button>}{panelShowing&&<div className="search-query-suggestions">{history.length>0&&<div className="search-query-recent">
       <header><h2 className="search-query-suggestions-title">{t('showRecentSearches')}</h2><button type="button" onMouseDown={event=>event.preventDefault()} onClick={()=>void clearHistory()} disabled={historyBusy}>{t('clearSearches')}</button></header>
       {/* Three, because this is a shortcut and not a record: the whole history is a page of
           its own, and a list long enough to scan is a list that hides the suggestions under
           it. Each can still be forgotten one at a time -- a search you would rather not be
           offered again is the reason anybody looks at this list twice. */}
       <ul className="search-query-recent-list">{history.slice(0,3).map(entry=><li key={entry.id}>
-        <button type="button" onMouseDown={event=>event.preventDefault()} onClick={()=>{setSuggestionsOpen(false);fill(entry.raw_query);}}><History aria-hidden="true"/>{entry.raw_query}</button>
+        <button type="button" onMouseDown={event=>event.preventDefault()} onClick={()=>{closePanel();fill(entry.raw_query);}}><History aria-hidden="true"/>{entry.raw_query}</button>
         <button type="button" className="search-query-recent-delete" onMouseDown={event=>event.preventDefault()} onClick={()=>void removeHistory(entry.id)} disabled={historyBusy} aria-label={t('deleteSearch')}><X aria-hidden="true"/></button>
-      </li>)}</ul></div>}<h2 className="search-query-suggestions-title">{t('suggestedSearches')}</h2><div className="search-query-suggestions-list">{prompts.map((phrase,index)=><button type="button" key={phrase} data-tint={index%4} onClick={()=>{setSuggestionsOpen(false);fill(phrase);}}><CategoryIcon slug={suggestionCategory(phrase)}/>{phrase}</button>)}</div></div>}</form>}
+      </li>)}</ul></div>}<h2 className="search-query-suggestions-title">{t('suggestedSearches')}</h2><div className="search-query-suggestions-list">{prompts.map((phrase,index)=><button type="button" key={phrase} data-tint={index%4} onClick={()=>{closePanel();fill(phrase);}}><CategoryIcon slug={suggestionCategory(phrase)}/>{phrase}</button>)}</div></div>}</form>}
     {/* A way back out of an answer. Once a search has run, the page is a list of shops and
         the only route back to the categories was the browser's own back button -- which on a
         phone leaves the site entirely as often as not. It sits directly under the field it
         undoes, and it clears the answer rather than navigating: the question stays in the
         bar, so changing one word is still one tap away. */}
-    {data&&!loading&&<button type="button" className="clear-results" onClick={()=>{setData(undefined);setSuggestionsOpen(false);}}><span>{t('clearResults')}</span><Image className="clear-results-mark" src="/illustrations/broom.webp" width={88} height={104} alt="" aria-hidden="true"/></button>}{/* The panel opens above these, it does not replace them. Hiding them while somebody
+    {data&&!loading&&<button type="button" className="clear-results" onClick={()=>{setData(undefined);closePanel();}}><span>{t('clearResults')}</span><Image className="clear-results-mark" src="/illustrations/broom.webp" width={88} height={104} alt="" aria-hidden="true"/></button>}{/* The panel opens above these, it does not replace them. Hiding them while somebody
         changes their location threw away the recent searches and the categories they were
         about to pick from, and put them back only once the location was settled. */}
     {/* Recent searches used to sit here, on the page. They belong with the field instead:
@@ -928,6 +951,11 @@ export function SearchExperience() {
           the order -- and as bare text above a long list they read as a caption nobody looks
           at. No chevron on the sort: the order is not something this page lets anybody
           change, and a control that does nothing is worse than no control. */}
-      <dl className="result-count"><div className="result-count-total"><span className="result-count-mark" aria-hidden="true"><Store/></span><div><dt>{t('listedStores')}</dt><dd>{data.results.length}</dd></div></div><div className="result-count-sort"><span className="result-count-mark" aria-hidden="true"><ArrowDownWideNarrow/></span><div><dt>{t('sortedBy')}</dt><dd>{t('sortedByDistance')}</dd></div></div></dl>{data.results.length===0?<div className="zero-state"><h2>{t('zeroTitle')}</h2><p>{t('zeroBody')}</p></div>:<>{data.results.slice(0,shown).map(item=><Result item={item} key={item.search_result_impression_id} onSelect={()=>select(item)} saved={savedStores.has(item.id??'')} viewerPosition={viewerPosition} reviewRadiusMeters={reviewRadiusMeters}/>)}{shown<data.results.length&&<button type="button" className="result-more" onClick={()=>setShown(count=>count+PAGE)}>{t('showMoreResults')}</button>}<AddStoreSheet query={data.intent?.normalized_query??''}/></>}</div></section>}
+      <dl className="result-count"><div className="result-count-total"><span className="result-count-mark" aria-hidden="true"><Store/></span><div><dt>{t('listedStores')}</dt><dd>{data.results.length}</dd></div></div><div className="result-count-sort"><span className="result-count-mark" aria-hidden="true"><ArrowDownWideNarrow/></span><div><dt>{t('sortedBy')}</dt><dd>{t('sortedByDistance')}</dd></div></div></dl>{/* R: the list is right and it does not look right without this line. A shop asked
+        for by name with nothing of that name nearby comes back as the nearest ones
+        anywhere -- 374 km and 488 km under a heading that says the order is by distance.
+        The backend decides which branch it took; the page only reports it. */}
+      {data.named_store_far_away&&<p className="result-far-note"><MapPin aria-hidden="true"/>{t('namedStoreFarAway')}</p>}
+      {data.results.length===0?<div className="zero-state"><h2>{t('zeroTitle')}</h2><p>{t('zeroBody')}</p></div>:<>{data.results.slice(0,shown).map(item=><Result item={item} key={item.search_result_impression_id} onSelect={()=>select(item)} saved={savedStores.has(item.id??'')} viewerPosition={viewerPosition} reviewRadiusMeters={reviewRadiusMeters}/>)}{shown<data.results.length&&<button type="button" className="result-more" onClick={()=>setShown(count=>count+PAGE)}>{t('showMoreResults')}</button>}<AddStoreSheet query={data.intent?.normalized_query??''}/></>}</div></section>}
     <TimedNudge kind="search"/></main>;
 }

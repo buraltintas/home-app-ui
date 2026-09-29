@@ -47,7 +47,10 @@ export type SearchResult = {
   brand_slug?: string;
 };
 export type SearchGuidance = { code: 'HOME_LIVING_ONLY'; reason: 'out_of_scope' | 'unclear'; message: string; examples: [string, string] };
-export type SearchResponse = { search_id: string; visitor_session_id?: string; intent: SearchIntent; results: SearchResult[]; guidance?: SearchGuidance; fallback_state?: string };
+export type SearchResponse = { search_id: string; visitor_session_id?: string; intent: SearchIntent; results: SearchResult[]; guidance?: SearchGuidance; fallback_state?: string;
+  /** A shop was asked for by name and none of that name stands within the horizon, so the
+   *  list is the nearest ones anywhere. The backend decides this; the page only says it. */
+  named_store_far_away?: boolean };
 // reviewer_count is how many different people, which review_count stops being the moment
 // somebody visits twice. slug is here so a link goes straight to the store's readable
 // address rather than to a uuid that answers with a redirect.

@@ -1158,8 +1158,14 @@ svg{stroke-width:2}
      every other sheet in the product arrives on -- the levels dialog, the add-a-store sheet,
      the category sheet -- and it comes from the same edge, so it is recognisably the same
      kind of thing. Its own ground fades up underneath it on the same clock. */
+  /* R66: leaving is the arrival mirrored, and mirroring means the curve as well as the
+     direction -- the same lesson the sheets learned. Played on the arrival's curve the
+     panel would be off the screen in the first sixth of a second and then spend the rest
+     of the half-second finishing a movement nobody can see. */
+  .search-form.is-query-open.is-query-leaving{animation:level-out .52s cubic-bezier(.7,0,.84,0) both}
+  html[data-search-panel=open] body:has(.is-query-leaving)::before{animation:level-fade-out .52s cubic-bezier(.7,0,.84,0) both}
   @media(prefers-reduced-motion:reduce){
-    html[data-search-panel=open] body::before,.search-form.is-query-open{animation:none}
+    html[data-search-panel=open] body::before,.search-form.is-query-open,.search-form.is-query-leaving{animation:none}
   }
   /* In the panel the magnifier is not decoration, it is the way back. */
   .search-form.is-query-open>svg{display:none}
@@ -1500,6 +1506,9 @@ svg{stroke-width:2}
    to it. On the page this replaces they were the page -- the first thing on an otherwise
    empty screen; here they are the label on a drawer, and a 22px question followed by an
    18px paragraph pushed the first field below the fold before anybody had read either. */
+/* The sheet takes focus when it opens so a keyboard reader is not left on the page behind
+   it, and that focus must not draw a ring: it is a container, not a control. */
+.add-store-sheet:focus,.add-store-sheet:focus-visible{outline:none}
 .store-correction-sheet{max-height:86vh;overflow-y:auto;overscroll-behavior:contain}
 .store-correction-sheet h3{font-size:18px;line-height:1.25}
 .store-correction-sheet-intro{margin:0 0 4px;font-size:14px;line-height:1.5;color:var(--ink-muted)}

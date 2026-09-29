@@ -26,6 +26,38 @@ The store, post and profile lookups already worked this way; these two were the 
 
 ---
 
+## Two shops 374 km away, under a heading that says "sorted by distance"
+
+Searching "Smeg" from Antalya returns branches in Ankara and Istanbul. The list is right --
+a named shop is looked for nearby first, and only when nothing of that name stands there is
+the nearest one anywhere shown. What was missing is the sentence that makes it readable, so
+the page now says it above the results: fifty kilometres, and the shop you asked for is not
+inside them.
+
+The backend decides which branch it took and now reports it. Working it out from the
+distances would mean re-deriving a decision already made there, and getting it wrong the
+moment the horizon moves. The sort label stays as it is, which is what was asked for.
+
+## The search panel left faster than it arrived
+
+It opens over half a second and vanished between two frames, which reads as a crash rather
+than a close -- the same complaint the category window drew once already.
+
+It could not simply be given a leaving animation, because nothing unmounts: the same form is
+the panel while the class is on it and an ordinary search bar the moment it comes off. So
+the class now stays for the length of the animation and a second class says which direction
+is playing, with every other part of the panel keyed off "showing" rather than "open" so the
+contents do not disappear underneath it. Leaving is the arrival mirrored, curve included.
+
+## The keyboard opened before anybody said they wanted to type
+
+Tapping "Mağaza ekle" focused the link field, so the keyboard came up with the sheet -- over
+the sentence explaining what to paste, before the reader had asked for it.
+
+Focus still has to enter the sheet or a keyboard reader is left on the page underneath, so
+it lands on the sheet itself and the field is one tab away. The keyboard belongs to tapping
+the field.
+
 ## The site sent no security headers at all
 
 Measured against the live domain, not read off the config: no CSP, no HSTS, no
