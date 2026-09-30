@@ -8,6 +8,30 @@ value involved.
 
 ---
 
+## The two sentences that explain a disappointing answer are one object now
+
+**R1.** "Yalnızca ev ve yaşam ürünleri bulabilirim." was the opening paragraph inside the
+categories card, where it read as a heading for the list underneath -- as though the
+categories were the thing being warned about. It is its own framed note now, with a warning
+mark, above the card.
+
+**R2.** "50 km içerisinde aradığın mağaza yok." wears exactly the same note, because the two
+say the same kind of thing: here is why the answer is not what you asked for. Same class,
+not a second one styled to match.
+
+Both are the `info-note` the store page and the profile editor already use, so this is one
+object met again rather than a third note invented.
+
+**Two cascade traps, both caught by measuring rather than looking.** The warning colour did
+not apply at first: `.search-note>svg` and `.info-note>svg` are the same specificity and the
+override was written earlier in the file, so it lost silently and the mark stayed muted
+grey. It now sits immediately after the rules it overrides.
+
+And on a wide screen the note ran the full width of the page while the card under it was
+centred at 920px -- which the product owner saw before this did. The note now takes its
+measure from the same declaration the card takes its own from, so the two cannot drift
+apart. Measured at both widths: 638-1558 for each at desktop, 18-357 for each at 375px.
+
 ## Two words off the feedback page, and a drawing that stops being a tile
 
 **R25, feedback.** "Hepsini okuyoruz." is gone from the opening paragraph, in all four

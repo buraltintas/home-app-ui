@@ -386,7 +386,7 @@ svg{stroke-width:2}
 /* Out-of-domain search is a compact recoverable error. Categories are useful exits;
    speculative query suggestions are not repeated under an input we just rejected. */
 .guidance-card{background:var(--surface);border:1px solid color-mix(in srgb,var(--error) 34%,var(--line));border-radius:var(--r-md);padding:20px 22px}
-.guidance-card>p{margin:0 0 22px;font-size:16px;font-weight:650;line-height:1.5;color:var(--clay)}
+
 .guidance-card h2{margin:0 0 12px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted)}
 .guidance-card .category-links{gap:4px 20px}
 .guidance-card .category-links button{padding:9px 0;background:transparent;border-radius:0}
@@ -478,6 +478,21 @@ svg{stroke-width:2}
 .store-review-policy p,.info-note p{margin:0}
 .info-note p+p{margin-top:6px}
 .info-note strong{color:var(--ink)}
+/* R1/R2: the two sentences that explain why an answer is not what was asked for -- the
+   search's own limits, and "nothing of that name within 50 km" -- are one object, framed,
+   with a warning mark, above whatever they are about. The first used to be the opening
+   paragraph inside the categories card, where it read as a heading for the list underneath
+   rather than as a note about the search.
+
+   Written here, immediately after the rules it overrides: both selectors are one class
+   deep, so an override placed earlier in the file loses silently -- which it did, and the
+   mark stayed muted grey instead of turning warning. */
+/* Only the margin is set here; the one beside the categories card takes its measure from
+   the same declaration the card does, in globals.css, so the two cannot drift apart. The
+   one in the results list inherits the list's width and needs no measure of its own. */
+.search-note{align-items:center}
+.search-note>svg{color:var(--warning);margin-top:0}
+.search-note p{font-size:14px}
 .store-review-policy details{margin-top:6px}
 .store-review-policy summary{display:inline-flex;min-height:32px;align-items:center;color:var(--clay);font-weight:700;cursor:pointer}
 .store-review-policy details[open] summary{margin-bottom:6px}

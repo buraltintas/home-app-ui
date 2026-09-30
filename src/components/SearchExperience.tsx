@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowDownWideNarrow, ArrowLeft, ArrowRight, Check, CircleCheck, Crosshair, History, LocateFixed, MapPin, Search, Store, X } from 'lucide-react';
+import { ArrowDownWideNarrow, ArrowLeft, ArrowRight, Check, CircleCheck, Crosshair, History, LocateFixed, MapPin, Search, Store, TriangleAlert, X } from 'lucide-react';
 import { FormEvent, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import type { Coordinates, Locale, LocationResult, Me, SearchHistory, SearchResponse, SearchResult } from '@/lib/types';
@@ -942,7 +942,13 @@ export function SearchExperience() {
         fill(chosen.name);
       }}/>}</header>
     {loading&&<SearchOverlay/>}
-    {!loading&&data?.guidance&&<section className="guidance-card" role="alert"><p>{data.guidance.message}</p><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>fill(category.name)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}</span></button>)}</div></section>}
+    {/* R1: what the search cannot answer is its own note, above the card rather than the
+        first paragraph inside it. Inside, it read as a heading for the categories -- as if
+        the list underneath were the thing being warned about. It is the same framed note
+        the "no store within 50 km" line wears, because the two say the same kind of thing:
+        here is why the answer is not what you asked for. */}
+    {!loading&&data?.guidance&&<aside className="info-note search-note" role="alert"><TriangleAlert aria-hidden="true"/><p>{data.guidance.message}</p></aside>}
+    {!loading&&data?.guidance&&<section className="guidance-card" role="group" aria-label={t('categories')}><h2>{t('categories')}</h2><div className="category-links">{categories.map(category=><button onClick={()=>fill(category.name)} key={category.slug}><CategoryIcon slug={category.slug}/><span>{category.name}</span></button>)}</div></section>}
     {!loading&&data&&!data.guidance&&<section className="results-layout"><div className="result-list">{/* What the list is and how it is ordered, said as two
       labelled facts rather than a bare number: "24 results" does not say what decided which
       twenty-four, and the order is the part a reader is entitled to know. */}
@@ -955,7 +961,8 @@ export function SearchExperience() {
         for by name with nothing of that name nearby comes back as the nearest ones
         anywhere -- 374 km and 488 km under a heading that says the order is by distance.
         The backend decides which branch it took; the page only reports it. */}
-      {data.named_store_far_away&&<p className="result-far-note"><MapPin aria-hidden="true"/>{t('namedStoreFarAway')}</p>}
+      {/* R2: the same note, drawn the same way, for the same reason. */}
+      {data.named_store_far_away&&<aside className="info-note search-note" role="note"><TriangleAlert aria-hidden="true"/><p>{t('namedStoreFarAway')}</p></aside>}
       {data.results.length===0?<div className="zero-state"><h2>{t('zeroTitle')}</h2><p>{t('zeroBody')}</p></div>:<>{data.results.slice(0,shown).map(item=><Result item={item} key={item.search_result_impression_id} onSelect={()=>select(item)} saved={savedStores.has(item.id??'')} viewerPosition={viewerPosition} reviewRadiusMeters={reviewRadiusMeters}/>)}{shown<data.results.length&&<button type="button" className="result-more" onClick={()=>setShown(count=>count+PAGE)}>{t('showMoreResults')}</button>}<AddStoreSheet query={data.intent?.normalized_query??''}/></>}</div></section>}
     <TimedNudge kind="search"/></main>;
 }
