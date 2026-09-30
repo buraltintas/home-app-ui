@@ -8,6 +8,23 @@ value involved.
 
 ---
 
+## Two words off the feedback page, and a drawing that stops being a tile
+
+**R25, feedback.** "Hepsini okuyoruz." is gone from the opening paragraph, in all four
+languages. It was two words of reassurance costing the send button its place on the first
+screen -- which is the same question that sat unanswered on this card since 27 September:
+whether to shorten the intro or move the sign-in button. The product owner answered it by
+picking the two words himself.
+
+**R68, listing screen.** The illustration beside "Mağaza ekle" shipped as an RGB PNG with
+its background painted in, so on a cream card it read as a white rounded tile rather than a
+drawing. The background is now cut to transparency -- flooded from the edges only, so the
+white walls inside the shopfront are not cut out along with the margin they happen to match
+-- and the rounded corners go with it, because a radius is for a tile.
+
+Cut rather than covered with a blend mode: a transparent PNG is right on any ground, and a
+blend mode is right on exactly one.
+
 ## The messages page says what each message was, and the signed-out page keeps its drawing beside the words
 
 **R55, messages.** A card used to be labelled by the first line the form that sent it wrote

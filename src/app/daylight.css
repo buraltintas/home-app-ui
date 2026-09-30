@@ -1560,7 +1560,9 @@ svg{stroke-width:2}
 .add-store p strong{color:var(--ink-muted);font-weight:750}
 .add-store p{margin:6px 0 16px;color:var(--ink-muted);font-size:15px}
 .add-store-action{display:flex;align-items:center;gap:26px;flex-wrap:wrap}
-.add-store-action img{width:72px;height:72px;border-radius:var(--r-md);object-fit:cover;flex:none}
+/* No rounded corners now that the drawing has no ground of its own: a radius is for a
+   tile, and this is an illustration sitting on the card. */
+.add-store-action img{width:72px;height:72px;object-fit:contain;flex:none}
 /* Written against the notice as well as the button, because `.button.primary` paints every
    primary control near-black and outranks a single class on its own. */
 .add-store .button.add-store-open{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 20px;background:var(--clay);color:var(--surface)}
