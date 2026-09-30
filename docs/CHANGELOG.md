@@ -8,6 +8,47 @@ value involved.
 
 ---
 
+## The messages page says what each message was, and the signed-out page keeps its drawing beside the words
+
+**R55, messages.** A card used to be labelled by the first line the form that sent it wrote
+-- "Mağaza bilgisi düzeltme önerisi", or "Mağaza önerisi (arama: perde)", or nothing at all.
+Now each card carries one of three names the product owner chose, with a mark: **Görüş ve
+öneri**, **Mağaza bilgisi düzenleme**, **Mağaza ekleme**. The search that was running when
+somebody asked for a shop is deliberately dropped -- it is how the suggestion was made, not
+what was suggested.
+
+Above the cards, three buttons, one per kind, each opening the messages of that kind. They
+are the favourites page's own two buttons, class for class, with a third added -- one
+control met twice rather than two that resemble each other -- and stacked rather than side
+by side, because those two were words and these three are sentences.
+
+Each card also shows the hour under the day. A message sent this morning and one sent last
+night are a different thing to somebody waiting on a reply, and a date alone cannot say
+which.
+
+**How a message is classified, and why it is done this way.** The forms are ours and each
+writes a fixed first line, so this reads our own vocabulary rather than guessing at prose:
+the correction form's prefix in all four languages, and the add-a-store sheet's one line.
+Anything without such a line came from the open box in the footer. It is not read from a
+field because there is no such field: the `kind` the API carries is the topic somebody
+picked, and two different forms send the same value. If a source field is ever added,
+`classify` is the only thing that changes.
+
+**R48-4, signed out.** The drawing of what is behind the sign-in now sits at the top right
+on a phone as well, beside the words, instead of below the button -- where it was arriving
+after the decision it exists to inform.
+
+It is floated rather than given a grid column of its own, and that is the whole difficulty:
+a second column this narrow takes its width from the page, so the heading beside it would
+have kept that narrow measure all the way down -- three words to a line for six lines.
+Floated, the words run beside the card while it lasts and across the full width once it
+ends. A float only holds the text that follows it, so the drawing had to move before the
+words in the source; it costs nothing to a screen reader, which is told to skip it, and
+desktop now places both explicitly so the words still start on the left there.
+
+Measured at 375px: no horizontal overflow, and all three labels on one line each rather
+than "Değerlendirmeleri / m".
+
 ## Four small corrections on the profile and store pages
 
 **R81, store page.** The mark beside "Bu mağazaya gittin mi?" is now the same shape, in the

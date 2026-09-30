@@ -696,6 +696,10 @@ svg{stroke-width:2}
 /* The invitation takes the width; the drawing takes what is left. Split evenly, a 40px
    heading fell into five lines on a 720px page. */
 .profile-page-out{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,204px);align-items:start;gap:44px;padding-block:24px}
+/* Placed rather than ordered, because the drawing comes first in the source for the phone
+   layout's sake and the words still belong on the left here. */
+.profile-out-copy{grid-column:1;grid-row:1}
+.profile-out-art{grid-column:2;grid-row:1}
 .profile-out-copy{min-width:0}
 .profile-page-out h1{margin:10px 0 12px;font-size:clamp(25px,2.9vw,34px);font-weight:650;line-height:1.16;letter-spacing:-.03em;text-wrap:balance}
 .profile-out-lead{margin:0 0 26px;color:var(--ink-muted);font-size:17px;line-height:1.5;max-width:42ch;white-space:pre-line}
@@ -713,12 +717,32 @@ svg{stroke-width:2}
 .profile-out-peek .is-clay{background:color-mix(in srgb,var(--clay) 12%,var(--surface));color:var(--clay)}
 .profile-out-peek .is-plain{background:var(--muted);color:var(--ink)}
 @media(max-width:700px){
-  /* The drawing goes under the invitation rather than beside it, and keeps its size: shrunk
-     into a corner it stops being a preview and becomes a smudge. */
-  .profile-page-out{grid-template-columns:minmax(0,1fr);gap:30px}
-  .profile-out-art{justify-items:stretch;min-height:0}
-  .profile-out-avatar{justify-self:end;width:84px;height:84px}
-  .profile-out-avatar svg{width:42px;height:42px}
+  /* R48-4: the drawing stays beside the invitation at this width too, at the top right,
+     rather than dropping below the button. It was under it and full width, which put the
+     three destinations after the thing they are meant to explain -- somebody has already
+     decided by the time they reach them.
+
+     Narrow enough not to crowd the words on its left: the column is a fraction rather than
+     a fixed number, so it holds its share at 700px and at 320px instead of squeezing the
+     heading at one end of that range. The rows inside lose their icons' boxes and drop a
+     size, which is what buys the width back. */
+  .profile-page-out{display:block}
+  /* Floated rather than given a column of its own. A second grid column this narrow would
+     take its width from the whole page, and the heading beside it would keep that narrow
+     measure all the way down -- five words to a line for six lines. Floated, the words run
+     beside the card while it lasts and across the full width once it ends, which is the
+     only way both fit on a 375px screen. */
+  .profile-out-art{float:right;width:min(48%,164px);min-width:0;margin:0 0 16px 14px;justify-items:stretch;min-height:0}
+  .profile-out-avatar{justify-self:end;width:52px;height:52px;margin-right:8px}
+  .profile-out-avatar svg{width:26px;height:26px}
+  .profile-out-peek{margin-top:-14px;padding:6px 9px;gap:0}
+  .profile-out-peek li{gap:7px;padding:7px 0;font-size:11px;font-weight:600;line-height:1.2;min-width:0;overflow-wrap:anywhere}
+  .profile-out-peek span{width:22px;height:22px}
+  .profile-out-peek span svg{width:13px;height:13px}
+  .profile-page-out h1{font-size:clamp(20px,5.4vw,26px)}
+  .profile-out-lead{font-size:15px;margin-bottom:20px;max-width:none}
+  /* The float has to be cleared or the button lands beside the card. */
+  .profile-out-action{clear:right}
 }
 .account-signout{margin-bottom:28px}
 /* Both of this page's buttons are the width of the words in them, like every other button
@@ -1028,6 +1052,28 @@ svg{stroke-width:2}
 .profile-section-icon svg{width:22px;height:22px}
 .profile-section-copy{display:flex;flex-direction:column;gap:3px;min-width:0}
 .profile-section-copy strong{color:var(--ink)}
+
+/* The three filters above the messages are the favourites page's two buttons, class for
+   class, so a reader meets one control twice rather than two controls that resemble each
+   other. Stacked rather than side by side: those two were words and these three are
+   sentences, and three sentences in a row on a phone become three columns of one word. */
+.profile-message-filters{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin:0 0 18px}
+.profile-message-filters>button{min-width:0}
+/* Pointing down the page at the list, which is where these three open their answer. */
+.profile-message-filters>button.is-showing::after{left:32px}
+
+/* Each card says what kind of message it is, with the same mark the filter above carries.
+   It is a label rather than a heading now, so it wears the header's own small-caps and
+   sits on the line instead of above the text. */
+/* Written the way the product owner wrote it, not shouted: the header's small-caps would
+   turn "Görüş ve öneri" into an uppercasing decision, and in Turkish that decision is
+   whether the last letter gains a dot. A label that names a thing should say the thing. */
+.profile-message-kind{display:inline-flex;align-items:center;gap:7px;margin:0;font-size:13px;font-weight:700;text-transform:none;letter-spacing:0}
+.profile-message-kind svg{width:16px;height:16px;flex:none}
+/* The day, and under it the hour. A message sent this morning and one sent last night are
+   a different thing to somebody waiting on an answer, and the date alone cannot say which. */
+.profile-message header time,.profile-message-reply time{display:grid;justify-items:end;gap:1px;line-height:1.25;text-align:right}
+.profile-message header time small,.profile-message-reply time small{font-size:12px;color:var(--ink-muted)}
 /* R45: one line. It names what the row is; a second line makes it read as prose and
    makes the four rows different heights. Shrinks with the screen rather than wrapping. */
 /* The line under each title wraps rather than being cut off with an ellipsis. It was

@@ -108,14 +108,13 @@ export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages
   // it shows what is behind the door -- the three places this page leads to -- so the
   // invitation is about what you get rather than about what you have not done.
   if(!signedIn||!me)return <main className="profile-page profile-page-out">
-    <div className="profile-out-copy">
-      <p className="eyebrow">{t('profile')}</p>
-      <h1>{copy.body}</h1>
-      <p className="profile-out-lead">{signedOutLead[locale]}</p>
-      <button type="button" className="button primary profile-out-action" onClick={()=>setOpen(true)}>{t('signIn')}</button>
-    </div>
     {/* What is behind the sign-in, drawn rather than described: the same three destinations
-        the page shows once you are in, with the marks they carry there. */}
+        the page shows once you are in, with the marks they carry there.
+
+        Before the words in the source, not after: on a phone this is floated to the right
+        and a float only holds text that follows it. The order costs nothing to a screen
+        reader, which is told to skip the whole block. Desktop places both explicitly, so
+        the words still start on the left there. */}
     <div className="profile-out-art" aria-hidden="true">
       <span className="profile-out-avatar"><UserRound/></span>
       <ul className="profile-out-peek">
@@ -123,6 +122,12 @@ export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages
         <li><span className="is-clay"><Star/></span>{reviewCopy[locale].title}</li>
         <li><span className="is-plain"><ShieldCheck/></span>{t('accountSection')}</li>
       </ul>
+    </div>
+    <div className="profile-out-copy">
+      <p className="eyebrow">{t('profile')}</p>
+      <h1>{copy.body}</h1>
+      <p className="profile-out-lead">{signedOutLead[locale]}</p>
+      <button type="button" className="button primary profile-out-action" onClick={()=>setOpen(true)}>{t('signIn')}</button>
     </div>
     <AuthDialog open={open} onClose={()=>setOpen(false)}/>
   </main>;
