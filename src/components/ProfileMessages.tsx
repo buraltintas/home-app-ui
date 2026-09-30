@@ -43,7 +43,7 @@ const marks:Record<Kind,typeof MessageCircle>={feedback:MessageCircle,correction
 export function ProfileMessages({locale}:{locale:Locale}){
   const [items,setItems]=useState<FeedbackMessage[]|null>(null);
   const [error,setError]=useState('');
-  const [showing,setShowing]=useState<Kind>('feedback');
+  const [chosen,setChosen]=useState<Kind|null>(null);
   const text=copy[locale];
   useEffect(()=>{
     let active=true;
@@ -61,6 +61,10 @@ export function ProfileMessages({locale}:{locale:Locale}){
   if(items.length===0)return <p className="profile-empty">{text.empty}</p>;
 
   const kinds:[Kind,string][]=[['feedback',text.feedback],['correction',text.correction],['addition',text.addition]];
+  // Until somebody picks, the page opens on the first kind that has anything in it. Opening
+  // on an empty list beside two buttons carrying counts tells a reader their messages are
+  // missing, when they are one button away.
+  const showing=chosen??kinds.find(([kind])=>sorted.some(row=>row.kind===kind))?.[0]??'feedback';
   const shown=sorted.filter(row=>row.kind===showing);
   const date=(value:string)=>new Intl.DateTimeFormat(locale,{dateStyle:'medium'}).format(new Date(value));
   const time=(value:string)=>new Intl.DateTimeFormat(locale,{timeStyle:'short'}).format(new Date(value));
@@ -70,7 +74,7 @@ export function ProfileMessages({locale}:{locale:Locale}){
   // three names are sentences where that page's two were words.
   return <>
     <div className="favorites-summary profile-message-filters" role="group" aria-label={text.feedback}>
-      {kinds.map(([kind,label])=>{const Mark=marks[kind];return <button key={kind} type="button" className={showing===kind?'is-showing':undefined} aria-pressed={showing===kind} onClick={()=>setShowing(kind)}>
+      {kinds.map(([kind,label])=>{const Mark=marks[kind];return <button key={kind} type="button" className={showing===kind?'is-showing':undefined} aria-pressed={showing===kind} onClick={()=>setChosen(kind)}>
         <span className="favorites-summary-mark" aria-hidden="true"><Mark/></span>
         <span className="favorites-summary-copy"><span>{label}</span><strong>{sorted.filter(row=>row.kind===kind).length}</strong></span>
       </button>;})}
