@@ -212,6 +212,20 @@ svg{stroke-width:2}
 .category-links button:active{color:var(--clay);transform:translateX(6px)}
 .location-working{display:flex;align-items:center;gap:10px;margin:0;font-size:15px;color:var(--ink-muted)}.location-pulse{width:10px;height:10px;border-radius:var(--r-pill);background:var(--accent);animation:location-pulse 1.2s ease-in-out infinite}@keyframes location-pulse{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1.15)}}@media(prefers-reduced-motion:reduce){.location-pulse{animation:none;opacity:1}}
 .location-sheet{border-radius:var(--r-md);background:var(--surface);color:var(--ink);border-top:0;}
+/* R66: it used to be there in one frame and gone in one frame -- the only thing on this
+   page that moved at all was everything except this. It arrives and leaves on the product's
+   own clock and curves, the same half-second the search panel and every sheet take.
+
+   It sits in the flow rather than over the page, so it cannot slide a whole panel-height
+   from the edge the way a fixed sheet does: what it has is a short rise and a fade, and the
+   curve is mirrored on the way out. Played on the arrival's curve it would be invisible in
+   the first sixth of a second and then spend the rest of the half-second finishing a
+   movement nobody can see -- the same lesson the search panel learned. */
+.location-sheet{animation:location-sheet-in .52s cubic-bezier(.16,1,.3,1) both}
+.location-sheet.is-leaving{animation:location-sheet-out .52s cubic-bezier(.7,0,.84,0) both;pointer-events:none}
+@keyframes location-sheet-in{from{opacity:0;transform:translateY(-10px) scale(.99)}to{opacity:1;transform:none}}
+@keyframes location-sheet-out{from{opacity:1;transform:none}to{opacity:0;transform:translateY(-10px) scale(.99)}}
+@media(prefers-reduced-motion:reduce){.location-sheet,.location-sheet.is-leaving{animation:none}}
 .location-sheet h2,.guidance-card h2,.zero-state h2{}
 .results-layout{max-width:1440px;border-top:0;grid-template-columns:minmax(600px,820px) 1fr}
 .result-list{padding:20px 40px 80px}

@@ -492,6 +492,23 @@ export function SearchExperience() {
   // yet. Gating this on the first case alone left the field on screen with nothing behind
   // it: a visitor could type a district and never get a single candidate back.
   const sheetOpen=locationOpen||(locationRestored&&!location);
+  // R66: the location panel arrived and left between two frames -- the one thing on this
+  // page with no movement at all, while the search panel and every sheet in the product
+  // take half a second each way. It unmounts when it closes, so as with the search panel
+  // the element has to outlive the close: `sheetLeaving` keeps it mounted for the length
+  // of the animation and says which direction is playing.
+  const [sheetLeaving,setSheetLeaving]=useState(false);
+  const sheetShowing=sheetOpen||sheetLeaving;
+  const closeSheet=useCallback(()=>{setLocationOpen(previous=>{if(previous)setSheetLeaving(true);return false;});},[]);
+  useEffect(()=>{
+    if(!sheetLeaving)return;
+    const done=window.setTimeout(()=>setSheetLeaving(false),520);
+    return()=>window.clearTimeout(done);
+  },[sheetLeaving]);
+  // Opening cancels a close still playing, so the panel never carries both directions.
+  // Done in the opener rather than in an effect watching it: an effect would run after the
+  // render that already put both classes on the element.
+  const openSheet=useCallback(()=>{setSheetLeaving(false);setLocationOpen(true);},[]);
   // Focus without the scroll the browser would do for it, then place the box ourselves:
   // left to itself the browser brings a field just inside the edge it was nearest, which
   // is the bottom of the screen on a phone -- exactly where the keyboard is about to be.
@@ -562,8 +579,8 @@ export function SearchExperience() {
     if(saved&&saved.source!=='device')return;
     setLocation(undefined);
     setData(undefined);
-    setLocationOpen(true);
-  }),[setLocation]);
+    openSheet();
+  }),[setLocation,openSheet]);
 
   // And the other direction. Turning the permission back on in browser settings is an
   // answer, but nothing was listening for it: the page kept the refusal it had been given
@@ -599,7 +616,7 @@ export function SearchExperience() {
       setAutoLocating(false);
       if(outcome.ok){
         selectLocation({source:'device',label:t('currentLocation'),accuracyMeters:outcome.position.accuracy_meters,coordinates:{latitude:outcome.position.latitude,longitude:outcome.position.longitude}});
-        setLocationOpen(false);
+        closeSheet();
         setError('');setErrorReason('');
       }else{
         // Nothing is said here, and that is a reversal of what this used to do.
@@ -617,7 +634,7 @@ export function SearchExperience() {
       }
     })();
     return()=>{active=false;};
-  },[restored,location,t,selectLocation]);
+  },[restored,location,t,selectLocation,closeSheet]);
 
   // Results are ordered near to far, so a search without a location is not a weaker
   // search but a meaningless one: it cannot tell a store down the road from one in the
@@ -649,7 +666,7 @@ export function SearchExperience() {
       // as another user step. This also makes a manually picked place continue the
       // query without requiring a second press of Search.
       pending.current=nextQuery;
-      setQuery(nextQuery);setLocationOpen(true);setError(t('locationRequired'));return;
+      setQuery(nextQuery);openSheet();setError(t('locationRequired'));return;
     }
     // A search on this page is now written into the address bar, so the URL never falls
     // behind what is on screen: a refresh repeats the search that is showing, a link can
@@ -739,7 +756,7 @@ export function SearchExperience() {
     // The first sheet is visible because location is absent, while locationOpen is still
     // false. Preserve it before the successful answer would otherwise close the sheet and
     // move the confirmation above the form.
-    setLocationOpen(true);setError('');setErrorReason('');
+    openSheet();setError('');setErrorReason('');
   };
   // Kept in an effect rather than assigned while rendering: the watcher outlives every
   // render and needs whichever locateMe belongs to the latest one.
@@ -760,7 +777,7 @@ export function SearchExperience() {
       if(!response.ok)throw new Error();
       const place=await response.json() as LocationResult;
       selectLocation({source:'manual',label:place.name,city:place.name,placeID:place.place_id,address:place.address,coordinates:{latitude:place.latitude,longitude:place.longitude}});
-      setLocationOpen(false);
+      closeSheet();
       // The list of places is long enough to have been scrolled to, and the panel holding
       // it disappears with the choice -- so the page that comes back is the same page
       // several hundred pixels down, with its own heading above the fold. Choosing a place
@@ -862,7 +879,7 @@ export function SearchExperience() {
   return <main className="search-page"><header className="search-hero"><div className="search-title"><h1>{emphasisedTitle(t('searchTitle'),'search-title-mark')}</h1><Image className="search-title-shop" src="/illustrations/store-front.webp" width={1396} height={985} alt="" aria-hidden="true" priority/></div>{locationRestored&&!location&&<p className="location-lead">{t('locationRequired')}</p>}{location&&!sheetOpen&&<div className={`location-control${location.source==='device'?' is-device':''}`}><span className="location-current-pair"><span className="location-current-mark" aria-hidden="true"><MapPin/></span><span className="location-current">{location.source==='device'?t('currentLocationActive'):location.label}</span></span>{/* One control, not two. The cross beside it cleared the location outright, which is a
           thing almost nobody wants and everybody could hit by accident -- and "Konumu
           değiştir" already opens the place to change it, including to somewhere else. */}
-        <button className="location-change" onClick={()=>{setLocationOpen(true);setOpenToType(true);}} disabled={loading}><Crosshair aria-hidden="true"/>{t('changeLocation')}</button></div>}{sheetOpen&&<section className="location-sheet" aria-label={t('chooseLocation')}>{location&&<div><p>{t('locationBenefit')}</p></div>}<div className="location-actions">{autoLocating&&<p className="location-working" aria-live="polite"><span className="location-pulse" aria-hidden="true"/>{t('locatingYou')}</p>}{/* One control, two states. It used to be swapped for a separate confirmation line,
+        <button className="location-change" onClick={()=>{openSheet();setOpenToType(true);}} disabled={loading}><Crosshair aria-hidden="true"/>{t('changeLocation')}</button></div>}{sheetShowing&&<section className={`location-sheet${sheetLeaving?' is-leaving':''}`} aria-label={t('chooseLocation')}>{location&&<div><p>{t('locationBenefit')}</p></div>}<div className="location-actions">{autoLocating&&<p className="location-working" aria-live="polite"><span className="location-pulse" aria-hidden="true"/>{t('locatingYou')}</p>}{/* One control, two states. It used to be swapped for a separate confirmation line,
           which read as the button disappearing and something else taking its place. The
           same bubble now carries the answer, and pressing it again re-reads the device
           rather than being inert -- a control that looks pressable has to be pressable. */}
@@ -871,7 +888,7 @@ export function SearchExperience() {
       </button><label><span>{t('chooseLocation')}</span><span className="location-field"><input ref={manualField} value={manual} onChange={event=>setManual(event.target.value)} placeholder={t('locationHint')} disabled={loading}/>{manual&&<button type="button" className="location-clear-text" onClick={()=>{setManual('');}} aria-label={t('clearSearch')}><X aria-hidden="true"/></button>}</span></label>{/* Directly under the box it is about. At the top of the panel it read as a warning
       about the whole screen; here it is plainly an answer to what was just typed or
       pressed. */}
-      {error&&<LocationAlert message={error} reason={errorReason} onRetry={()=>void locateMe()} onDismiss={()=>{setError('');setErrorReason('');}}/>}{location&&<button className="button quiet" onClick={()=>setLocationOpen(false)}>{location.source==='device'?t('close'):t('later')}</button>}</div>{/* The list is not thrown away to say "searching". Every keystroke starts another
+      {error&&<LocationAlert message={error} reason={errorReason} onRetry={()=>void locateMe()} onDismiss={()=>{setError('');setErrorReason('');}}/>}{location&&<button className="button quiet" onClick={closeSheet}>{location.source==='device'?t('close'):t('later')}</button>}</div>{/* The list is not thrown away to say "searching". Every keystroke starts another
             lookup, and replacing the results with a status line each time is the flicker
             that was reported: list, searching, list, searching. The previous answers stay
             on screen while the next ones are fetched, and the status line appears only when
@@ -938,7 +955,7 @@ export function SearchExperience() {
         // Pressed with no location the search simply did not run: the sheet closed and
         // nothing happened, which is the worst answer a button can give. It asks for the
         // location instead, which is the step the reader was going to have to take anyway.
-        if(!location){setLocationOpen(true);return;}
+        if(!location){openSheet();return;}
         fill(chosen.name);
       }}/>}</header>
     {loading&&<SearchOverlay/>}

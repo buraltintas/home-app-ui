@@ -8,6 +8,28 @@ value involved.
 
 ---
 
+## R66, the third time: it was the location panel
+
+Twice this was reported and twice the search panel was measured and found working -- open
+`level-in`, close `level-out`, half a second each, which is still true. What was never
+measured was the other panel on the same screen. "Konumu değiştir" had no animation at all,
+in either direction: `position: static`, `animation: none`. It appeared in one frame and
+vanished in one, which is exactly the complaint.
+
+That is what the report was about, and the reason it survived two fixes is that the fix was
+aimed at the panel that had a name in the code rather than at the screen the person was
+looking at.
+
+It arrives and leaves on the product's clock now, the same 0.52s and the same mirrored
+curves as every sheet. Two things it needed that the search panel did not: it unmounts when
+it closes, so it is kept mounted for the length of the leaving animation; and it sits in the
+flow rather than over the page, so it rises and fades a short distance instead of sliding a
+whole panel-height from an edge.
+
+Four different places closed it and only two went through the close -- including "Şimdi
+değil", which is the one anybody actually presses. Measured after: open, then `is-leaving`
+for 569ms, then gone.
+
 ## The two sentences that explain a disappointing answer are one object now
 
 **R1.** "Yalnızca ev ve yaşam ürünleri bulabilirim." was the opening paragraph inside the
