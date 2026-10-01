@@ -8,6 +8,13 @@ value involved.
 
 ---
 
+## R3/R4: the two notes under a disappointing search are read first
+
+"Yalnızca ev ve yaşam ürünleri bulabilirim." and "50 km içerisinde aradığın mağaza yok."
+explain why an answer is not what was asked for, and they were set in the muted grey of an
+aside -- the colour this product uses for what can be skipped. They are ink now, at the
+emphasis weight, from one declaration on the class both already share.
+
 ## Profile R57–R63: six small corrections
 
 - **R57** — the reviews card's second line is "Paylaştığın mağaza deneyimleri" and fits on one

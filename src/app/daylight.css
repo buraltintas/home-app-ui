@@ -527,6 +527,10 @@ svg{stroke-width:2}
 .search-note{align-items:center}
 .search-note>svg{color:var(--warning);margin-top:0}
 .search-note p{font-size:14px}
+/* R3/R4: the two sentences that explain a disappointing answer are the most important words
+   on that screen, and they were set in the muted grey of an aside. Ink, at the emphasis
+   weight -- one declaration for both, so they cannot come apart again. */
+.search-note p{color:var(--ink);font-weight:500}
 .store-review-policy details{margin-top:6px}
 .store-review-policy summary{display:inline-flex;min-height:32px;align-items:center;color:var(--clay);font-weight:700;cursor:pointer}
 .store-review-policy details[open] summary{margin-bottom:6px}
