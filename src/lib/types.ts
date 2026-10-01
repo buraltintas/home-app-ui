@@ -60,6 +60,9 @@ export type StoreHighlight = { id:string;slug?:string;name:string;city:string;di
 export type MonthlyStoreHighlights = { rating_gainer?:StoreHighlight;most_reviewed?:StoreHighlight;recent?:StoreHighlight[] };
 // The picker's places are ours now, read from a Turkish administrative table the API
 // ships with rather than bought from a provider. `place_id` carries that table's own id.
+// A catalogue name offered while the search field is still being typed in: a chain once,
+// by its own name, or a single shop by its sign -- only ones with a shop within reach.
+export type StoreName = { name: string; brand_slug?: string; stores: number; nearest_meters: number; district?: string; city?: string };
 export type LocationResult = { provider: 'bosagezme'; place_id: string; name: string; address: string; latitude: number; longitude: number; types: string[]; attributions: string[] };
 export type DiscoveryLocation = { source: 'device' | 'manual'; label: string; address: string; place_id?: string; latitude: number; longitude: number; accuracy_meters?: number; updated_at: string };
 export type Store = { id:string;name:string;slug:string;is_premium?:boolean;is_catalog_store:boolean;location_approximate?:boolean;brand_name?:string;brand_slug?:string;address:string;city:string;district:string;phone?:string;website?:string;latitude:number;longitude:number;distance_meters?:number;categories:string[];category_labels:string[];localized_description?:string;platform:PlatformStats;criteria_averages?:CriteriaAverages;viewer_has_favorited:boolean;viewer_has_reviewed:boolean;viewer_review_count?:number;photo?:StoredPhoto;external_sources?:{provider:'google'|'osm';external_id:string;attribution:Record<string,unknown>;refreshed_at?:string}[] };

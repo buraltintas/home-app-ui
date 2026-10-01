@@ -8,6 +8,48 @@ value involved.
 
 ---
 
+## R70: shop names offered while they are being typed
+
+The search panel now answers a name before it is finished, the way the location field
+answers "antal" with Antalya: "arçel" offers Arçelik. The list sits above the past searches,
+one row per name -- a chain once, with how many of its shops are within reach and how far
+the nearest is; a single shop with its district and distance. Picking one searches for it.
+
+Names come from the API's `/v1/stores/names`, asked on each pause in typing from the point
+being searched, and only names with a shop inside the search's own 50 km horizon are
+offered -- a name that leads to "no such shop within 50 km" is worse than no name. The
+point is rounded to about a kilometre before it is sent, because a device location refines
+itself every few seconds and a list refetched on each refinement would move under a finger.
+
+The count says "79 mağaza" in Turkish and needs three forms in Russian, so it goes through
+the plural rules of each language rather than one word with a number in front of it.
+
+## R71: the bar over a list keeps to one line
+
+A long question pushed the search bar on the listing page to two lines, and the list down
+with it. Over a list the field is a caption for the results, not a place being written in,
+so at rest it keeps one line and the rest of the question scrolls sideways under a finger,
+with no scrollbar drawn. Touching it opens the panel, where it is read and edited as before.
+The page before a search is unchanged: there the field is empty and its two-line example is
+the point.
+
+## R69: the verb stands under the phrase it acts on
+
+"bul" was a small filled tag under "Mağazaları". Its fill is now exactly as wide as the
+phrase above it, the word sits in the middle at its own size, and the magnifier from the
+navigation stands in front of it with its lens filled, the way the navigation fills it on
+the page you are on. The width is not measured for this heading: a filled verb written
+straight after a marked phrase shares a column with it, so it follows from the sentence in
+whichever language writes it that way. Only Turkish does today. Measured unchanged: the
+line spacing R60 set, at phone and desktop sizes.
+
+## R82: the door beside the question, not beside the paragraph
+
+On the store page the mark in "Bu mağazaya gittin mi?" was centred on the whole note, which
+put it 20px below the question it belongs to, level with the sentence underneath. Its box
+is now one line of the question, so it is centred on that line at either size the question
+is set at; the size lives in one variable so the two cannot drift apart again.
+
 ## R66, the third time: it was the location panel
 
 Twice this was reported and twice the search panel was measured and found working -- open

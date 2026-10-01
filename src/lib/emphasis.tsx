@@ -10,7 +10,7 @@
 // This lives here rather than beside one page because a second page wanted the same
 // treatment, and the second copy of a rule is the one that drifts.
 import Link from 'next/link';
-import {Fragment} from 'react';
+import {Fragment,type ReactNode} from 'react';
 
 // Two marks, both written into the string for the same reason: which word carries the
 // emphasis, and which word is the one being offered, are facts about the sentence. Square
@@ -40,17 +40,34 @@ export function sentenceWithLink(text:string,href:string,className='inline-link'
   return <>{lines(before)}<Link href={href} className={className}>{found[1]}</Link>{lines(after)}</>;
 }
 
-export function emphasisedTitle(title:string,className='favorites-title-mark'){
-  const parts=[];
+// A filled verb written straight after the marked phrase stands under it as one object:
+// the two share a column, so the fill is exactly as wide as the phrase above it and the
+// verb sits in its middle (R69). That is a fact about the sentence -- the verb acts on
+// those words -- so it follows from the string, in whichever language writes it that way,
+// rather than from a width measured for one heading.
+//
+// `chipMark` is drawn before the verb inside its fill. The caller supplies it because what
+// a verb is drawn as depends on what it does on that page.
+export function emphasisedTitle(title:string,className='favorites-title-mark',chipMark?:ReactNode){
+  const parts:ReactNode[]=[];
   let last=0;
   let key=0;
+  let phrase:{node:ReactNode;end:number}|null=null;
+  const flush=()=>{if(phrase){parts.push(phrase.node);phrase=null;}};
   for(const found of title.matchAll(MARKED)){
     const at=found.index??0;
-    if(at>last)parts.push(<Fragment key={key++}>{lines(title.slice(last,at))}</Fragment>);
-    if(found[1]!==undefined)parts.push(<span key={key++} className={className}>{lines(found[1])}</span>);
-    else parts.push(<span key={key++} className="title-chip">{found[2]}</span>);
+    if(at>last){flush();parts.push(<Fragment key={key++}>{lines(title.slice(last,at))}</Fragment>);}
+    if(found[1]!==undefined){
+      flush();
+      phrase={node:<span key={key++} className={className}>{lines(found[1])}</span>,end:at+found[0].length};
+    }else{
+      const chip=<span key={key++} className="title-chip">{chipMark}<span>{found[2]}</span></span>;
+      if(phrase&&phrase.end===at){parts.push(<span key={key++} className="title-stack">{phrase.node}{chip}</span>);phrase=null;}
+      else parts.push(chip);
+    }
     last=at+found[0].length;
   }
+  flush();
   if(last<title.length)parts.push(<Fragment key={key++}>{lines(title.slice(last))}</Fragment>);
   return <>{parts}</>;
 }

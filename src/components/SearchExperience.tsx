@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { ArrowDownWideNarrow, ArrowLeft, ArrowRight, Check, CircleCheck, Crosshair, History, LocateFixed, MapPin, Search, Store, TriangleAlert, X } from 'lucide-react';
 import { FormEvent, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import type { Coordinates, Locale, LocationResult, Me, SearchHistory, SearchResponse, SearchResult } from '@/lib/types';
+import type { Coordinates, Locale, LocationResult, Me, SearchHistory, SearchResponse, SearchResult, StoreName } from '@/lib/types';
 import { SaveStoreButton } from './SaveStoreButton';
 import { ResultCriteria } from './ResultCriteria';
 import { AddStoreSheet } from './AddStoreSheet';
@@ -18,8 +18,9 @@ import { LOCATION_LOST_EVENT, deviceLocationAllowed, forgetDeviceLocation, watch
 import { seasonalPool } from '@/i18n/search-seasons';
 import { rememberOriginSearch } from '@/lib/search-origin';
 import { clearSearchSnapshot, readSearchSnapshot, writeSearchSnapshot } from '@/lib/search-session';
-import { categoryLabels, searchExamples } from '@/i18n/dictionaries';
+import { categoryLabels, searchExamples, storeCountWords } from '@/i18n/dictionaries';
 import { emphasisedTitle } from '@/lib/emphasis';
+import { NavSearch } from './NavIcons';
 import { RatingStars } from './Rating';
 import { SearchOverlay } from './SearchOverlay';
 import { LocationAlert } from './LocationAlert';
@@ -463,7 +464,18 @@ export function SearchExperience() {
 
   // The field grows with whatever ends up in it, including text put there by tapping
   // a suggestion rather than typing.
-  useEffect(()=>{growToFit(field.current);},[query]);
+  //
+  // Except above a list (R71). There the field is a caption for the results under it, not
+  // a place being written in, and a long question pushed the bar to two lines and the
+  // results down with it. At rest over a list it keeps one line and the rest of the
+  // question scrolls sideways under a finger; touching it opens the panel, where it wraps
+  // again because that is where it is read and edited. Measured before paint, so the bar
+  // never shows a frame at the height of the shape it is leaving.
+  const oneLine=Boolean(data)&&!panelShowing;
+  useBeforePaint(()=>{
+    growToFit(field.current);
+    if(oneLine&&field.current)field.current.scrollLeft=0;
+  },[query,oneLine]);
 
   // The panel covers the screen, but the page it opened from is still behind it and still
   // scrollable. On a phone, focusing a field inside a fixed element makes the browser
@@ -539,6 +551,38 @@ export function SearchExperience() {
     },350);
     return()=>{window.clearTimeout(timer);controller.abort();};
   },[sheetOpen,manual,locale,location]);
+
+  // R70: the names in the catalogue that what is being typed could be the start of, the way
+  // "antal" is answered with Antalya when a location is picked. Asked on each pause in
+  // typing, from the point being searched -- the answer only holds names with a shop the
+  // search can reach. The point is rounded to about a kilometre for the same reason: a
+  // device location refines itself every few seconds, and a list that refetched on each
+  // refinement would flicker under a finger about to tap it.
+  const [names,setNames]=useState<{asked:string;items:StoreName[]}>({asked:'',items:[]});
+  const typed=query.trim();
+  const nearLat=location?Math.round(location.coordinates.latitude*100)/100:undefined;
+  const nearLon=location?Math.round(location.coordinates.longitude*100)/100:undefined;
+  useEffect(()=>{
+    if(!suggestionsOpen||typed.length<2||nearLat===undefined||nearLon===undefined)return;
+    const controller=new AbortController();
+    const timer=window.setTimeout(async()=>{
+      try{const response=await apiFetch(`/api/proxy/stores/names?q=${encodeURIComponent(typed)}&latitude=${nearLat}&longitude=${nearLon}&limit=6`,{signal:controller.signal});if(!response.ok)throw new Error();const result=await response.json() as {items?:StoreName[]};setNames({asked:typed,items:result.items??[]});}
+      catch(err){if((err as Error).name!=='AbortError')setNames({asked:typed,items:[]});}
+    },200);
+    return()=>{window.clearTimeout(timer);controller.abort();};
+  },[suggestionsOpen,typed,nearLat,nearLon]);
+  // Shown while they still answer what is in the field: the list for "arçel" stays up while
+  // "arçeli" is on its way, and goes the moment the field says something it never asked.
+  const shownNames=typed.length>=2&&names.asked&&typed.toLocaleLowerCase(locale).startsWith(names.asked.toLocaleLowerCase(locale))?names.items:[];
+  const nameDetail=(name:StoreName)=>{
+    const distance=`${(name.nearest_meters/1000).toLocaleString(locale,{maximumFractionDigits:1})} km`;
+    if(name.brand_slug){
+      const words=storeCountWords[locale];
+      const word=words[new Intl.PluralRules(locale).select(name.stores) as keyof typeof words]??words.other;
+      return `${name.stores.toLocaleString(locale)} ${word} · ${t('nearestStore').replace('{distance}',distance)}`;
+    }
+    return [[name.district,name.city].filter(Boolean).join(', '),distance].filter(Boolean).join(' · ');
+  };
 
   // Taking the permission away has to mean something. Until now it did not: the browser
   // stopped answering, but we kept answering from a copy we had saved -- which from the
@@ -876,7 +920,7 @@ export function SearchExperience() {
   // answer "what shall I type" should not be holding half its answers back.
   const stripPhrases=Array.from(new Set([...strip.phrases,...seasonalPool(locale)]));
   const prompts=stripPhrases;
-  return <main className="search-page"><header className="search-hero"><div className="search-title"><h1>{emphasisedTitle(t('searchTitle'),'search-title-mark')}</h1><Image className="search-title-shop" src="/illustrations/store-front.webp" width={1396} height={985} alt="" aria-hidden="true" priority/></div>{locationRestored&&!location&&<p className="location-lead">{t('locationRequired')}</p>}{location&&!sheetOpen&&<div className={`location-control${location.source==='device'?' is-device':''}`}><span className="location-current-pair"><span className="location-current-mark" aria-hidden="true"><MapPin/></span><span className="location-current">{location.source==='device'?t('currentLocationActive'):location.label}</span></span>{/* One control, not two. The cross beside it cleared the location outright, which is a
+  return <main className="search-page"><header className="search-hero"><div className="search-title"><h1>{emphasisedTitle(t('searchTitle'),'search-title-mark',<NavSearch/>)}</h1><Image className="search-title-shop" src="/illustrations/store-front.webp" width={1396} height={985} alt="" aria-hidden="true" priority/></div>{locationRestored&&!location&&<p className="location-lead">{t('locationRequired')}</p>}{location&&!sheetOpen&&<div className={`location-control${location.source==='device'?' is-device':''}`}><span className="location-current-pair"><span className="location-current-mark" aria-hidden="true"><MapPin/></span><span className="location-current">{location.source==='device'?t('currentLocationActive'):location.label}</span></span>{/* One control, not two. The cross beside it cleared the location outright, which is a
           thing almost nobody wants and everybody could hit by accident -- and "Konumu
           değiştir" already opens the place to change it, including to somewhere else. */}
         <button className="location-change" onClick={()=>{openSheet();setOpenToType(true);}} disabled={loading}><Crosshair aria-hidden="true"/>{t('changeLocation')}</button></div>}{sheetShowing&&<section className={`location-sheet${sheetLeaving?' is-leaving':''}`} aria-label={t('chooseLocation')}>{location&&<div><p>{t('locationBenefit')}</p></div>}<div className="location-actions">{autoLocating&&<p className="location-working" aria-live="polite"><span className="location-pulse" aria-hidden="true"/>{t('locatingYou')}</p>}{/* One control, two states. It used to be swapped for a separate confirmation line,
@@ -893,7 +937,7 @@ export function SearchExperience() {
             that was reported: list, searching, list, searching. The previous answers stay
             on screen while the next ones are fetched, and the status line appears only when
             there is genuinely nothing to show yet. */}
-    {manual.trim().length>=2&&<div className="location-results" aria-live="polite">{lookingUp&&candidates.length===0?<p>{t('searchingLocations')}</p>:!lookingUp&&candidates.length===0?<p>{t('noLocations')}</p>:candidates.map(candidate=><button key={candidate.place_id} onClick={()=>void choose(candidate)} disabled={loading}><strong>{candidate.name}</strong><span>{candidate.address}</span><small>{candidate.attributions.join(' · ')}</small></button>)}</div>}</section>}{location&&<form className={`search-form${panelShowing?' is-query-open':''}${leaving?' is-query-leaving':''}`} onBlur={event=>{const panel=event.currentTarget;
+    {manual.trim().length>=2&&<div className="location-results" aria-live="polite">{lookingUp&&candidates.length===0?<p>{t('searchingLocations')}</p>:!lookingUp&&candidates.length===0?<p>{t('noLocations')}</p>:candidates.map(candidate=><button key={candidate.place_id} onClick={()=>void choose(candidate)} disabled={loading}><strong>{candidate.name}</strong><span>{candidate.address}</span><small>{candidate.attributions.join(' · ')}</small></button>)}</div>}</section>}{location&&<form className={`search-form${panelShowing?' is-query-open':''}${leaving?' is-query-leaving':''}${oneLine?' is-one-line':''}`} onBlur={event=>{const panel=event.currentTarget;
       // Asking where focus went is unreliable on a touch screen: the element being tapped
       // is often not named as the blur's destination, so the panel closed under the finger
       // on its way to the control inside it. Asking a tick later, where focus actually
@@ -920,7 +964,14 @@ export function SearchExperience() {
         lands here and then moves is a scroll, and a browser that takes a gesture over for
         scrolling cancels the pointer rather than releasing it -- so the panel no longer
         opens under a finger that was only passing through. A mouse focuses on the press, so
-        that route is the handler beside this one. */}<textarea ref={field} enterKeyHint="done" onPointerUp={openPanel} onFocus={openPanel} rows={1} value={query} onChange={event=>setQuery(event.target.value)} onKeyDown={event=>{if(event.key==='Escape')closePanel();if(event.key==='Enter'){event.preventDefault();if(window.matchMedia('(max-width: 720px)').matches){keepQueryPanelAfterBlur.current=true;event.currentTarget.blur();return;}void runSearch();}}} placeholder={placeholder} aria-label={t('searchHint')} disabled={loading}/>{query&&!loading&&<button type="button" className="search-clear" onClick={()=>{setQuery('');field.current?.focus();}} aria-label={t('clearSearch')}><X aria-hidden="true"/></button>}</div>{panelShowing&&<button type="submit" disabled={loading}>{loading?t('loading'):t('searchAction')}</button>}{panelShowing&&<div className="search-query-suggestions">{history.length>0&&<div className="search-query-recent">
+        that route is the handler beside this one. */}<textarea ref={field} enterKeyHint="done" onPointerUp={openPanel} onFocus={openPanel} rows={1} wrap={oneLine?'off':'soft'} value={query} onChange={event=>setQuery(event.target.value)} onKeyDown={event=>{if(event.key==='Escape')closePanel();if(event.key==='Enter'){event.preventDefault();if(window.matchMedia('(max-width: 720px)').matches){keepQueryPanelAfterBlur.current=true;event.currentTarget.blur();return;}void runSearch();}}} placeholder={placeholder} aria-label={t('searchHint')} disabled={loading}/>{query&&!loading&&<button type="button" className="search-clear" onClick={()=>{setQuery('');field.current?.focus();}} aria-label={t('clearSearch')}><X aria-hidden="true"/></button>}</div>{panelShowing&&<button type="submit" disabled={loading}>{loading?t('loading'):t('searchAction')}</button>}{panelShowing&&<div className="search-query-suggestions">{shownNames.length>0&&<div className="search-query-names">
+      <h2 className="search-query-suggestions-title">{t('storeNamesTitle')}</h2>
+      {/* Above everything else in the panel: a name being typed is the most specific thing
+          anybody can ask for, and these are the answers to it. Picking one searches for it,
+          as picking a past search does. */}
+      <ul className="search-query-name-list">{shownNames.map(name=><li key={`${name.brand_slug??''}:${name.name}`}>
+        <button type="button" onMouseDown={event=>event.preventDefault()} onClick={()=>{closePanel();fill(name.name);}}><Store aria-hidden="true"/><span><strong>{name.name}</strong><small>{nameDetail(name)}</small></span></button>
+      </li>)}</ul></div>}{history.length>0&&<div className="search-query-recent">
       <header><h2 className="search-query-suggestions-title">{t('showRecentSearches')}</h2><button type="button" onMouseDown={event=>event.preventDefault()} onClick={()=>void clearHistory()} disabled={historyBusy}>{t('clearSearches')}</button></header>
       {/* Three, because this is a shortcut and not a record: the whole history is a page of
           its own, and a list long enough to scan is a list that hides the suggestions under

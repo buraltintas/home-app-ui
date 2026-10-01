@@ -62,11 +62,20 @@ export const storeStatusCopy={
   de:'Google kennzeichnet dieses Geschäft als geschlossen. Prüfe Google Maps, bevor du losfährst.',
   ru:'Google отмечает этот магазин как закрытый. Проверьте Google Карты перед поездкой.',
 } as const;
+// How many shops a chain has within reach, in the plural forms each language actually has.
+// Keyed by Intl.PluralRules categories: Russian needs three ("1 магазин", "3 магазина",
+// "5 магазинов"), Turkish needs none, and "other" is the answer whenever a form is missing.
+export const storeCountWords:Record<Locale,Partial<Record<Intl.LDMLPluralRule,string>>&{other:string}>={
+  tr:{other:'mağaza'},
+  en:{one:'store',other:'stores'},
+  de:{one:'Geschäft',other:'Geschäfte'},
+  ru:{one:'магазин',few:'магазина',many:'магазинов',other:'магазина'},
+};
 const discoveryControls={
-  tr:{showRecentSearches:'Son aramalarım',currentLocationActive:'Mevcut konum kullanılıyor',changeLocation:'Konumu değiştir'},
-  en:{showRecentSearches:'My recent searches',currentLocationActive:'Using current location',changeLocation:'Change location'},
-  de:{showRecentSearches:'Meine letzten Suchen',currentLocationActive:'Aktueller Standort wird verwendet',changeLocation:'Standort ändern'},
-  ru:{showRecentSearches:'Мои недавние поиски',currentLocationActive:'Используется текущее местоположение',changeLocation:'Изменить местоположение'},
+  tr:{storeNamesTitle:'Mağazalar',nearestStore:'en yakını {distance}',showRecentSearches:'Son aramalarım',currentLocationActive:'Mevcut konum kullanılıyor',changeLocation:'Konumu değiştir'},
+  en:{storeNamesTitle:'Stores',nearestStore:'nearest {distance}',showRecentSearches:'My recent searches',currentLocationActive:'Using current location',changeLocation:'Change location'},
+  de:{storeNamesTitle:'Geschäfte',nearestStore:'nächstes {distance}',showRecentSearches:'Meine letzten Suchen',currentLocationActive:'Aktueller Standort wird verwendet',changeLocation:'Standort ändern'},
+  ru:{storeNamesTitle:'Магазины',nearestStore:'ближайший — {distance}',showRecentSearches:'Мои недавние поиски',currentLocationActive:'Используется текущее местоположение',changeLocation:'Изменить местоположение'},
 };
 export type TranslationKey=keyof typeof discoveryControls.en|keyof typeof dictionaries.en|keyof typeof favoriteActionCopy.en|keyof typeof feedStateCopy.en|keyof typeof hardeningCopy.en|keyof typeof googleAuthCopy.en|keyof typeof profileCopy.en|keyof typeof feedbackCopy.en|keyof typeof searchHighlightCopy.en|keyof typeof reviewPolicyCopy.en;
 export const getDictionary=(locale:Locale):Record<TranslationKey,string>=>Object.assign({},dictionaries[locale],favoriteActionCopy[locale],feedStateCopy[locale],hardeningCopy[locale],googleAuthCopy[locale],profileCopy[locale],feedbackCopy[locale],searchHighlightCopy[locale],reviewPolicyCopy[locale],discoveryControls[locale]) as Record<TranslationKey,string>;
