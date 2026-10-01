@@ -1,15 +1,15 @@
 'use client';
 
 import {useEffect,useMemo,useState} from 'react';
-import {MapPinPlus,MessageCircle,SquarePen} from 'lucide-react';
+import {MapPinPlus,MessageCircle,Quote,SquarePen} from 'lucide-react';
 import {apiFetch} from '@/lib/api-client';
 import type {FeedbackMessage,Locale} from '@/lib/types';
 
-const copy:Record<Locale,{answered:string;empty:string;emptyKind:string;error:string;pending:string;reply:string;feedback:string;correction:string;addition:string}>={
-  tr:{answered:'Yanıtlandı',empty:'Henüz bize gönderdiğin bir mesaj yok.',emptyKind:'Bu türde gönderdiğin bir mesaj yok.',error:'Mesajların yüklenemedi. Tekrar dener misin?',pending:'Yanıt bekliyor',reply:'Boşa Gezme! yanıtı',feedback:'Görüş ve öneri',correction:'Mağaza bilgisi düzenleme',addition:'Mağaza ekleme'},
-  en:{answered:'Answered',empty:'You have not sent us a message yet.',emptyKind:'You have not sent a message of this kind.',error:'Your messages could not be loaded. Please try again.',pending:'Awaiting a reply',reply:'Boşa Gezme! reply',feedback:'Thoughts and suggestions',correction:'Store information edit',addition:'Store addition'},
-  de:{answered:'Beantwortet',empty:'Du hast uns noch keine Nachricht gesendet.',emptyKind:'Du hast keine Nachricht dieser Art gesendet.',error:'Deine Nachrichten konnten nicht geladen werden.',pending:'Wartet auf Antwort',reply:'Antwort von Boşa Gezme!',feedback:'Meinung und Vorschlag',correction:'Geschäftsdaten bearbeiten',addition:'Geschäft hinzufügen'},
-  ru:{answered:'Получен ответ',empty:'Вы ещё не отправляли нам сообщений.',emptyKind:'Сообщений этого типа вы не отправляли.',error:'Не удалось загрузить сообщения.',pending:'Ожидает ответа',reply:'Ответ Boşa Gezme!',feedback:'Мнение и предложение',correction:'Изменение данных магазина',addition:'Добавление магазина'},
+const copy:Record<Locale,{answered:string;empty:string;emptyKind:string;error:string;pending:string;reply:string;yours:string;feedback:string;correction:string;addition:string}>={
+  tr:{answered:'Yanıtlandı',empty:'Henüz bize gönderdiğin bir mesaj yok.',emptyKind:'Bu türde gönderdiğin bir mesaj yok.',error:'Mesajların yüklenemedi. Tekrar dener misin?',pending:'Yanıt bekliyor',reply:'Boşa Gezme! yanıtı',yours:'Senin mesajın',feedback:'Görüş ve öneri',correction:'Mağaza bilgisi düzenleme',addition:'Mağaza ekleme'},
+  en:{answered:'Answered',empty:'You have not sent us a message yet.',emptyKind:'You have not sent a message of this kind.',error:'Your messages could not be loaded. Please try again.',pending:'Awaiting a reply',reply:'Boşa Gezme! reply',yours:'Your message',feedback:'Thoughts and suggestions',correction:'Store information edit',addition:'Store addition'},
+  de:{answered:'Beantwortet',empty:'Du hast uns noch keine Nachricht gesendet.',emptyKind:'Du hast keine Nachricht dieser Art gesendet.',error:'Deine Nachrichten konnten nicht geladen werden.',pending:'Wartet auf Antwort',reply:'Antwort von Boşa Gezme!',yours:'Deine Nachricht',feedback:'Meinung und Vorschlag',correction:'Geschäftsdaten bearbeiten',addition:'Geschäft hinzufügen'},
+  ru:{answered:'Получен ответ',empty:'Вы ещё не отправляли нам сообщений.',emptyKind:'Сообщений этого типа вы не отправляли.',error:'Не удалось загрузить сообщения.',pending:'Ожидает ответа',reply:'Ответ Boşa Gezme!',yours:'Ваше сообщение',feedback:'Мнение и предложение',correction:'Изменение данных магазина',addition:'Добавление магазина'},
 };
 
 type Kind='feedback'|'correction'|'addition';
@@ -88,7 +88,13 @@ export function ProfileMessages({locale}:{locale:Locale}){
               sent last night are a different thing to the person waiting on a reply. */}
           <time dateTime={item.created_at}>{date(item.created_at)}<small>{time(item.created_at)}</small></time>
         </header>
-        <p>{body}</p>
+        {/* R59: what somebody wrote in their own words, set apart as their words -- labelled,
+            and in the voice a reviewer's own note is set in -- so it does not read as one more
+            line of the card's furniture. The two forms send fields rather than prose, and
+            keep the plain paragraph. */}
+        {kind==='feedback'
+          ?<blockquote className="profile-message-quote"><p className="profile-message-said"><Quote aria-hidden="true"/>{text.yours}</p><p>{body}</p></blockquote>
+          :<p>{body}</p>}
         {item.reply?<div className="profile-message-reply"><strong>{text.reply}</strong><p>{item.reply}</p>{item.replied_at&&<time dateTime={item.replied_at}>{date(item.replied_at)}<small>{time(item.replied_at)}</small></time>}</div>:<small className="profile-message-status">{text.pending}</small>}
       </article>;})}</div>}
   </>;

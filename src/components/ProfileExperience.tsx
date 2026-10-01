@@ -49,7 +49,9 @@ const signOutNote:Record<Locale,string>={
 };
 
 const deleteBody:Record<Locale,string>={tr:'Yorumlarınız, arama geçmişiniz, profil bilgileriniz ve sosyal bağlantılarınız kaldırılır. Daha sonra aynı e-postayla giriş yapabilirsiniz ancak silinen veriler geri gelmez.',en:'Your reviews, search history, profile information, and social connections will be removed. You can sign in later with the same email, but deleted data cannot be restored.',de:'Deine Bewertungen, dein Suchverlauf, deine Profilangaben und deine sozialen Verbindungen werden entfernt. Du kannst dich später mit derselben E-Mail-Adresse anmelden, gelöschte Daten werden jedoch nicht wiederhergestellt.',ru:'Ваши отзывы, история поиска, данные профиля и социальные связи будут удалены. Позже вы сможете войти с тем же адресом электронной почты, но удалённые данные нельзя восстановить.'};
-const reviewCopy:Record<Locale,{title:string;hint:string}>={tr:{title:'Değerlendirmelerim',hint:'Daha önce paylaştığın mağaza deneyimleri'},en:{title:'My reviews',hint:'Store experiences you shared before'},de:{title:'Meine Bewertungen',hint:'Deine bisherigen Erfahrungen mit Geschäften'},ru:{title:'Мои отзывы',hint:'Ваши опубликованные впечатления о магазинах'}};
+// R57: one line. "Daha önce" said nothing the word "paylaştığın" does not already say, and it
+// was the half that pushed the line onto a second one.
+const reviewCopy:Record<Locale,{title:string;hint:string}>={tr:{title:'Değerlendirmelerim',hint:'Paylaştığın mağaza deneyimleri'},en:{title:'My reviews',hint:'Store experiences you shared'},de:{title:'Meine Bewertungen',hint:'Deine Erfahrungen mit Geschäften'},ru:{title:'Мои отзывы',hint:'Ваши впечатления о магазинах'}};
 // The set's medal, minus the numeral on its face. Every other stroke is the same one the
 // icon set draws; only the "1" is gone, because a badge for level three and a badge for
 // level four were both stamped with it.

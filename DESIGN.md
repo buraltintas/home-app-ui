@@ -43,6 +43,7 @@ makes every one of those photographs look wrong.
 | `--accent-ink` | `#8a5d05` | honey text on a light ground, where contrast demands it |
 | `--clay` | `#c2452d` | emphasis and live values: ratings, promoted, counts |
 | `--success` | `#2e6a4f` | verified visit |
+| `--success-wash` | `#e0fcd4` | the share card's ground: the green of the message bubble in the picture it carries |
 | `--error` | `#b3372b` | destructive and failed states |
 
 One accent, used in area rather than in line — a honey wash behind a whole section reads

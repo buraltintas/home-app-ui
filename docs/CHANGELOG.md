@@ -8,6 +8,29 @@ value involved.
 
 ---
 
+## Profile R57–R63: six small corrections
+
+- **R57** — the reviews card's second line is "Paylaştığın mağaza deneyimleri" and fits on one
+  line; "daha önce" said nothing "paylaştığın" does not.
+- **R58** — signed out, the profile's heading and the sentence under it are set exactly as the
+  favourites page sets its own signed-out invitation, from the same rules rather than copied
+  numbers: 48px and 18px on a desktop, 25.9px and 18px on a 375px phone, measured on both
+  pages. The avatar takes the colours of the star in the card below it (clay on the pale clay
+  wash) and is drawn over the card's top edge, whole -- the card used to cut the bottom off
+  the circle.
+- **R59** — in the messages, the date keeps to one line and the long label beside it wraps
+  instead; the chosen filter loses the tail under it, which on a stack of three pointed at
+  the button below rather than at the list; and what somebody wrote in "Görüş ve öneri" is set
+  apart as their own words, labelled "Senin mesajın" with a quote mark, in the voice the
+  product already uses for a reviewer's own note (the system serif behind a clay rule). The
+  rule is shared with that note rather than copied.
+- **R61** — your own reviews show the hour under the date, the way your messages do, from
+  the same rule.
+- **R62** — the account page has a rule between signing out and deleting, with the edit
+  page's spacing: 28px above the line and 25px below, measured on both pages.
+- **R63** — the share card sits on the green of the message bubble in the phone beside it.
+  That green is a token now, `--success-wash`, recorded in DESIGN.md.
+
 ## R70: shop names offered while they are being typed
 
 The search panel now answers a name before it is finished, the way the location field

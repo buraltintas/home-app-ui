@@ -138,6 +138,10 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
   // A date without its year answers "which day" and not "which year", and a review list
   // that goes back further than twelve months needs both.
   const written=new Intl.DateTimeFormat(locale,{day:'numeric',month:'short',year:'numeric'}).format(new Date(post.created_at));
+  // R61: on your own list the hour as well, under the day -- the way your messages show it.
+  // Only there: that list is drawn in the browser, so the hour is the reader's own clock,
+  // and a server rendering it would print the server's.
+  const writtenAt=owned?new Intl.DateTimeFormat(locale,{timeStyle:'short'}).format(new Date(post.created_at)):'';
   const likes=post.like_count+(showLiked&&!post.viewer_has_liked?1:!showLiked&&post.viewer_has_liked?-1:0);
 
   return <article className={`post-card${owned?' is-owned':''}${hasPhoto?'':' is-photo-free'}`}>
@@ -175,7 +179,7 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
           the date -- the thing a reader checks first on a review -- on a line of its own
           below. What the review is worth is a stack of claims; when it was written is not
           one of them, it is a label on the whole thing. */}
-      <div className="post-meta"><RatingStars value={post.rating}/><span className="post-written">{written}</span></div>
+      <div className="post-meta"><RatingStars value={post.rating}/><time className="post-written" dateTime={post.created_at}>{written}{writtenAt&&<small>{writtenAt}</small>}</time></div>
       {/* Only the author is ever sent a review that is not published, so this only ever
           appears on their own list: where it stands, in one word, beside when it was written. */}
       {owned&&post.moderation&&post.moderation!=='published'&&<span className="post-moderation" data-state={post.moderation}>{t(post.moderation==='held'?'moderationHeld':'moderationRemoved')}</span>}

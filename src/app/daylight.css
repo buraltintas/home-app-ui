@@ -27,7 +27,7 @@ svg{stroke-width:2}
 .feed-intro{padding:8px 0 40px;display:grid;grid-template-columns:minmax(0,820px);align-items:end;animation:ink-in .62s cubic-bezier(.16,1,.3,1) backwards}
 .feed-intro h1{font-size:clamp(38px,5.4vw,60px);font-weight:740;line-height:1;letter-spacing:-.04em;margin:0;max-width:760px;text-wrap:balance}
 .search-hero h1,.empty-page h1{font-size:clamp(42px,6.1vw,84px);font-weight:740;line-height:.98;letter-spacing:-.04em;margin:0;max-width:920px;text-wrap:balance}
-.favorites-page h1,.favorites-empty h1{max-width:760px;margin:8px 0 0;font-size:clamp(30px,4vw,48px);font-weight:650;line-height:1.08;letter-spacing:-.035em;text-wrap:balance}
+.favorites-page h1,.favorites-empty h1,.profile-page-out h1{max-width:760px;margin:8px 0 0;font-size:clamp(30px,4vw,48px);font-weight:650;line-height:1.08;letter-spacing:-.035em;text-wrap:balance}
 /* The drawing a reader gets instead of the list they cannot see: a saved list behind a
    padlock. It replaces a 40px outline heart, which said "favourites" but not "you are not
    signed in" -- and not being signed in is the whole reason the page is empty. Sized to the
@@ -45,7 +45,7 @@ svg{stroke-width:2}
    the type follows the viewport down, so the longest line lands inside the gutter on a 320px
    phone as well as a 430px one. The title then falls in two lines, and text-wrap:balance puts
    the break where the sentence already wanted it. */
-.favorites-empty h1{font-size:clamp(24px,6.9vw,48px)}
+.favorites-empty h1,.profile-page-out h1{font-size:clamp(24px,6.9vw,48px)}
 /* The phrase the title is actually about. The rest of the sentence is scaffolding around
    it, and this is the part somebody reads if they read three words. */
 /* The marked phrase takes its own line. Balancing the heading put the break between "yapmak"
@@ -354,6 +354,11 @@ svg{stroke-width:2}
    owner's call, and the right one: what is dangerous here is the button, and the button
    already says so in its own colour. */
 .danger-zone{padding:0;border:0;border-radius:0}
+/* R62: a rule between signing out and deleting, with the space the edit page leaves between
+   saving the profile and changing the address -- the same two values as .profile-email, so
+   the two settings pages divide themselves one way. */
+.profile-section-content>.danger-zone{margin-top:28px;padding-top:24px;border-top:1px solid var(--line)}
+.profile-section-content>.danger-zone>h3{margin-top:0}
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 /* A focus ring answers "where is the keyboard". On a touch screen there is no keyboard
    to locate, and the ring lands on whatever was last tapped and stays there, which reads
@@ -632,7 +637,14 @@ svg{stroke-width:2}
    above it. A different face says so without a word of chrome -- the system's own serif,
    which costs nothing to load -- with the clay rule the product already uses to mark
    quoted things. */
-.criterion-detail p{margin:6px 0 2px;padding-left:10px;border-left:2px solid color-mix(in srgb,var(--clay) 45%,transparent);font-family:var(--font-quote);font-size:14px;font-style:italic;line-height:1.5;color:var(--ink);overflow-wrap:anywhere}
+.criterion-detail p{margin:6px 0 2px;padding-left:10px;font-size:14px;line-height:1.5;overflow-wrap:anywhere}
+/* Somebody's own words, wherever this product quotes them: a reviewer's note under a low
+   score, and what a reader wrote to us in their messages (R59). */
+.criterion-detail p,.profile-message-quote{border-left:2px solid color-mix(in srgb,var(--clay) 45%,transparent);font-family:var(--font-quote);font-style:italic;color:var(--ink)}
+.profile-message-quote{margin:12px 0 14px;padding:2px 0 2px 12px}
+.profile-message-quote>p{margin:0;font-size:16px;line-height:1.5;white-space:pre-wrap}
+.profile-message-quote>.profile-message-said{display:flex;align-items:center;gap:6px;margin:0 0 4px;font-family:var(--font-sans),system-ui,sans-serif;font-style:normal;font-size:12px;font-weight:700;line-height:1.3;color:var(--ink-muted)}
+.profile-message-said svg{width:14px;height:14px;flex:none;color:var(--clay)}
 /* What the review claims, stacked under the score rather than beside the date. */
 /* Mark, then name and place: the listing's arrangement, so a shop looks the same wherever
    this product shows it. */
@@ -712,7 +724,9 @@ svg{stroke-width:2}
    reporting something -- and green is what this product already uses for a contribution that
    counted. The card sits on its own tint so it reads as an invitation next to four white
    cards that are just doors. */
-.profile-invite{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) 176px;gap:14px 24px;align-items:center;margin:28px 0 24px;padding:26px 24px;border:1px solid color-mix(in srgb,var(--success) 22%,var(--line));border-radius:var(--r-lg);background:color-mix(in srgb,var(--success) 7%,var(--surface))}
+/* R63: the ground is the green of the message bubble in the phone beside it, so the card and
+   the picture read as one scene rather than a picture pasted onto a panel. */
+.profile-invite{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) 176px;gap:14px 24px;align-items:center;margin:28px 0 24px;padding:26px 24px;border:1px solid color-mix(in srgb,var(--success) 22%,var(--line));border-radius:var(--r-lg);background:var(--success-wash)}
 .profile-invite-copy{grid-column:1;min-width:0}
 /* The mark sits on the heading's line and at its size, so the two read as one phrase. */
 /* R44: the mark sits beside the heading rather than inside its text, so it cannot push a
@@ -745,12 +759,19 @@ svg{stroke-width:2}
 .profile-out-copy{grid-column:1;grid-row:1}
 .profile-out-art{grid-column:2;grid-row:1}
 .profile-out-copy{min-width:0}
-.profile-page-out h1{margin:10px 0 12px;font-size:clamp(25px,2.9vw,34px);font-weight:650;line-height:1.16;letter-spacing:-.03em;text-wrap:balance}
-.profile-out-lead{margin:0 0 26px;color:var(--ink-muted);font-size:17px;line-height:1.5;max-width:42ch;white-space:pre-line}
+/* R58: set as the favourites page sets its own signed-out invitation -- the same heading
+   and the same sentence under it, from the same rules -- because the two pages are the same
+   moment: something is behind a sign-in, and this is what it is. Only the spacing is this
+   page's own. */
+.profile-page-out h1{margin:10px 0 12px}
+.profile-out-lead{margin:0 0 26px;color:var(--ink-muted);font-size:18px;line-height:1.55;max-width:42ch;white-space:pre-line}
 .profile-out-action.button.primary{background:var(--clay);color:var(--surface)}
 .profile-out-action.button.primary:hover{background:color-mix(in srgb,var(--clay) 86%,var(--ink))}
 .profile-out-art{position:relative;display:grid;justify-items:end}
-.profile-out-avatar{display:grid;place-items:center;width:104px;height:104px;margin-right:18px;border-radius:var(--r-pill);background:var(--clay);color:var(--surface)}
+/* R58: the pink of the star beside "Değerlendirmelerim" in the card below, and the clay of
+   the star itself -- one of the card's own marks rather than a fourth colour. It sits over
+   the card's top edge, whole: drawn under it, the card cut the bottom off the circle. */
+.profile-out-avatar{position:relative;z-index:1;display:grid;place-items:center;width:104px;height:104px;margin-right:18px;border-radius:var(--r-pill)}
 .profile-out-avatar svg{width:52px;height:52px}
 .profile-out-peek{list-style:none;margin:-26px 0 0;padding:14px 16px;width:100%;border-radius:var(--r-lg);background:var(--surface);box-shadow:var(--lift);display:grid;gap:2px}
 .profile-out-peek li{display:flex;align-items:center;gap:12px;padding:10px 2px;font-size:15px;font-weight:650;color:var(--ink)}
@@ -758,7 +779,7 @@ svg{stroke-width:2}
 .profile-out-peek span{display:grid;place-items:center;width:32px;height:32px;border-radius:var(--r-sm);flex:none}
 .profile-out-peek span svg{width:18px;height:18px}
 .profile-out-peek .is-gold{background:var(--accent-wash);color:var(--accent-ink)}
-.profile-out-peek .is-clay{background:color-mix(in srgb,var(--clay) 12%,var(--surface));color:var(--clay)}
+.profile-out-peek .is-clay,.profile-out-avatar{background:color-mix(in srgb,var(--clay) 12%,var(--surface));color:var(--clay)}
 .profile-out-peek .is-plain{background:var(--muted);color:var(--ink)}
 @media(max-width:700px){
   /* R48-4: the drawing stays beside the invitation at this width too, at the top right,
@@ -783,12 +804,10 @@ svg{stroke-width:2}
   .profile-out-peek li{gap:7px;padding:7px 0;font-size:11px;font-weight:600;line-height:1.2;min-width:0;overflow-wrap:anywhere}
   .profile-out-peek span{width:22px;height:22px}
   .profile-out-peek span svg{width:13px;height:13px}
-  .profile-page-out h1{font-size:clamp(20px,5.4vw,26px)}
-  .profile-out-lead{font-size:15px;margin-bottom:20px;max-width:none}
+  .profile-out-lead{margin-bottom:20px;max-width:none}
   /* The float has to be cleared or the button lands beside the card. */
   .profile-out-action{clear:right}
 }
-.account-signout{margin-bottom:28px}
 /* Both of this page's buttons are the width of the words in them, like every other button
    in the product. The section stretches whatever it holds to its own width, which is right
    for a list and wrong for a control: a full-width "Çıkış yap" reads as the page's purpose. */
@@ -1107,8 +1126,10 @@ svg{stroke-width:2}
    sentences, and three sentences in a row on a phone become three columns of one word. */
 .profile-message-filters{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin:0 0 18px}
 .profile-message-filters>button{min-width:0}
-/* Pointing down the page at the list, which is where these three open their answer. */
-.profile-message-filters>button.is-showing::after{left:32px}
+/* R59: no tail under the chosen one. On the favourites page the two buttons sit side by
+   side and the tail says which half of the page below is answering; stacked three deep,
+   it pointed at the button underneath rather than at the list. */
+.profile-message-filters>button.is-showing::after{content:none}
 
 /* Each card says what kind of message it is, with the same mark the filter above carries.
    It is a label rather than a heading now, so it wears the header's own small-caps and
@@ -1120,8 +1141,11 @@ svg{stroke-width:2}
 .profile-message-kind svg{width:16px;height:16px;flex:none}
 /* The day, and under it the hour. A message sent this morning and one sent last night are
    a different thing to somebody waiting on an answer, and the date alone cannot say which. */
-.profile-message header time,.profile-message-reply time{display:grid;justify-items:end;gap:1px;line-height:1.25;text-align:right}
-.profile-message header time small,.profile-message-reply time small{font-size:12px;color:var(--ink-muted)}
+.profile-message header time,.profile-message-reply time,.profile-review-list .post-card.is-owned .post-written{display:grid;justify-items:end;gap:1px;line-height:1.25;text-align:right}
+/* R59: the day on one line. The label beside it is the long one, so it is the label that
+   wraps; the date was giving way instead and putting its year on a line of its own. */
+.profile-message header time{flex:none;white-space:nowrap}
+.profile-message header time small,.profile-message-reply time small,.profile-review-list .post-card.is-owned .post-written small{font-size:12px;color:var(--ink-muted)}
 /* R45: one line. It names what the row is; a second line makes it read as prose and
    makes the four rows different heights. Shrinks with the screen rather than wrapping. */
 /* The line under each title wraps rather than being cut off with an ellipsis. It was

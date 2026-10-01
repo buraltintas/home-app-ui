@@ -7,7 +7,7 @@
   --ink:#16140f;--ink-muted:#6b6559;
   --line:#e4e0d7;--line-strong:#cdc7b9;
   --accent:#eda92b;--accent-wash:#fdf1d7;--accent-ink:#8a5d05;
-  --clay:#c2452d;--success:#2e6a4f;--warning:#8a5d05;--error:#b3372b;
+  --clay:#c2452d;--success:#2e6a4f;--success-wash:#e0fcd4;--warning:#8a5d05;--error:#b3372b;
   --r-sm:8px;--r-md:12px;--r-lg:20px;--r-pill:999px;
   --lift:0 8px 24px rgba(22,20,15,.08);
   --font-serif:var(--font-sans);--font-quote:ui-serif,Georgia,'Times New Roman',serif;--cobalt:var(--ink);--sun:var(--accent-wash);--forest:var(--success);--accent-strong:var(--clay)
