@@ -974,7 +974,10 @@ export function SearchExperience() {
         // The way out is the arrow, the search button, or Escape.
         if(window.matchMedia('(max-width: 720px)').matches)return;
         if(!panel.contains(document.activeElement))closePanel();
-      },0);}} onSubmit={event=>{closePanel();submit(event);}} aria-busy={loading}>{!panelShowing&&<Search aria-hidden="true"/>}<div className="search-field">{/* The way out sits inside the field, where the magnifier sits on the page this
+      },0);}} onSubmit={event=>{closePanel();submit(event);}} aria-busy={loading}>{/* Always drawn, and hidden by the phone's panel rule alone. Dropped from the markup while
+        the panel was open, it took the form's first column with it on a desktop -- where the
+        panel is a dropdown under the same bar -- and the field fell into the narrow column
+        while "Ara" stretched across the wide one. */}<Search aria-hidden="true"/><div className="search-field">{/* The way out sits inside the field, where the magnifier sits on the page this
         panel opens from: one control in one place, doing the opposite job. A separate
         corner button was a second way out of a screen that only needs one. */}
       {panelShowing&&<button type="button" className="search-query-back" onClick={closePanel} aria-label={t('back')}><ArrowLeft aria-hidden="true"/></button>}{/* Opened when the finger lifts, not when it lands, and still before the focus that

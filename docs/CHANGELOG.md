@@ -8,6 +8,18 @@ value involved.
 
 ---
 
+## The search bar on a desktop stops collapsing when it is clicked
+
+Clicking the search field on a desktop squeezed the field into a narrow column -- the example
+wrapped onto three lines -- and stretched "Ara" across the rest of the bar. The magnifier was
+being removed from the markup while the panel was open, which is right on a phone, where the
+panel is full-screen and draws its own back arrow in that place; but the form is a three-column
+grid, and on a desktop, where the panel is a dropdown under the same bar, taking the first
+child away moved the field into the narrow column and the button into the wide one. It had
+been like this since 29 September, and every check made since was made at phone width or
+with the panel closed. The magnifier is always in the markup now and the phone's panel rule
+alone hides it: measured at 1440px with the panel open, field 1162px, button 120px.
+
 ## Profile R63–R66: a shorter share card, the favourites' invitation, corrections read apart, and Help
 
 - **R63** — the share card is a fifth shorter: the picture no longer sets its height, the
