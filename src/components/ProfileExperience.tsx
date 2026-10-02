@@ -1,8 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import {useEffect,useState} from 'react';
-import {ArrowDownWideNarrow,ClipboardCheck,Gift,MessageCircle,PenLine,ShieldCheck,Star,UserRound} from 'lucide-react';
+import {type ReactNode,useEffect,useState} from 'react';
+import {ArrowDownWideNarrow,CircleHelp,ClipboardCheck,Gift,MessageCircle,PenLine,ShieldCheck,Star,UserRound} from 'lucide-react';
 import {AuthDialog} from '@/components/AuthDialog';
 import {SignOutButton} from '@/components/SignOutButton';
 import Link from 'next/link';
@@ -55,6 +55,14 @@ const reviewCopy:Record<Locale,{title:string;hint:string}>={tr:{title:'Değerlen
 // The set's medal, minus the numeral on its face. Every other stroke is the same one the
 // icon set draws; only the "1" is gone, because a badge for level three and a badge for
 // level four were both stamped with it.
+// R66: the fifth card, and the page it opens. The card says what it is for; the page says
+// what is on it.
+const helpCopy:Record<Locale,{card:string;hint:string;title:string}>={
+  tr:{card:'Yardım',hint:'Çok sorulan soruların cevapları',title:'Çok sorulanlar'},
+  en:{card:'Help',hint:'Answers to common questions',title:'Frequently asked'},
+  de:{card:'Hilfe',hint:'Antworten auf häufige Fragen',title:'Häufig gefragt'},
+  ru:{card:'Помощь',hint:'Ответы на частые вопросы',title:'Частые вопросы'},
+};
 const messageCopy:Record<Locale,{title:string;hint:string}>={tr:{title:'Mesajlarım',hint:'Bize gönderdiklerin ve yanıtlarımız'},en:{title:'My messages',hint:'What you sent us and our replies'},de:{title:'Meine Nachrichten',hint:'Deine Nachrichten und unsere Antworten'},ru:{title:'Мои сообщения',hint:'Ваши сообщения и наши ответы'}};
 const levelNote:Record<Locale,string>={tr:'Doğrulanmış her değerlendirme katkı seviyeni yükseltir.',en:'Every verified review raises your contributor level.',de:'Jede bestätigte Bewertung erhöht deine Beitragsstufe.',ru:'Каждый подтверждённый отзыв повышает ваш уровень участника.'};
 const profileEditorHint:Record<Locale,string>={tr:'Görünen adın ve profil bilgilerin',en:'Your display name and profile details',de:'Dein Anzeigename und deine Profilangaben',ru:'Ваше отображаемое имя и данные профиля'};
@@ -91,7 +99,7 @@ const reviewSummaryCopy:Record<Locale,{total:string;sort:string;sortValue:string
   ru:{total:'Всего отзывов',sort:'Сортировка',sortValue:'Дата отзыва'},
 };
 
-export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages'|'account'}){
+export function ProfileExperience({section,help}:{section?:'edit'|'reviews'|'messages'|'account'|'help';help?:ReactNode}){
   const {t,locale}=useI18n();const copy=accountCopy[locale];const [open,setOpen]=useState(false);const [signedIn,setSignedIn]=useState(false);const [checking,setChecking]=useState(true);const [deleting,setDeleting]=useState(false);const [me,setMe]=useState<Me|null>(null);
   useEffect(()=>{
     let active=true;let requestSequence=0;
@@ -105,18 +113,15 @@ export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages
   useScrollTopWhenReady(!checking);
   if(checking)return <AccountPageSkeleton className="profile-page" eyebrow="" title={t('profileTitle')}/>;
 
-  // Signed out, this page has one thing to say and one thing to offer. It said them as a
-  // heading, a sentence and a small button on an otherwise empty screen; the drawing beside
-  // it shows what is behind the door -- the three places this page leads to -- so the
-  // invitation is about what you get rather than about what you have not done.
-  if(!signedIn||!me)return <main className="profile-page profile-page-out">
-    {/* What is behind the sign-in, drawn rather than described: the same three destinations
-        the page shows once you are in, with the marks they carry there.
-
-        Before the words in the source, not after: on a phone this is floated to the right
-        and a float only holds text that follows it. The order costs nothing to a screen
-        reader, which is told to skip the whole block. Desktop places both explicitly, so
-        the words still start on the left there. */}
+  // Signed out, this page has one thing to say and one thing to offer, and it says them the
+  // way the favourites page says its own (R64): the same centred column, in the same order --
+  // the drawing, the clay word, the heading, the sentence, the button -- from the same rules.
+  // The two pages are the same moment: something is behind a sign-in, and this is what.
+  //
+  // The drawing is this page's own: the three places it leads to once you are in, with the
+  // marks they carry there, so the invitation is about what you get rather than about what
+  // you have not done.
+  if(!signedIn||!me)return <main className="empty-page profile-page-out">
     <div className="profile-out-art" aria-hidden="true">
       <span className="profile-out-avatar"><UserRound/></span>
       <ul className="profile-out-peek">
@@ -125,12 +130,10 @@ export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages
         <li><span className="is-plain"><ShieldCheck/></span>{t('accountSection')}</li>
       </ul>
     </div>
-    <div className="profile-out-copy">
-      <p className="eyebrow">{t('profile')}</p>
-      <h1>{copy.body}</h1>
-      <p className="profile-out-lead">{signedOutLead[locale]}</p>
-      <button type="button" className="button primary profile-out-action" onClick={()=>setOpen(true)}>{t('signIn')}</button>
-    </div>
+    <p className="eyebrow">{t('profile')}</p>
+    <h1>{copy.body}</h1>
+    <p className="profile-out-lead">{signedOutLead[locale]}</p>
+    <button type="button" className="button primary" onClick={()=>setOpen(true)}>{t('signIn')}</button>
     <AuthDialog open={open} onClose={()=>setOpen(false)}/>
   </main>;
 
@@ -149,6 +152,9 @@ export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages
     ['reviews',reviewCopy[locale].title,reviewCopy[locale].hint,Star,'clay'],
     ['messages',messageCopy[locale].title,messageCopy[locale].hint,MessageCircle,'green'],
     ['account',t('accountSection'),t('accountHint'),ShieldCheck,'plain'],
+    // The neutral again: help is a drawer of answers, like the account is a drawer of
+    // settings, and the four colours are the product's whole palette for these marks.
+    ['help',helpCopy[locale].card,helpCopy[locale].hint,CircleHelp,'plain'],
   ] as const;
 
   // A sub-page has no title of its own above the back arrow, so the page's opening margin
@@ -194,7 +200,7 @@ export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages
       </Link>)}
     </nav>:<section className="profile-section-content">
       <PageBackButton/>
-      <h2>{section==='edit'?t('editProfile'):section==='reviews'?reviewCopy[locale].title:section==='messages'?messageCopy[locale].title:t('accountSection')}</h2>
+      <h2>{section==='edit'?t('editProfile'):section==='reviews'?reviewCopy[locale].title:section==='messages'?messageCopy[locale].title:section==='help'?helpCopy[locale].title:t('accountSection')}</h2>
       {/* The search page's own tiles, class for class: the green one counts what is on the
           screen, the amber one names the order. Newest first is what this list has always
           been; it simply never said so. */}
@@ -205,6 +211,7 @@ export function ProfileExperience({section}:{section?:'edit'|'reviews'|'messages
       {section==='edit'&&<ProfileEditor me={me} onSaved={setMe}/>}
       {section==='reviews'&&<MyReviews userId={me.id} locale={locale}/>}
       {section==='messages'&&<ProfileMessages locale={locale}/>}
+      {section==='help'&&help}
       {/* Both notes are plain page text rather than boxed warnings. A red frame around the
           sentence that explains what deleting removes made the explanation read as the alarm;
           the frame belongs to the act, and the sentence belongs to the reader. */}

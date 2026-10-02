@@ -252,14 +252,32 @@ export function SearchExperience() {
       // the two have come apart, and nothing else on the page reports it.
       root.style.setProperty('--panel-top',`${Math.round(viewport?viewport.offsetTop:0)}px`);
     };
+    // R74: and measured until the keyboard has finished arriving. The events above are the
+    // browser's account of a movement it is still making: the last resize can land before
+    // the keyboard has settled, and a page the keyboard pushes up moves the layout viewport
+    // without the visual one saying so. Whatever the panel was last told, it kept, and a
+    // strip of the page showed above the keyboard -- some of the time, depending on where
+    // the page was scrolled to when the panel opened. So for a second after anything that
+    // starts a keyboard -- the panel opening, a field taking focus, the viewport resizing --
+    // the panel re-reads both numbers every frame and stops when the movement does.
+    let frame=0;
+    let until=0;
+    const follow=()=>{measure();if(performance.now()<until)frame=window.requestAnimationFrame(follow);};
+    const settle=()=>{until=performance.now()+1000;window.cancelAnimationFrame(frame);frame=window.requestAnimationFrame(follow);};
     measure();
-    viewport?.addEventListener('resize',measure);
+    settle();
+    viewport?.addEventListener('resize',settle);
     viewport?.addEventListener('scroll',measure);
-    window.addEventListener('orientationchange',measure);
+    window.addEventListener('scroll',measure,{passive:true});
+    document.addEventListener('focusin',settle);
+    window.addEventListener('orientationchange',settle);
     return()=>{
-      viewport?.removeEventListener('resize',measure);
+      window.cancelAnimationFrame(frame);
+      viewport?.removeEventListener('resize',settle);
       viewport?.removeEventListener('scroll',measure);
-      window.removeEventListener('orientationchange',measure);
+      window.removeEventListener('scroll',measure);
+      document.removeEventListener('focusin',settle);
+      window.removeEventListener('orientationchange',settle);
       root.style.removeProperty('--panel-height');
       root.style.removeProperty('--panel-top');
       root.removeAttribute('data-search-panel');
@@ -574,6 +592,11 @@ export function SearchExperience() {
   // Shown while they still answer what is in the field: the list for "arçel" stays up while
   // "arçeli" is on its way, and goes the moment the field says something it never asked.
   const shownNames=typed.length>=2&&names.asked&&typed.toLocaleLowerCase(locale).startsWith(names.asked.toLocaleLowerCase(locale))?names.items:[];
+  // R73: the chain's own mark where we hold one -- the same file the result list shows for its
+  // shops, found the same way -- and the shop front where we do not. A single shop is matched
+  // on its whole name only: without knowing what it sells, a first word in common is not
+  // evidence that it is anybody's branch.
+  const nameMark=(name:StoreName)=>name.brand_slug?storePhotoURL({source:'brand',brand_slug:name.brand_slug},120,name.name):brandMarkForName(name.name);
   const nameDetail=(name:StoreName)=>{
     const distance=`${(name.nearest_meters/1000).toLocaleString(locale,{maximumFractionDigits:1})} km`;
     if(name.brand_slug){
@@ -970,7 +993,7 @@ export function SearchExperience() {
           anybody can ask for, and these are the answers to it. Picking one searches for it,
           as picking a past search does. */}
       <ul className="search-query-name-list">{shownNames.map(name=><li key={`${name.brand_slug??''}:${name.name}`}>
-        <button type="button" onMouseDown={event=>event.preventDefault()} onClick={()=>{closePanel();fill(name.name);}}><Store aria-hidden="true"/><span><strong>{name.name}</strong><small>{nameDetail(name)}</small></span></button>
+        <button type="button" onMouseDown={event=>event.preventDefault()} onClick={()=>{closePanel();fill(name.name);}}><span className="search-query-name-mark" aria-hidden="true">{nameMark(name)?<Image src={nameMark(name) as string} width={72} height={72} alt="" unoptimized/>:<Store/>}</span><span><strong>{name.name}</strong><small>{nameDetail(name)}</small></span></button>
       </li>)}</ul></div>}{history.length>0&&<div className="search-query-recent">
       <header><h2 className="search-query-suggestions-title">{t('showRecentSearches')}</h2><button type="button" onMouseDown={event=>event.preventDefault()} onClick={()=>void clearHistory()} disabled={historyBusy}>{t('clearSearches')}</button></header>
       {/* Three, because this is a shortcut and not a record: the whole history is a page of

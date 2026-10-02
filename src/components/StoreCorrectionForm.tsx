@@ -18,6 +18,13 @@ const copy:Record<Locale,{topic:string;categories:[string,string,string,string];
 // was sent, and a sheet on the store itself -- and an explanation that lives in one of them
 // is an explanation the other has to copy.
 
+// The lines this form writes at the top of the message it sends, in each language it can be
+// sent in. Exported because the sender reads the message back in their own list, and that
+// list has to take it apart along the same seams this form put it together -- a second copy
+// of these words over there would drift from the ones written here.
+const wordingOf=(text:(typeof copy)[Locale])=>({prefix:text.prefix,store:text.store,field:text.field,categories:text.categories as readonly string[]});
+export const correctionWording:Record<Locale,ReturnType<typeof wordingOf>>={tr:wordingOf(copy.tr),en:wordingOf(copy.en),de:wordingOf(copy.de),ru:wordingOf(copy.ru)};
+
 export function StoreCorrectionForm({locale,storeName}:{locale:Locale;storeId:string;storeName:string}){
   const t=copy[locale];
   // What is wrong with an address is worded once for the whole product, so this reads it

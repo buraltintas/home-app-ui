@@ -3,6 +3,7 @@
 import {useEffect,useMemo,useState} from 'react';
 import {MapPinPlus,MessageCircle,Quote,SquarePen} from 'lucide-react';
 import {apiFetch} from '@/lib/api-client';
+import {correctionWording} from '@/components/StoreCorrectionForm';
 import type {FeedbackMessage,Locale} from '@/lib/types';
 
 const copy:Record<Locale,{answered:string;empty:string;emptyKind:string;error:string;pending:string;reply:string;yours:string;feedback:string;correction:string;addition:string}>={
@@ -17,21 +18,45 @@ type Kind='feedback'|'correction'|'addition';
 // What a message is, worked out from the line the form that sent it wrote at the top.
 //
 // The forms are ours and each writes a fixed first line, so this reads our own vocabulary
-// rather than guessing at prose: the correction form writes its own prefix in the reader's
-// language -- all four are listed -- and the add-a-store sheet writes one line beginning
-// "Mağaza önerisi". Anything with no such line came from the open box in the footer.
+// rather than guessing at prose: the correction form writes its own prefix in the sender's
+// language -- read from the form itself, all four -- and the add-a-store sheet writes one
+// line beginning "Mağaza önerisi". Anything with no such line came from the open box in the
+// footer.
 //
 // It is done here and not by a field on the message because there is no such field yet.
 // The one the API carries, `kind`, is the topic somebody picked (suggestion, problem), and
 // two different forms send the same value. If a source field is ever added, this function
 // is the only thing that changes.
-const CORRECTION_PREFIXES=['Mağaza bilgisi düzeltme önerisi','Store information correction','Korrektur der Geschäftsinformationen','Исправление данных магазина'];
 const ADDITION_PREFIX='Mağaza önerisi';
 
-function classify(message:string):{kind:Kind;body:string}{
+type Read={kind:Kind;body:string;store?:string;field?:number|string};
+
+function classify(message:string):Read{
   const [first,...rest]=message.split('\n');
   const title=first.trim();
-  if(CORRECTION_PREFIXES.some(prefix=>title.startsWith(prefix)))return {kind:'correction',body:rest.join('\n').trim()};
+  const wording=Object.values(correctionWording).find(words=>title.startsWith(words.prefix));
+  if(wording){
+    // R65: the two lines the form writes under its title -- which shop, which kind of
+    // information -- are taken out as the facts they are, and what follows the blank line is
+    // the person's own words. A message from before the form wrote them keeps them in its
+    // text. The kind of information is kept as its place in the form's list, so it can be
+    // named in the reader's language rather than the one it was sent in.
+    const lines=[...rest];
+    let store:string|undefined;
+    let field:number|string|undefined;
+    while(lines.length&&lines[0].trim()){
+      const line=lines[0].trim();
+      if(line.startsWith(`${wording.store}:`))store=line.slice(wording.store.length+1).trim();
+      else if(line.startsWith(`${wording.field}:`)){
+        const value=line.slice(wording.field.length+1).trim();
+        const index=wording.categories.indexOf(value);
+        field=index>=0?index:value;
+      }
+      else break;
+      lines.shift();
+    }
+    return {kind:'correction',store,field,body:lines.join('\n').trim()};
+  }
   // The search that was running when somebody asked for a shop is deliberately not shown:
   // it is how the suggestion was made, not what was suggested.
   if(title.startsWith(ADDITION_PREFIX))return {kind:'addition',body:rest.join('\n').trim()};
@@ -81,19 +106,26 @@ export function ProfileMessages({locale}:{locale:Locale}){
     </div>
     {shown.length===0
       ?<p className="profile-empty">{text.emptyKind}</p>
-      :<div className="profile-messages">{shown.map(({item,kind,body})=>{const Mark=marks[kind];return <article key={item.id} className="profile-message">
+      :<div className="profile-messages">{shown.map(({item,kind,body,store,field})=>{const Mark=marks[kind];return <article key={item.id} className="profile-message">
         <header>
           <strong className="profile-message-kind"><Mark aria-hidden="true"/>{copy[locale][kind]}</strong>
           {/* The day and the hour, one under the other: a message sent this morning and one
               sent last night are a different thing to the person waiting on a reply. */}
           <time dateTime={item.created_at}>{date(item.created_at)}<small>{time(item.created_at)}</small></time>
         </header>
-        {/* R59: what somebody wrote in their own words, set apart as their words -- labelled,
-            and in the voice a reviewer's own note is set in -- so it does not read as one more
-            line of the card's furniture. The two forms send fields rather than prose, and
-            keep the plain paragraph. */}
-        {kind==='feedback'
-          ?<blockquote className="profile-message-quote"><p className="profile-message-said"><Quote aria-hidden="true"/>{text.yours}</p><p>{body}</p></blockquote>
+        {/* R65: which shop and which kind of information, as the two fixed facts they are --
+            the same two labels on every card, so they are set as labels with the answer beside
+            them rather than as two more lines of text. */}
+        {kind==='correction'&&(store||field!==undefined)&&<dl className="profile-message-facts">
+          {store&&<div><dt>{correctionWording[locale].store}</dt><dd>{store}</dd></div>}
+          {field!==undefined&&<div><dt>{correctionWording[locale].field}</dt><dd>{typeof field==='number'?correctionWording[locale].categories[field]:field}</dd></div>}
+        </dl>}
+        {/* R59/R65: what somebody wrote in their own words, set apart as their words --
+            labelled, and in the voice a reviewer's own note is set in -- so it does not read
+            as one more line of the card's furniture. The add-a-store sheet sends a link
+            rather than prose, and keeps the plain paragraph. */}
+        {kind!=='addition'
+          ?body&&<blockquote className="profile-message-quote"><p className="profile-message-said"><Quote aria-hidden="true"/>{text.yours}</p><p>{body}</p></blockquote>
           :<p>{body}</p>}
         {item.reply?<div className="profile-message-reply"><strong>{text.reply}</strong><p>{item.reply}</p>{item.replied_at&&<time dateTime={item.replied_at}>{date(item.replied_at)}<small>{time(item.replied_at)}</small></time>}</div>:<small className="profile-message-status">{text.pending}</small>}
       </article>;})}</div>}

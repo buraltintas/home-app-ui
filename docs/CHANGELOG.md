@@ -8,6 +8,47 @@ value involved.
 
 ---
 
+## Profile R63–R66: a shorter share card, the favourites' invitation, corrections read apart, and Help
+
+- **R63** — the share card is a fifth shorter: the picture no longer sets its height, the
+  words do (desktop 640×283 → 640×198, phone 339×201 → 339×173, same widths). On a phone
+  "Gerçek ev ve yaşam mağazalarını" now stays on one line, with "birlikte keşfedin" under it,
+  down to a 360px screen: the picture's column and the gap beside it are narrower, and below
+  375px the sentence gives up a few tenths of a pixel rather than a word.
+- **R64** — signed out, the profile is laid out as the favourites page lays out its own
+  invitation: the drawing on top, then the clay word, the heading, the sentence and the
+  button, on the same centred column and from the same rules -- measured identical on a
+  375px phone (15/25.9/18px, 8/18/18px apart). The drawing keeps its desktop size at every
+  width now; it no longer has to shrink to sit beside the words.
+- **R65** — a correction in "Mesajlarım" is taken apart along the seams the form put it
+  together with: which shop and which kind of information are shown as two labelled facts
+  on a quiet ground, and what the person wrote is set apart as their own words, as in
+  "Görüş ve öneri". The labels are read from the form itself (exported as
+  `correctionWording`), so the two cannot drift; the kind of information is named in the
+  reader's language even when the message was sent in another. Messages from before the form
+  wrote those lines are shown as they are.
+- **R66** — a fifth card on the profile, "Yardım", opens "Çok sorulanlar": the home page's own
+  questions and answers, the same component, rendered on the server and handed to the page so
+  the about text is not shipped to the browser twice. The profile is out of the index, so
+  the same answers at a second address cost the home page nothing in search.
+
+## R72–R74: the search heading's magnifier, logos among the names, and the keyboard strip
+
+- **R72** — inside "bul", the magnifier sits at the start of the fill and the word in its
+  middle, each on its own terms (three columns, the outer two equal), so the word is centred
+  on the fill whatever the mark beside it measures.
+- **R73** — a name offered while typing carries the chain's own logo where we hold one -- the
+  same file the result list uses, found the same way -- in a tile wider than tall, because
+  most marks are words. A single shop is matched on its whole name only.
+- **R74** — on some phones a strip of the page showed above the keyboard in the search panel.
+  It could not be reproduced here: this simulator never raises an on-screen keyboard. Two
+  causes fit "sometimes", and both are now covered: the panel kept the last size the browser
+  reported, and the last report can land before the keyboard has settled, so for a second
+  after anything that starts a keyboard the panel re-reads both numbers every frame; and a
+  page the keyboard pushes up can move the visible area past the bottom of the layout
+  viewport, where the opaque sheet behind the panel ended, so the sheet now reaches a full
+  screen beyond it in both directions.
+
 ## R3/R4: the two notes under a disappointing search are read first
 
 "Yalnızca ev ve yaşam ürünleri bulabilirim." and "50 km içerisinde aradığın mağaza yok."
