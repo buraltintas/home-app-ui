@@ -8,6 +8,26 @@ value involved.
 
 ---
 
+## R83: every review of a store, in the order the reader picks
+
+The store page shows its latest reviews in a row; a "Tümünü göster" link now sits over the
+row's right-hand end and opens `/stores/<store>/reviews`. That page carries the listing page's
+own two tiles -- how many, and in what order -- and the second is a button, because here the
+order can be changed: newest, oldest, highest rated, lowest rated, and "Alışveriş yapanlar",
+which keeps only the reviews whose writer said they bought something. Between two reviews
+with the same score the newer comes first. The choices open in place under the tiles rather
+than floating over the page, so they need no layer of their own. The cards are the store
+page's own, stacked: one column on a phone, two on a desktop (measured at 1440px: two 502px
+columns, no sideways scroll).
+
+The reviews are the endpoint's newest 200 -- its ceiling -- and the page says so when a store
+reaches it. They are cached for the store page's day and tagged with every name the store
+answers to, so writing or deleting a review drops this page with the store page.
+
+The page is kept out of the index and followed: every review on it is already on the store
+page, which is the page that should rank for those words, and an indexable copy would compete
+with it.
+
 ## The search bar on a desktop stops collapsing when it is clicked
 
 Clicking the search field on a desktop squeezed the field into a narrow column -- the example

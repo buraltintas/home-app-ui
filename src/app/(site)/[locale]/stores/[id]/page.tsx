@@ -117,30 +117,30 @@ const correctionCopy:Record<Locale,{title:string;body:string}>={
 // What this product will and will not do about what is written here. It is said where the
 // reviews are, because that is where somebody decides whether to believe them -- and the
 // first sentence is the one that answers that, so it is the one always on screen.
-const policyCopy:Record<Locale,{heading:string;first:string;rest:string;more:string;title:string;close:string}>={
+const policyCopy:Record<Locale,{heading:string;first:string;rest:string;more:string;title:string;close:string;all:string}>={
   tr:{
     heading:'Topluluk değerlendirmeleri',
     first:'Boşa Gezme!’de listelenen mağazaların, kendileri hakkındaki yorumları etkileyecek herhangi bir müdahalede bulunmaları site politikası çerçevesinde yasaklanmıştır.',
     rest:'Değerlendirmeler, kullanıcıların kişisel görüşleridir. Boşa Gezme! sadece bu görüşleri yayınlayan bir platform olarak hizmet sunmaktadır.',
-    more:'Devamını oku',title:'Topluluk değerlendirmeleri',close:'Kapat',
+    more:'Devamını oku',title:'Topluluk değerlendirmeleri',close:'Kapat',all:'Tümünü göster',
   },
   en:{
     heading:'Community reviews',
     first:'Stores listed on Boşa Gezme! are forbidden by site policy from interfering in any way with the reviews written about them.',
     rest:'Reviews are the personal opinions of the people who wrote them. Boşa Gezme! serves only as the platform that publishes those opinions.',
-    more:'Read more',title:'Community reviews',close:'Close',
+    more:'Read more',title:'Community reviews',close:'Close',all:'Show all',
   },
   de:{
     heading:'Bewertungen der Community',
     first:'Geschäften, die auf Boşa Gezme! gelistet sind, ist es nach den Richtlinien der Website untersagt, in irgendeiner Weise auf die Bewertungen über sie einzuwirken.',
     rest:'Bewertungen sind die persönlichen Meinungen der Personen, die sie verfasst haben. Boşa Gezme! dient allein als Plattform, die diese Meinungen veröffentlicht.',
-    more:'Mehr lesen',title:'Bewertungen der Community',close:'Schließen',
+    more:'Mehr lesen',title:'Bewertungen der Community',close:'Schließen',all:'Alle anzeigen',
   },
   ru:{
     heading:'Отзывы сообщества',
     first:'Магазинам, размещённым на Boşa Gezme!, правилами сайта запрещено каким-либо образом влиять на отзывы о себе.',
     rest:'Отзывы — личные мнения написавших их людей. Boşa Gezme! выступает лишь платформой, публикующей эти мнения.',
-    more:'Читать дальше',title:'Отзывы сообщества',close:'Закрыть',
+    more:'Читать дальше',title:'Отзывы сообщества',close:'Закрыть',all:'Показать все',
   },
 };
 
@@ -359,6 +359,10 @@ export default async function Page({params}:Props){
             that question and is always on screen; the second is the disclaimer, and it opens.
             A details element, so it works before any script does. */}
         {recent_posts.length>0&&<ReviewPolicy locale={locale} copy={policy}/>}
+        {/* R83: every review, in an order the reader picks, on a page of its own. Directly over
+            the cards it opens, at the right-hand end -- where a row of things that continues
+            elsewhere usually says so. */}
+        {recent_posts.length>0&&<div className="store-reviews-all-row"><Link className="store-rating-jump store-reviews-all" href={localePath(locale,`${storePath(store)}/reviews`)}>{policy.all}</Link></div>}
         {recent_posts.length?<ViewerLikes postIds={recent_posts.map(post=>post.id)}><ReviewRail label={policy.heading}>{recent_posts.map(post=><PostCard post={post} surface="store" key={post.id}/>)}</ReviewRail></ViewerLikes>:<div className="empty-state"><h3>{t.noCommunity}</h3><p>{t.noReviewsBody}</p></div>}
 
       </div>

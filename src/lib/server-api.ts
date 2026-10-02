@@ -104,6 +104,22 @@ export const getPublicStore=cache(async function getPublicStore(ref:string,local
   return {...detail,recent_posts:detail.recent_posts??[]};
 });
 
+// Every published review of one shop, for the page that lists them all (R83): the store
+// page shows a rail of the latest, this is the rest. Two hundred is the endpoint's ceiling;
+// the page says so when a shop reaches it. Tagged with every name the shop answers to, so
+// writing or deleting a review drops this list along with the store page itself.
+export async function getStorePosts(storeId:string,refs:string[],locale:Locale,seconds:number):Promise<Post[]>{
+  if(!UUID.test(storeId))notFound();
+  const tags=[...new Set([storeId,...refs].map(ref=>ref.trim()).filter(Boolean).map(storeTag))];
+  const response=await fetch(`${API_ORIGIN}/v1/stores/${storeId}/posts?limit=${STORE_POSTS_LIMIT}`,{
+    next:{revalidate:seconds,tags},
+    headers:{'Content-Type':'application/json','X-BFF-Secret':process.env.BFF_SECRET??'','X-Locale':locale,'Accept-Language':locale},
+  });
+  if(!response.ok)throw new ApiError(response.status,await response.json().catch(()=>undefined));
+  return ((await response.json()) as {items?:Post[]}).items??[];
+}
+export const STORE_POSTS_LIMIT=200;
+
 // A review page shows that review. Comments are a separate read so a failure there
 // still leaves the review itself on screen rather than turning the page into a 404.
 export async function getPost(id:string):Promise<Post>{if(!UUID.test(id))notFound();try{return await serverApi<Post>(`/v1/posts/${id}`)}catch(reason){if(reason instanceof ApiError&&reason.status===404)notFound();throw reason}}
