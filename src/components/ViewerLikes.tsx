@@ -31,7 +31,10 @@ export function ViewerLikes({postIds,children}:{postIds:string[];children:ReactN
         const response=await apiFetch(`/api/proxy/me/likes?posts=${encodeURIComponent(key)}`,{cache:'no-store'});
         if(!response.ok)return;
         const body=await response.json() as {liked?:string[]};
-        if(active&&(body.liked??[]).length>0)setLiked(new Set(body.liked));
+        // Always the answer as given, including an empty one: a page that shows a different set of
+        // reviews asks again, and keeping the previous answer brought back a like the reader had
+        // since taken away.
+        if(active)setLiked(new Set(body.liked??[]));
       }catch{/* leave every card as the page rendered it */}
     })();
     return()=>{active=false;};

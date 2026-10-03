@@ -29,6 +29,11 @@
  * here. svh rather than vh because the phone's address bar is part of the viewport it hides.
  */
 .page-slot{min-height:100svh}
+/* R86: while one page is being left for another, it is off the screen (NavigationStartsAtTop).
+   Transparent rather than removed, so it keeps its height and nothing under it moves into
+   view; and transparent rather than visibility:hidden, which a child can override -- an open
+   answer that sets itself visible would have floated alone on the empty ground. */
+html[data-navigating] .page-slot{opacity:0;pointer-events:none}
 /* Scrolling is a jump unless somebody asked for a journey.
  *
  * This declared the opposite for the whole document, and the cost was not decoration. Every

@@ -8,6 +8,39 @@ value involved.
 
 ---
 
+## R84–R87: the way to all reviews, and the page between two pages
+
+- **R84/R85** — the link over the store page's review row says "Tüm değerlendirmeleri gör"
+  (See all reviews, Alle Bewertungen ansehen, Все отзывы), with the count above it --
+  "7 değerlendirme" -- in the words and type the count under the store's score already uses,
+  both at the row's left.
+- **R86** — after the tap, the store page jumped to its top and showed its photograph until
+  the reviews arrived. That jump is NavigationStartsAtTop's doing: it scrolls the page being
+  left before leaving, because the framework's own scroll used to land on the old document
+  while the new one loaded. Now the page being left is taken off the screen in the same
+  instant (`html[data-navigating] .page-slot{opacity:0}` -- opacity, because a child that
+  sets its own `visibility` would show through a hidden parent) and comes back the moment
+  the new route is in the document, before that frame is painted. Hiding a page is only
+  safe if it always comes back, so every other way a navigation can end gives it back too:
+  a click no in-app link took, a second tap on the page already showing, back and forward,
+  the page entering or leaving the back-forward cache (a page restored from it used to come
+  back blank), and a 15-second last resort for a navigation that never ends. This holds for
+  every in-app navigation to another path, not this link alone. The reviews page also has
+  its own loading skeleton, shaped like the page; without one the nearest boundary was the
+  store page's, which drew a hero and a title. Recorded on the iOS simulator and read frame
+  by frame at 100ms: store page, the masthead over the empty ground, the reviews at their
+  top -- the store's top is never shown.
+- **R87** — "Alışveriş yapanlar" left the order list, where it never belonged (it is a filter,
+  not an order), and stands over the reviews as its own choice, "Alışveriş yapanları göster",
+  drawn as the messages page's buttons with the number it would show; pressed again it lets
+  go, and it applies on top of whichever order is chosen. The "Ziyaret amacı" list asked for
+  beside it needs options the review flow does not ask for yet -- asked on the card.
+- Found on the way: a review liked after the filter was turned on showed as not liked once
+  it was turned off (the likes were fetched for the reviews on screen and an empty answer
+  was ignored) -- likes are now read for every review on the page; the "most recent 200"
+  note no longer claims to describe a filtered list; and a store with no reviews gets the
+  empty state instead of a bare count of zero.
+
 ## Review flow R44–R53: what the final check shows, how the buttons work, and the steps' rings
 
 - **R44** — the final check ("Son kontrol") showed the eight scores and nothing else, so the
