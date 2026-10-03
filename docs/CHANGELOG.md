@@ -8,6 +8,13 @@ value involved.
 
 ---
 
+## R54/R55 switched on: the review flow asks why the visit was made
+
+The visit-purpose question built with R54–R64 is on (`ASK_VISIT_PURPOSE`). The API that stores
+it is live: migration 000040 was applied by the migration job first, then the code that reads
+and writes `posts.visit_purpose`, and only then this -- the order the API's deploy rule
+requires, because the API refuses a request carrying a field it does not know.
+
 ## Search Console: the sitemap parts are gzipped, ids redirect for real, one host
 
 Read from Search Console on 3 October 2026 (data from 18 August): 26 clicks, 405

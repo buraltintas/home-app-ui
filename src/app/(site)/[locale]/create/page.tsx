@@ -51,13 +51,11 @@ const lowScoreCopy:Record<Locale,{prompt:[string,string];hint:string}>={
   de:{prompt:['Eine Eins oder Zwei braucht eine Begründung.','Schreibe kurz, was nicht gepasst hat.'],hint:'Ein Satz dazu, was passiert ist'},
   ru:{prompt:['Оценке 1 или 2 нужна причина.','Коротко напишите, что было не так.'],hint:'Одно предложение о том, что случилось'},
 };
-// R54 is held back until the API that stores the answer is live. The API refuses a request
-// carrying a field it does not know, so sending visit_purpose before migration 000040 and the
-// code that reads it have shipped would turn every review into a 400 -- and asking the
-// question without sending the answer would collect answers that are thrown away. While this
-// is false the question is not shown, not required and not sent; turning it on is the whole
-// change once the API is live.
-const ASK_VISIT_PURPOSE=false;
+// R54 waited for the API that stores the answer: it refuses a request carrying a field it does
+// not know, so sending visit_purpose before migration 000040 and the code that reads it had
+// shipped would have turned every review into a 400. Both are live (3 October 2026). Turned
+// off, the question is not shown, not required and not sent.
+const ASK_VISIT_PURPOSE=true;
 // R54: why the visit was made, as the API names it, with the words each answer is shown in.
 // Routine comes last because it is the answer for everything the others do not cover.
 const VISIT_PURPOSES:[VisitPurpose,'visitPurposeGift'|'visitPurposeTrousseau'|'visitPurposeNewHome'|'visitPurposeRoutine'][]=[
