@@ -3,9 +3,10 @@
 import {Check,CircleCheck,Eraser,Info,MapPin,ShoppingBag,Star,TriangleAlert} from 'lucide-react';
 import Image from 'next/image';
 import {useRouter,useSearchParams} from 'next/navigation';
-import {Suspense,useCallback,useEffect,useLayoutEffect,useRef,useState} from 'react';
+import {type CSSProperties,Fragment,Suspense,useCallback,useEffect,useLayoutEffect,useRef,useState} from 'react';
 import {AuthDialog} from '@/components/AuthDialog';
 import {BusyLabel} from '@/components/BusyLabel';
+import {InfoSheet} from '@/components/InfoSheet';
 import {RatingStars} from '@/components/Rating';
 import {useI18n} from '@/i18n/I18nProvider';
 import { localePath } from '@/lib/site';
@@ -15,7 +16,7 @@ import {isBrandMark,storePhotoURL} from '@/lib/store-photo';
 import {readOriginSearch} from '@/lib/search-origin';
 import {refreshStorePage} from '@/lib/store-cache';
 import {useScrollTopWhenReady} from '@/lib/scroll-top';
-import type {Locale,StoreDetail,VisitVerification} from '@/lib/types';
+import type {Locale,StoreDetail,VisitPurpose,VisitVerification} from '@/lib/types';
 
 const UUID=/^[0-9a-f-]{36}$/i;
 
@@ -43,12 +44,25 @@ const criteriaIntroCopy:Record<Locale,[string,string]>={
 // A hundred characters. Long enough for the sentence somebody actually wants to write, short
 // enough that nobody is being asked to compose.
 const NOTE_LIMIT=100;
-const lowScoreCopy:Record<Locale,{prompt:string;hint:string}>={
-  tr:{prompt:'1 ve 2 puan için yorum yazman gerek. Memnuniyetsizliğini kısaca buraya yaz.',hint:'Ne olduğunu bir cümleyle anlat'},
-  en:{prompt:'A one or a two needs a reason. Say briefly what was wrong.',hint:'One sentence on what happened'},
-  de:{prompt:'Eine Eins oder Zwei braucht eine Begründung. Schreibe kurz, was nicht gepasst hat.',hint:'Ein Satz dazu, was passiert ist'},
-  ru:{prompt:'Оценке 1 или 2 нужна причина. Коротко напишите, что было не так.',hint:'Одно предложение о том, что случилось'},
+// R59: the rule and the request, a line each -- they are two sentences doing two jobs.
+const lowScoreCopy:Record<Locale,{prompt:[string,string];hint:string}>={
+  tr:{prompt:['1 ve 2 puan için yorum yazman gerek.','Memnun kalmama sebebini kısaca buraya yaz.'],hint:'Ne olduğunu bir cümleyle anlat'},
+  en:{prompt:['A one or a two needs a reason.','Say briefly what was wrong.'],hint:'One sentence on what happened'},
+  de:{prompt:['Eine Eins oder Zwei braucht eine Begründung.','Schreibe kurz, was nicht gepasst hat.'],hint:'Ein Satz dazu, was passiert ist'},
+  ru:{prompt:['Оценке 1 или 2 нужна причина.','Коротко напишите, что было не так.'],hint:'Одно предложение о том, что случилось'},
 };
+// R54 is held back until the API that stores the answer is live. The API refuses a request
+// carrying a field it does not know, so sending visit_purpose before migration 000040 and the
+// code that reads it have shipped would turn every review into a 400 -- and asking the
+// question without sending the answer would collect answers that are thrown away. While this
+// is false the question is not shown, not required and not sent; turning it on is the whole
+// change once the API is live.
+const ASK_VISIT_PURPOSE=false;
+// R54: why the visit was made, as the API names it, with the words each answer is shown in.
+// Routine comes last because it is the answer for everything the others do not cover.
+const VISIT_PURPOSES:[VisitPurpose,'visitPurposeGift'|'visitPurposeTrousseau'|'visitPurposeNewHome'|'visitPurposeRoutine'][]=[
+  ['gift','visitPurposeGift'],['trousseau','visitPurposeTrousseau'],['new_home','visitPurposeNewHome'],['routine','visitPurposeRoutine'],
+];
 type CriterionKey=keyof typeof criterionLabels;
 const criterionKeys=Object.keys(criterionLabels) as CriterionKey[];
 
@@ -66,8 +80,15 @@ const criterionKeys=Object.keys(criterionLabels) as CriterionKey[];
 // scroll is cancelled and leaves nothing, and a tap that only stopped a scroll never clicks, so
 // its press is let go a moment later. Arrow keys, Space and screen readers press nothing and go
 // through onChange exactly as a radio group does.
+//
+// R61: a five is marked as the thing it is. When a question is given its fifth star, a small
+// burst of honey and clay goes off from that star -- once, at the moment the five is given,
+// not again for a five that was already there. Each burst is a fresh element (keyed by a
+// counter), so a five taken away and given again celebrates again. It is decoration, hidden
+// from assistive technology, and absent for anyone who asked for less motion.
 function CriterionStars({name,value,onChange}:{name:string;value:number|undefined;onChange:(value:number)=>void}){
   const [pressed,setPressed]=useState<number>();
+  const [bursts,setBursts]=useState(0);
   const letGo=useRef<number|undefined>(undefined);
   const release=()=>{window.clearTimeout(letGo.current);setPressed(undefined);};
   const shown=pressed??value??0;
@@ -78,7 +99,8 @@ function CriterionStars({name,value,onChange}:{name:string;value:number|undefine
     onPointerUp={()=>{window.clearTimeout(letGo.current);letGo.current=window.setTimeout(release,400);}}>{[1,2,3,4,5].map(star=>
     <label key={star}><input type="radio" name={name} value={star} aria-label={`${star} / 5`} checked={value===star}
       onPointerDown={event=>{if(!event.isPrimary||event.button!==0)return;window.clearTimeout(letGo.current);setPressed(star);}}
-      onChange={()=>onChange(star)}/><Star aria-hidden="true" className={star<=shown?'is-on':undefined}/></label>)}</div>;
+      onChange={()=>{if(star===5&&value!==5)setBursts(count=>count+1);onChange(star);}}/><Star aria-hidden="true" className={star<=shown?'is-on':undefined}/>
+      {star===5&&bursts>0&&<span key={bursts} className="star-burst" aria-hidden="true"><b/>{Array.from({length:8},(_,ray)=><i key={ray} style={{'--ray':ray} as CSSProperties}/>)}</span>}</label>)}</div>;
 }
 
 function ReviewLoadingState(){
@@ -112,6 +134,14 @@ function ReviewWizard({storeId}:{storeId:string}){
   // and not a silent "no": the step can be walked past, and a review is still a review.
   const [purchased,setPurchased]=useState<boolean|undefined>(undefined);
   const [purchasedItem,setPurchasedItem]=useState('');
+  // R54: why the visit was made. One answer, and asked of everybody: "routine" is there for
+  // every purpose the other three do not name, so there is always an answer that fits.
+  const [visitPurpose,setVisitPurpose]=useState<VisitPurpose>();
+  const [routineInfo,setRoutineInfo]=useState(false);
+  // Set by a press of "Devam et" with something still unanswered. The button is not greyed
+  // out for that: a greyed button cannot say what it is waiting for, so it is pressed and
+  // says it, under the questions (AGENTS.md).
+  const [purchaseAttempted,setPurchaseAttempted]=useState(false);
   const [submitting,setSubmitting]=useState(false);
   const [submitError,setSubmitError]=useState('');
   // Set when the review was written but is waiting for a person to read it. It is not on
@@ -166,6 +196,14 @@ function ReviewWizard({storeId}:{storeId:string}){
   // already near its bottom, and the purchase step -- three lines long -- opened there,
   // showing its footer with its question off the top of the screen.
   useLayoutEffect(()=>{window.scrollTo(0,0);},[step]);
+  // A sheet belongs to the step it was opened on. The steps are history entries, so a back
+  // gesture -- the usual way to dismiss a sheet on Android -- leaves the step; it closes the
+  // sheet too, rather than carrying it over the step it lands on and back again later.
+  useEffect(()=>{
+    const close=()=>setRoutineInfo(false);
+    window.addEventListener('popstate',close);
+    return()=>window.removeEventListener('popstate',close);
+  },[]);
 
   const checkSession=useCallback(async()=>{
     try{const response=await apiFetch('/api/proxy/me',{cache:'no-store'});return response.ok;}catch{return false;}
@@ -289,6 +327,13 @@ function ReviewWizard({storeId}:{storeId:string}){
     ?criterionKeys.reduce((sum,key)=>sum+(criteria[key]??0),0)/criterionKeys.length
     :0;
 
+  // What the purchase step still needs, in the order it is asked.
+  const purchaseMissing=[
+    !ASK_VISIT_PURPOSE||visitPurpose?'':t('purchaseMissingPurpose'),
+    purchased===undefined?t('purchaseMissingAnswer'):'',
+    purchased===true&&!purchasedItem.trim()?t('purchaseMissingItem'):'',
+  ].filter(Boolean);
+
   const submit=async()=>{
     if(!verification||!scored)return;
     setSubmitting(true);setSubmitError('');
@@ -309,6 +354,7 @@ function ReviewWizard({storeId}:{storeId:string}){
           text:lowScores.map(key=>`${t(criterionLabels[key])}: ${(notes[key]??'').trim()}`).join('\n'),
         }:{}),
         ...(purchased===undefined?{}:{purchased,...(purchased&&purchasedItem.trim()?{purchased_item:purchasedItem.trim()}:{})}),
+        ...(ASK_VISIT_PURPOSE&&visitPurpose?{visit_purpose:visitPurpose}:{}),
         ...(origin?{origin_search_id:origin.search_id,origin_search_result_id:origin.search_result_id}:{}),
       })});
       if(response.status===401){setSignedIn(false);setAuth(true);setSubmitting(false);return;}
@@ -450,8 +496,10 @@ function ReviewWizard({storeId}:{storeId:string}){
         <fieldset key={key} className="rating-picker criterion">
           <legend><span className="criterion-number" aria-hidden="true">{index+1}</span>{t(criterionLabels[key])}</legend>
           <CriterionStars name={key} value={criteria[key]} onChange={value=>setCriteria(current=>({...current,[key]:value}))}/>
+          {/* R60: the request is framed as the note at the foot of the list is -- the same
+              object, so the page has one kind of framed message. */}
           {(criteria[key]===1||criteria[key]===2)&&<label className="criterion-note">
-            <span>{lowScoreCopy[locale].prompt}</span>
+            <span className="criteria-hint"><Info aria-hidden="true"/><span>{lowScoreCopy[locale].prompt[0]}<span>{lowScoreCopy[locale].prompt[1]}</span></span></span>
             <textarea rows={2} maxLength={NOTE_LIMIT} value={notes[key]??''} placeholder={lowScoreCopy[locale].hint}
               onChange={event=>setNotes(current=>({...current,[key]:event.target.value}))}/>
             <small>{(notes[key]??'').length}/{NOTE_LIMIT}</small>
@@ -468,11 +516,29 @@ function ReviewWizard({storeId}:{storeId:string}){
     </section>}
 
     {step===3&&<section className="review-step">
-      <p className="criteria-intro-plain">{t('purchaseIntro')}</p>
+      {/* R54/R55: why the visit was made, first, under the steps: a heading in the type of
+          the purchase question below it, the sentence that says what the answer is for, and
+          four answers of which one can be chosen -- they are radios, so choosing one lets go
+          of the other. The last one carries an "i": it is the answer for every purpose the
+          others do not name, and the sheet says so. */}
+      {ASK_VISIT_PURPOSE&&<fieldset className="purchase-answer visit-purpose">
+        <legend>{t('visitPurposeTitle')}</legend>
+        <p className="criteria-intro-plain">{t('visitPurposeIntro')}</p>
+        <div className="purchase-choices">{VISIT_PURPOSES.map(([value,label])=>{
+          const choice=<label data-selected={visitPurpose===value}><input type="radio" name="visit_purpose" value={value} checked={visitPurpose===value} onChange={()=>setVisitPurpose(value)}/><span>{t(label)}</span></label>;
+          return value==='routine'
+            ?<span key={value} className="purchase-choice-info">{choice}<button type="button" className="criterion-warn-button" aria-label={t('visitPurposeRoutineInfoLabel')} onClick={()=>setRoutineInfo(true)}><Info aria-hidden="true"/></button></span>
+            :<Fragment key={value}>{choice}</Fragment>;
+        })}</div>
+      </fieldset>}
+      {/* R56: the question first and the sentence that explains it under it. */}
       <fieldset className="purchase-answer">
         <legend>{t('purchaseQuestion')}</legend>
-        <label data-selected={purchased===true}><input type="radio" name="purchased" checked={purchased===true} onChange={()=>setPurchased(true)}/><span>{t('yes')}</span></label>
-        <label data-selected={purchased===false}><input type="radio" name="purchased" checked={purchased===false} onChange={()=>{setPurchased(false);setPurchasedItem('');}}/><span>{t('no')}</span></label>
+        <p className="criteria-intro-plain">{t('purchaseIntro')}</p>
+        <div className="purchase-choices">
+          <label data-selected={purchased===true}><input type="radio" name="purchased" checked={purchased===true} onChange={()=>setPurchased(true)}/><span>{t('yes')}</span></label>
+          <label data-selected={purchased===false}><input type="radio" name="purchased" checked={purchased===false} onChange={()=>{setPurchased(false);setPurchasedItem('');}}/><span>{t('no')}</span></label>
+        </div>
       </fieldset>
       {/* Asked only where there is something to name. The words are the shopper's own: what
           somebody calls what they bought is the vocabulary the next search for it will use. */}
@@ -483,9 +549,11 @@ function ReviewWizard({storeId}:{storeId:string}){
       {/* The step asks a question, so it cannot be left before it is answered. Saying yes and
           naming nothing is the same as not answering: the name is the whole value of the yes,
           because it is the word the next person searching for that thing will type. */}
+      {purchaseAttempted&&purchaseMissing.length>0&&<aside className="criteria-hint review-blocked" role="alert"><Info aria-hidden="true"/><p>{purchaseMissing.map(line=><span key={line}>{line}</span>)}</p></aside>}
       {blocked&&<aside className="criteria-hint review-blocked" role="alert"><Info aria-hidden="true"/><p>{blocked}</p></aside>}
-      <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>void screen('purchased_item',purchased===true?purchasedItem:'',4)} disabled={purchased===undefined||(purchased===true&&!purchasedItem.trim())||screening} aria-busy={screening}><BusyLabel busy={screening}>{t('continue')}</BusyLabel></button></div>
+      <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>{if(purchaseMissing.length){setPurchaseAttempted(true);return;}void screen('purchased_item',purchased===true?purchasedItem:'',4);}} disabled={screening} aria-busy={screening}><BusyLabel busy={screening}>{t('continue')}</BusyLabel></button></div>
     </section>}
+    {step===3&&routineInfo&&<InfoSheet title={t('lowScoreRuleTitle')} onClosed={()=>setRoutineInfo(false)}><p>{t('visitPurposeRoutineInfo')}</p></InfoSheet>}
 
     {/* Nothing is written until this page. Eight scores given one after another are easy to
         get wrong by a star and impossible to check while giving them; this is where they are
@@ -506,6 +574,7 @@ function ReviewWizard({storeId}:{storeId:string}){
         </div>;
       })}
       </dl>
+      {ASK_VISIT_PURPOSE&&visitPurpose&&<p className="review-summary-purchase">{t('visitPurposeTitle')}: {t(VISIT_PURPOSES.find(([value])=>value===visitPurpose)?.[1]??'visitPurposeRoutine')}</p>}
       {purchased!==undefined&&<p className="review-summary-purchase">{purchased?(purchasedItem.trim()?`${t('purchasedYes')} · ${purchasedItem.trim()}`:t('purchasedYes')):t('purchasedNo')}</p>}
       {submitError&&<p className="form-error" role="alert">{submitError}</p>}
       {/* The button keeps its own name while it is working -- it used to borrow the search

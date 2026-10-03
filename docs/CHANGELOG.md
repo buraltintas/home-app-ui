@@ -8,6 +8,41 @@ value involved.
 
 ---
 
+## Review flow R54–R64: the purchase step's questions, a five worth celebrating, and the sheet an "i" opens
+
+- **R54/R55 — built, and held back.** The purchase step asks why the visit was made ("Ziyaret
+  amacı"): four answers of which one can be chosen (gift, trousseau, new home, routine), the
+  sentence that says what the answer is for, and an "i" beside "Rutin alışveriş" opening the
+  store page's own sheet with the reason routine is the catch-all. It is required when shown,
+  and appears on the final check. It is switched off (`ASK_VISIT_PURPOSE` in the create page)
+  until the API that stores it is live: the API refuses a request carrying a field it does not
+  know, so sending `visit_purpose` before migration 000040 and the code that reads it have
+  shipped would turn every review into a 400, and asking without sending would throw the
+  answers away. The words are in the shared dictionary so a page that later sorts reviews by
+  purpose says the same ones.
+- **R56/R57** — "Alışveriş yaptın mı?" stands over its sentence, which now asks whether
+  something was *bought* ("satın aldın mı").
+- **R58** — the tick before "Ziyaretin doğrulandı" stands in the column of the "i" under it:
+  same x, measured to the pixel on the iOS simulator, and the two sentences start together.
+- **R59/R60** — the one-or-two prompt is two sentences on two lines, framed as the note at
+  the foot of the list is. The rule that draws the star targets as small centred grids reached the note
+  too and outranked it; with the prompt in two short lines the note shrank to the longer one,
+  frame and typing area with it. It is scoped back to the full column, measured at phone and
+  desktop width.
+- **R61** — a five is celebrated: a ring opens and sparks of honey and clay fly from the fifth
+  star for about half a second, once per five given, and not at all with reduced motion.
+- **R62** — a chosen answer is filled with clay and written in white.
+- **R63** — the purchase step's buttons scroll with the page again; R50 had pinned them above
+  the dock.
+- **R64** — the final button says "Paylaş" and is as wide as that word.
+- On the way: "Devam et" on the purchase step was greyed out until everything was answered,
+  which said nothing about what was missing (AGENTS.md). It can be pressed now, and pressing
+  it lists what is still unanswered under the questions. The answers can be reached by
+  keyboard with a visible focus ring, which they did not have. The sheet behind every "i" is
+  one component (`InfoSheet`), portaled to the document as anything floating over the page
+  must be, with Escape, focus on its close button, and focus returned to the "i" afterwards;
+  the store page's review cards use it too, with the look and the 0.52s they had.
+
 ## Profile R67–R74: a card opens on the tap, a sign-in that fits the screen, and the messages' fine print
 
 - **R68** — a tap on one of the profile's white cards showed the top of the profile before

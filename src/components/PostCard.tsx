@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import {Bookmark,ChevronRight,Heart,Info,MessageCircle,Package,Send,ShoppingBag,X} from 'lucide-react';
+import {Bookmark,ChevronRight,Heart,Info,MessageCircle,Package,Send,ShoppingBag} from 'lucide-react';
 import {useState} from 'react';
 import type {Post,ReviewCriteriaScores} from '@/lib/types';
 import {useI18n} from '@/i18n/I18nProvider';
@@ -10,6 +10,7 @@ import { localePath } from '@/lib/site';
 import {apiFetch} from '@/lib/api-client';
 import {RatingStars,Verified} from './Rating';
 import {AuthDialog} from './AuthDialog';
+import {InfoSheet} from './InfoSheet';
 import {ContributorLevel} from './ContributorLevel';
 import {useViewerLiked} from './ViewerLikes';
 import {storePhotoURL} from '@/lib/store-photo';
@@ -74,12 +75,6 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
   // curve and at the same 0.52s as every other sheet in this product; three panels at three
   // speeds read as three products.
   const [ruleOpen,setRuleOpen]=useState(false);
-  const [ruleLeaving,setRuleLeaving]=useState(false);
-  const closeRule=()=>{
-    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){setRuleOpen(false);return;}
-    setRuleLeaving(true);
-    window.setTimeout(()=>{setRuleOpen(false);setRuleLeaving(false);},520);
-  };
 
   // The shop answers to its slug and to its uuid, and its page names the slug as canonical.
   // Linking by uuid pointed every review on the site at the copy rather than the original.
@@ -245,15 +240,6 @@ export function PostCard({post,surface='feed',owned=false,onDeleted}:PostCardPro
       {removeFailed&&<p className="form-error" role="alert">{t('deleteReviewFailed')}</p>}
     </div>
     <AuthDialog open={auth} onClose={()=>setAuth(false)}/>
-    {ruleOpen&&<div className="dialog-backdrop add-store-backdrop" data-state={ruleLeaving?'leaving':'visible'} role="presentation"
-      onMouseDown={event=>{if(event.target===event.currentTarget)closeRule();}}>
-      <div className="add-store-sheet criterion-rule-sheet" role="dialog" aria-modal="true" aria-labelledby={`criterion-rule-${post.id}`}>
-        <header>
-          <h3 id={`criterion-rule-${post.id}`}>{t('lowScoreRuleTitle')}</h3>
-          <button type="button" className="icon-button" aria-label={t('close')} onClick={closeRule}><X aria-hidden="true"/></button>
-        </header>
-        <p>{t('lowScoreRule')}</p>
-      </div>
-    </div>}
+    {ruleOpen&&<InfoSheet title={t('lowScoreRuleTitle')} onClosed={()=>setRuleOpen(false)}><p>{t('lowScoreRule')}</p></InfoSheet>}
   </article>;
 }

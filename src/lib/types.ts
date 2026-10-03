@@ -6,6 +6,7 @@ export type MediaAsset = { id: string; url: string; mime_type: 'image/jpeg' | 'i
 export type ReviewCriteriaScores = { availability:number;value:number;layout:number;staff_care:number;staff_knowledge:number;checkout:number;returns:number;cleanliness:number };
 export type PlatformStats = { average_rating: number; rating_count?: number; review_count: number; favorite_count: number; post_count: number };
 export type CriteriaAverages = { review_count:number;availability:number;value:number;layout:number;staff_care:number;staff_knowledge:number;checkout:number;returns:number;cleanliness:number };
+export type VisitPurpose='gift'|'trousseau'|'new_home'|'routine';
 export type Post = {
   id: string; user_id: string; store_id: string; text: string; content_language?: Locale; rating: number;
   visit_verified: true; distance_meters: number; store_distance_meters?: number; created_at: string;
@@ -17,6 +18,9 @@ export type Post = {
   // What the visit was for, and why any heading scored one or two. Both optional: a review
   // that answered neither question has neither field.
   purchased?: boolean; purchased_item?: string;
+  // Why the visit was made, when the reviewer said (R54). Absent on reviews written before
+  // the question was asked, and on reviews from clients that do not ask it.
+  visit_purpose?: VisitPurpose;
   criterion_notes?: Partial<Record<keyof ReviewCriteriaScores,string>>;
   // Whether the review is on the page. Only ever anything but published on the author's own
   // list: everywhere else a review that is not published is simply not returned.

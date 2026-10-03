@@ -1443,7 +1443,9 @@ svg{stroke-width:2}
 @media(max-width:600px),(min-width:900.02px){.review-summary{grid-template-columns:minmax(0,1fr)}.review-summary>div{border-right:0}.review-summary>div:nth-last-child(2){border-bottom:1px solid var(--line)}}
 /* The same verdict the results list gives, in the same words, the same tick and the same
    green -- a reader who has met it there should not have to learn it again here. */
-.create-page .review-verified{display:flex;align-items:center;gap:8px;margin:0;color:var(--success);font-size:15px;font-weight:700;line-height:1.35}
+.create-page .review-verified{display:flex;align-items:center;gap:10px;margin:0;padding-left:14px;color:var(--success);font-size:15px;font-weight:700;line-height:1.35}
+/* R58: the tick stands in the column the "i" of the notice under it stands in -- the notice's
+   own inner padding and gap, so the two marks and the two sentences start at the same x. */
 .create-page .review-verified svg{width:18px;height:18px;flex:none;color:var(--success)}
 /* A condition with a date in it is a notice, not a verdict, so it is framed like every other
    notice on this page rather than run on from the sentence above it. */
@@ -1529,23 +1531,45 @@ svg{stroke-width:2}
 .criterion-note textarea{width:100%;min-height:62px;padding:10px 12px;border:1px solid var(--line-strong);border-radius:var(--r-md);background:var(--surface);color:var(--ink);font:inherit;font-size:15px;line-height:1.45;resize:none}
 .criterion-note textarea:focus{outline:0;border-color:var(--clay)}
 .criterion-note>small{justify-self:end;font-size:12px;color:var(--ink-muted);font-variant-numeric:tabular-nums}
+/* R60: the request is the note at the foot of the list, framed the same way. The note's own
+   rule sets the frame; this only undoes what the label's caption rule above gives a span
+   (bold ink at 13px) and the note's margin, which is for a note standing on its own. */
+/* The note is a label inside a question, and the rule that draws the star targets as small
+   centred grids (`.criteria-list .criterion label`, globals.css) reaches it too and outranks
+   `.criterion-note`. While the request was one long sentence that went unnoticed -- it was
+   wider than the column anyway -- but in two short lines the note shrank to the longer one,
+   frame and typing area with it. It takes the column back here. */
+.criteria-list .criterion .criterion-note{display:grid;place-items:normal}
+.criterion-note>.criteria-hint{margin:0;font-size:14px;font-weight:400;color:var(--ink-muted)}
+.criterion-note>.criteria-hint>span>span{display:block}
+/* R61: a five, celebrated. A ring opens and eight sparks fly from the fifth star and fade,
+   in the brand's honey and the clay of the score -- about half a second, then nothing. */
+.star-burst{position:absolute;left:50%;top:50%;width:0;height:0;pointer-events:none}
+.star-burst b{position:absolute;left:-15px;top:-15px;width:30px;height:30px;border:2px solid var(--accent);border-radius:var(--r-pill);opacity:0;animation:star-ring .5s cubic-bezier(.16,1,.3,1) forwards}
+.star-burst i{position:absolute;left:-2.5px;top:-2.5px;width:5px;height:5px;border-radius:var(--r-pill);background:var(--accent);opacity:0;animation:star-spark .62s cubic-bezier(.16,1,.3,1) forwards}
+.star-burst i:nth-child(odd){width:4px;height:4px;left:-2px;top:-2px;background:var(--clay)}
+@keyframes star-ring{0%{opacity:.9;transform:scale(.45)}100%{opacity:0;transform:scale(1.5)}}
+@keyframes star-spark{0%{opacity:1;transform:rotate(calc(var(--ray) * 45deg)) translateY(-9px)}100%{opacity:0;transform:rotate(calc(var(--ray) * 45deg)) translateY(-26px) scale(.5)}}
+@media(prefers-reduced-motion:reduce){.star-burst{display:none}}
 .criteria-clear{display:inline-flex;align-items:center;gap:8px;min-height:44px;margin-top:0;padding:0 14px;font-size:14px;color:var(--ink-muted)}
 .criteria-clear svg{width:16px;height:16px}
 .criteria-clear:disabled{opacity:.45}
-/* Did the visit end in a purchase. Two answers, drawn as the two things they are. */
-/* R50: the question follows the sentence above it at the step's own gap. A margin on top of
-   the flex gap had put 52px between them, and with the product field open the button under
-   them fell below the dock on a phone. */
-.purchase-answer{display:flex;flex-wrap:wrap;gap:10px;margin:0;padding:0;border:0}
-.review-step>.criteria-intro-plain:has(+.purchase-answer){margin-bottom:0}
-/* R50: and its buttons stay on the screen. Spacing alone got "Devam et" above the dock on a
-   phone shown whole, but not in Mobile Safari with its toolbars up, and not with a store name
-   on two lines -- no amount of trimming holds for every shop and every phone. So on a phone
-   the row sits just above the dock until the page reaches it, on a solid ground (the glass is
-   the dock's alone). Where the page is short enough it is simply where it always was. */
-@media(max-width:900px){
-  .review-step:has(>.purchase-answer)>.review-nav{position:sticky;bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:3;align-self:stretch;margin-top:0;padding:10px 0;background:var(--canvas)}
-}
+/* The purchase step's two questions: why the visit was made (R54), then whether it ended in
+   a purchase. Each is a heading, the sentence that says what the answer is for (R55, R56),
+   and its answers drawn as the things they are. R63: the buttons under them scroll with the
+   page, as every other step's do; R50 had pinned them above the dock. */
+.purchase-answer{display:block;align-self:stretch;margin:0;padding:0;border:0;min-inline-size:0}
+.purchase-answer>.criteria-intro-plain{margin:0 0 12px}
+.purchase-choices{display:flex;flex-wrap:wrap;gap:10px}
+/* Four answers of different lengths wrapped into rows of one, two and one, which read as a
+   layout accident; one under another they read as the list of choices they are. Yes and no
+   stay side by side. */
+.visit-purpose .purchase-choices{flex-direction:column;align-items:flex-start}
+.visit-purpose+.purchase-answer{margin-top:12px}
+/* The "i" belongs to the answer it explains, so the two wrap as one. The mark is drawn at the
+   store page's size; the target around it is a finger's. */
+.purchase-choice-info{display:inline-flex;align-items:center;gap:2px}
+.purchase-choice-info .criterion-warn-button{width:44px;height:44px}
 /* The scoring grid has the final check's problem in the same column: above 900px the step
    sits in one of the page's two columns, and two questions to a row left each 214px for five
    44px stars. The fieldsets would not shrink below their stars, so they overlapped, and a
@@ -1560,7 +1584,10 @@ svg{stroke-width:2}
 }
 .purchase-answer legend{padding:0;margin-bottom:10px;font-size:17px;font-weight:700;color:var(--ink)}
 .purchase-answer label{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 20px;border:1px solid var(--line-strong);border-radius:var(--r-pill);background:var(--surface);font-weight:700;cursor:pointer}
-.purchase-answer label[data-selected=true]{border-color:var(--clay);background:var(--accent-wash);color:var(--clay)}
+/* R62: a chosen answer is filled with clay and written in white, as the button that acts on
+   it is. */
+.purchase-answer label[data-selected=true]{border-color:var(--clay);background:var(--clay);color:var(--surface)}
+.purchase-answer label:has(input:focus-visible){outline:3px solid var(--accent);outline-offset:2px}
 .purchase-answer input{position:absolute;opacity:0;width:1px;height:1px}
 /* R53: as wide as the column. The step's column lays its children out at their own width, so
    the label shrank to the input's default size and the example in it was cut off. */
