@@ -54,8 +54,10 @@ type Props={params:Promise<{id:string;locale:string}>};
 //
 // A day is what the staleness can honestly carry. Everything that changes a store page and
 // can be seen from this application now drops it on the spot -- a review written, a review
-// deleted, a cover image replaced -- so the day is only the ceiling for a change made
-// somewhere this application cannot hear about, such as straight in the catalogue.
+// deleted, a cover image replaced -- and a write made through the API anywhere else, the
+// mobile app included, drops it within a minute (lib/catalog-changes.ts). The day is only the
+// ceiling for a change made somewhere neither can hear about, such as straight in the
+// catalogue.
 //
 // Longer than a day would convert more of those repeats, and is worth revisiting once the
 // catalogue can announce its own edits. Until then a day is the point where the saving stops

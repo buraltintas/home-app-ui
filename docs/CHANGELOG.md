@@ -8,6 +8,54 @@ value involved.
 
 ---
 
+## A review written anywhere shows on the shop's page within a minute
+
+A store page is cached for a day, and the only thing that dropped it early was a write made
+through this site, on the web server that handled it. A review written from the mobile app
+reached no web server at all, and one written here reached only the server it landed on: the
+shop's page showed it without that review for up to a day. The owner's rule is plain -- if
+there is a write, the current data must show; if there is not, the cache is fine.
+
+The API already tells its own instances about every catalogue write through one small object
+in Cloud Storage (home-app-api, `internal/changes`): which shops' pages changed, whether the
+lists moved, whether a review changed. The site now reads the same object
+(`src/lib/catalog-changes.ts`). The proxy takes a look at most once every thirty seconds per
+instance, inside a page request -- one metadata read, the entries only when it moved -- and
+hands what they name to `/api/internal/catalog-changes` on the same instance over loopback,
+because `revalidateTag` cannot be called from the proxy. That route asks the API for each
+shop's slug (a page is cached under the id or the slug it was opened by) and expires
+`store:<id>`, `store:<slug>`, and, when the entry says so, the new group tags: `store-pages`
+(every store page and review list), `store-lists` (every list of shops -- the city and brand
+lists, a store page's nearby rail, the city/category and city/brand indexes -- which show
+other shops' ratings and counts, so a review drops every store page too) and `highlights`
+(the home page's monthly highlights). The request that took the look waits for this and is
+answered fresh.
+
+An entry that changes the catalogue without naming a shop -- a brand import from the panel
+rewriting addresses and phones, a match merge, a new shop -- drops every store page. So does
+a shop that answers as another one (merged away) or not at all (gone): the slug its page is
+cached under can no longer be learned. A slug lookup that fails answers 503, the news is sent
+again on the next look, after three tries as every store page, and after ten it is left to the
+pages' own lifetime so a broken route cannot hold up a request every thirty seconds.
+
+Each entry is acted on three times: when first seen, once it is 45 seconds old, and after five
+minutes. An API instance learns of a write made on another one only at its own next look, so
+a page rendered in between can still be the old one; the last pass is for an API instance
+whose look failed or was still running. Everything here falls back quietly: unset
+`CATALOG_CHANGES_OBJECT` (every development machine) turns it off, and when Cloud Storage or
+the route does not answer, the look is skipped and the pages keep their own lifetime, as
+before. The route answers 404 without the server's own secret. Cost: one Class B read per look,
+under five cents a month per instance, plus one API read per changed shop.
+
+Measured locally against a stand-in for the API and Cloud Storage: a cached page (`HIT`) was
+rendered again on the first request 31 seconds after a review and after a brand import, again
+after the settle window, at once after a merge, and served from cache in between and
+afterwards; a failing slug lookup answered 503, and the route answered 404 without the key.
+
+Not covered: catalogue imports run from a laptop write straight to the database, so the API
+never hears of them and neither does this; and a user renaming themselves changes the name on
+their review cards without the API writing an entry.
+
 ## R54/R55 switched on: the review flow asks why the visit was made
 
 The visit-purpose question built with R54–R64 is on (`ASK_VISIT_PURPOSE`). The API that stores

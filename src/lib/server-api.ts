@@ -32,9 +32,9 @@ export async function serverApi<T>(path:string,init:RequestInit={}):Promise<T>{
 //
 // This asks for the public version of a thing and lets Next cache the answer. No cookie is
 // read, so nothing here can vary by reader.
-export async function publicApi<T>(path:string,{locale='tr',revalidate=3600}:{locale?:Locale;revalidate?:number}={}):Promise<T>{
+export async function publicApi<T>(path:string,{locale='tr',revalidate=3600,tags}:{locale?:Locale;revalidate?:number;tags?:string[]}={}):Promise<T>{
   const response=await fetch(`${API_ORIGIN}${path}`,{
-    next:{revalidate},
+    next:{revalidate,...(tags?{tags}:{})},
     headers:{'Content-Type':'application/json','X-BFF-Secret':process.env.BFF_SECRET??'','X-Locale':locale,'Accept-Language':locale},
   });
   if(!response.ok)throw new ApiError(response.status,await response.json().catch(()=>undefined));
@@ -88,6 +88,17 @@ export const getStore=cache(async function getStore(ref:string):Promise<StoreDet
 // differently.
 export function storeTag(ref:string){return `store:${ref.toLowerCase()}`;}
 
+// What the catalogue's change log (catalog-changes.ts) can name besides one shop. Every
+// store page and review list carries the first, so news that some shop changed without
+// saying which one can drop them all. Every list of shops carries the second -- the city and
+// brand lists, a store page's nearby rail, the city/category and city/brand indexes -- because
+// they show other shops' ratings and review counts, or which lists exist, and a review or a
+// catalogue edit moves them; that puts it on every store page too. The home page's monthly
+// highlights carry the third, because they are counted from reviews.
+export const STORE_PAGES_TAG='store-pages';
+export const STORE_LISTS_TAG='store-lists';
+export const HIGHLIGHTS_TAG='highlights';
+
 export const getPublicStore=cache(async function getPublicStore(ref:string,locale:Locale,seconds:number):Promise<StoreDetail>{
   if(!STORE_REF.test(ref)&&!UUID.test(ref))notFound();
   const response=await fetch(`${API_ORIGIN}/v1/stores/${encodeURIComponent(ref)}`,{
@@ -95,7 +106,7 @@ export const getPublicStore=cache(async function getPublicStore(ref:string,local
     // than waiting out the hour or dumping eleven thousand of them. The route answers to
     // either the id or the slug and they are two different cache keys, so the tag is the
     // reference that was asked for -- whichever it was, the writer knows it too.
-    next:{revalidate:seconds,tags:[storeTag(ref)]},
+    next:{revalidate:seconds,tags:[storeTag(ref),STORE_PAGES_TAG]},
     headers:{'Content-Type':'application/json','X-BFF-Secret':process.env.BFF_SECRET??'','X-Locale':locale,'Accept-Language':locale},
   });
   if(response.status===404)notFound();
@@ -110,7 +121,7 @@ export const getPublicStore=cache(async function getPublicStore(ref:string,local
 // writing or deleting a review drops this list along with the store page itself.
 export async function getStorePosts(storeId:string,refs:string[],locale:Locale,seconds:number):Promise<Post[]>{
   if(!UUID.test(storeId))notFound();
-  const tags=[...new Set([storeId,...refs].map(ref=>ref.trim()).filter(Boolean).map(storeTag))];
+  const tags=[...new Set([storeId,...refs].map(ref=>ref.trim()).filter(Boolean).map(storeTag)),STORE_PAGES_TAG];
   const response=await fetch(`${API_ORIGIN}/v1/stores/${storeId}/posts?limit=${STORE_POSTS_LIMIT}`,{
     next:{revalidate:seconds,tags},
     headers:{'Content-Type':'application/json','X-BFF-Secret':process.env.BFF_SECRET??'','X-Locale':locale,'Accept-Language':locale},
@@ -182,7 +193,7 @@ export async function getNearbyStores(ref:string,limit=6,seconds?:number):Promis
   //
   // A store page is worth rendering without its neighbours; it is not worth failing over
   // them. Anything that goes wrong here leaves the block out and the page stands.
-  try{return (await publicApi<{items:NearbyStore[]}>(`/v1/stores/${ref}/nearby?limit=${limit}`,seconds?{revalidate:seconds}:{})).items??[]}catch{return []}
+  try{return (await publicApi<{items:NearbyStore[]}>(`/v1/stores/${ref}/nearby?limit=${limit}`,{...(seconds?{revalidate:seconds}:{}),tags:[STORE_LISTS_TAG]})).items??[]}catch{return []}
 }
 
 export const backendOrigin=API_ORIGIN;
@@ -199,7 +210,7 @@ export async function getHomeSignals(locale:Locale):Promise<HomeSignals>{
   // Three independent reads, and any one of them may be missing without the other two
   // becoming untrue. A home page is worth rendering with two of its three lists.
   const [highlights,cities,categories]=await Promise.all([
-    publicApi<MonthlyStoreHighlights>('/v1/search/highlights',{locale}).catch(()=>({} as MonthlyStoreHighlights)),
+    publicApi<MonthlyStoreHighlights>('/v1/search/highlights',{locale,tags:[HIGHLIGHTS_TAG]}).catch(()=>({} as MonthlyStoreHighlights)),
     publicApi<{items:PopularCity[]}>('/v1/search/popular-cities?limit=5',{locale}).then(r=>r.items??[]).catch(()=>[]),
     publicApi<{items:PopularCategory[]}>('/v1/categories',{locale}).then(r=>r.items??[]).catch(()=>[]),
   ]);
@@ -222,7 +233,7 @@ export type CityCategory={city:string;city_slug:string;category_slug:string;cate
 // Throwing gives a 500 instead. A crawler treats that as "come back later", which is the
 // truth, and Next does not cache it.
 export const getCityCategories=cache(async(locale:Locale,seconds?:number):Promise<CityCategory[]>=>
-  (await publicApi<{items:CityCategory[]}>('/v1/discovery/city-categories',seconds?{locale,revalidate:seconds}:{locale})).items??[]);
+  (await publicApi<{items:CityCategory[]}>('/v1/discovery/city-categories',{locale,...(seconds?{revalidate:seconds}:{}),tags:[STORE_LISTS_TAG]})).items??[]);
 
 // The same list for callers that only decorate a page with it. A store page shows links to
 // the pages its shop belongs to; not knowing them costs a few links and nothing else, so
@@ -234,7 +245,7 @@ export const getCityCategoriesIfKnown=cache(async(locale:Locale,seconds?:number)
 export type CatalogEntry={id:string;slug:string;name:string;address?:string;district?:string;city:string;average_rating:number;review_count:number;brand_name?:string;brand_slug?:string;category_labels:string[];photo?:StoredPhoto};
 export type CityCategoryPage={city:string;category_slug:string;category_name:string;total:number;items:CatalogEntry[]};
 export async function getCityCategoryPage(citySlug:string,categorySlug:string,locale:Locale,limit=60,offset=0):Promise<CityCategoryPage|undefined>{
-  try{return await publicApi<CityCategoryPage>(`/v1/discovery/stores?city=${encodeURIComponent(citySlug)}&category=${encodeURIComponent(categorySlug)}&limit=${limit}&offset=${offset}`,{locale});}
+  try{return await publicApi<CityCategoryPage>(`/v1/discovery/stores?city=${encodeURIComponent(citySlug)}&category=${encodeURIComponent(categorySlug)}&limit=${limit}&offset=${offset}`,{locale,tags:[STORE_LISTS_TAG]});}
   catch(error){return absentOrThrow(error);}
 }
 
@@ -251,7 +262,7 @@ function absentOrThrow(error:unknown):undefined{
 export type CityBrand={city:string;city_slug:string;brand_slug:string;brand_name:string;store_count:number};
 // Throws, for the same reason getCityCategories throws.
 export const getCityBrands=cache(async(locale:Locale,seconds?:number):Promise<CityBrand[]>=>
-  (await publicApi<{items:CityBrand[]}>('/v1/discovery/city-brands',seconds?{locale,revalidate:seconds}:{locale})).items??[]);
+  (await publicApi<{items:CityBrand[]}>('/v1/discovery/city-brands',{locale,...(seconds?{revalidate:seconds}:{}),tags:[STORE_LISTS_TAG]})).items??[]);
 
 export const getCityBrandsIfKnown=cache(async(locale:Locale,seconds?:number):Promise<CityBrand[]>=>{
   try{return await getCityBrands(locale,seconds);}catch{return [];}
@@ -259,6 +270,6 @@ export const getCityBrandsIfKnown=cache(async(locale:Locale,seconds?:number):Pro
 
 export type CityBrandPage={city:string;brand_slug:string;brand_name:string;total:number;items:CatalogEntry[]};
 export async function getCityBrandPage(citySlug:string,brandSlug:string,locale:Locale,limit=60,offset=0):Promise<CityBrandPage|undefined>{
-  try{return await publicApi<CityBrandPage>(`/v1/discovery/brand-stores?city=${encodeURIComponent(citySlug)}&brand=${encodeURIComponent(brandSlug)}&limit=${limit}&offset=${offset}`,{locale});}
+  try{return await publicApi<CityBrandPage>(`/v1/discovery/brand-stores?city=${encodeURIComponent(citySlug)}&brand=${encodeURIComponent(brandSlug)}&limit=${limit}&offset=${offset}`,{locale,tags:[STORE_LISTS_TAG]});}
   catch(error){return absentOrThrow(error);}
 }

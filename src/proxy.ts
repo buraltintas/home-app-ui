@@ -1,4 +1,5 @@
 import {NextResponse,type NextRequest} from 'next/server';
+import {lookForCatalogChanges} from '@/lib/catalog-changes';
 import {isUnwelcomeCrawler} from '@/lib/crawlers';
 
 // Locale used to live only in a cookie. Googlebot sends no cookies, so every crawl saw
@@ -111,6 +112,11 @@ export async function proxy(request:NextRequest){
   if(pathname!=='/robots.txt'&&isUnwelcomeCrawler(request.headers.get('user-agent'))){
     return new NextResponse('Disallowed by /robots.txt',{status:403,headers:{'content-type':'text/plain; charset=utf-8','cache-control':'no-store'}});
   }
+
+  // A review written from the app, or on another web server, drops the shop's cached page
+  // here before this request is answered (lib/catalog-changes.ts). One request in thirty
+  // seconds takes the look; the rest do not wait for it.
+  await lookForCatalogChanges();
 
   const store=STORE_PATH.exec(pathname);
   if(store){
