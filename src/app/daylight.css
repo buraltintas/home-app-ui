@@ -103,6 +103,21 @@ svg{stroke-width:2}
    the location had been confirmed. */
 .button.primary.use-location.is-verified,.button.primary.use-location.is-verified:hover{background:var(--success);border-color:var(--success);color:var(--surface)}
 .button.secondary{background:var(--surface);border:1px solid var(--line-strong);color:var(--ink)}
+/* A button whose work is in flight (BusyLabel). The label and the dots share one grid cell,
+   so the button is as wide as its label either way; the label is only made transparent, so
+   it is still the button's name. The dots are the button's own ink. Under reduced motion
+   they stand still, which still reads as an ellipsis. */
+.busy-label{display:inline-grid;place-items:center}
+.busy-label>*{grid-area:1/1}
+.busy-label[data-busy]>:first-child{opacity:0}
+.busy-dots{display:inline-flex;align-items:center;gap:5px}
+.busy-dots>span{width:6px;height:6px;border-radius:var(--r-pill);background:currentColor;animation:busy-dot 1s ease-in-out infinite}
+.busy-dots>span:nth-child(2){animation-delay:.15s}
+.busy-dots>span:nth-child(3){animation-delay:.3s}
+@keyframes busy-dot{0%,80%,100%{opacity:.35;transform:none}40%{opacity:1;transform:translateY(-3px)}}
+@media(prefers-reduced-motion:reduce){.busy-dots>span{animation:none;opacity:1}}
+/* High-contrast modes repaint backgrounds; the dots are drawn in the button's text colour there. */
+@media(forced-colors:active){.busy-dots>span{forced-color-adjust:none;background:ButtonText}}
 .search-page{min-height:calc(100vh - 82px)}
 /* The page ground is the canvas, as everywhere else. Honey is an area colour and it was
    covering the whole top of the screen -- the title, the location panel, the suggestions and
@@ -385,7 +400,7 @@ svg{stroke-width:2}
 @keyframes ink-in{from{opacity:.01;transform:translateY(18px);clip-path:inset(0 0 12% 0)}to{opacity:1;transform:none;clip-path:inset(0)}}
 @media(max-width:900px){body{padding-bottom:calc(86px + env(safe-area-inset-bottom))}.site-header{backdrop-filter:none}.nav-wrap{height:66px;padding:0 20px}.brand-link{font-size:15px}.brand-mark,.brand-link img{width:52px;height:52px}.site-header nav{position:fixed;z-index:24;left:50%;right:auto;bottom:calc(10px + env(safe-area-inset-bottom));width:min(420px,calc(100% - 28px));height:66px;transform:translateX(-50%);display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:0;padding:0 8px;background:color-mix(in srgb,var(--surface) 82%,transparent);border:1px solid var(--line);border-radius:22px;box-shadow:0 12px 32px rgba(22,20,15,.12);backdrop-filter:blur(24px) saturate(150%);overflow:visible}.site-header nav a{min-height:54px;height:54px;align-self:center;justify-content:center;padding:0;border-radius:15px}.site-header nav a span{display:none}.site-header nav a svg{display:block;width:24px;height:24px}.site-header nav a.is-active{background:var(--accent-wash);color:var(--ink);transform:translateY(-2px)}.site-header nav a.is-active::after{display:none}.feed-layout{padding:38px 22px 40px}.feed-intro{grid-template-columns:minmax(0,820px)}.post-card{grid-template-columns:46px minmax(0,1fr);column-gap:14px}.post-number{grid-column:1}.post-heading{grid-column:2;display:block}.post-author{margin-bottom:22px}.post-store h2{font-size:30px}.post-photo{grid-column:2;grid-row:2}.post-details{grid-column:2;grid-row:3}.results-layout{grid-template-columns:1fr}.map-panel{display:none}.store-overview{grid-template-columns:1fr 1fr}.store-copy,.store-actions{grid-column:1/-1}.store-body{gap:50px}.create-page{grid-template-columns:1fr}.create-page>.button{grid-column:auto}.public-profile{grid-template-columns:auto 1fr}.public-profile dl{grid-column:1/-1}}
 @media(max-width:600px){.nav-wrap{height:62px;padding:0 16px}.brand-name{font-size:14px}.brand-mark,.brand-link img{width:48px;height:48px}.feed-layout{padding:26px 0 24px}.feed-intro{padding:10px 18px 18px;grid-template-columns:minmax(0,1fr);gap:14px;align-items:center}.feed-intro h1{font-size:clamp(23px,6.2vw,29px);line-height:1.1;letter-spacing:-.03em}.search-hero h1{font-size:clamp(22px,7.7vw,34px);line-height:1.1;letter-spacing:-.03em}.search-title{gap:10px}.search-form{margin-top:20px;padding:6px 6px 6px 14px;gap:8px}.search-form textarea{font-size:16px}.location-control{margin-top:14px}.search-suggestions{margin-top:26px}.feed-intro>div>p{font-size:14px;line-height:1.45;margin-top:8px}
-.feed-rule{margin:0 18px}.post-card{display:block;padding:34px 0}.post-heading{margin:0 18px 18px}.post-author{padding-right:0}.post-store{margin-top:20px}.post-store h2{font-size:24px;line-height:1.12}.post-photo{width:100%;aspect-ratio:4/3;clip-path:none}.post-details{margin:0 18px;padding:20px;border-top-width:6px}.post-copy{font-size:15px}.post-actions{gap:6px}.feed-state{margin:0 18px;padding:32px 24px;grid-template-columns:1fr}.feed-more{padding:28px 18px 40px}.feed-more button{width:100%;min-width:0}.feed-end{padding:32px 18px 60px}.feed-state>img{grid-row:auto}.feed-skeleton{aspect-ratio:4/1}.search-hero{padding:20px 18px 26px}.search-slogan{margin-bottom:10px;font-size:12px}.brand-tagline{font-size:11px}.search-title-shop{width:100%}.search-form{grid-template-columns:auto 1fr;margin-top:28px}.search-form>button{grid-column:1/-1}.search-suggestions{grid-template-columns:1fr;gap:24px}.location-sheet{grid-template-columns:1fr;padding:20px}.location-results{grid-column:1}.result-list{padding:0 18px 100px}.search-result{grid-template-columns:110px 1fr;gap:14px}.result-call{margin:0 0 12px;width:100%;justify-content:center}.result-google{margin:0 0 18px;width:100%;justify-content:center}.search-result>img{width:110px;height:145px}.search-result>svg{display:none}.search-result h2{font-size:19px}.store-hero-grid{height:76vw;grid-template-columns:1fr}.store-side-image{display:none}.store-overview{padding:30px 18px;gap:24px}.store-body{display:block;margin:44px auto 36px;padding:0 18px}.public-profile{grid-template-columns:1fr}.auth-dialog{box-shadow:none;border-top-width:8px}.dialog-backdrop{padding:0}.auth-dialog{align-self:end}.empty-page{padding-bottom:110px}.create-page{margin:40px auto 110px;padding:0 18px}}
+.feed-rule{margin:0 18px}.post-card{display:block;padding:34px 0}.post-heading{margin:0 18px 18px}.post-author{padding-right:0}.post-store{margin-top:20px}.post-store h2{font-size:24px;line-height:1.12}.post-photo{width:100%;aspect-ratio:4/3;clip-path:none}.post-details{margin:0 18px;padding:20px;border-top-width:6px}.post-copy{font-size:15px}.post-actions{gap:6px}.feed-state{margin:0 18px;padding:32px 24px;grid-template-columns:1fr}.feed-more{padding:28px 18px 40px}.feed-more button{width:100%;min-width:0}.feed-end{padding:32px 18px 60px}.feed-state>img{grid-row:auto}.feed-skeleton{aspect-ratio:4/1}.search-hero{padding:20px 18px 26px}.search-slogan{margin-bottom:10px;font-size:12px}.brand-tagline{font-size:11px}.search-title-shop{width:100%}.search-form{grid-template-columns:auto 1fr;margin-top:28px}.search-form>button{grid-column:1/-1}.search-suggestions{grid-template-columns:1fr;gap:24px}.location-sheet{grid-template-columns:1fr;padding:20px}.location-results{grid-column:1}.result-list{padding:0 18px 100px}.search-result{grid-template-columns:110px 1fr;gap:14px}.result-call{margin:0 0 12px;width:100%;justify-content:center}.result-google{margin:0 0 18px;width:100%;justify-content:center}.search-result>img{width:110px;height:145px}.search-result>svg{display:none}.search-result h2{font-size:19px}.store-hero-grid{height:76vw;grid-template-columns:1fr}.store-side-image{display:none}.store-overview{padding:30px 18px;gap:24px}.store-body{display:block;margin:44px auto 36px;padding:0 18px}.public-profile{grid-template-columns:1fr}.auth-dialog{box-shadow:none;border-top-width:8px}.dialog-backdrop{padding:0}.auth-dialog{align-self:end}.empty-page{padding-bottom:110px}.create-page{margin:24px auto 110px;padding:0 18px}}
 @media(prefers-reduced-motion:reduce){.feed-intro,.search-hero{animation:none}.post-photo,.post-photo img,.brand-mark{transition:none}}
 
 /* Returned navigation destinations use one visual language. Search and Profile were
@@ -1350,12 +1365,16 @@ svg{stroke-width:2}
 }
 
 /* Keep each question's five radio targets in a single row. */
-/* A note, framed as one: an icon that says "this is information", and a border so it is
-   plainly an aside rather than the next instruction. */
-.criteria-intro{display:flex;align-items:center;gap:10px;margin:0 0 20px;padding:13px 15px;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:var(--r-md);background:var(--surface)}
-.criteria-intro svg{flex:none;width:18px;height:18px;margin-top:0;color:var(--accent-ink)}
-.criteria-intro p{margin:0;font-size:14.5px;line-height:1.45;color:var(--ink)}
-.criteria-intro span{display:block}
+/* A note, framed as one: an icon that says "this is information" on a quiet ground, so it
+   is plainly an aside rather than the next instruction. R51: the note above the scores and
+   the one under them are the same object, so they are one class -- two classes styled to
+   match drift apart at the next change to either, which is how the top one came to have a
+   white ground, an amber edge and a third colour of "i". The icon's colour is not set here:
+   it comes from the location step's notice, below, so every "i" in this flow is one colour. */
+.criteria-hint{display:flex;align-self:stretch;align-items:flex-start;gap:9px;margin:0 0 18px;padding:12px 14px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--muted);color:var(--ink-muted);font-size:14px;line-height:1.45}
+.criteria-hint svg{width:17px;height:17px;flex:none;margin-top:1px}
+.criteria-hint p{margin:0}
+.criteria-hint p span{display:block}
 .criteria-intro-plain{margin:0 0 18px;font-size:14.5px;line-height:1.45;color:var(--ink-muted)}
 /* The refusal a blocked passage produces wears the same frame as the note above the
    scores, down to the colour -- the product owner asked for exactly that, so a person
@@ -1367,15 +1386,24 @@ svg{stroke-width:2}
    file loses silently. The rule that overrides belongs next to the rule it overrides. */
 .review-blocked{margin:12px 0 0}
 /* The eight scores, all visible at once, in the same two-column frame they were given in. */
-.review-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;margin:0 0 22px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.review-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-self:stretch;gap:0;margin:0 0 22px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .review-summary-average{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 14px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--muted)}
 .review-summary-average>span{font-size:14px;font-weight:700;color:var(--ink)}
-.review-summary>div{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;padding:12px 16px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.review-summary>div{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;align-content:start;column-gap:12px;min-width:0;padding:12px 16px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
 .review-summary>div:nth-child(2n){border-right:0}
 .review-summary>div:nth-last-child(-n+2){border-bottom:0}
-.review-summary dt{display:flex;align-items:baseline;gap:7px;min-width:0;font-size:13px;line-height:1.3;color:var(--ink-muted)}
+.review-summary dt{display:flex;align-items:baseline;gap:7px;min-width:0;overflow-wrap:anywhere;font-size:13px;line-height:1.3;color:var(--ink-muted)}
 .review-summary dd{display:flex;align-items:center;gap:8px;margin:0;font-size:15px;font-weight:750;color:var(--clay);font-variant-numeric:tabular-nums}
-@media(max-width:600px){.review-summary{grid-template-columns:minmax(0,1fr)}.review-summary>div{border-right:0}.review-summary>div:nth-last-child(2){border-bottom:1px solid var(--line)}}
+/* R44: a low mark's reason, across the whole cell under the score it explains. The quoted
+   face -- serif, italic, clay rule -- comes from `.criterion-detail p`; this only undoes
+   what the score's own dd sets (a clay flex row at 750), which a sentence must not inherit. */
+.review-summary .review-summary-note{grid-column:1/-1;display:block;margin:8px 0 0;font-size:14px;font-weight:400;font-variant-numeric:normal;color:var(--ink)}
+.review-summary .review-summary-note p{margin:0}
+/* One column wherever the column the step sits in is narrow: on a phone, and on a desktop,
+   where the page puts the step in one of its two columns (428px). Two columns of 214px could
+   not hold a heading, five stars and a number, and "Fiyat/performans" ran under its stars.
+   The two-column frame is kept for the band between, where the step takes the page's width. */
+@media(max-width:600px),(min-width:900.02px){.review-summary{grid-template-columns:minmax(0,1fr)}.review-summary>div{border-right:0}.review-summary>div:nth-last-child(2){border-bottom:1px solid var(--line)}}
 /* The same verdict the results list gives, in the same words, the same tick and the same
    green -- a reader who has met it there should not have to learn it again here. */
 .create-page .review-verified{display:flex;align-items:center;gap:8px;margin:0;color:var(--success);font-size:15px;font-weight:700;line-height:1.35}
@@ -1383,11 +1411,19 @@ svg{stroke-width:2}
 /* A condition with a date in it is a notice, not a verdict, so it is framed like every other
    notice on this page rather than run on from the sentence above it. */
 .create-page .review-window{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;margin:0;padding:12px 14px;background:var(--muted);border-radius:var(--r-md);color:var(--ink-muted);font-size:14px;line-height:1.5}
-.create-page .review-window svg{width:18px;height:18px;margin-top:1px;color:var(--ink-muted)}
+.create-page .review-window svg{width:18px;height:18px;margin-top:1px}
+/* R51/R52: one colour for the "i" of every notice in this flow, set once -- the location
+   step's notice and the scoring step's notes take it from the same rule. */
+.create-page .review-window svg,.create-page .criteria-hint svg{color:var(--ink-muted)}
 .create-page .review-window p{margin:0}
 .create-page .review-step .button.primary:disabled{background:var(--muted);color:var(--ink-muted);border-color:var(--line);opacity:1;cursor:not-allowed}
+/* Disabled because it is working, not because something is missing: it keeps its clay, so
+   the dots read as the button doing what it was asked rather than refusing. */
+.create-page .review-step .button.primary[aria-busy=true]:disabled{background:var(--clay);color:var(--surface);cursor:progress}
 .criterion-stars{display:flex;gap:0;flex-wrap:nowrap}
-.criteria-list .criterion-stars label{position:relative;width:44px;height:44px;flex:none;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
+/* R45: a tap on a star is never half of a double tap. Without this, iOS can hold the click to
+   find out -- on a zoomed page, or when two stars are tapped in quick succession. */
+.criteria-list .criterion-stars label{position:relative;width:44px;height:44px;flex:none;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none;touch-action:manipulation}
 .criterion-stars input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer}
 .criterion-stars svg{width:22px;height:22px;color:var(--ink-muted);pointer-events:none}
 .criterion-stars svg.is-on{fill:var(--clay);color:var(--clay)}
@@ -1415,7 +1451,11 @@ svg{stroke-width:2}
 .create-page .review-steps li{position:relative;display:grid;grid-template-columns:none;align-content:start;justify-items:center;gap:6px;padding:6px 4px;margin:0;border:0;border-radius:var(--r-md);background:transparent;text-align:center;opacity:.55}
 /* The line between one stop and the next, drawn behind the marks rather than between the
    boxes, so it does not move when a label wraps. */
-.create-page .review-steps li>span{position:relative;z-index:1;width:40px;height:40px;border:1px solid var(--line-strong);background:var(--surface)}
+/* R49: `li span`, not `li>span`. A passed step's mark is wrapped in the button that takes
+   you back to it, so it is no longer the li's child -- and every child-combinator rule here
+   stopped reaching it: the ring, the size and the green of a step already done all fell away
+   the moment the step was passed. */
+.create-page .review-steps li span{position:relative;z-index:1;width:40px;height:40px;border:1px solid var(--line-strong);background:var(--surface)}
 .create-page .review-steps li strong{font-size:12px;font-weight:700;line-height:1.25;letter-spacing:.01em;color:var(--ink-muted);text-wrap:balance;overflow-wrap:anywhere}
 /* Where you are, said in the colour this product uses for what it wants read. */
 .create-page .review-steps .current{opacity:1;padding:6px 4px;margin:0;border:0;background:transparent}
@@ -1430,15 +1470,15 @@ svg{stroke-width:2}
 /* A completed step is a way back, so it is a button. It keeps the circle and the name exactly
    as the others draw them -- the only thing it adds is that it can be pressed. */
 .create-page .review-steps .review-step-jump{display:grid;justify-items:center;gap:6px;width:100%;padding:0;border:0;background:transparent;color:inherit;font:inherit;cursor:pointer}
-.create-page .review-steps .review-step-jump:hover>span{border-color:var(--ink);color:var(--ink)}
+.create-page .review-steps .review-step-jump:hover>span{border-color:var(--ink)}
 .create-page .review-steps .done{opacity:.85}
-.create-page .review-steps .done>span,.create-page .review-steps li.is-verified>span{background:var(--success);border-color:var(--success);color:var(--surface)}
+.create-page .review-steps .done span,.create-page .review-steps li.is-verified span{background:var(--success);border-color:var(--success);color:var(--surface)}
 @media(max-width:600px){
   .create-page .review-steps{padding:10px 4px}
   .create-page .review-steps li,.create-page .review-steps .current{padding:6px 1px}
   .create-page .review-steps li strong{font-size:10px}
-  .create-page .review-steps li>span{width:34px;height:34px}
-  .create-page .review-steps li>span svg{width:17px;height:17px}
+  .create-page .review-steps li span{width:34px;height:34px}
+  .create-page .review-steps li span svg{width:17px;height:17px}
 }
 /* Start the eight again. Quiet, because starting over is the rarer of the two things to do
    under the last question. */
@@ -1456,12 +1496,38 @@ svg{stroke-width:2}
 .criteria-clear svg{width:16px;height:16px}
 .criteria-clear:disabled{opacity:.45}
 /* Did the visit end in a purchase. Two answers, drawn as the two things they are. */
-.purchase-answer{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 0;padding:0;border:0}
+/* R50: the question follows the sentence above it at the step's own gap. A margin on top of
+   the flex gap had put 52px between them, and with the product field open the button under
+   them fell below the dock on a phone. */
+.purchase-answer{display:flex;flex-wrap:wrap;gap:10px;margin:0;padding:0;border:0}
+.review-step>.criteria-intro-plain:has(+.purchase-answer){margin-bottom:0}
+/* R50: and its buttons stay on the screen. Spacing alone got "Devam et" above the dock on a
+   phone shown whole, but not in Mobile Safari with its toolbars up, and not with a store name
+   on two lines -- no amount of trimming holds for every shop and every phone. So on a phone
+   the row sits just above the dock until the page reaches it, on a solid ground (the glass is
+   the dock's alone). Where the page is short enough it is simply where it always was. */
+@media(max-width:900px){
+  .review-step:has(>.purchase-answer)>.review-nav{position:sticky;bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:3;align-self:stretch;margin-top:0;padding:10px 0;background:var(--canvas)}
+}
+/* The scoring grid has the final check's problem in the same column: above 900px the step
+   sits in one of the page's two columns, and two questions to a row left each 214px for five
+   44px stars. The fieldsets would not shrink below their stars, so they overlapped, and a
+   press on the fifth star of one question could land on the first star of the next. One
+   question to a row wherever the column is that narrow. */
+.criteria-list .criterion{min-inline-size:0}
+@media(min-width:900.02px){
+  .criteria-list{grid-template-columns:minmax(0,1fr)}
+  .criteria-list .criterion{border-right:0}
+  .criteria-list .criterion:nth-last-child(-n+2){border-bottom:1px solid var(--line)}
+  .criteria-list .criterion:last-child{border-bottom:0}
+}
 .purchase-answer legend{padding:0;margin-bottom:10px;font-size:17px;font-weight:700;color:var(--ink)}
 .purchase-answer label{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 20px;border:1px solid var(--line-strong);border-radius:var(--r-pill);background:var(--surface);font-weight:700;cursor:pointer}
 .purchase-answer label[data-selected=true]{border-color:var(--clay);background:var(--accent-wash);color:var(--clay)}
 .purchase-answer input{position:absolute;opacity:0;width:1px;height:1px}
-.purchase-item{display:grid;gap:8px;margin-top:20px;max-width:460px}
+/* R53: as wide as the column. The step's column lays its children out at their own width, so
+   the label shrank to the input's default size and the example in it was cut off. */
+.purchase-item{display:grid;gap:8px;align-self:stretch;max-width:460px}
 .purchase-item span{font-size:14px;color:var(--ink-muted)}
 .purchase-item input{min-height:52px;padding:0 16px;border:1px solid var(--line-strong);border-radius:var(--r-md);background:var(--surface);font-size:16px;color:var(--ink)}
 .review-summary-purchase{margin:16px 0 0;font-size:15px;font-weight:700;color:var(--ink-muted)}

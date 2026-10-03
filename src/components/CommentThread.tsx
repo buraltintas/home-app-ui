@@ -6,6 +6,7 @@ import type {Comment} from '@/lib/types';
 import {useI18n} from '@/i18n/I18nProvider';
 import {apiFetch} from '@/lib/api-client';
 import {AuthDialog} from './AuthDialog';
+import {BusyLabel} from './BusyLabel';
 
 // Comments are readable by anyone; only writing one needs an account. The dialog opens
 // when the backend actually refuses the write, never on the mere intent to comment.
@@ -59,7 +60,7 @@ export function CommentThread({postId,comments}:{postId:string;comments:Comment[
       <textarea id="comment-text" value={text} onChange={event=>setText(event.target.value.slice(0,1000))} rows={3} maxLength={1000} placeholder={t('commentHint')}/>
       {error&&<p className="form-error" role="alert">{error}</p>}
       {held&&<p className="comment-held-notice" role="status">{t('commentHeldNotice')}</p>}
-      <button className="button primary" type="submit" disabled={sending}>{sending?t('loading'):t('sendComment')}</button>
+      <button className="button primary" type="submit" disabled={sending} aria-busy={sending}><BusyLabel busy={sending}>{t('sendComment')}</BusyLabel></button>
     </form>
     <AuthDialog open={auth} onClose={()=>setAuth(false)} onAuthenticated={()=>{setAuth(false);void send();}}/>
   </section>;

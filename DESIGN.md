@@ -87,6 +87,10 @@ Body is 18px, not 16. This is a product people read on a phone while standing in
 - **Focus:** `outline: 3px solid var(--accent); outline-offset: 2px`. Visible, not violent.
 - **Motion:** 140–220 ms ease-out for feedback. No decorative loops. Everything stops under
   `prefers-reduced-motion`.
+- **Busy:** a button whose work is in flight keeps its label, unseen, and draws three dots
+  over it (`BusyLabel`), so it keeps its width and its accessible name and never borrows
+  another screen's word. The dots are feedback, not decoration, and stand still under
+  `prefers-reduced-motion`.
 - **Targets:** 44×44 minimum, always.
 
 ## Composition

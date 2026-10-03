@@ -5,6 +5,7 @@ import Image from 'next/image';
 import {useRouter,useSearchParams} from 'next/navigation';
 import {Suspense,useCallback,useEffect,useLayoutEffect,useRef,useState} from 'react';
 import {AuthDialog} from '@/components/AuthDialog';
+import {BusyLabel} from '@/components/BusyLabel';
 import {RatingStars} from '@/components/Rating';
 import {useI18n} from '@/i18n/I18nProvider';
 import { localePath } from '@/lib/site';
@@ -50,6 +51,35 @@ const lowScoreCopy:Record<Locale,{prompt:string;hint:string}>={
 };
 type CriterionKey=keyof typeof criterionLabels;
 const criterionKeys=Object.keys(criterionLabels) as CriterionKey[];
+
+// One question's five stars, and the reason they are a component of their own (R45).
+//
+// A radio changes on `click`, and on a phone `click` arrives only once the finger has lifted
+// and the browser has ruled out a scroll or a double tap. Until then nothing was drawn: a press
+// that lasted a beat showed an empty star under the thumb, and the fill then waited for the
+// whole eight-question form to render again. Reported as "the stars take orders late", which
+// is what they did -- there was never a transition on them.
+//
+// So the press is drawn the moment the pointer goes down, from this row's own state, and only
+// these five stars render for it. The score itself is still committed by the radio's change,
+// because that is the browser's verdict that the touch was a tap: a press that turns into a
+// scroll is cancelled and leaves nothing, and a tap that only stopped a scroll never clicks, so
+// its press is let go a moment later. Arrow keys, Space and screen readers press nothing and go
+// through onChange exactly as a radio group does.
+function CriterionStars({name,value,onChange}:{name:string;value:number|undefined;onChange:(value:number)=>void}){
+  const [pressed,setPressed]=useState<number>();
+  const letGo=useRef<number|undefined>(undefined);
+  const release=()=>{window.clearTimeout(letGo.current);setPressed(undefined);};
+  const shown=pressed??value??0;
+  // The click that commits the score also ends the press, in the same render, so the star goes
+  // straight from pressed to chosen without a frame of the old score in between.
+  return <div className="criterion-stars" onClick={release} onPointerCancel={release}
+    onPointerLeave={event=>{if(event.pointerType==='mouse')release();}}
+    onPointerUp={()=>{window.clearTimeout(letGo.current);letGo.current=window.setTimeout(release,400);}}>{[1,2,3,4,5].map(star=>
+    <label key={star}><input type="radio" name={name} value={star} aria-label={`${star} / 5`} checked={value===star}
+      onPointerDown={event=>{if(!event.isPrimary||event.button!==0)return;window.clearTimeout(letGo.current);setPressed(star);}}
+      onChange={()=>onChange(star)}/><Star aria-hidden="true" className={star<=shown?'is-on':undefined}/></label>)}</div>;
+}
 
 function ReviewLoadingState(){
   return <main className="create-page create-page-loading" aria-busy="true" aria-label="Loading">
@@ -281,10 +311,10 @@ function ReviewWizard({storeId}:{storeId:string}){
         ...(purchased===undefined?{}:{purchased,...(purchased&&purchasedItem.trim()?{purchased_item:purchasedItem.trim()}:{})}),
         ...(origin?{origin_search_id:origin.search_id,origin_search_result_id:origin.search_result_id}:{}),
       })});
-      if(response.status===401){setSignedIn(false);setAuth(true);return;}
+      if(response.status===401){setSignedIn(false);setAuth(true);setSubmitting(false);return;}
       if(!response.ok)throw new Error();
       const created=await response.json().catch(()=>({})) as {moderation?:string};
-      if(created.moderation==='held'){setHeld(true);window.scrollTo({top:0,behavior:'auto'});return;}
+      if(created.moderation==='held'){setHeld(true);setSubmitting(false);window.scrollTo({top:0,behavior:'auto'});return;}
       sessionStorage.setItem('bosagezme:review-nudge','1');
       // Two caches stand between writing a review and seeing it, and dropping one of them
       // was not enough.
@@ -317,8 +347,12 @@ function ReviewWizard({storeId}:{storeId:string}){
       // right matters more than being quick: somebody has just written something and is
       // going to look for it.
       window.location.assign(localePath(locale,`/stores/${storeId}`));
+      // Still working until this document is gone: assign() only starts the load, and the
+      // store page it waits for is being rebuilt. Letting go here gave the button its label
+      // back and let a second tap send the review twice.
+      return;
     }catch{setSubmitError(t('reviewError'));}
-    finally{setSubmitting(false);}
+    setSubmitting(false);
   };
 
   // Written and held. Said plainly, with the one place the review can be seen from now on.
@@ -399,21 +433,23 @@ function ReviewWizard({storeId}:{storeId:string}){
           <p className="review-window" role="note"><Info aria-hidden="true"/><span>{t('verifyValidityWindow')}</span></p></>
         :<><p>{t('verifyValidity')}</p>
           <button className="button primary" onClick={()=>void verify()} disabled={verifying||!signedIn}>{verifying?t('verifying'):verifyError?t('locationRetry'):t('verifyNow')}</button></>}
-      {verification&&<div className="review-nav"><button className="button primary" onClick={()=>advance(2)}>{t('continue')}</button></div>}
+      {/* Step one's "Geri" leaves the flow, to the shop it was opened from. Not history.back():
+          a flow opened in a new tab has nothing behind it, and one whose steps were jumped
+          through has a later step there. */}
+      {verification&&<div className="review-nav"><button className="button quiet" onClick={()=>router.push(localePath(locale,`/stores/${store.store.slug||storeId}`))}>{t('back')}</button><button className="button primary" onClick={()=>advance(2)}>{t('continue')}</button></div>}
     </section>}
 
     {step===2&&<section className="review-step">
       {/* A note about how the scoring works, not an instruction competing with the scores
           themselves: marked as one, and inside its own frame. */}
-      <aside className="criteria-intro" role="note"><Info aria-hidden="true"/><p>{criteriaIntroCopy[locale][0]}<span>{criteriaIntroCopy[locale][1]}</span></p></aside>
+      <aside className="criteria-hint" role="note"><Info aria-hidden="true"/><p>{criteriaIntroCopy[locale][0]}<span>{criteriaIntroCopy[locale][1]}</span></p></aside>
       {/* Eight fieldsets rather than one, because each line is its own question and a
           screen reader has to be able to say which one it is reading. The overall rating is
           not among them: it is the average of these, worked out by the server. */}
       <div className="criteria-list">{criterionKeys.map((key,index)=>
         <fieldset key={key} className="rating-picker criterion">
           <legend><span className="criterion-number" aria-hidden="true">{index+1}</span>{t(criterionLabels[key])}</legend>
-          <div className="criterion-stars">{[1,2,3,4,5].map(value=>
-            <label key={value}><input type="radio" name={key} value={value} aria-label={`${value} / 5`} checked={criteria[key]===value} onChange={()=>setCriteria(current=>({...current,[key]:value}))}/><Star aria-hidden="true" className={value<=(criteria[key]??0)?'is-on':undefined}/></label>)}</div>
+          <CriterionStars name={key} value={criteria[key]} onChange={value=>setCriteria(current=>({...current,[key]:value}))}/>
           {(criteria[key]===1||criteria[key]===2)&&<label className="criterion-note">
             <span>{lowScoreCopy[locale].prompt}</span>
             <textarea rows={2} maxLength={NOTE_LIMIT} value={notes[key]??''} placeholder={lowScoreCopy[locale].hint}
@@ -427,8 +463,8 @@ function ReviewWizard({storeId}:{storeId:string}){
       <button type="button" className="button quiet criteria-clear" onClick={()=>setCriteria({})} disabled={!Object.keys(criteria).length}><Eraser aria-hidden="true"/>{t('clearScores')}</button>
       {!scored&&<p className="criteria-hint" role="note"><Info aria-hidden="true"/><span>{t('criteriaIncomplete')}</span></p>}
       {submitError&&<p className="form-error" role="alert">{submitError}</p>}
-      {blocked&&<aside className="criteria-intro review-blocked" role="alert"><Info aria-hidden="true"/><p>{blocked}</p></aside>}
-      <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>void screen('criterion_note',lowScores.map(key=>(notes[key]??'').trim()).filter(Boolean).join('\n'),3)} disabled={!scored||!verification||screening}>{screening?t('loading'):t('confirmReview')}</button></div>
+      {blocked&&<aside className="criteria-hint review-blocked" role="alert"><Info aria-hidden="true"/><p>{blocked}</p></aside>}
+      <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>void screen('criterion_note',lowScores.map(key=>(notes[key]??'').trim()).filter(Boolean).join('\n'),3)} disabled={!scored||!verification||screening} aria-busy={screening}><BusyLabel busy={screening}>{t('confirmReview')}</BusyLabel></button></div>
     </section>}
 
     {step===3&&<section className="review-step">
@@ -447,8 +483,8 @@ function ReviewWizard({storeId}:{storeId:string}){
       {/* The step asks a question, so it cannot be left before it is answered. Saying yes and
           naming nothing is the same as not answering: the name is the whole value of the yes,
           because it is the word the next person searching for that thing will type. */}
-      {blocked&&<aside className="criteria-intro review-blocked" role="alert"><Info aria-hidden="true"/><p>{blocked}</p></aside>}
-      <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>void screen('purchased_item',purchased===true?purchasedItem:'',4)} disabled={purchased===undefined||(purchased===true&&!purchasedItem.trim())||screening}>{screening?t('loading'):t('continue')}</button></div>
+      {blocked&&<aside className="criteria-hint review-blocked" role="alert"><Info aria-hidden="true"/><p>{blocked}</p></aside>}
+      <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>void screen('purchased_item',purchased===true?purchasedItem:'',4)} disabled={purchased===undefined||(purchased===true&&!purchasedItem.trim())||screening} aria-busy={screening}><BusyLabel busy={screening}>{t('continue')}</BusyLabel></button></div>
     </section>}
 
     {/* Nothing is written until this page. Eight scores given one after another are easy to
@@ -457,17 +493,25 @@ function ReviewWizard({storeId}:{storeId:string}){
     {step===4&&<section className="review-step">
       <p className="criteria-intro-plain">{t('reviewSummaryIntro')}</p>
       <div className="review-summary-average"><span>{t('ratingLabel')}</span><RatingStars value={criteriaAverage}/></div>
-      <dl className="review-summary">{criterionKeys.map((key,index)=>
-        <div key={key}>
+      {/* R44: a one or a two goes out with the reason given for it, so the reason is checked
+          here, under the score it explains and in the quoted face the store page gives it.
+          Only a mark that is still a one or a two shows one: a note left behind by a score
+          raised afterwards is not sent, so it is not shown either. */}
+      <dl className="review-summary">{criterionKeys.map((key,index)=>{
+        const note=lowScores.includes(key)?(notes[key]??'').trim():'';
+        return <div key={key}>
           <dt><span className="criterion-number" aria-hidden="true">{index+1}</span>{t(criterionLabels[key])}</dt>
           <dd><RatingStars value={criteria[key]??0} showValue={false}/><span>{criteria[key]}</span></dd>
-        </div>)}
+          {note&&<dd className="criterion-detail review-summary-note"><p>{note}</p></dd>}
+        </div>;
+      })}
       </dl>
       {purchased!==undefined&&<p className="review-summary-purchase">{purchased?(purchasedItem.trim()?`${t('purchasedYes')} · ${purchasedItem.trim()}`:t('purchasedYes')):t('purchasedNo')}</p>}
       {submitError&&<p className="form-error" role="alert">{submitError}</p>}
-      {/* The button keeps its own name while it is working. It used to borrow the search
-          page's loading word, so publishing a review said "Aranıyor…". */}
-      <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>void submit()} disabled={submitting||!scored||!verification}>{t('submitReview')}</button></div>
+      {/* The button keeps its own name while it is working -- it used to borrow the search
+          page's loading word, so publishing a review said "Aranıyor…" -- and draws three
+          moving dots over it, so pressing it visibly started something. */}
+      <div className="review-nav"><button className="button quiet" onClick={()=>router.back()}>{t('back')}</button><button className="button primary" onClick={()=>void submit()} disabled={submitting||!scored||!verification} aria-busy={submitting}><BusyLabel busy={submitting}>{t('submitReview')}</BusyLabel></button></div>
     </section>}
 
     <AuthDialog open={auth} onClose={()=>setAuth(false)} onAuthenticated={()=>{setSignedIn(true);setAuth(false);}}/>

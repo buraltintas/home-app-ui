@@ -8,6 +8,55 @@ value involved.
 
 ---
 
+## Review flow R44–R53: what the final check shows, how the buttons work, and the steps' rings
+
+- **R44** — the final check ("Son kontrol") showed the eight scores and nothing else, so the
+  reason written for a one or a two -- which is published with the review -- was never seen
+  again before it went out. Each low score's note now sits under its own score, in the
+  quoted face the store page gives it, and only for a score that is still a one or a two:
+  exactly what is sent.
+- **R45** — the stars filled when the finger was lifted, not when it landed. They were
+  radios, a radio changes on `click`, and on a phone `click` arrives only after the browser
+  has ruled out a scroll or a double tap; the whole eight-question form then rendered again.
+  Each question's stars are a component of their own now: the press is drawn on
+  `pointerdown`, the score is still committed by the radio's change (so a press that becomes
+  a scroll leaves nothing), and the targets declare `touch-action: manipulation`. Keyboard and
+  screen readers are unchanged.
+- **R46** — a working button said "Aranıyor…", the search page's loading word, on the confirm
+  button, the purchase step's "Devam et" and a comment's send button. A working button now
+  keeps its label, unseen, and draws three moving dots over it (`BusyLabel`), so its width and
+  its accessible name do not change; on the review flow it keeps its clay while it works
+  instead of greying out as though something were missing. The publish button gets the same.
+- **R47** — the confirm button says "Onayla" (Confirm, Bestätigen, Подтвердить) and narrows
+  with the word.
+- **R48** — the location-verified step has the same "Geri" button as the other three steps.
+- **R49** — the rings around the step marks fell away once a step was passed, and with them
+  the green of a step already done: a passed step's mark is wrapped in the button that takes
+  you back to it, and every `li>span` rule stopped reaching it. They are `li span` now.
+- **R50/R53** — on the purchase step the question follows the sentence above it at the
+  step's own 16px gap (it was 52px), the product field takes the column's width (it shrank to
+  the input's default 207px and cut its example off), and the page's head is tighter on every
+  step (phone 40→24px above, 36→24px between; desktop 80→48px and 80→32px). Spacing alone
+  was not enough: it held for a phone shown whole (375×812) but not for Mobile Safari with its
+  toolbars up (about 375×664), or for a store name on two lines. So on a phone the step's
+  buttons stay just above the dock until the page reaches them, on a solid ground. Measured
+  with the product field open: at 375×664 "Devam et" sits at 520–568px, the dock starts at
+  588px; at 375×812 the row is simply in its place; at 1440×900 it ends at 714px.
+- **R51/R52** — the note above the eight scores and the one under them were two objects
+  styled apart, with a third colour of "i" between them. They are one class now, and every
+  "i" in the flow takes its colour from the location step's notice. The refusal message,
+  which already wore the top note's frame, follows it.
+- The publish button now stays busy until the store page has actually loaded. It let go as
+  soon as the load started, gave the button its label back and let a second tap send the
+  review twice.
+- Found while checking the desktop: the scoring grid had two questions to a row in the step's
+  428px column, so each got 214px for five 44px stars; the fieldsets would not shrink, they
+  overlapped, and a press on the fifth star of one question could land on the first star of
+  the next. One question to a row there now. The final check's two columns were 214px wide too,
+  because the page puts the step in one of its two columns, and "Fiyat/performans" ran under
+  its own stars -- it had done so before these changes. The list is one column wherever its
+  column is narrow (a phone, and a desktop); the two-column frame stays for the band between.
+
 ## R83: every review of a store, in the order the reader picks
 
 The store page shows its latest reviews in a row; a "Tümünü göster" link now sits over the
