@@ -9,19 +9,28 @@ const nextConfig: NextConfig = {
   // they already use, and the host it is served from has to be named before a browser
   // will be pointed at it. Nothing else is allowed through.
   images: { remotePatterns: [{ protocol: "https", hostname: "lh3.googleusercontent.com" }] },
-  // The sitemap is an index over several files now, and Next reserves the name
-  // /sitemap.xml for its own metadata route while generating nothing there. That address
-  // is the one Search Console holds and the one robots.txt has advertised since the site
-  // launched, so it is kept working rather than allowed to become a 404.
+  // The sitemap is an index over several files (app/sitemap-index.xml naming the parts that
+  // app/sitemap/[part] writes). /sitemap.xml is the address Search Console holds and the one
+  // robots.txt advertised when the site launched, so it redirects to the index rather than
+  // becoming a 404 -- to an absolute address, so that on www it is one hop and not two.
   async redirects() {
-    return [{ source: "/sitemap.xml", destination: "/sitemap-index.xml", permanent: true }];
+    return [
+      { source: "/sitemap.xml", destination: "https://bosagezme.com/sitemap-index.xml", permanent: true },
+      // One host. www.bosagezme.com was answering every page itself, with a canonical
+      // pointing at the bare domain: Search Console listed it as an alternate page and
+      // Googlebot spent 233 requests on it in three months. A permanent redirect says the
+      // same thing once, for every path, before anything is rendered.
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.bosagezme.com" }],
+        destination: "https://bosagezme.com/:path*",
+        permanent: true,
+      },
+    ];
   },
   // The sitemap parts are dynamic routes, because the catalogue cannot be reached from the
-  // container the site is built in. Dynamic also means Next sends them with no shared cache,
-  // so every read walks eleven thousand shops again -- and a crawler reading six parts asks
-  // for that six times. The documents change once an hour at most, so they are cached at the
-  // edge for an hour and served stale for a day while the next one is built. The index
-  // already had this; the parts lost it when they were made dynamic.
+  // container the site is built in. Their shared cache (an hour, a day stale) is set by the
+  // route that writes them, app/sitemap/[part], beside the compression it also does.
   //
   // The site answered with no security headers at all, measured against the live domain,
   // and announced what it runs on besides. Two of the six added below are not theoretical
@@ -62,10 +71,6 @@ const nextConfig: NextConfig = {
       "report-to csp-endpoint",
     ].join("; ");
     return [
-      {
-        source: "/sitemap/:id.xml",
-        headers: [{ key: "Cache-Control", value: "public, max-age=0, s-maxage=3600, stale-while-revalidate=86400" }],
-      },
       {
         source: "/:path*",
         headers: [

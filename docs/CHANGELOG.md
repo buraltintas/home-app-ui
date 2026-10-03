@@ -8,6 +8,42 @@ value involved.
 
 ---
 
+## Search Console: the sitemap parts are gzipped, ids redirect for real, one host
+
+Read from Search Console on 3 October 2026 (data from 18 August): 26 clicks, 405
+impressions, 148 pages indexed and 99 not, with fifteen thousand stores in the catalogue.
+
+- **Google had read the sitemap index and none of its parts.** "Processed successfully",
+  zero sitemaps read, zero pages discovered, for the two weeks since the index replaced the
+  single file. Each part was arriving as plain XML -- 4.5 to 10 MB, two to ten seconds --
+  because Next compresses every page but not its metadata sitemap routes. The parts are
+  written out by a route of their own now (`app/sitemap/[part]`, logic in `lib/sitemap.ts`),
+  at the same addresses and in the same shape, and gzipped whenever the reader accepts it
+  (by the header's own rules, q=0 included). Measured on the live catalogue, the largest part
+  goes from 10.2 MB to 237 KB and an eight-thousand-URL part from 5.8 MB to 159 KB. Search
+  Console has to be asked to read them again; that is a step in the account, not in the code.
+- **Store ids redirect with a 308.** `/stores/<uuid>` answered 200 with a
+  `<meta http-equiv="refresh">` inside: the page's `permanentRedirect` ran after its loading
+  state had already started the response. Search Console filed those as "moved (other)" and
+  one was showing in results at position 35 beside the real page. The proxy now looks the
+  slug up (the store's public record, remembered for a day) and redirects before anything
+  is rendered; an id the backend says does not exist is remembered for ten minutes, and if
+  the backend cannot say, the page redirects as before -- now into the reader's language,
+  where it used to drop the prefix. A store address written with capitals is lower-cased the
+  same way, without a lookup. The places that still link by id are mostly ones that only have
+  the id (a search result, a past search); the ones that had the slug -- the review's
+  structured data, the favourites list, the return after writing a review, llms.txt -- use
+  it now. Still a meta refresh: an address the page itself resolves to another store, which
+  is what a merged store's old slug does.
+- **www.bosagezme.com redirects to the bare domain** (308, every path). It was serving every
+  page itself with a canonical pointing across, which Search Console listed as an alternate
+  page and Googlebot crawled 233 times. /sitemap.xml redirects to the index by absolute
+  address, so it is one hop from either host.
+- Seen and left as they are: a missing store answers 200 with `noindex` rather than 404 (the
+  same loading state starts the response before the store is known; Google already excludes
+  them), `/$` and old build assets 404 (correct), and plain-HTTP requests are redirected with
+  a 302 by the hosting in front of the app, not by it.
+
 ## Review flow R54–R64: the purchase step's questions, a five worth celebrating, and the sheet an "i" opens
 
 - **R54/R55 — built, and held back.** The purchase step asks why the visit was made ("Ziyaret

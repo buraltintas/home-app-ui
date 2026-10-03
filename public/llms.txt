@@ -46,9 +46,9 @@ were written in and are never machine translated.
 
 - https://bosagezme.com/ — what the product is, and the search
 - https://bosagezme.com/discover — search and results
-- https://bosagezme.com/stores/<id> — a store, its categories and its reviews
+- https://bosagezme.com/stores/<slug> — a store, its categories and its reviews
 - https://bosagezme.com/about — how it works, in full
-- https://bosagezme.com/sitemap.xml — index over every published page
+- https://bosagezme.com/sitemap-index.xml — index over every published page
 - https://bosagezme.com/legal — terms, privacy, KVKK
 
 ## Citing this site

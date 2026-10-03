@@ -392,7 +392,7 @@ function ReviewWizard({storeId}:{storeId:string}){
       // costs the instant transition once, on the one journey in the product where being
       // right matters more than being quick: somebody has just written something and is
       // going to look for it.
-      window.location.assign(localePath(locale,`/stores/${storeId}`));
+      window.location.assign(localePath(locale,`/stores/${store?.store.slug||storeId}`));
       // Still working until this document is gone: assign() only starts the load, and the
       // store page it waits for is being rebuilt. Letting go here gave the button its label
       // back and let a second tap send the review twice.

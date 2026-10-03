@@ -248,7 +248,9 @@ export default async function Page({params}:Props){
   ];
   // One store, one address. Links created before slugs existed still resolve, they just
   // do not stay on a second URL competing with the canonical one.
-  if(store.slug&&id!==store.slug)permanentRedirect(storePath(store));
+  // In the reader's language: storePath has no prefix, so an English visitor on an old
+  // address was sent to the Turkish page.
+  if(store.slug&&id!==store.slug)permanentRedirect(localePath(locale,storePath(store)));
   // A bare personal name under a photograph of a shop reads as the shop's name, so the
   // credit says what it is. The provider requires it to be shown either way.
   const photo=storePhotoURL(store.photo,1200,store.name,store.categories);

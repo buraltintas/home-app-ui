@@ -112,7 +112,9 @@ export function reviewPageJsonLd(post:Post):JsonLd{
     ...(post.text.trim()?{reviewBody:post.text}:{}),
     itemReviewed:{
       '@type':'Store',name:post.store_name,
-      url:absolute(`/stores/${post.store_id}`),
+      // The address the store is published under: an id here sent crawlers to a URL that
+      // only redirects.
+      url:absolute(`/stores/${post.store_slug||post.store_id}`),
       address:{'@type':'PostalAddress',addressLocality:post.store_city,...(post.store_district?{addressRegion:post.store_district}:{}),addressCountry:'TR'},
     },
   };

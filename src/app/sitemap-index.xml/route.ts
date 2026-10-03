@@ -1,15 +1,14 @@
-import {sitemapParts} from '../sitemap';
+import {sitemapParts} from '@/lib/sitemap';
 import {siteUrl} from '@/lib/site';
 
 // The catalogue outgrew one sitemap, so the stores are split across several files and this
 // is the index that names them.
 //
-// It is written by hand because Next generates the parts and not the index: with
-// generateSitemaps it serves /sitemap/0.xml, /sitemap/1.xml and so on, and reserves the
-// name /sitemap.xml without putting anything there. That is the address Search Console was
-// given and the address robots.txt has always advertised, so it is redirected here in
-// next.config rather than left to 404 -- which would have withdrawn the whole catalogue
-// from the one crawler already watching it.
+// The parts (/sitemap/0.xml, /sitemap/1.xml and so on) are written and gzipped by
+// app/sitemap/[part]; this writes the index that names them. /sitemap.xml is the address
+// Search Console was given and robots.txt advertised at launch, so next.config redirects it
+// here rather than letting it 404 -- which would withdraw the whole catalogue from the one
+// crawler already watching it.
 // Per request, for the reason written on the sitemap itself: the catalogue is not reachable
 // from the container this is built in, and a count taken there would be zero.
 export const dynamic='force-dynamic';

@@ -10,7 +10,7 @@ import {useScrollTopWhenReady} from '@/lib/scroll-top';
 import {RatingStars} from '@/components/Rating';
 import {emphasisedTitle,plainTitle} from '@/lib/emphasis';
 import {useI18n} from '@/i18n/I18nProvider';
-import { localePath } from '@/lib/site';
+import { localePath,storePath } from '@/lib/site';
 import {apiFetch} from '@/lib/api-client';
 import type {Locale,Store} from '@/lib/types';
 import {isBrandMark,storePhotoURL} from '@/lib/store-photo';
@@ -103,7 +103,7 @@ export default function Page(){
         another anchor, and starting a review is not a step on the way to opening the
         store's page. It is the same control, and the same wording, the store page uses. */}
     {shown.length?<ul className="favorites-list">{shown.map(store=>{const photo=storePhotoURL(store.photo,320,store.name,store.categories);return <li key={store.id}>
-      <Link href={localePath(locale,`/stores/${store.id}`)} prefetch={false}>
+      <Link href={localePath(locale,storePath(store))} prefetch={false}>
         {photo?<Image className={`favorite-store-photo${isBrandMark(store.photo,store.name,store.categories)?' is-brand-mark':''}`} src={photo} width={160} height={120} alt="" unoptimized/>:<div className="favorite-store-photo is-empty" aria-hidden="true">{store.name.trim().charAt(0)}</div>}
         <div>{/* Said before the name, because it is the reason this list is two lists. Which of
                  the two counts a shop belongs to was only legible by opening the other tab and

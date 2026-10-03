@@ -17,10 +17,14 @@ import {BRAND_PER_PAGE} from '@/components/CityBrandView';
 // route to the backend, so every call from a build step answers ECONNREFUSED. While these
 // calls returned an empty list on failure that produced a sitemap with nothing in it and a
 // green deploy; once they started reporting failure honestly, the same unreachable backend
-// stopped the deploy instead. Neither is a sitemap. A dynamic route is not asked for the
-// catalogue until a request arrives, and by then the backend is a network hop away. The
-// fetches underneath carry their own revalidate, so asking again costs nothing.
-export const dynamic='force-dynamic';
+// stopped the deploy instead. Neither is a sitemap. The routes that serve this
+// (app/sitemap/[part] and app/sitemap-index.xml) are dynamic, so the catalogue is not asked
+// for until a request arrives, and by then the backend is a network hop away. The fetches
+// underneath carry their own revalidate, so asking again costs nothing.
+//
+// It lives here rather than as Next's metadata sitemap because the metadata route cannot be
+// compressed: it served each part as plain XML, 4.5 to 10 MB apiece, taking up to ten
+// seconds to arrive. The parts are written out by the route instead, and gzipped there.
 
 // One sitemap held every store until the catalogue outgrew it. Each page is listed once
 // per language and carries the full set of alternates, which is what Google asks for and
@@ -137,20 +141,14 @@ export async function sitemapParts():Promise<{id:number;lastModified:Date|undefi
 }
 
 // Which addresses exist, which is a different question from how many have anything in them.
-// Next resolves this list while building the image, where the catalogue cannot be reached,
-// so it cannot be the real count -- and a real count taken at that moment would be zero,
-// which is how the catalogue went missing from the sitemap the first time. It is a ceiling
-// instead: room for sixty thousand shops, the same number the catalogue reader stops at.
+// A ceiling: room for sixty thousand shops, the same number the catalogue reader stops at.
 // Addresses past the end of the catalogue answer with an empty sitemap and nothing points
-// at them, because the index publishes the count measured at request time.
+// at them, because the index publishes the count measured at request time; addresses past
+// the ceiling are not sitemaps at all.
 const SITEMAP_CEILING=60000;
+export const SITEMAP_PARTS=Math.ceil(SITEMAP_CEILING/PAGES_PER_SITEMAP);
 
-export async function generateSitemaps(){
-  return Array.from({length:Math.ceil(SITEMAP_CEILING/PAGES_PER_SITEMAP)},(_,id)=>({id}));
-}
-
-export default async function sitemap({id}:{id:Promise<string>}):Promise<MetadataRoute.Sitemap>{
-  const index=Number(await id)||0;
+export async function sitemapEntries(index:number):Promise<MetadataRoute.Sitemap>{
   const stores=await getAllStores();
   const slice=stores.slice(index*PAGES_PER_SITEMAP,(index+1)*PAGES_PER_SITEMAP);
   return [
@@ -164,4 +162,24 @@ export default async function sitemap({id}:{id:Promise<string>}):Promise<Metadat
       store.review_count>0?.8:.5,
     )),
   ];
+}
+
+const XML_ESCAPES:Record<string,string>={'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'};
+const xml=(value:string)=>value.replace(/[&<>"']/g,character=>XML_ESCAPES[character]);
+
+// One part, written out in the shape Next's metadata sitemap wrote it -- the same elements in
+// the same order -- so moving the work into a route changed how it travels and nothing about
+// what a crawler reads.
+export function urlset(entries:MetadataRoute.Sitemap):string{
+  const urls=entries.map(entry=>{
+    const alternates=Object.entries(entry.alternates?.languages??{})
+      .map(([language,href])=>`<xhtml:link rel="alternate" hreflang="${xml(language)}" href="${xml(String(href))}" />`);
+    const lastModified=entry.lastModified?new Date(entry.lastModified).toISOString():'';
+    return ['<url>',`<loc>${xml(entry.url)}</loc>`,...alternates,
+      ...(lastModified?[`<lastmod>${lastModified}</lastmod>`]:[]),
+      ...(entry.changeFrequency?[`<changefreq>${entry.changeFrequency}</changefreq>`]:[]),
+      ...(entry.priority!==undefined?[`<priority>${entry.priority}</priority>`]:[]),
+      '</url>'].join('\n');
+  });
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${urls.join('\n')}\n</urlset>\n`;
 }

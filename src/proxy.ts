@@ -29,6 +29,65 @@ function preferredLocale(request:NextRequest):Locale{
   return DEFAULT_LOCALE;
 }
 
+// A store addressed by its id is sent to the address it is published under, here, before
+// anything is rendered.
+//
+// The store page did this itself, with permanentRedirect -- but that page has a loading
+// state, so by the time it knew the slug the response had already begun as a 200, and the
+// redirect went out as a <meta http-equiv="refresh"> inside it. Search Console filed those
+// URLs as "moved (other)", kept them as pages of their own, and showed one in results at
+// position 35 beside the real one. A 308 sent from here is a redirect a crawler believes.
+//
+// Ids still reach crawlers from places that have only the id: a search result, a past
+// search, a link somebody shared. The lookup is the store's own public record; its answer
+// is remembered for a day, so a link followed twice costs one read. If the backend cannot
+// say, the request goes on to the page, which still redirects the way it used to.
+//
+// The same goes for a store address written with capitals: slugs and ids are lower case,
+// the backend matches either regardless, and the page would answer the capitalised copy with
+// the same meta refresh. That one needs no lookup -- it is lower-cased here.
+const STORE_PATH=/^\/(?:(en|de|ru)\/)?stores\/([^/]+)(\/reviews)?\/?$/i;
+const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const API_ORIGIN=process.env.API_ORIGIN??'http://localhost:8080';
+const SLUG_TTL=24*60*60*1000;
+// A store the backend says does not exist is remembered as such for ten minutes, so a crawler
+// working through an old list of deleted ids costs one read per id, not one per request.
+const MISS_TTL=10*60*1000;
+const SLUG_MEMORY=5000;
+const slugs=new Map<string,{slug:string|null;at:number}>();
+const asking=new Map<string,Promise<string|undefined>>();
+
+function remember(id:string,slug:string|null){
+  // The oldest entry goes first when the memory is full; a Map keeps insertion order.
+  if(slugs.size>=SLUG_MEMORY)slugs.delete(slugs.keys().next().value as string);
+  slugs.set(id,{slug,at:Date.now()});
+}
+
+async function slugFor(id:string):Promise<string|undefined>{
+  const known=slugs.get(id);
+  if(known&&Date.now()-known.at<(known.slug?SLUG_TTL:MISS_TTL))return known.slug??undefined;
+  // Requests for the same id that arrive together share one read.
+  const pending=asking.get(id);
+  if(pending)return pending;
+  const read=(async()=>{
+    try{
+      const response=await fetch(`${API_ORIGIN}/v1/stores/${id}`,{
+        headers:{'Content-Type':'application/json','X-BFF-Secret':process.env.BFF_SECRET??'','X-Locale':DEFAULT_LOCALE},
+        signal:AbortSignal.timeout(3000),
+      });
+      if(response.status===404){remember(id,null);return undefined;}
+      if(!response.ok)return undefined;
+      const slug=(await response.json() as {store?:{slug?:string}}).store?.slug;
+      if(!slug||slug.toLowerCase()===id){remember(id,null);return undefined;}
+      remember(id,slug);
+      return slug;
+    }catch{return undefined;}
+    finally{asking.delete(id);}
+  })();
+  asking.set(id,read);
+  return read;
+}
+
 
 
 // Renewing the token here was tried and removed. The browser already refreshes once, in a
@@ -36,7 +95,7 @@ function preferredLocale(request:NextRequest):Locale{
 // theft: it revokes the whole session family. Proxy has no way to know a refresh is
 // already in progress in the tab, so racing it did not just fail -- it signed people out
 // for real, which is worse than the stale render it was meant to avoid.
-export function proxy(request:NextRequest){
+export async function proxy(request:NextRequest){
   const {pathname}=request.nextUrl;
   const segment=pathname.split('/')[1]??'';
 
@@ -51,6 +110,19 @@ export function proxy(request:NextRequest){
   // readable to everyone including them.
   if(pathname!=='/robots.txt'&&isUnwelcomeCrawler(request.headers.get('user-agent'))){
     return new NextResponse('Disallowed by /robots.txt',{status:403,headers:{'content-type':'text/plain; charset=utf-8','cache-control':'no-store'}});
+  }
+
+  const store=STORE_PATH.exec(pathname);
+  if(store){
+    const [,prefix,ref,rest]=store;
+    const lower=ref.toLowerCase();
+    const slug=UUID.test(ref)?await slugFor(lower):undefined;
+    const target=slug??lower;
+    if(target!==ref||(prefix&&prefix!==prefix.toLowerCase())){
+      const url=request.nextUrl.clone();
+      url.pathname=`${prefix?`/${prefix.toLowerCase()}`:''}/stores/${target}${rest??''}`;
+      return NextResponse.redirect(url,308);
+    }
   }
 
   // An explicitly prefixed URL is authoritative: it is what was linked, shared or
