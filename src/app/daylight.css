@@ -673,7 +673,8 @@ svg{stroke-width:2}
 .profile-message-quote{margin:12px 0 14px;padding:2px 0 2px 12px}
 .profile-message-quote>p{margin:0;font-size:16px;line-height:1.5;white-space:pre-wrap}
 .profile-message-quote>.profile-message-said{display:flex;align-items:center;gap:6px;margin:0 0 4px;font-family:var(--font-sans),system-ui,sans-serif;font-style:normal;font-size:12px;font-weight:700;line-height:1.3;color:var(--ink-muted)}
-.profile-message-said svg{width:14px;height:14px;flex:none;color:var(--clay)}
+/* R72: the mark is the label's own colour -- it belongs to the words beside it. */
+.profile-message-said svg{width:14px;height:14px;flex:none}
 /* R65: the two facts a correction always carries -- which shop, which kind of information.
    The labels are the same on every card, so they are set quiet and small and the answers
    carry the weight; on the muted ground the page uses for things it states rather than
@@ -682,6 +683,10 @@ svg{stroke-width:2}
 .profile-message-facts>div{display:grid;grid-template-columns:minmax(88px,max-content) minmax(0,1fr);gap:4px 14px;align-items:baseline}
 .profile-message-facts dt{font-size:12px;font-weight:600;color:var(--ink-muted)}
 .profile-message-facts dd{margin:0;font-size:15px;font-weight:600;line-height:1.35;color:var(--ink)}
+/* R74: one fact whose answer is a link: the name over it, the link under it, whole. */
+.profile-message-facts.is-stacked{margin:12px 0 14px}
+.profile-message-facts.is-stacked>div{grid-template-columns:minmax(0,1fr);gap:2px}
+.profile-message-facts.is-stacked dd{font-weight:500;overflow-wrap:anywhere}
 /* What the review claims, stacked under the score rather than beside the date. */
 /* Mark, then name and place: the listing's arrangement, so a shop looks the same wherever
    this product shows it. */
@@ -761,8 +766,9 @@ svg{stroke-width:2}
    reporting something -- and green is what this product already uses for a contribution that
    counted. The card sits on its own tint so it reads as an invitation next to four white
    cards that are just doors. */
-/* R63: the ground is the green of the message bubble in the phone beside it, so the card and
-   the picture read as one scene rather than a picture pasted onto a panel. */
+/* R63 made the ground the green of the message bubble in the phone beside it; R69 set it to a
+   softer sage (#eaeedf, the token's value) that the product owner chose. Only the ground
+   changed -- border, type, button and picture are as they were. */
 .profile-invite{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) 116px;gap:12px 24px;align-items:center;margin:28px 0 24px;padding:22px 24px;border:1px solid color-mix(in srgb,var(--success) 22%,var(--line));border-radius:var(--r-lg);background:var(--success-wash)}
 .profile-invite-copy{grid-column:1;min-width:0}
 /* The mark sits on the heading's line and at its size, so the two read as one phrase. */
@@ -793,24 +799,45 @@ svg{stroke-width:2}
    rather than decoration. One size at every width now: the column is the whole page, so
    the drawing no longer has to shrink to fit beside the words. */
 .profile-out-lead{white-space:pre-line}
-.profile-out-art{position:relative;display:grid;justify-items:end;width:min(236px,72vw);margin:0 0 20px;text-align:left}
-/* R58: the pink of the star beside "Değerlendirmelerim" in the card below, and the clay of
-   the star itself -- one of the card's own marks rather than a fourth colour. It sits over
-   the card's top edge, whole: drawn under it, the card cut the bottom off the circle. */
-.profile-out-avatar{position:relative;z-index:1;display:grid;place-items:center;width:104px;height:104px;margin-right:18px;border-radius:var(--r-pill)}
-.profile-out-avatar svg{width:52px;height:52px}
-.profile-out-peek{list-style:none;margin:-26px 0 0;padding:14px 16px;width:100%;border-radius:var(--r-lg);background:var(--surface);box-shadow:var(--lift);display:grid;gap:2px}
-.profile-out-peek li{display:flex;align-items:center;gap:12px;padding:10px 2px;font-size:15px;font-weight:650;color:var(--ink)}
+/* R71: the drawing and the card under it are smaller, so that the button this page exists
+   for is on a phone's first screen -- under the dock it was a button nobody saw. */
+.profile-out-art{position:relative;display:grid;justify-items:end;width:min(212px,64vw);margin:0 0 14px;text-align:left}
+/* The disc sits over the card's top edge, whole: drawn under it, the card cut the bottom off
+   the circle (R58). */
+/* R71: the disc is the clay of the sign-in button and the person on it keeps the pale fill
+   it had; the shoulders run to the disc's edge and the disc cuts them, as a photograph in a
+   round frame is cut. */
+.profile-out-avatar{position:relative;z-index:1;display:block;overflow:hidden;width:76px;height:76px;margin-right:16px;border-radius:var(--r-pill);background:var(--clay)}
+.profile-out-avatar svg{display:block;width:100%;height:100%;fill:color-mix(in srgb,var(--clay) 12%,var(--surface))}
+.profile-out-peek{list-style:none;margin:-19px 0 0;padding:10px 14px;width:100%;border-radius:var(--r-lg);background:var(--surface);box-shadow:var(--lift);display:grid;gap:2px}
+.profile-out-peek li{display:flex;align-items:center;gap:11px;padding:7px 2px;font-size:14px;font-weight:650;color:var(--ink)}
 .profile-out-peek li+li{border-top:1px solid var(--line)}
-.profile-out-peek span{display:grid;place-items:center;width:32px;height:32px;border-radius:var(--r-sm);flex:none}
-.profile-out-peek span svg{width:18px;height:18px}
+.profile-out-peek span{display:grid;place-items:center;width:28px;height:28px;border-radius:var(--r-sm);flex:none}
+.profile-out-peek span svg{width:16px;height:16px}
 .profile-out-peek .is-gold{background:var(--accent-wash);color:var(--accent-ink)}
-.profile-out-peek .is-clay,.profile-out-avatar{background:color-mix(in srgb,var(--clay) 12%,var(--surface));color:var(--clay)}
+.profile-out-peek .is-clay{background:color-mix(in srgb,var(--clay) 12%,var(--surface));color:var(--clay)}
 .profile-out-peek .is-plain{background:var(--muted);color:var(--ink)}
-/* Both of this page's buttons are the width of the words in them, like every other button
-   in the product. The section stretches whatever it holds to its own width, which is right
-   for a list and wrong for a control: a full-width "Çıkış yap" reads as the page's purpose. */
-.profile-section-content>.account-signout,.danger-zone .danger-button{width:max-content;max-width:100%}
+.profile-out-peek .is-sky{background:var(--sky-wash);color:var(--ink)}
+/* R71: the words that ask for the sign-in, in the clay of the button that does it. In the
+   line, not on a line of their own: they open the sentence in three languages. */
+.profile-out-mark{color:var(--clay)}
+@media(max-width:600px){
+  /* The column is centred in the screen that is actually visible; the top padding only
+     matters when it is not tall enough, and then the button is what needs the room. */
+  .profile-page-out{padding-top:24px}
+}
+/* A short phone -- a mini or an SE, 680px of page or less with Safari's bars showing -- has no
+   room for the preview card and the button both, and the button is what the page is for:
+   the card steps aside and the disc stays, centred over the words. */
+@media(max-width:600px) and (max-height:680px){
+  .profile-out-peek{display:none}
+  .profile-out-art{justify-items:center;width:auto}
+  .profile-out-avatar{margin-right:0}
+}
+/* R70: the page's two buttons are one width, so the pair reads as the two choices it is.
+   Not the column's width: a full-width "Çıkış yap" reads as the page's purpose. The width is
+   in ems, so it follows the type; the longest label in the four languages, "Mein Konto löschen", needs 11.9. */
+.profile-section-content>.account-signout,.danger-zone .danger-button{width:12.5em;max-width:100%}
 .profile-section-content>.account-note{margin:0 0 12px}
 /* The sentence about what deleting removes now sits inside the section, above the button
    it describes. After the button it was an explanation of something already pressed. */
@@ -1118,6 +1145,7 @@ svg{stroke-width:2}
 .profile-section-icon.is-clay{background:color-mix(in srgb,var(--clay) 12%,var(--surface));color:var(--clay)}
 .profile-section-icon.is-green{background:color-mix(in srgb,var(--success) 12%,var(--surface));color:var(--success)}
 .profile-section-icon.is-plain{background:var(--muted);color:var(--ink)}
+.profile-section-icon.is-sky{background:var(--sky-wash);color:var(--ink)}
 .profile-section-icon svg{width:22px;height:22px}
 .profile-section-copy{display:flex;flex-direction:column;gap:3px;min-width:0}
 .profile-section-copy strong{color:var(--ink)}
@@ -1134,12 +1162,21 @@ svg{stroke-width:2}
 .profile-message-filters>button.is-showing::after{content:none}
 
 /* Each card says what kind of message it is, with the same mark the filter above carries.
-   It is a label rather than a heading now, so it wears the header's own small-caps and
-   sits on the line instead of above the text. */
+   It is a label rather than a heading now, so it sits on the line instead of above the
+   text. */
 /* Written the way the product owner wrote it, not shouted: the header's small-caps would
    turn "Görüş ve öneri" into an uppercasing decision, and in Turkish that decision is
    whether the last letter gains a dot. A label that names a thing should say the thing. */
-.profile-message-kind{display:inline-flex;align-items:center;gap:7px;margin:0;font-size:13px;font-weight:700;text-transform:none;letter-spacing:0}
+/* Scoped through the header: the older rule for a header's strong set it in spaced capitals
+   and outranked this one, so since R55 the label was shouted after all -- "GÖRÜŞ VE ÖNERİ"
+   rather than the three names as they were chosen. */
+.profile-message header .profile-message-kind{display:inline-flex;align-items:baseline;gap:7px;margin:0;font-size:13px;font-weight:700;text-transform:none;letter-spacing:0}
+/* R73: the label sits on the date's line -- the two share a baseline, so the bottoms of the
+   two words are level -- rather than half way down the date and the hour under it. The mark
+   is centred on its own, so that the label's baseline is its words' and not the bottom of
+   the drawing, which is what a flex row reports when its first item is an image. */
+.profile-message>header{align-items:baseline}
+.profile-message header .profile-message-kind svg{align-self:center}
 .profile-message-kind svg{width:16px;height:16px;flex:none}
 /* The day, and under it the hour. A message sent this morning and one sent last night are
    a different thing to somebody waiting on an answer, and the date alone cannot say which. */

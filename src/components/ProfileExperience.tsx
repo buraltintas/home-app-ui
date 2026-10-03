@@ -1,9 +1,10 @@
 'use client';
 
 import Image from 'next/image';
-import {type ReactNode,useEffect,useState} from 'react';
-import {ArrowDownWideNarrow,CircleHelp,ClipboardCheck,Gift,MessageCircle,PenLine,ShieldCheck,Star,UserRound} from 'lucide-react';
+import {type ReactNode,useCallback,useEffect,useState} from 'react';
+import {ArrowDownWideNarrow,CircleHelp,ClipboardCheck,Gift,MessageCircle,PenLine,ShieldCheck,Star} from 'lucide-react';
 import {AuthDialog} from '@/components/AuthDialog';
+import {emphasisedTitle} from '@/lib/emphasis';
 import {SignOutButton} from '@/components/SignOutButton';
 import Link from 'next/link';
 import {localePath} from '@/lib/site';
@@ -18,14 +19,18 @@ import {ContributorLevelsDialog} from '@/components/ContributorLevelsDialog';
 import {ProfileInvite} from '@/components/ProfileInvite';
 import {LevelMedal} from '@/components/LevelMedal';
 import {useI18n} from '@/i18n/I18nProvider';
-import {apiFetch} from '@/lib/api-client';
+import {apiFetch,sessionExpiresAt} from '@/lib/api-client';
 import type {Locale,Me} from '@/lib/types';
 
+// R71: the words that ask for the sign-in are in brackets and drawn in clay, the colour of
+// the button they lead to. They are not in the same place in every language -- they end the
+// Turkish sentence and open the others -- so they are marked in the string rather than found
+// by position.
 const accountCopy:Record<Locale,{body:string;danger:string;title:string;confirm:string;cancel:string;failed:string}>={
-  tr:{body:'Hesabını yönetmek ve özel tercihlerini görmek için giriş yap.',danger:'Hesap işlemleri',title:'Hesabınızı silmek istiyor musunuz?',confirm:'Hesabımı sil',cancel:'Vazgeç',failed:'Hesap silinemedi. Tekrar dene.'},
-  en:{body:'Sign in to manage your account and private preferences.',danger:'Account actions',title:'Delete your account?',confirm:'Delete my account',cancel:'Cancel',failed:'The account could not be deleted. Try again.'},
-  de:{body:'Melde dich an, um dein Konto und deine privaten Einstellungen zu verwalten.',danger:'Kontoaktionen',title:'Konto löschen?',confirm:'Mein Konto löschen',cancel:'Abbrechen',failed:'Das Konto konnte nicht gelöscht werden.'},
-  ru:{body:'Войдите, чтобы управлять аккаунтом и личными настройками.',danger:'Действия с аккаунтом',title:'Удалить аккаунт?',confirm:'Удалить аккаунт',cancel:'Отмена',failed:'Не удалось удалить аккаунт.'},
+  tr:{body:'Hesabını yönetmek ve özel tercihlerini [görmek için giriş yap].',danger:'Hesap işlemleri',title:'Hesabınızı silmek istiyor musunuz?',confirm:'Hesabımı sil',cancel:'Vazgeç',failed:'Hesap silinemedi. Tekrar dene.'},
+  en:{body:'[Sign in] to manage your account and private preferences.',danger:'Account actions',title:'Delete your account?',confirm:'Delete my account',cancel:'Cancel',failed:'The account could not be deleted. Try again.'},
+  de:{body:'[Melde dich an], um dein Konto und deine privaten Einstellungen zu verwalten.',danger:'Kontoaktionen',title:'Konto löschen?',confirm:'Mein Konto löschen',cancel:'Abbrechen',failed:'Das Konto konnte nicht gelöscht werden.'},
+  ru:{body:'[Войдите], чтобы управлять аккаунтом и личными настройками.',danger:'Действия с аккаунтом',title:'Удалить аккаунт?',confirm:'Удалить аккаунт',cancel:'Отмена',failed:'Не удалось удалить аккаунт.'},
 };
 // The second line of the signed-out page: what you get, rather than what you are missing.
 // The heading above it already says "sign in"; this says why it is worth it.
@@ -34,8 +39,8 @@ const accountCopy:Record<Locale,{body:string;danger:string;title:string;confirm:
 const signedOutLead:Record<Locale,string>={
   tr:'Daha kişisel bir deneyimle,\nkeşfetmeye devam et.',
   en:'Carry on exploring,\nwith an experience that knows you.',
-  de:'Entdecke weiter --\nmit einem Erlebnis, das dich kennt.',
-  ru:'Продолжайте искать --\nс опытом, который знает вас.',
+  de:'Entdecke weiter –\nmit einem Erlebnis, das dich kennt.',
+  ru:'Продолжайте искать —\nс опытом, который знает вас.',
 };
 
 // Signing out is the reversible one and deleting is not, but on a page that offers both,
@@ -99,15 +104,54 @@ const reviewSummaryCopy:Record<Locale,{total:string;sort:string;sortValue:string
   ru:{total:'Всего отзывов',sort:'Сортировка',sortValue:'Дата отзыва'},
 };
 
+// R68: the profile this tab last read, kept between the profile's own pages.
+//
+// Each of those pages is a route of its own, so each one mounted with nothing and asked the
+// server who is signed in before it drew a thing: a tap on "Mesajlarım" was followed by an
+// empty page for as long as that question took, and only then by the page. Somebody who was
+// signed in a moment ago, on the page they tapped from, still is -- so the page is drawn at
+// once from what was last read, and the question is still asked, behind it, to catch a
+// session that has since ended.
+//
+// It lives in this tab's memory only and starts empty on every full load, so a server render
+// and the first client render always agree. It is only ever drawn for the session it was read
+// in: it is kept beside the session cookie's value at that moment, and any change to that
+// cookie -- signing out here or in another tab, a refresh that failed anywhere in the app and
+// cleared it, a new sign-in, a renewed token -- sets it aside, so the page waits for the
+// server as it used to. Signing in or out in this tab drops it outright, mounted or not.
+let remembered:{profile:Me;session:number}|null=null;
+function rememberedProfile():Me|null{
+  const session=sessionExpiresAt();
+  if(remembered&&remembered.session!==session)remembered=null;
+  return remembered?.profile??null;
+}
+function remember(profile:Me|null){
+  const session=sessionExpiresAt();
+  remembered=profile&&session!==null?{profile,session}:null;
+}
+if(typeof window!=='undefined')window.addEventListener('bosagezme:authenticated',()=>{remembered=null;});
+
 export function ProfileExperience({section,help}:{section?:'edit'|'reviews'|'messages'|'account'|'help';help?:ReactNode}){
-  const {t,locale}=useI18n();const copy=accountCopy[locale];const [open,setOpen]=useState(false);const [signedIn,setSignedIn]=useState(false);const [checking,setChecking]=useState(true);const [deleting,setDeleting]=useState(false);const [me,setMe]=useState<Me|null>(null);
+  const {t,locale}=useI18n();const copy=accountCopy[locale];const [open,setOpen]=useState(false);const [me,setMeState]=useState<Me|null>(rememberedProfile);const [signedIn,setSignedIn]=useState(me!==null);const [checking,setChecking]=useState(me===null);const [deleting,setDeleting]=useState(false);
+  // Whether this page has heard from the server itself, rather than drawn from memory. The
+  // form for editing the profile waits for it: it takes its starting values once, and a form
+  // seeded from a name changed since -- in the app, or in another tab -- would save the old
+  // name back over the new one.
+  const [verified,setVerified]=useState(false);
+  const setMe=useCallback((profile:Me|null)=>{remember(profile);setMeState(profile);},[]);
   useEffect(()=>{
     let active=true;let requestSequence=0;
-    const checkSession=async()=>{const sequence=++requestSequence;setChecking(true);try{const response=await apiFetch('/api/proxy/me',{cache:'no-store'});const profile=response.ok?await response.json() as Me:null;if(active&&sequence===requestSequence){setSignedIn(response.ok);setMe(profile);}}catch{if(active&&sequence===requestSequence){setSignedIn(false);setMe(null);}}finally{if(active&&sequence===requestSequence)setChecking(false)}};
-    const handleAuthentication=()=>void checkSession();
+    // With a remembered profile on screen, a failed read is not taken as proof of being
+    // signed out -- only a 401 is, as in the header. Without one there is nothing to keep,
+    // and the page says what it always said.
+    const checkSession=async()=>{const sequence=++requestSequence;if(!rememberedProfile())setChecking(true);try{const response=await apiFetch('/api/proxy/me',{cache:'no-store'});const profile=response.ok?await response.json() as Me:null;if(active&&sequence===requestSequence){if(profile){setSignedIn(true);setMe(profile);setVerified(true);}else if(response.status===401||!rememberedProfile()){setSignedIn(false);setMe(null);}}}catch{if(active&&sequence===requestSequence&&!rememberedProfile()){setSignedIn(false);setMe(null);}}finally{if(active&&sequence===requestSequence)setChecking(false)}};
+    // Signing in or out here: whatever was remembered belongs to the session that just ended,
+    // so the page waits for the answer instead of showing it -- the account page does not
+    // stay live under a session that is already gone.
+    const handleAuthentication=()=>{remembered=null;void checkSession();};
     void checkSession();window.addEventListener('bosagezme:authenticated',handleAuthentication);
     return()=>{active=false;window.removeEventListener('bosagezme:authenticated',handleAuthentication)};
-  },[]);
+  },[setMe]);
   const remove=async()=>{if(!window.confirm(`${copy.title}\n\n${deleteBody[locale]}`))return;setDeleting(true);try{const response=await apiFetch('/api/proxy/me',{method:'DELETE'});if(!response.ok)throw new Error();await fetch('/api/auth/logout',{method:'POST'});setSignedIn(false);setMe(null);}catch{window.alert(copy.failed);}finally{setDeleting(false);}};
 
   useScrollTopWhenReady(!checking);
@@ -123,15 +167,18 @@ export function ProfileExperience({section,help}:{section?:'edit'|'reviews'|'mes
   // you have not done.
   if(!signedIn||!me)return <main className="empty-page profile-page-out">
     <div className="profile-out-art" aria-hidden="true">
-      <span className="profile-out-avatar"><UserRound/></span>
+      {/* R71: a person cut from the disc rather than drawn on it in a line -- the figure keeps
+          the pale fill it had, the disc around it takes the clay of the button below, and the
+          shoulders run on to the disc's edge, the way a profile picture is framed. */}
+      <span className="profile-out-avatar"><svg viewBox="0 0 64 64" focusable="false"><circle cx="32" cy="25" r="11"/><path d="M9 64c0-13.3 10.3-23 23-23s23 9.7 23 23z"/></svg></span>
       <ul className="profile-out-peek">
         <li><span className="is-gold"><PenLine/></span>{t('editProfile')}</li>
         <li><span className="is-clay"><Star/></span>{reviewCopy[locale].title}</li>
-        <li><span className="is-plain"><ShieldCheck/></span>{t('accountSection')}</li>
+        <li><span className="is-sky"><ShieldCheck/></span>{t('accountSection')}</li>
       </ul>
     </div>
     <p className="eyebrow">{t('profile')}</p>
-    <h1>{copy.body}</h1>
+    <h1>{emphasisedTitle(copy.body,'profile-out-mark')}</h1>
     <p className="profile-out-lead">{signedOutLead[locale]}</p>
     <button type="button" className="button primary" onClick={()=>setOpen(true)}>{t('signIn')}</button>
     <AuthDialog open={open} onClose={()=>setOpen(false)}/>
@@ -143,17 +190,16 @@ export function ProfileExperience({section,help}:{section?:'edit'|'reviews'|'mes
   // Both numbers come from the backend, so the ladder here can never disagree with the one
   // being applied there.
   const nextTarget=me.next_level!==undefined?me.post_count+(me.reviews_to_next_level??0):undefined;
-  // Four destinations, four marks, four grounds. The colour is named on the row rather than
-  // worked out from its position, so reordering the list cannot silently repaint it. They are
-  // this product's own four -- gold, clay, green, and a neutral for the account, which is the
-  // settings drawer rather than a themed place.
+  // Each destination its own mark and its own ground. The colour is named on the row rather
+  // than worked out from its position, so reordering the list cannot silently repaint it.
+  // R67: the account has a ground of its own, a pale sky that no other row uses; until then it
+  // shared the neutral with help, and two rows in one colour read as one kind of thing.
   const sectionLinks=[
     ['edit',t('editProfile'),profileEditorHint[locale],PenLine,'gold'],
     ['reviews',reviewCopy[locale].title,reviewCopy[locale].hint,Star,'clay'],
     ['messages',messageCopy[locale].title,messageCopy[locale].hint,MessageCircle,'green'],
-    ['account',t('accountSection'),t('accountHint'),ShieldCheck,'plain'],
-    // The neutral again: help is a drawer of answers, like the account is a drawer of
-    // settings, and the four colours are the product's whole palette for these marks.
+    ['account',t('accountSection'),t('accountHint'),ShieldCheck,'sky'],
+    // The neutral: help is a drawer of answers rather than a themed place.
     ['help',helpCopy[locale].card,helpCopy[locale].hint,CircleHelp,'plain'],
   ] as const;
 
@@ -208,8 +254,8 @@ export function ProfileExperience({section,help}:{section?:'edit'|'reviews'|'mes
         <div className="result-count-total"><span className="result-count-mark" aria-hidden="true"><ClipboardCheck/></span><div><dt>{reviewSummaryCopy[locale].total}</dt><dd>{me.post_count}</dd></div></div>
         <div className="result-count-sort"><span className="result-count-mark" aria-hidden="true"><ArrowDownWideNarrow/></span><div><dt>{reviewSummaryCopy[locale].sort}</dt><dd>{reviewSummaryCopy[locale].sortValue}</dd></div></div>
       </dl>}
-      {section==='edit'&&<ProfileEditor me={me} onSaved={setMe}/>}
-      {section==='reviews'&&<MyReviews userId={me.id} locale={locale}/>}
+      {section==='edit'&&verified&&<ProfileEditor key={me.id} me={me} onSaved={setMe}/>}
+      {section==='reviews'&&<MyReviews key={me.id} userId={me.id} locale={locale}/>}
       {section==='messages'&&<ProfileMessages locale={locale}/>}
       {section==='help'&&help}
       {/* Both notes are plain page text rather than boxed warnings. A red frame around the

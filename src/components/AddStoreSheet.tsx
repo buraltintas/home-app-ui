@@ -13,7 +13,9 @@ import {apiFetch} from '@/lib/api-client';
 //
 // It goes in as an ordinary suggestion, through the feedback the product already has, rather
 // than into a second inbox nobody would remember to read.
-const MAPS=/^https?:\/\/([a-z0-9-]+\.)*(google\.[a-z.]+\/maps|goo\.gl\/maps|maps\.app\.goo\.gl)\//i;
+// Exported because the sender's own list of messages reads the link back and names it as one
+// only when it is one -- the same test, not a second copy of it.
+export const MAPS_LINK=/^https?:\/\/([a-z0-9-]+\.)*(google\.[a-z.]+\/maps|goo\.gl\/maps|maps\.app\.goo\.gl)\//i;
 
 export function AddStoreSheet({query}:{query:string}){
   const {t}=useI18n();
@@ -51,7 +53,7 @@ export function AddStoreSheet({query}:{query:string}){
 
   const send=async()=>{
     const value=link.trim();
-    if(!MAPS.test(value)){setState('invalid');return;}
+    if(!MAPS_LINK.test(value)){setState('invalid');return;}
     setState('sending');
     try{
       // The search that came up short is part of the suggestion: it says which shop, in

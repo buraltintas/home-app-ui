@@ -43,7 +43,8 @@ makes every one of those photographs look wrong.
 | `--accent-ink` | `#8a5d05` | honey text on a light ground, where contrast demands it |
 | `--clay` | `#c2452d` | emphasis and live values: ratings, promoted, counts |
 | `--success` | `#2e6a4f` | verified visit |
-| `--success-wash` | `#e0fcd4` | the share card's ground: the green of the message bubble in the picture it carries |
+| `--success-wash` | `#eaeedf` | the share card's ground ("Topluluğu güçlendir"), a soft sage chosen for it by the product owner (R69) |
+| `--sky-wash` | `#e3ecf5` | the account row's mark on the profile, the one ground no other row uses (R67); carries `--ink` |
 | `--error` | `#b3372b` | destructive and failed states |
 
 One accent, used in area rather than in line — a honey wash behind a whole section reads

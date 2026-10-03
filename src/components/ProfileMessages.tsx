@@ -4,10 +4,14 @@ import {useEffect,useMemo,useState} from 'react';
 import {MapPinPlus,MessageCircle,Quote,SquarePen} from 'lucide-react';
 import {apiFetch} from '@/lib/api-client';
 import {correctionWording} from '@/components/StoreCorrectionForm';
+import {MAPS_LINK} from '@/components/AddStoreSheet';
+import {useI18n} from '@/i18n/I18nProvider';
 import type {FeedbackMessage,Locale} from '@/lib/types';
 
+// R72: "Mesajın" rather than "Senin mesajın" -- the possessive is already in the word. The
+// other three languages say it in two words because that is how they say it.
 const copy:Record<Locale,{answered:string;empty:string;emptyKind:string;error:string;pending:string;reply:string;yours:string;feedback:string;correction:string;addition:string}>={
-  tr:{answered:'Yanıtlandı',empty:'Henüz bize gönderdiğin bir mesaj yok.',emptyKind:'Bu türde gönderdiğin bir mesaj yok.',error:'Mesajların yüklenemedi. Tekrar dener misin?',pending:'Yanıt bekliyor',reply:'Boşa Gezme! yanıtı',yours:'Senin mesajın',feedback:'Görüş ve öneri',correction:'Mağaza bilgisi düzenleme',addition:'Mağaza ekleme'},
+  tr:{answered:'Yanıtlandı',empty:'Henüz bize gönderdiğin bir mesaj yok.',emptyKind:'Bu türde gönderdiğin bir mesaj yok.',error:'Mesajların yüklenemedi. Tekrar dener misin?',pending:'Yanıt bekliyor',reply:'Boşa Gezme! yanıtı',yours:'Mesajın',feedback:'Görüş ve öneri',correction:'Mağaza bilgisi düzenleme',addition:'Mağaza ekleme'},
   en:{answered:'Answered',empty:'You have not sent us a message yet.',emptyKind:'You have not sent a message of this kind.',error:'Your messages could not be loaded. Please try again.',pending:'Awaiting a reply',reply:'Boşa Gezme! reply',yours:'Your message',feedback:'Thoughts and suggestions',correction:'Store information edit',addition:'Store addition'},
   de:{answered:'Beantwortet',empty:'Du hast uns noch keine Nachricht gesendet.',emptyKind:'Du hast keine Nachricht dieser Art gesendet.',error:'Deine Nachrichten konnten nicht geladen werden.',pending:'Wartet auf Antwort',reply:'Antwort von Boşa Gezme!',yours:'Deine Nachricht',feedback:'Meinung und Vorschlag',correction:'Geschäftsdaten bearbeiten',addition:'Geschäft hinzufügen'},
   ru:{answered:'Получен ответ',empty:'Вы ещё не отправляли нам сообщений.',emptyKind:'Сообщений этого типа вы не отправляли.',error:'Не удалось загрузить сообщения.',pending:'Ожидает ответа',reply:'Ответ Boşa Gezme!',yours:'Ваше сообщение',feedback:'Мнение и предложение',correction:'Изменение данных магазина',addition:'Добавление магазина'},
@@ -70,6 +74,7 @@ export function ProfileMessages({locale}:{locale:Locale}){
   const [error,setError]=useState('');
   const [chosen,setChosen]=useState<Kind|null>(null);
   const text=copy[locale];
+  const {t}=useI18n();
   useEffect(()=>{
     let active=true;
     void apiFetch('/api/proxy/me/messages?limit=50',{cache:'no-store'})
@@ -122,11 +127,16 @@ export function ProfileMessages({locale}:{locale:Locale}){
         </dl>}
         {/* R59/R65: what somebody wrote in their own words, set apart as their words --
             labelled, and in the voice a reviewer's own note is set in -- so it does not read
-            as one more line of the card's furniture. The add-a-store sheet sends a link
-            rather than prose, and keeps the plain paragraph. */}
+            as one more line of the card's furniture. */}
+        {/* R74: the add-a-store sheet sends a link rather than prose, so it is named for what it
+            is -- in the words of the field it was pasted into -- and stays the link below. Only
+            a link is named that way: the open box can be made to begin with the same words,
+            and a sentence under "Google Haritalar bağlantısı" would be a label that lies. */}
         {kind!=='addition'
           ?body&&<blockquote className="profile-message-quote"><p className="profile-message-said"><Quote aria-hidden="true"/>{text.yours}</p><p>{body}</p></blockquote>
-          :<p>{body}</p>}
+          :MAPS_LINK.test(body)&&!/\s/.test(body)
+            ?<dl className="profile-message-facts is-stacked"><div><dt>{t('addStoreLabel')}</dt><dd>{body}</dd></div></dl>
+            :body&&<p>{body}</p>}
         {item.reply?<div className="profile-message-reply"><strong>{text.reply}</strong><p>{item.reply}</p>{item.replied_at&&<time dateTime={item.replied_at}>{date(item.replied_at)}<small>{time(item.replied_at)}</small></time>}</div>:<small className="profile-message-status">{text.pending}</small>}
       </article>;})}</div>}
   </>;

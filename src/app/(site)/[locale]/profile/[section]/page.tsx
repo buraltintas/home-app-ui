@@ -6,6 +6,13 @@ import {asLocale} from '@/lib/site';
 const SECTIONS=['edit','reviews','messages','account','help'] as const;
 type Section=(typeof SECTIONS)[number];
 
+// R68: the five pages are built ahead, like the profile page they are opened from. Nothing in
+// them depends on the request -- who is signed in is asked by the browser -- and a page that
+// was rendered per request could not be fetched before the tap, so every card waited on a
+// round trip to the server before anything moved. Built, each one is fetched while its card
+// is on screen and opens on the tap.
+export function generateStaticParams(){return SECTIONS.map(section=>({section}));}
+
 export default async function Page({params}:{params:Promise<{locale:string;section:string}>}){
   const {locale,section}=await params;
   if(!SECTIONS.includes(section as Section))notFound();

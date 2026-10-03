@@ -8,6 +8,59 @@ value involved.
 
 ---
 
+## Profile R67–R74: a card opens on the tap, a sign-in that fits the screen, and the messages' fine print
+
+- **R68** — a tap on one of the profile's white cards showed the top of the profile before
+  the page asked for. That part had already gone with R86 (the page being left is taken off
+  the screen), and it was re-measured on a phone to make sure: a page opened before that
+  deploy keeps the old code until it is reloaded. What remained was an empty screen between
+  the tap and the page, about 0.4s on a phone, made of two waits. The five card pages were
+  rendered per request, so none could be fetched before the tap; they are now built ahead
+  (`generateStaticParams`), like the profile page itself, and fetched while their card is on
+  screen. And each page asked who is signed in before drawing anything; the profile now
+  keeps the last answer in the tab's memory and draws from it at once, still asking behind
+  it. That memory starts empty on every full load (so the server's HTML and the first client
+  render agree), and it is only drawn for the session it was read in: it is kept beside the
+  value of the readable session-expiry cookie, and any change to that cookie -- signing out
+  here or in another tab, a refresh that failed anywhere and cleared it, a new sign-in, a
+  renewed token -- sets it aside and the page waits for the server as before. Signing in or
+  out in this tab drops it outright, so the account page no longer stays live for the round
+  trips after a sign-out. The edit form waits for this page's own answer, because it takes
+  its starting values once and would save a stale name back; the per-person lists are keyed
+  by the account. Recorded on the iOS simulator at 50ms a frame: the frame after the tap is
+  the target page, whole.
+- **R71** — signed out, the "Giriş yap" button sat under the dock on a phone. The cause was
+  shared: an empty page centred its contents in `100vh`, which on Safari is the height with
+  the toolbars hidden -- 754px on an iPhone 17 against the 714 actually visible -- so the
+  middle of the box was below the middle of the screen. It now centres in `100svh` (with the
+  `vh` line kept as the fallback), which also lifts the favourites page's sign-in button onto
+  the first screen. The drawing is smaller too (a 76px disc, a tighter card), the disc is
+  now the clay of the button with the person on it in the pale fill it had, shoulders running
+  to the disc's edge, and "görmek için giriş yap" is set in clay -- marked in the sentence
+  rather than found by position, because it ends the Turkish sentence and opens the others.
+  On a short phone (680px of page or less: a mini, an SE) the preview card steps aside and
+  the disc stays, since there is no room for both it and the button; measured in all four
+  languages down to 375x553, the button clears the dock by 44px. The German and Russian
+  lines under the title showed a literal "--" where a dash was meant; they have dashes now.
+- **R67** — the account row's mark has a ground no other row uses, a pale sky (`--sky-wash`,
+  new in DESIGN.md); help keeps the neutral it shared with it. The signed-out drawing's
+  account row follows, since it is a preview of those rows.
+- **R69** — the "Topluluğu güçlendir" card's ground is `#eaeedf`. It was the only user of
+  `--success-wash`, so the token changed and nothing else moved.
+- **R70** — "Çıkış yap" and "Hesabımı sil" are one width (12.5em: the longest of the eight
+  labels, "Mein Konto löschen", needs 11.9).
+- **R72** — "Senin mesajın" is "Mesajın", and its quote mark takes the label's colour.
+- **R73** — a message's label and its date share a baseline; they were centred against the
+  date and the hour together, so the label sat between the two. The label's baseline is
+  taken from its words, not from the mark in front of it. On the way: the label was meant to
+  be written as named since R55 ("Görüş ve öneri"), but an older rule for a header's `strong`
+  outranked it and set it in spaced capitals all along. It is now scoped so it applies.
+- **R74** — an add-a-store message says what its link is, "Google Haritalar bağlantısı", in
+  the words of the field it was pasted into, with the link under it. Only when it is a Maps
+  link: a message is classed as an add-store suggestion by its first words, which the open
+  feedback box can also be made to begin with, and a sentence under that label would be a
+  label that lies -- those keep the plain paragraph.
+
 ## R84–R87: the way to all reviews, and the page between two pages
 
 - **R84/R85** — the link over the store page's review row says "Tüm değerlendirmeleri gör"
